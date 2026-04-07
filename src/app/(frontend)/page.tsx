@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 import './styles.css'
 
+/** 首页依赖请求头和 Payload 鉴权，必须保持动态渲染 */
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config

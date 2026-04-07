@@ -2,6 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { redirectsPlugin } from '@payloadcms/plugin-redirects'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
@@ -10,6 +12,7 @@ import { r2Storage } from '@payloadcms/storage-r2'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -60,6 +63,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -71,6 +75,23 @@ export default buildConfig({
     r2Storage({
       bucket: cloudflare.env.R2,
       collections: { media: true },
+    }),
+    seoPlugin({
+      globals: [SiteSettings.slug],
+      uploadsCollection: Media.slug,
+      tabbedUI: true,
+      generateTitle: ({ doc }) => {
+        const siteName = typeof doc?.siteName === 'string' ? doc.siteName.trim() : ''
+        return siteName ? `${siteName} | Noumi` : 'Noumi'
+      },
+      generateDescription: ({ doc }) =>
+        typeof doc?.defaultDescription === 'string' ? doc.defaultDescription : '',
+      generateURL: ({ doc }) => (typeof doc?.siteUrl === 'string' ? doc.siteUrl : ''),
+    }),
+    redirectsPlugin({
+      // 当前仓库还没有页面内容集合，先启用自定义 URL 跳转管理；后续新增 pages/posts 时可补到这里
+      collections: [],
+      redirectTypes: ['301', '302'],
     }),
   ],
 })

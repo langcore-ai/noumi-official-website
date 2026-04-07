@@ -33,7 +33,8 @@
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "official-website-bucket","preview_bucket_name": "official-website-bucket",
+      "bucket_name": "official-website-bucket",
+      "preview_bucket_name": "official-website-bucket",
     },
     // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
     // {

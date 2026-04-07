@@ -26,16 +26,16 @@
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.11.0",
-    "@payloadcms/db-d1-sqlite": "3.80.0",
-    "@payloadcms/next": "3.80.0",
-    "@payloadcms/richtext-lexical": "3.80.0",
-    "@payloadcms/storage-r2": "3.80.0",
-    "@payloadcms/ui": "3.80.0",
+    "@payloadcms/db-d1-sqlite": "^3.81.0",
+    "@payloadcms/next": "^3.81.0",
+    "@payloadcms/richtext-lexical": "^3.81.0",
+    "@payloadcms/storage-r2": "^3.81.0",
+    "@payloadcms/ui": "^3.81.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "next": "15.4.11",
-    "payload": "3.80.0",
+    "payload": "^3.81.0",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
@@ -55,7 +55,7 @@
     "typescript": "5.7.3",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18",
-    "wrangler": "~4.61.1"
+    "wrangler": "^4.80.0"
   },
   "engines": {
     "node": "^18.20.2 || >=20.9.0",
@@ -63,9 +63,10 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sharp",
       "esbuild",
-      "unrs-resolver"
+      "sharp",
+      "unrs-resolver",
+      "workerd"
     ]
   },
   "cloudflare": {

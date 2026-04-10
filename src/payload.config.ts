@@ -4,6 +4,7 @@ import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import type { Field } from 'payload'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
@@ -26,6 +27,13 @@ const isNextBuild =
   process.argv.includes('build')
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
+/** redirects 插件可引用的内部集合；当前站点尚未接入页面内容集合 */
+const redirectTargetCollections: string[] = []
+/** Payload 密钥；开发环境提供稳定兜底值，避免本地启动因缺少环境变量而失败 */
+const payloadSecret =
+  process.env.PAYLOAD_SECRET || (isProduction ? (() => {
+    throw new Error('Missing PAYLOAD_SECRET in production environment.')
+  })() : 'noumi-local-dev-secret')
 
 /**
  * 创建结构化日志方法
@@ -55,6 +63,48 @@ const cloudflareLogger = {
 
 const cloudflare = await getCloudflareContextForPayload()
 
+/**
+ * 为 redirects 插件生成兼容当前项目阶段的字段配置
+ * @param defaultFields 插件默认提供的字段
+ * @returns 适配当前站点的跳转字段列表
+ */
+function getRedirectFields(defaultFields: Field[]): Field[] {
+  // 尚无页面类集合时，只保留自定义 URL 跳转，避免 relationship 字段出现空 relationTo
+  if (redirectTargetCollections.length > 0) {
+    return defaultFields
+  }
+
+  return defaultFields.map((field) => {
+    if (field.type !== 'group' || !('name' in field) || field.name !== 'to') {
+      return field
+    }
+
+    return {
+      ...field,
+      fields: [
+        {
+          name: 'type',
+          type: 'radio',
+          label: 'To URL Type',
+          defaultValue: 'custom',
+          options: [{ label: 'Custom URL', value: 'custom' }],
+          required: true,
+          admin: {
+            layout: 'horizontal',
+            readOnly: true,
+          },
+        },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'Custom URL',
+          required: true,
+        },
+      ],
+    }
+  })
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -65,7 +115,7 @@ export default buildConfig({
   collections: [Users, Media],
   globals: [SiteSettings],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
@@ -89,8 +139,11 @@ export default buildConfig({
       generateURL: ({ doc }) => (typeof doc?.siteUrl === 'string' ? doc.siteUrl : ''),
     }),
     redirectsPlugin({
-      // 当前仓库还没有页面内容集合，先启用自定义 URL 跳转管理；后续新增 pages/posts 时可补到这里
-      collections: [],
+      // 当前仓库还没有页面内容集合，先降级为仅支持自定义 URL 的跳转管理
+      collections: redirectTargetCollections,
+      overrides: {
+        fields: ({ defaultFields }) => getRedirectFields(defaultFields),
+      },
       redirectTypes: ['301', '302'],
     }),
   ],

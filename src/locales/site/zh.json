@@ -1,0 +1,108 @@
+{
+  "common": {
+    "siteLogoAlt": "站点标识",
+    "siteLogoSuffix": "标识",
+    "socialPreviewSuffix": "社交分享预览图",
+    "mainNavigation": "主导航",
+    "languageSwitcher": "语言切换",
+    "breadcrumb": "面包屑导航",
+    "localeNames": {
+      "en": "EN",
+      "zh": "中文"
+    },
+    "brandName": "Noumi"
+  },
+  "home": {
+    "problemEyebrow": "核心问题",
+    "problemTitle": "AI 最先失效的地方，往往正是最依赖上下文的地方。",
+    "featuresEyebrow": "核心能力",
+    "featuresTitle": "五大能力，组成一个持续复利的系统。",
+    "exploreFeature": "查看能力详情 →",
+    "howItWorksEyebrow": "工作方式",
+    "howItWorksTitle": "投入一次，后续每一轮都会持续变好。",
+    "useCasesEyebrow": "适用场景",
+    "useCasesTitle": "为长期、重知识的工作流程而构建。",
+    "viewUseCase": "查看场景 →",
+    "faqEyebrow": "常见问题",
+    "faqTitle": "关于 Noumi 的常见问题。",
+    "aboutEyebrow": "关于我们",
+    "aboutTitle": "真正理解上下文的 AI，始于清晰坚定的产品判断。",
+    "missionTitle": "使命",
+    "storyTitle": "故事",
+    "learnMore": "进一步了解 Noumi →",
+    "nextStepEyebrow": "下一步"
+  },
+  "about": {
+    "metadataTitle": "关于 Noumi",
+    "metadataDescription": "了解 Noumi 团队、公司背景与产品理念。",
+    "breadcrumb": "关于我们",
+    "eyebrow": "公司",
+    "title": "关于 Noumi",
+    "missionTitle": "使命",
+    "storyTitle": "故事",
+    "statsEyebrow": "关键数据",
+    "statsTitle": "一些重要的公司里程碑。",
+    "recognitionEyebrow": "认可与进展",
+    "recognitionTitle": "近期获得的认可与进展。",
+    "contactEyebrow": "联系我们",
+    "viewPricing": "查看定价"
+  },
+  "pricing": {
+    "metadataTitle": "定价 | Noumi",
+    "metadataDescription": "查看由 Payload 管理的 Noumi 定价信息。",
+    "breadcrumb": "定价",
+    "eyebrow": "定价",
+    "title": "定价",
+    "noteEyebrow": "补充说明",
+    "noteTitle": "定价说明",
+    "readFaqs": "查看常见问题",
+    "aboutNoumi": "了解 Noumi"
+  },
+  "blog": {
+    "metadataTitle": "Noumi 博客",
+    "metadataDescription": "阅读 Noumi 最新发布的文章。",
+    "breadcrumb": "博客",
+    "eyebrow": "资源",
+    "title": "Noumi 博客",
+    "intro": "所有已发布文章都直接由 Payload 管理。",
+    "readArticle": "阅读全文 →"
+  },
+  "faq": {
+    "metadataTitle": "常见问题 | Noumi",
+    "metadataDescription": "查看由 Payload 管理的常见问题内容。",
+    "breadcrumb": "常见问题",
+    "eyebrow": "资源",
+    "title": "常见问题",
+    "moreEyebrow": "更多内容",
+    "moreTitle": "想更深入了解产品？",
+    "exploreFeatures": "查看产品能力",
+    "readBlog": "阅读博客"
+  },
+  "features": {
+    "breadcrumb": "产品能力",
+    "summaryTitle": "摘要",
+    "relatedEyebrow": "相关能力",
+    "relatedTitle": "更多来自 Noumi 的能力。",
+    "viewDetail": "查看详情 →",
+    "ctaEyebrow": "下一步",
+    "getStarted": "立即开始",
+    "readFaqs": "查看常见问题"
+  },
+  "useCases": {
+    "breadcrumb": "应用场景",
+    "painPointsEyebrow": "痛点",
+    "painPointsTitle": "为什么这类角色很快会遇到无状态 AI 的上限。",
+    "relatedEyebrow": "相关能力",
+    "relatedTitle": "最适合这个角色的能力组合。",
+    "exploreFeature": "查看能力详情 →"
+  },
+  "legal": {
+    "privacyMetadataTitle": "隐私政策 | Noumi",
+    "privacyMetadataDescription": "查看由 Payload 管理的最新隐私政策。",
+    "privacyTitle": "隐私政策",
+    "termsMetadataTitle": "服务条款 | Noumi",
+    "termsMetadataDescription": "查看由 Payload 管理的最新服务条款。",
+    "termsTitle": "服务条款",
+    "eyebrow": "法律信息"
+  }
+}

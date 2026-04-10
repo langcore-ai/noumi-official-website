@@ -69,6 +69,10 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'blog-posts': BlogPost;
+    'feature-pages': FeaturePage;
+    'use-case-pages': UseCasePage;
+    'faq-items': FaqItem;
     redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -79,6 +83,10 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    'feature-pages': FeaturePagesSelect<false> | FeaturePagesSelect<true>;
+    'use-case-pages': UseCasePagesSelect<false> | UseCasePagesSelect<true>;
+    'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -88,14 +96,20 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
+    'about-page': AboutPage;
+    'pricing-page': PricingPage;
+    'legal-pages': LegalPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'pricing-page': PricingPageSelect<false> | PricingPageSelect<true>;
+    'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'zh';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -167,14 +181,229 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-posts".
+ */
+export interface BlogPost {
+  id: number;
+  /**
+   * 文章标题，同时可作为默认 H1。
+   */
+  title: string;
+  /**
+   * 文章 URL slug；上线后应谨慎变更，避免 SEO 权重丢失。
+   */
+  slug: string;
+  /**
+   * 可选 SEO 标题；未填写时前台可回退到 title。
+   */
+  metaTitle?: string | null;
+  /**
+   * 文章 meta description，建议控制在 160 字符以内。
+   */
+  metaDescription?: string | null;
+  /**
+   * 列表页摘要与分享描述。
+   */
+  excerpt?: string | null;
+  /**
+   * 文章分享图；如未上传，前台可回退到站点默认 OG 图。
+   */
+  ogImage?: (number | null) | Media;
+  /**
+   * 作者展示名。
+   */
+  author?: string | null;
+  publishedAt?: string | null;
+  status: 'draft' | 'review' | 'published';
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 文章正文分节；前台按这里的结构渲染。
+   */
+  contentSections?:
+    | {
+        title: string;
+        paragraphs?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        bullets?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feature-pages".
+ */
+export interface FeaturePage {
+  id: number;
+  /**
+   * Feature 路由 slug；应与前台固定 URL 保持一致。
+   */
+  slug: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  heroLabel: string;
+  heroTitle: string;
+  heroEmphasis?: string | null;
+  heroLead: string;
+  summaryBullets?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Feature 页面主体分节；前台直接按这里的结构渲染。
+   */
+  body?:
+    | {
+        label?: string | null;
+        title: string;
+        paragraphs?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        cards?:
+          | {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[]
+          | null;
+        bullets?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedFeatures?: (number | FeaturePage)[] | null;
+  ctaTitle?: string | null;
+  ctaDescription?: string | null;
+  ogImage?: (number | null) | Media;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "use-case-pages".
+ */
+export interface UseCasePage {
+  id: number;
+  /**
+   * Use case 路由 slug；应与固定外部 URL 保持一致。
+   */
+  slug: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  roleLabel: string;
+  heroTitle: string;
+  heroLead: string;
+  painPoints?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  solutionSections?:
+    | {
+        label?: string | null;
+        title: string;
+        paragraphs?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedFeatures?: (number | FeaturePage)[] | null;
+  ogImage?: (number | null) | Media;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-items".
+ */
+export interface FaqItem {
+  id: number;
+  question: string;
+  answer: string;
+  page: 'home' | 'faqs' | 'pricing';
+  sortOrder?: number | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
   id: number;
   from: string;
-  to: {
-    type: 'custom';
-    url: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?:
+      | ({
+          relationTo: 'blog-posts';
+          value: number | BlogPost;
+        } | null)
+      | ({
+          relationTo: 'feature-pages';
+          value: number | FeaturePage;
+        } | null)
+      | ({
+          relationTo: 'use-case-pages';
+          value: number | UseCasePage;
+        } | null);
+    url?: string | null;
   };
   type: '301' | '302';
   updatedAt: string;
@@ -211,6 +440,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'blog-posts';
+        value: number | BlogPost;
+      } | null)
+    | ({
+        relationTo: 'feature-pages';
+        value: number | FeaturePage;
+      } | null)
+    | ({
+        relationTo: 'use-case-pages';
+        value: number | UseCasePage;
+      } | null)
+    | ({
+        relationTo: 'faq-items';
+        value: number | FaqItem;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -298,6 +543,168 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-posts_select".
+ */
+export interface BlogPostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  excerpt?: T;
+  ogImage?: T;
+  author?: T;
+  publishedAt?: T;
+  status?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  contentSections?:
+    | T
+    | {
+        title?: T;
+        paragraphs?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feature-pages_select".
+ */
+export interface FeaturePagesSelect<T extends boolean = true> {
+  slug?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  heroLabel?: T;
+  heroTitle?: T;
+  heroEmphasis?: T;
+  heroLead?: T;
+  summaryBullets?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  body?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        paragraphs?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        cards?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  relatedFeatures?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ogImage?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "use-case-pages_select".
+ */
+export interface UseCasePagesSelect<T extends boolean = true> {
+  slug?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  roleLabel?: T;
+  heroTitle?: T;
+  heroLead?: T;
+  painPoints?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  solutionSections?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        paragraphs?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  relatedFeatures?: T;
+  ogImage?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-items_select".
+ */
+export interface FaqItemsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  page?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -306,6 +713,7 @@ export interface RedirectsSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        reference?: T;
         url?: T;
       };
   type?: T;
@@ -363,13 +771,109 @@ export interface SiteSetting {
    */
   siteName: string;
   /**
-   * 站点完整访问地址，例如 https://example.com 。
+   * 站点完整访问地址，例如 https://www.noumi.ai 。
    */
   siteUrl: string;
   /**
-   * 当页面或文档未提供更具体描述时，可作为默认 SEO 描述。
+   * 页面未提供更具体描述时的默认 SEO 描述。
    */
   defaultDescription?: string | null;
+  /**
+   * 官网统一联系邮箱；本项目默认使用 official@noumi.ai。
+   */
+  contactEmail?: string | null;
+  /**
+   * 导航右侧按钮文案。
+   */
+  navCtaText?: string | null;
+  /**
+   * 导航右侧按钮链接；未填写时前台不展示该按钮。
+   */
+  navCtaHref?: string | null;
+  /**
+   * 页脚品牌说明文案。
+   */
+  footerDescription?: string | null;
+  /**
+   * 页脚版权文案。
+   */
+  footerCopyright?: string | null;
+  /**
+   * 默认分享图；未配置页面级图片时可回退使用。
+   */
+  defaultOgImage?: (number | null) | Media;
+  /**
+   * 顶部导航配置；前台会直接读取这里的内容。
+   */
+  navLinks?:
+    | {
+        label: string;
+        href?: string | null;
+        children?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 页脚列配置；前台会直接读取这里的内容。
+   */
+  footerColumns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  homeHero?: {
+    label?: string | null;
+    title?: string | null;
+    subtitle?: string | null;
+    intro?: string | null;
+    roles?: string | null;
+    primaryCtaLabel?: string | null;
+    primaryCtaHref?: string | null;
+    secondaryCtaLabel?: string | null;
+    secondaryCtaHref?: string | null;
+  };
+  homeProblems?:
+    | {
+        title: string;
+        paragraphs?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  homeFeatureIntro?: string | null;
+  homeHowItWorks?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  homeFinalCta?: {
+    title?: string | null;
+    description?: string | null;
+    primaryCtaLabel?: string | null;
+    primaryCtaHref?: string | null;
+    secondaryCtaLabel?: string | null;
+    secondaryCtaHref?: string | null;
+  };
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -383,12 +887,167 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  intro?: string | null;
+  missionParagraphs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  storyParagraphs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  stats?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  recognition?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  contactTitle?: string | null;
+  contactBody?: string | null;
+  contactEmail?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-page".
+ */
+export interface PricingPage {
+  id: number;
+  intro?: string | null;
+  plans?:
+    | {
+        title: string;
+        description: string;
+        highlights?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  note?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal-pages".
+ */
+export interface LegalPage {
+  id: number;
+  /**
+   * 隐私政策 Markdown 原稿；前台会直接读取这里的内容。
+   */
+  privacyPolicyMarkdown?: string | null;
+  /**
+   * 服务条款 Markdown 原稿；前台会直接读取这里的内容。
+   */
+  termsOfServiceMarkdown?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   siteUrl?: T;
   defaultDescription?: T;
+  contactEmail?: T;
+  navCtaText?: T;
+  navCtaHref?: T;
+  footerDescription?: T;
+  footerCopyright?: T;
+  defaultOgImage?: T;
+  navLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  footerColumns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  homeHero?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        subtitle?: T;
+        intro?: T;
+        roles?: T;
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
+      };
+  homeProblems?:
+    | T
+    | {
+        title?: T;
+        paragraphs?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  homeFeatureIntro?: T;
+  homeHowItWorks?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  homeFinalCta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
+      };
   meta?:
     | T
     | {
@@ -396,6 +1055,79 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  intro?: T;
+  missionParagraphs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  storyParagraphs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  recognition?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  contactTitle?: T;
+  contactBody?: T;
+  contactEmail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-page_select".
+ */
+export interface PricingPageSelect<T extends boolean = true> {
+  intro?: T;
+  plans?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        highlights?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal-pages_select".
+ */
+export interface LegalPagesSelect<T extends boolean = true> {
+  privacyPolicyMarkdown?: T;
+  termsOfServiceMarkdown?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -23,17 +23,14 @@ const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(valu
 const isCLI = process.argv.some((value) => realpath(value).endsWith(path.join('payload', 'bin.js')))
 /** 是否是 Next.js 生产构建阶段 */
 const isNextBuild =
-  process.argv.some((value) => realpath(value)?.endsWith(path.join('next', 'dist', 'bin', 'next'))) &&
-  process.argv.includes('build')
+  process.env.NEXT_PHASE === 'phase-production-build' ||
+  process.env.npm_lifecycle_event === 'build' ||
+  (process.argv.some((value) => realpath(value)?.endsWith(path.join('next', 'dist', 'bin', 'next'))) &&
+    process.argv.includes('build'))
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
 /** redirects 插件可引用的内部集合；当前站点尚未接入页面内容集合 */
 const redirectTargetCollections: string[] = []
-/** Payload 密钥；开发环境提供稳定兜底值，避免本地启动因缺少环境变量而失败 */
-const payloadSecret =
-  process.env.PAYLOAD_SECRET || (isProduction ? (() => {
-    throw new Error('Missing PAYLOAD_SECRET in production environment.')
-  })() : 'noumi-local-dev-secret')
 
 /**
  * 创建结构化日志方法
@@ -62,6 +59,7 @@ const cloudflareLogger = {
 } as any // Use PayloadLogger type when it's exported
 
 const cloudflare = await getCloudflareContextForPayload()
+const payloadSecret = getPayloadSecret(cloudflare)
 
 /**
  * 为 redirects 插件生成兼容当前项目阶段的字段配置
@@ -103,6 +101,36 @@ function getRedirectFields(defaultFields: Field[]): Field[] {
       ],
     }
   })
+}
+
+/**
+ * 解析 Payload 运行所需密钥
+ * 构建阶段允许占位值通过静态收集；真正运行时仍要求提供真实密钥。
+ * @param cloudflare Cloudflare 运行时上下文
+ * @returns 可用于初始化 Payload 的密钥
+ */
+function getPayloadSecret(cloudflare: CloudflareContext): string {
+  const cloudflarePayloadSecret = (cloudflare.env as CloudflareContext['env'] & { PAYLOAD_SECRET?: string })
+    .PAYLOAD_SECRET
+
+  if (process.env.PAYLOAD_SECRET) {
+    return process.env.PAYLOAD_SECRET
+  }
+
+  if (cloudflarePayloadSecret) {
+    return cloudflarePayloadSecret
+  }
+
+  // Cloudflare 构建阶段尚未注入运行时 secret，此处使用占位值避免 next build 失败
+  if (isNextBuild) {
+    return 'noumi-build-secret'
+  }
+
+  if (!isProduction) {
+    return 'noumi-local-dev-secret'
+  }
+
+  throw new Error('Missing PAYLOAD_SECRET in production environment.')
 }
 
 export default buildConfig({

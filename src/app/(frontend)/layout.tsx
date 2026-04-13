@@ -5,6 +5,7 @@ import { draftMode, headers } from 'next/headers'
 import { PayloadLivePreviewListener } from './PayloadLivePreviewListener'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
+import { ViewportSectionObserver } from '@/components/site/ViewportSectionObserver'
 import { getSiteDictionary, getSiteLogoAlt } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getSiteSettings, mapFooterColumns, mapNavigation } from '@/lib/site/cms'
@@ -78,6 +79,7 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
     <html lang={locale}>
       <body>
         <div className="site-root">
+          <ViewportSectionObserver />
           {preview.isEnabled && livePreviewServerURL ? (
             <PayloadLivePreviewListener serverURL={livePreviewServerURL} />
           ) : null}

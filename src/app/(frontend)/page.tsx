@@ -73,7 +73,7 @@ export default async function HomePage() {
   const additionalSections = getHomeAdditionalSections(homePage.sections)
 
   return (
-    <div className="page page--hero">
+    <div className="page page--hero page--fullscreen">
       {organizationJsonLd ? <StructuredData data={organizationJsonLd} /> : null}
       {homeFaqItems.length > 0 ? <StructuredData data={createFaqJsonLd(homeFaqItems)} /> : null}
 
@@ -106,7 +106,7 @@ export default async function HomePage() {
       </section>
 
       {homePage.problemsSection && homePage.problemsSection.cards.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">
               {homePage.problemsSection.label || dictionary.home.problemEyebrow}
@@ -128,7 +128,7 @@ export default async function HomePage() {
       ) : null}
 
       {features.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">
               {homePage.featureIntroSection?.label || dictionary.home.featuresEyebrow}
@@ -170,7 +170,7 @@ export default async function HomePage() {
       ) : null}
 
       {homePage.howItWorksSection && homePage.howItWorksSection.cards.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">
               {homePage.howItWorksSection.label || dictionary.home.howItWorksEyebrow}
@@ -190,7 +190,7 @@ export default async function HomePage() {
       ) : null}
 
       {useCases.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.useCasesEyebrow}</span>
             <h2>{dictionary.home.useCasesTitle}</h2>
@@ -210,7 +210,7 @@ export default async function HomePage() {
       ) : null}
 
       {homeFaqItems.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.faqEyebrow}</span>
             <h2>{dictionary.home.faqTitle}</h2>
@@ -227,7 +227,7 @@ export default async function HomePage() {
       ) : null}
 
       {aboutPage.hero.description || aboutOverviewSection ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.aboutEyebrow}</span>
             <h2>{dictionary.home.aboutTitle}</h2>
@@ -254,10 +254,11 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {additionalSections.length > 0 ? <PageSections sections={additionalSections} /> : null}
+      {additionalSections.length > 0 ? <PageSections fullScreen sections={additionalSections} /> : null}
 
       {homePage.finalCtaSection ? (
         <PageSections
+          fullScreen
           sections={[
             {
               ...homePage.finalCtaSection,

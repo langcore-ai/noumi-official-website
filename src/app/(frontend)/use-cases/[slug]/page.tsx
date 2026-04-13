@@ -62,7 +62,7 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
   ], locale)
 
   return (
-    <div className="page page--hero">
+    <div className="page page--hero page--fullscreen">
       <StructuredData data={breadcrumbJsonLd} />
 
       <section className="site-shell page__hero">
@@ -80,6 +80,7 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
 
       {page.painPointsSection ? (
         <PageSections
+          fullScreen
           sections={[
             {
               ...page.painPointsSection,
@@ -90,10 +91,10 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
         />
       ) : null}
 
-      <PageSections sections={page.sections} />
+      <PageSections fullScreen sections={page.sections} />
 
       {page.relatedFeatures.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.useCases.relatedEyebrow}</span>
             <h2>{dictionary.useCases.relatedTitle}</h2>

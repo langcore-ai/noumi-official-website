@@ -1,4 +1,5 @@
 :root {
+  --site-header-height: 84px;
   --page-bg: #ffffff;
   --page-bg-subtle: #eef2ff;
   --ink: #000000;
@@ -35,6 +36,12 @@ html {
   background: var(--page-bg);
   color: var(--ink);
   scroll-behavior: smooth;
+}
+
+html:has(.page--fullscreen),
+body:has(.page--fullscreen) {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--site-header-height);
 }
 
 body {
@@ -342,6 +349,10 @@ summary:focus-visible {
   color: var(--ink);
 }
 
+.page--fullscreen {
+  padding-bottom: 0;
+}
+
 .page--hero {
   background: var(--page-bg);
 }
@@ -349,6 +360,18 @@ summary:focus-visible {
 .page__hero {
   position: relative;
   padding: 112px 0 64px;
+}
+
+/* 让营销页首屏与导航栏共同占满视口，形成整屏分页体验 */
+.page--fullscreen .page__hero,
+.page--fullscreen .section--screen {
+  min-height: calc(100svh - var(--site-header-height));
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: var(--site-header-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .page--hero .page__hero::before {
@@ -362,6 +385,7 @@ summary:focus-visible {
 
 .page__eyebrow {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   min-height: 30px;
   padding: 0 10px;
@@ -430,6 +454,10 @@ summary:focus-visible {
 
 .section {
   padding-top: 88px;
+}
+
+.section--screen {
+  padding-bottom: 88px;
 }
 
 .section__header {
@@ -873,6 +901,10 @@ summary:focus-visible {
 
   .page__hero {
     padding: 84px 0 40px;
+  }
+
+  .section--screen {
+    padding-bottom: 56px;
   }
 
   .cards--2,

@@ -41,7 +41,7 @@ export default async function AboutPage() {
   ])
 
   return (
-    <div className="page">
+    <div className="page page--fullscreen">
       <StructuredData data={breadcrumbJsonLd} />
       {organizationJsonLd ? <StructuredData data={organizationJsonLd} /> : null}
 
@@ -52,10 +52,10 @@ export default async function AboutPage() {
         {page.hero.supportingText ? <p className="page__hero-support">{page.hero.supportingText}</p> : null}
       </section>
 
-      <PageSections sections={page.sections} />
+      <PageSections fullScreen sections={page.sections} />
 
       {!page.sections.some((section) => section.type === 'cta') ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="feature-detail__summary">
             <span className="page__eyebrow">{dictionary.about.contactEyebrow}</span>
             <div className="page__hero-actions">

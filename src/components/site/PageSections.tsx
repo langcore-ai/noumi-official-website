@@ -130,12 +130,31 @@ function renderCardGrid(section: CmsCardGridSectionView): ReactNode {
 }
 
 /**
+ * 生成 section 容器类名
+ * @param options 分节布局选项
+ * @returns className
+ */
+function getSectionClassName(options: { article?: boolean; fullScreen?: boolean }): string {
+  const classNames = ['site-shell', 'section']
+
+  if (options.article) {
+    classNames.push('article')
+  }
+
+  if (options.fullScreen && !options.article) {
+    classNames.push('section--screen')
+  }
+
+  return classNames.join(' ')
+}
+
+/**
  * 统一渲染营销页 section
  * @param props section 列表
  * @returns 页面分节节点
  */
-export function PageSections(props: { sections: CmsPageSectionView[] }) {
-  const { sections } = props
+export function PageSections(props: { fullScreen?: boolean; sections: CmsPageSectionView[] }) {
+  const { fullScreen = false, sections } = props
 
   return (
     <>
@@ -145,7 +164,10 @@ export function PageSections(props: { sections: CmsPageSectionView[] }) {
             return (
               <section
                 key={`${section.type}-${section.slotKey ?? index}`}
-                className={section.style === 'article' ? 'site-shell section article' : 'site-shell section'}
+                className={getSectionClassName({
+                  article: section.style === 'article',
+                  fullScreen,
+                })}
               >
                 {renderSectionHeader(section.label, section.title, section.description)}
                 {section.paragraphs.length > 0 || section.bullets.length > 0 ? (
@@ -166,7 +188,10 @@ export function PageSections(props: { sections: CmsPageSectionView[] }) {
             )
           case 'cardGrid':
             return (
-              <section key={`${section.type}-${section.slotKey ?? index}`} className="site-shell section">
+              <section
+                key={`${section.type}-${section.slotKey ?? index}`}
+                className={getSectionClassName({ fullScreen })}
+              >
                 {renderSectionHeader(section.label, section.title, section.description)}
                 {section.cards.length > 0 && (section.paragraphs.length > 0 || section.bullets.length > 0) ? (
                   <div className="feature-detail__layout">
@@ -199,7 +224,10 @@ export function PageSections(props: { sections: CmsPageSectionView[] }) {
             )
           case 'bulletList':
             return (
-              <section key={`${section.type}-${section.slotKey ?? index}`} className="site-shell section">
+              <section
+                key={`${section.type}-${section.slotKey ?? index}`}
+                className={getSectionClassName({ fullScreen })}
+              >
                 {section.style === 'plain' ? renderSectionHeader(section.label, section.title, section.description) : null}
                 <div className={section.style === 'plain' ? 'panel' : 'feature-detail__summary'}>
                   {section.style !== 'plain' && section.label ? (
@@ -219,7 +247,10 @@ export function PageSections(props: { sections: CmsPageSectionView[] }) {
             )
           case 'cta':
             return (
-              <section key={`${section.type}-${section.slotKey ?? index}`} className="site-shell section">
+              <section
+                key={`${section.type}-${section.slotKey ?? index}`}
+                className={getSectionClassName({ fullScreen })}
+              >
                 <div className="feature-detail__summary">
                   {section.label ? <span className="page__eyebrow">{section.label}</span> : null}
                   {section.title ? <h2>{section.title}</h2> : null}
@@ -235,7 +266,10 @@ export function PageSections(props: { sections: CmsPageSectionView[] }) {
             )
           case 'markdownDocument':
             return (
-              <section key={`${section.type}-${section.slotKey ?? index}`} className="site-shell section article">
+              <section
+                key={`${section.type}-${section.slotKey ?? index}`}
+                className={getSectionClassName({ article: true, fullScreen })}
+              >
                 {renderSectionHeader(section.label, section.title, undefined)}
                 <div className="panel">
                   <MarkdownContent markdown={section.markdown} />

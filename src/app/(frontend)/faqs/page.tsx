@@ -35,7 +35,7 @@ export default async function FaqPage() {
   ], locale)
 
   return (
-    <div className="page">
+    <div className="page page--fullscreen">
       <StructuredData data={breadcrumbJsonLd} />
       {items.length > 0 ? <StructuredData data={createFaqJsonLd(items)} /> : null}
 
@@ -45,7 +45,7 @@ export default async function FaqPage() {
       </section>
 
       {items.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="faq-list">
             {items.map((item, index) => (
               <details key={item.id} open={index === 0}>
@@ -57,7 +57,7 @@ export default async function FaqPage() {
         </section>
       ) : null}
 
-      <section className="site-shell section">
+      <section className="site-shell section section--screen">
         <div className="feature-detail__summary">
           <span className="page__eyebrow">{dictionary.faq.moreEyebrow}</span>
           <h2>{dictionary.faq.moreTitle}</h2>

@@ -62,7 +62,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
   ], locale)
 
   return (
-    <div className="page page--hero">
+    <div className="page page--hero page--fullscreen">
       <StructuredData data={breadcrumbJsonLd} />
 
       <section className="site-shell page__hero">
@@ -90,6 +90,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
 
       {page.summarySection ? (
         <PageSections
+          fullScreen
           sections={[
             {
               ...page.summarySection,
@@ -99,10 +100,10 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
         />
       ) : null}
 
-      <PageSections sections={page.sections} />
+      <PageSections fullScreen sections={page.sections} />
 
       {page.relatedFeatures.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.features.relatedEyebrow}</span>
             <h2>{dictionary.features.relatedTitle}</h2>
@@ -131,6 +132,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
 
       {page.ctaSection ? (
         <PageSections
+          fullScreen
           sections={[
             {
               ...page.ctaSection,

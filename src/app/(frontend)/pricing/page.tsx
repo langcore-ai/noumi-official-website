@@ -41,7 +41,7 @@ export default async function PricingPage() {
   ], locale)
 
   return (
-    <div className="page">
+    <div className="page page--fullscreen">
       <StructuredData data={breadcrumbJsonLd} />
 
       <section className="site-shell page__hero">
@@ -51,10 +51,10 @@ export default async function PricingPage() {
         {page.hero.supportingText ? <p className="page__hero-support">{page.hero.supportingText}</p> : null}
       </section>
 
-      <PageSections sections={page.sections} />
+      <PageSections fullScreen sections={page.sections} />
 
       {!page.sections.some((section) => section.type === 'cta') && faqItems.length > 0 ? (
-        <section className="site-shell section">
+        <section className="site-shell section section--screen">
           <div className="feature-detail__summary">
             <span className="page__eyebrow">{dictionary.pricing.noteEyebrow}</span>
             <h2>{dictionary.pricing.noteTitle}</h2>

@@ -36,7 +36,7 @@ export function SiteHeader(props: {
   const navCtaLink = navCtaHref?.trim()
 
   return (
-    <header className="site-header">
+    <header className="site-header" data-site-header>
       <div className="site-shell site-header__inner">
         <Link className="site-brand" href="/">
           <img

@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
+import { draftMode } from 'next/headers'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { getSiteDictionary, getSiteLogoAlt } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getSiteSettings, mapFooterColumns, mapNavigation } from '@/lib/site/cms'
+import { buildExitPreviewURL } from '@/lib/site/publishing'
 import { createPageMetadata } from '@/lib/site/seo'
 
 import './styles.css'
@@ -46,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FrontendLayout(props: { children: ReactNode }) {
   const { children } = props
   const locale = await getRequestLocale()
+  const preview = await draftMode()
   const dictionary = getSiteDictionary(locale)
   const siteSettings = await getSiteSettings(locale)
 
@@ -53,6 +56,16 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
     <html lang={locale}>
       <body>
         <div className="site-root">
+          {preview.isEnabled ? (
+            <div className="preview-banner">
+              <div className="site-shell preview-banner__inner">
+                <p>Previewing draft content from Payload CMS.</p>
+                <a className="button button--ghost" href={buildExitPreviewURL('/')}>
+                  Exit preview
+                </a>
+              </div>
+            </div>
+          ) : null}
           <SiteHeader
             locale={locale}
             localeLabels={dictionary.common.localeNames}

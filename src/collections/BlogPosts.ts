@@ -1,23 +1,12 @@
-import type { Access, CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 
-/**
- * 控制博客文章读取权限：
- * - 已登录用户可读取全部状态，便于后台编辑与审核
- * - 匿名请求仅允许读取已发布文章，避免草稿通过公开 API 暴露
- */
-const canReadBlogPost: Access = ({ req: { user } }) => {
-  // 后台已登录用户保留完整读取能力
-  if (user) {
-    return true
-  }
-
-  // 匿名访问仅允许读取已发布文章
-  return {
-    status: {
-      equals: 'published',
-    },
-  }
-}
+import {
+  authenticatedAccess,
+  buildPreviewURL,
+  getCollectionPreviewPath,
+  PUBLIC_COLLECTION_VERSIONS,
+  publishedDocumentReadAccess,
+} from '@/lib/site/publishing'
 
 /**
  * Blog 文章集合
@@ -30,16 +19,22 @@ export const BlogPosts: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'publishedAt', 'status'],
+    defaultColumns: ['title', 'slug', '_status', 'status', 'publishedAt'],
     group: 'Content',
+    preview: (doc, options) =>
+      buildPreviewURL({
+        locale: options.locale,
+        path: getCollectionPreviewPath('blog-posts', doc),
+      }),
   },
+  versions: PUBLIC_COLLECTION_VERSIONS,
   access: {
     /** 公开请求仅可读取已发布内容 */
-    read: canReadBlogPost,
+    read: publishedDocumentReadAccess,
     /** 已登录用户可维护内容 */
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    create: authenticatedAccess,
+    update: authenticatedAccess,
+    delete: authenticatedAccess,
   },
   fields: [
     {

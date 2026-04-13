@@ -1,5 +1,6 @@
 import { cache } from 'react'
 
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 
 import { DEFAULT_CONTENT_LOCALE, getPayloadLocaleOptions, type SiteLocale } from '@/lib/site/i18n'
@@ -74,17 +75,81 @@ export type CmsContentSection = {
  */
 const getPayloadClient = cache(async () => getPayload({ config: await config }))
 
+/** 前台公共读取参数 */
+type PublicReadOptions = {
+  /** 是否读取草稿版本 */
+  draft?: boolean
+  /** 是否跳过访问控制 */
+  overrideAccess?: boolean
+}
+
+/**
+ * 判断当前请求是否处于预览模式
+ * @returns 是否启用草稿预览
+ */
+async function isDraftPreviewEnabled(): Promise<boolean> {
+  const preview = await draftMode()
+  return preview.isEnabled
+}
+
+/**
+ * 根据预览状态生成公开读取参数
+ * 正常模式严格遵循访问控制，预览模式显式读取草稿版本。
+ * @param previewEnabled 是否启用预览
+ * @returns 可复用的 Payload 查询参数
+ */
+function getPublicReadOptions(previewEnabled: boolean): PublicReadOptions {
+  if (previewEnabled) {
+    return {
+      draft: true,
+    }
+  }
+
+  return {
+    overrideAccess: false,
+  }
+}
+
+/**
+ * 读取站点设置
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns 站点设置
+ */
+const getSiteSettingsByMode = cache(
+  async (locale: SiteLocale, previewEnabled: boolean) => {
+    const payload = await getPayloadClient()
+    return payload.findGlobal({
+      slug: 'site-settings',
+      depth: 1,
+      ...getPayloadLocaleOptions(locale),
+      ...getPublicReadOptions(previewEnabled),
+    })
+  },
+)
+
 /**
  * 读取站点设置
  * @param locale 站点语言
  * @returns 站点设置
  */
-export const getSiteSettings = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+export async function getSiteSettings(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getSiteSettingsByMode(locale, await isDraftPreviewEnabled())
+}
+
+/**
+ * 读取 about 页面
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns about 内容
+ */
+const getAboutPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   return payload.findGlobal({
-    slug: 'site-settings',
-    depth: 1,
+    slug: 'about-page',
+    depth: 0,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
   })
 })
 
@@ -93,12 +158,23 @@ export const getSiteSettings = cache(async (locale: SiteLocale = DEFAULT_CONTENT
  * @param locale 站点语言
  * @returns about 内容
  */
-export const getAboutPage = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+export async function getAboutPage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getAboutPageByMode(locale, await isDraftPreviewEnabled())
+}
+
+/**
+ * 读取 pricing 页面
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns pricing 内容
+ */
+const getPricingPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   return payload.findGlobal({
-    slug: 'about-page',
+    slug: 'pricing-page',
     depth: 0,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
   })
 })
 
@@ -107,12 +183,23 @@ export const getAboutPage = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LO
  * @param locale 站点语言
  * @returns pricing 内容
  */
-export const getPricingPage = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+export async function getPricingPage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getPricingPageByMode(locale, await isDraftPreviewEnabled())
+}
+
+/**
+ * 读取法律页配置
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns legal 内容
+ */
+const getLegalPagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   return payload.findGlobal({
-    slug: 'pricing-page',
+    slug: 'legal-pages',
     depth: 0,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
   })
 })
 
@@ -121,13 +208,28 @@ export const getPricingPage = cache(async (locale: SiteLocale = DEFAULT_CONTENT_
  * @param locale 站点语言
  * @returns legal 内容
  */
-export const getLegalPages = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+export async function getLegalPages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getLegalPagesByMode(locale, await isDraftPreviewEnabled())
+}
+
+/**
+ * 读取全部 feature 页面
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns feature 列表
+ */
+const getFeaturePagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
-  return payload.findGlobal({
-    slug: 'legal-pages',
-    depth: 0,
+  const result = await payload.find({
+    collection: 'feature-pages',
+    depth: 1,
+    limit: 100,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
+    sort: 'createdAt',
   })
+
+  return result.docs
 })
 
 /**
@@ -135,18 +237,9 @@ export const getLegalPages = cache(async (locale: SiteLocale = DEFAULT_CONTENT_L
  * @param locale 站点语言
  * @returns feature 列表
  */
-export const getFeaturePages = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
-  const payload = await getPayloadClient()
-  const result = await payload.find({
-    collection: 'feature-pages',
-    depth: 1,
-    limit: 100,
-    ...getPayloadLocaleOptions(locale),
-    sort: 'createdAt',
-  })
-
-  return result.docs
-})
+export async function getFeaturePages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getFeaturePagesByMode(locale, await isDraftPreviewEnabled())
+}
 
 /**
  * 按 slug 读取 feature 页面
@@ -158,12 +251,14 @@ export async function getFeaturePageBySlug(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
 ): Promise<FeaturePage | null> {
+  const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'feature-pages',
     depth: 1,
     limit: 1,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
     where: {
       slug: {
         equals: slug,
@@ -177,20 +272,31 @@ export async function getFeaturePageBySlug(
 /**
  * 读取全部 use case 页面
  * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
  * @returns use case 列表
  */
-export const getUseCasePages = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+const getUseCasePagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'use-case-pages',
     depth: 1,
     limit: 100,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
     sort: 'createdAt',
   })
 
   return result.docs
 })
+
+/**
+ * 读取全部 use case 页面
+ * @param locale 站点语言
+ * @returns use case 列表
+ */
+export async function getUseCasePages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getUseCasePagesByMode(locale, await isDraftPreviewEnabled())
+}
 
 /**
  * 按 slug 读取 use case 页面
@@ -202,12 +308,14 @@ export async function getUseCasePageBySlug(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
 ): Promise<UseCasePage | null> {
+  const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'use-case-pages',
     depth: 1,
     limit: 1,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
     where: {
       slug: {
         equals: slug,
@@ -219,31 +327,45 @@ export async function getUseCasePageBySlug(
 }
 
 /**
- * 读取公开博客文章
+ * 读取博客文章列表
  * @param locale 站点语言
- * @returns 已发布文章列表
+ * @param previewEnabled 是否启用预览
+ * @returns 文章列表
  */
-export const getPublishedBlogPosts = cache(async (locale: SiteLocale = DEFAULT_CONTENT_LOCALE) => {
+const getPublishedBlogPostsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'blog-posts',
     depth: 1,
     limit: 100,
-    overrideAccess: false,
     ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
     sort: '-publishedAt',
-    where: {
-      status: {
-        equals: 'published',
-      },
-    },
+    where: previewEnabled
+      ? undefined
+      : {
+          _status: {
+            equals: 'published',
+          },
+        },
   })
 
   return result.docs
 })
 
 /**
- * 按 slug 读取已发布博客文章
+ * 读取博客文章
+ * 正常模式返回已发布文章，预览模式返回当前草稿内容。
+ * @param locale 站点语言
+ * @returns 文章列表
+ */
+export async function getPublishedBlogPosts(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
+  return getPublishedBlogPostsByMode(locale, await isDraftPreviewEnabled())
+}
+
+/**
+ * 按 slug 读取博客文章
+ * 正常模式返回已发布内容，预览模式返回当前草稿内容。
  * @param slug 文章 slug
  * @param locale 站点语言
  * @returns 文章
@@ -252,27 +374,34 @@ export async function getPublishedBlogPostBySlug(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
 ): Promise<BlogPost | null> {
+  const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'blog-posts',
     depth: 1,
     limit: 1,
-    overrideAccess: false,
     ...getPayloadLocaleOptions(locale),
-    where: {
-      and: [
-        {
+    ...getPublicReadOptions(previewEnabled),
+    where: previewEnabled
+      ? {
           slug: {
             equals: slug,
           },
+        }
+      : {
+          and: [
+            {
+              slug: {
+                equals: slug,
+              },
+            },
+            {
+              _status: {
+                equals: 'published',
+              },
+            },
+          ],
         },
-        {
-          status: {
-            equals: 'published',
-          },
-        },
-      ],
-    },
   })
 
   return result.docs[0] ?? null

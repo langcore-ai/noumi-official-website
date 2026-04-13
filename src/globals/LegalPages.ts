@@ -1,17 +1,31 @@
 import type { GlobalConfig } from 'payload'
 
+import {
+  authenticatedAccess,
+  buildPreviewURL,
+  getGlobalPreviewPath,
+  PUBLIC_GLOBAL_VERSIONS,
+  publishedGlobalReadAccess,
+} from '@/lib/site/publishing'
+
 /**
  * 法律页原稿配置
  */
 export const LegalPages: GlobalConfig = {
   slug: 'legal-pages',
   label: 'Legal Pages',
+  versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
-    read: () => true,
-    update: ({ req: { user } }) => Boolean(user),
+    read: publishedGlobalReadAccess,
+    update: authenticatedAccess,
   },
   admin: {
     group: 'Pages',
+    preview: (_doc, options) =>
+      buildPreviewURL({
+        locale: options.locale,
+        path: getGlobalPreviewPath('legal-pages'),
+      }),
   },
   fields: [
     {

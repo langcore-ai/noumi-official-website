@@ -1,5 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
+import {
+  authenticatedAccess,
+  buildPreviewURL,
+  getCollectionPreviewPath,
+  PUBLIC_COLLECTION_VERSIONS,
+  publishedDocumentReadAccess,
+} from '@/lib/site/publishing'
+
 /**
  * Feature 页面集合
  */
@@ -11,14 +19,20 @@ export const FeaturePages: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'heroTitle',
-    defaultColumns: ['heroTitle', 'slug'],
+    defaultColumns: ['heroTitle', 'slug', '_status'],
     group: 'Content',
+    preview: (doc, options) =>
+      buildPreviewURL({
+        locale: options.locale,
+        path: getCollectionPreviewPath('feature-pages', doc),
+      }),
   },
+  versions: PUBLIC_COLLECTION_VERSIONS,
   access: {
-    read: () => true,
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    read: publishedDocumentReadAccess,
+    create: authenticatedAccess,
+    update: authenticatedAccess,
+    delete: authenticatedAccess,
   },
   fields: [
     {

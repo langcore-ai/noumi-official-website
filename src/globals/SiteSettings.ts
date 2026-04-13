@@ -1,5 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
+import {
+  authenticatedAccess,
+  buildPreviewURL,
+  getGlobalPreviewPath,
+  PUBLIC_GLOBAL_VERSIONS,
+  publishedGlobalReadAccess,
+} from '@/lib/site/publishing'
+
 /**
  * 站点级设置
  * 用于统一维护官网品牌、导航与基础 SEO 默认值。
@@ -7,14 +15,20 @@ import type { GlobalConfig } from 'payload'
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: '站点设置',
+  versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
-    /** 允许前台或服务端读取站点配置 */
-    read: () => true,
+    /** 前台默认仅读取已发布配置；后台用户仍可读取草稿与历史版本 */
+    read: publishedGlobalReadAccess,
     /** 仅登录用户可在后台更新站点配置 */
-    update: ({ req: { user } }) => Boolean(user),
+    update: authenticatedAccess,
   },
   admin: {
     group: '设置',
+    preview: (_doc, options) =>
+      buildPreviewURL({
+        locale: options.locale,
+        path: getGlobalPreviewPath('site-settings'),
+      }),
   },
   fields: [
     {

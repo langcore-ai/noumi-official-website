@@ -1,17 +1,31 @@
 import type { GlobalConfig } from 'payload'
 
+import {
+  authenticatedAccess,
+  buildPreviewURL,
+  getGlobalPreviewPath,
+  PUBLIC_GLOBAL_VERSIONS,
+  publishedGlobalReadAccess,
+} from '@/lib/site/publishing'
+
 /**
  * About 页面全局配置
  */
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
   label: 'About Page',
+  versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
-    read: () => true,
-    update: ({ req: { user } }) => Boolean(user),
+    read: publishedGlobalReadAccess,
+    update: authenticatedAccess,
   },
   admin: {
     group: 'Pages',
+    preview: (_doc, options) =>
+      buildPreviewURL({
+        locale: options.locale,
+        path: getGlobalPreviewPath('about-page'),
+      }),
   },
   fields: [
     {

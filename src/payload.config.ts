@@ -20,9 +20,11 @@ import { FeaturePages } from './collections/FeaturePages'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { AboutPage } from './globals/AboutPage'
+import { HomePage } from './globals/HomePage'
+import { PrivacyPage } from './globals/PrivacyPage'
 import { PricingPage } from './globals/PricingPage'
-import { LegalPages } from './globals/LegalPages'
 import { SiteSettings } from './globals/SiteSettings'
+import { TermsPage } from './globals/TermsPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -150,7 +152,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],
-  globals: [SiteSettings, AboutPage, PricingPage, LegalPages],
+  globals: [SiteSettings, HomePage, AboutPage, PricingPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',

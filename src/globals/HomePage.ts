@@ -14,11 +14,12 @@ import {
 } from '@/lib/site/publishing'
 
 /**
- * About 页面全局配置
+ * 首页内容全局配置
+ * 站点配置与页面正文分离后，首页文案统一收敛到该 global 中管理。
  */
-export const AboutPage: GlobalConfig = {
-  slug: 'about-page',
-  label: 'About Page',
+export const HomePage: GlobalConfig = {
+  slug: 'home-page',
+  label: 'Home Page',
   versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
     read: marketingGlobalReadAccess,
@@ -29,7 +30,7 @@ export const AboutPage: GlobalConfig = {
     preview: (_doc, options) =>
       buildPreviewURL({
         locale: options.locale,
-        path: getGlobalPreviewPath('about-page'),
+        path: getGlobalPreviewPath('home-page'),
       }),
   },
   fields: [...MARKETING_PAGE_SEO_FIELDS, MARKETING_HERO_FIELD, MARKETING_SECTIONS_FIELD],

@@ -1,8 +1,8 @@
-import { MarkdownContent } from '@/components/site/MarkdownContent'
+import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getLegalPages } from '@/lib/site/cms'
+import { getPrivacyPageView } from '@/lib/site/cms'
 import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
 
 /**
@@ -11,12 +11,14 @@ import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
 export async function generateMetadata() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
+  const page = await getPrivacyPageView(locale)
 
   return createPageMetadata({
     locale,
-    title: dictionary.legal.privacyMetadataTitle,
-    description: dictionary.legal.privacyMetadataDescription,
+    title: page.metaTitle || page.hero.title || dictionary.legal.privacyMetadataTitle,
+    description: page.metaDescription || page.hero.description || dictionary.legal.privacyMetadataDescription,
     pathname: '/privacy/',
+    image: page.ogImage,
   })
 }
 
@@ -27,8 +29,7 @@ export async function generateMetadata() {
 export default async function PrivacyPage() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
-  const legalPages = await getLegalPages(locale)
-  const markdown = legalPages.privacyPolicyMarkdown?.trim() || ''
+  const page = await getPrivacyPageView(locale)
   const breadcrumbJsonLd = await createBreadcrumbJsonLd([
     { name: dictionary.common.brandName, pathname: '/' },
     { name: dictionary.legal.privacyTitle, pathname: '/privacy/' },
@@ -39,17 +40,12 @@ export default async function PrivacyPage() {
       <StructuredData data={breadcrumbJsonLd} />
 
       <section className="site-shell page__hero article">
-        <span className="page__eyebrow">{dictionary.legal.eyebrow}</span>
-        <h1>{dictionary.legal.privacyTitle}</h1>
+        <span className="page__eyebrow">{page.hero.eyebrow || dictionary.legal.eyebrow}</span>
+        <h1>{page.hero.title || dictionary.legal.privacyTitle}</h1>
+        {page.hero.description ? <p>{page.hero.description}</p> : null}
       </section>
 
-      {markdown ? (
-        <section className="site-shell section article">
-          <div className="panel">
-            <MarkdownContent markdown={markdown} />
-          </div>
-        </section>
-      ) : null}
+      <PageSections sections={page.sections} />
     </div>
   )
 }

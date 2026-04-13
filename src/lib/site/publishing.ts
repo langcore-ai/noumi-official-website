@@ -80,9 +80,11 @@ export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_U
 type PreviewCollectionSlug = 'blog-posts' | 'feature-pages' | 'use-case-pages'
 /** 支持预览的全局 slug */
 type PreviewGlobalSlug =
+  | 'home-page'
   | 'about-page'
-  | 'legal-pages'
+  | 'privacy-page'
   | 'pricing-page'
+  | 'terms-page'
   | 'site-settings'
 
 /** 预览文档的最小结构 */
@@ -92,9 +94,11 @@ type PreviewDoc = {
 
 /** 全局页面预览路径映射 */
 const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
+  'home-page': '/',
   'about-page': '/about/',
-  'legal-pages': '/privacy/',
+  'privacy-page': '/privacy/',
   'pricing-page': '/pricing/',
+  'terms-page': '/terms/',
   'site-settings': '/',
 }
 

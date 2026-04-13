@@ -1,9 +1,10 @@
 import Link from 'next/link'
 
+import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getFaqItems, getPricingPage } from '@/lib/site/cms'
+import { getFaqItems, getPricingPageView } from '@/lib/site/cms'
 import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
 
 /**
@@ -12,12 +13,14 @@ import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
 export async function generateMetadata() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
+  const page = await getPricingPageView(locale)
 
   return createPageMetadata({
     locale,
-    title: dictionary.pricing.metadataTitle,
-    description: dictionary.pricing.metadataDescription,
+    title: page.metaTitle || page.hero.title || dictionary.pricing.metadataTitle,
+    description: page.metaDescription || page.hero.description || dictionary.pricing.metadataDescription,
     pathname: '/pricing/',
+    image: page.ogImage,
   })
 }
 
@@ -28,7 +31,10 @@ export async function generateMetadata() {
 export default async function PricingPage() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
-  const [page, faqItems] = await Promise.all([getPricingPage(locale), getFaqItems(['pricing'], locale)])
+  const [page, faqItems] = await Promise.all([
+    getPricingPageView(locale),
+    getFaqItems(['pricing'], locale),
+  ])
   const breadcrumbJsonLd = await createBreadcrumbJsonLd([
     { name: dictionary.common.brandName, pathname: '/' },
     { name: dictionary.pricing.breadcrumb, pathname: '/pricing/' },
@@ -39,41 +45,19 @@ export default async function PricingPage() {
       <StructuredData data={breadcrumbJsonLd} />
 
       <section className="site-shell page__hero">
-        <span className="page__eyebrow">{dictionary.pricing.eyebrow}</span>
-        <h1>{dictionary.pricing.title}</h1>
-        {page.intro ? <p>{page.intro}</p> : null}
+        <span className="page__eyebrow">{page.hero.eyebrow || dictionary.pricing.eyebrow}</span>
+        <h1>{page.hero.title || dictionary.pricing.title}</h1>
+        {page.hero.description ? <p>{page.hero.description}</p> : null}
+        {page.hero.supportingText ? <p className="page__hero-support">{page.hero.supportingText}</p> : null}
       </section>
 
-      {(page.plans ?? []).length > 0 ? (
-        <section className="site-shell section">
-          <div className="cards cards--3">
-            {(page.plans ?? []).map((plan) =>
-              plan?.title ? (
-                <article key={plan.id ?? plan.title} className="card">
-                  <h3>{plan.title}</h3>
-                  {plan.description ? <p>{plan.description}</p> : null}
-                  {(plan.highlights ?? []).length > 0 ? (
-                    <ul>
-                      {(plan.highlights ?? []).map((highlight) =>
-                        highlight?.text ? (
-                          <li key={highlight.id ?? highlight.text}>{highlight.text}</li>
-                        ) : null,
-                      )}
-                    </ul>
-                  ) : null}
-                </article>
-              ) : null,
-            )}
-          </div>
-        </section>
-      ) : null}
+      <PageSections sections={page.sections} />
 
-      {page.note || faqItems.length > 0 ? (
+      {!page.sections.some((section) => section.type === 'cta') && faqItems.length > 0 ? (
         <section className="site-shell section">
           <div className="feature-detail__summary">
             <span className="page__eyebrow">{dictionary.pricing.noteEyebrow}</span>
             <h2>{dictionary.pricing.noteTitle}</h2>
-            {page.note ? <p>{page.note}</p> : null}
             <div className="page__hero-actions">
               <Link className="button button--solid" href="/faqs/">
                 {dictionary.pricing.readFaqs}

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import { MARKETING_HERO_FIELD, MARKETING_SECTIONS_FIELD } from '@/fields/marketingContent'
 import {
   buildPreviewURL,
   contentDocumentReadAccess,
@@ -18,8 +19,8 @@ export const FeaturePages: CollectionConfig = {
     plural: 'Feature Pages',
   },
   admin: {
-    useAsTitle: 'heroTitle',
-    defaultColumns: ['heroTitle', 'slug', '_status'],
+    useAsTitle: 'slug',
+    defaultColumns: ['slug', '_status', 'updatedAt'],
     group: 'Content',
     preview: (doc, options) =>
       buildPreviewURL({
@@ -55,114 +56,13 @@ export const FeaturePages: CollectionConfig = {
       type: 'textarea',
       localized: true,
     },
-    {
-      name: 'heroLabel',
-      type: 'text',
-      localized: true,
-      required: true,
-    },
-    {
-      name: 'heroTitle',
-      type: 'text',
-      localized: true,
-      required: true,
-    },
-    {
-      name: 'heroEmphasis',
-      type: 'text',
-      localized: true,
-    },
-    {
-      name: 'heroLead',
-      type: 'textarea',
-      localized: true,
-      required: true,
-    },
-    {
-      name: 'summaryBullets',
-      type: 'array',
-      localized: true,
-      fields: [
-        {
-          name: 'text',
-          type: 'text',
-          required: true,
-        },
-      ],
-    },
-    {
-      name: 'body',
-      type: 'array',
-      label: 'Sections',
-      localized: true,
-      fields: [
-        {
-          name: 'label',
-          type: 'text',
-        },
-        {
-          name: 'title',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'paragraphs',
-          type: 'array',
-          fields: [
-            {
-              name: 'text',
-              type: 'textarea',
-              required: true,
-            },
-          ],
-        },
-        {
-          name: 'cards',
-          type: 'array',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'body',
-              type: 'textarea',
-              required: true,
-            },
-          ],
-        },
-        {
-          name: 'bullets',
-          type: 'array',
-          fields: [
-            {
-              name: 'text',
-              type: 'textarea',
-              required: true,
-            },
-          ],
-        },
-      ],
-      admin: {
-        description: 'Feature 页面主体分节；前台直接按这里的结构渲染。',
-      },
-    },
+    MARKETING_HERO_FIELD,
+    MARKETING_SECTIONS_FIELD,
     {
       name: 'relatedFeatures',
       type: 'relationship',
       relationTo: 'feature-pages',
       hasMany: true,
-    },
-    {
-      name: 'ctaTitle',
-      type: 'text',
-      localized: true,
-    },
-    {
-      name: 'ctaDescription',
-      type: 'textarea',
-      localized: true,
     },
     {
       name: 'ogImage',

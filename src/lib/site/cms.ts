@@ -10,9 +10,12 @@ import type {
   BlogPost,
   FaqItem,
   FeaturePage,
-  LegalPage,
+  HomePage as HomePageDoc,
+  Media,
   PricingPage as PricingPageDoc,
+  PrivacyPage as PrivacyPageDoc,
   SiteSetting,
+  TermsPage as TermsPageDoc,
   UseCasePage,
 } from '@/payload-types'
 
@@ -49,24 +52,360 @@ export type SiteFooterColumn = {
 }
 
 /**
- * 通用内容分节
+ * 通用按钮视图
  */
-export type CmsContentSection = {
-  /** 可选标签 */
-  label?: string
+export type CmsButtonView = {
+  /** 按钮文案 */
+  label: string
+  /** 跳转链接 */
+  href: string
+}
+
+/**
+ * 通用 Hero 视图
+ */
+export type CmsHeroView = {
+  /** 角标 */
+  eyebrow?: string
   /** 标题 */
+  title?: string
+  /** 高亮文案 */
+  highlight?: string
+  /** 主描述 */
+  description?: string
+  /** 补充描述 */
+  supportingText?: string
+  /** 尾注文案 */
+  footnote?: string
+  /** 主按钮 */
+  primaryCta?: CmsButtonView
+  /** 次按钮 */
+  secondaryCta?: CmsButtonView
+}
+
+/**
+ * 通用卡片视图
+ */
+export type CmsCardView = {
+  /** 可选角标 */
+  eyebrow?: string
+  /** 卡片标题 */
   title: string
+  /** 卡片正文 */
+  body?: string
   /** 段落 */
   paragraphs: string[]
-  /** 卡片 */
-  cards?: Array<{
-    /** 卡片标题 */
-    title: string
-    /** 卡片正文 */
-    body: string
-  }>
   /** 列表 */
-  bullets?: string[]
+  bullets: string[]
+}
+
+/**
+ * 富文本 section 视图
+ */
+export type CmsRichTextSectionView = {
+  /** 分节类型 */
+  type: 'richText'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 段落 */
+  paragraphs: string[]
+  /** 列表 */
+  bullets: string[]
+  /** 样式 */
+  style: 'article' | 'panel' | 'plain'
+}
+
+/**
+ * 卡片分节视图
+ */
+export type CmsCardGridSectionView = {
+  /** 分节类型 */
+  type: 'cardGrid'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 左侧段落 */
+  paragraphs: string[]
+  /** 左侧列表 */
+  bullets: string[]
+  /** 列数 */
+  columns: 2 | 3 | 4
+  /** 样式 */
+  style: 'default' | 'stats' | 'steps'
+  /** 卡片列表 */
+  cards: CmsCardView[]
+}
+
+/**
+ * 列表分节视图
+ */
+export type CmsBulletListSectionView = {
+  /** 分节类型 */
+  type: 'bulletList'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 条目 */
+  items: string[]
+  /** 样式 */
+  style: 'panel' | 'plain'
+}
+
+/**
+ * CTA 分节视图
+ */
+export type CmsCtaSectionView = {
+  /** 分节类型 */
+  type: 'cta'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 主按钮 */
+  primaryCta?: CmsButtonView
+  /** 次按钮 */
+  secondaryCta?: CmsButtonView
+}
+
+/**
+ * Markdown 分节视图
+ */
+export type CmsMarkdownDocumentSectionView = {
+  /** 分节类型 */
+  type: 'markdownDocument'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** Markdown 原稿 */
+  markdown: string
+}
+
+/**
+ * 营销页通用分节视图
+ */
+export type CmsPageSectionView =
+  | CmsRichTextSectionView
+  | CmsCardGridSectionView
+  | CmsBulletListSectionView
+  | CmsCtaSectionView
+  | CmsMarkdownDocumentSectionView
+
+/**
+ * 共享页面基础视图
+ */
+type CmsBasicPageView = {
+  /** 页面 SEO 标题 */
+  metaTitle?: string
+  /** 页面 SEO 描述 */
+  metaDescription?: string
+  /** 页面分享图 */
+  ogImage: Media | null
+  /** 页面 Hero */
+  hero: CmsHeroView
+  /** 页面分节 */
+  sections: CmsPageSectionView[]
+}
+
+/**
+ * 首页视图
+ */
+export type HomePageView = CmsBasicPageView & {
+  /** 首页问题区 */
+  problemsSection: CmsCardGridSectionView | null
+  /** 首页功能导语 */
+  featureIntroSection: CmsRichTextSectionView | null
+  /** 首页工作方式 */
+  howItWorksSection: CmsCardGridSectionView | null
+  /** 首页底部行动区 */
+  finalCtaSection: CmsCtaSectionView | null
+}
+
+/**
+ * 单页营销页面视图
+ */
+export type CmsStandalonePageView = CmsBasicPageView
+
+/**
+ * Feature 卡片摘要视图
+ */
+export type FeaturePageSummaryView = {
+  /** 页面 slug */
+  slug: string
+  /** 页面 hero */
+  hero: CmsHeroView
+  /** 摘要列表 */
+  summaryItems: string[]
+}
+
+/**
+ * Feature 详情页视图
+ */
+export type FeaturePageView = {
+  /** 页面 slug */
+  slug: string
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** Hero */
+  hero: CmsHeroView
+  /** 摘要分节 */
+  summarySection: CmsBulletListSectionView | null
+  /** 主体分节 */
+  sections: CmsPageSectionView[]
+  /** 关联 Feature */
+  relatedFeatures: FeaturePageSummaryView[]
+  /** 底部 CTA */
+  ctaSection: CmsCtaSectionView | null
+}
+
+/**
+ * Use case 卡片摘要视图
+ */
+export type UseCasePageSummaryView = {
+  /** 页面 slug */
+  slug: string
+  /** 页面 hero */
+  hero: CmsHeroView
+}
+
+/**
+ * Use case 详情视图
+ */
+export type UseCasePageView = {
+  /** 页面 slug */
+  slug: string
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** Hero */
+  hero: CmsHeroView
+  /** 痛点分节 */
+  painPointsSection: CmsCardGridSectionView | null
+  /** 主体分节 */
+  sections: CmsPageSectionView[]
+  /** 关联 Feature */
+  relatedFeatures: FeaturePageSummaryView[]
+}
+
+/**
+ * 博客列表项视图
+ */
+export type BlogPostSummaryView = {
+  /** 文章 slug */
+  slug: string
+  /** 标题 */
+  title: string
+  /** 摘要 */
+  excerpt?: string
+  /** 作者 */
+  author?: string
+  /** 发布时间 */
+  publishedAt?: string
+}
+
+/**
+ * 博客详情视图
+ */
+export type BlogPostView = {
+  /** 文章 slug */
+  slug: string
+  /** 文章标题 */
+  title: string
+  /** 文章摘要 */
+  excerpt?: string
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** 作者 */
+  author?: string
+  /** 发布时间 */
+  publishedAt?: string
+  /** 标签 */
+  tags: string[]
+  /** 正文分节 */
+  sections: CmsRichTextSectionView[]
+}
+
+/**
+ * Payload section 原始输入
+ * 为避免和生成类型强耦合，这里只声明视图层实际会使用到的字段。
+ */
+type RawSectionBlock = {
+  /** block 类型 */
+  blockType?: null | string
+  /** 槽位标识 */
+  slotKey?: null | string
+  /** 角标 */
+  label?: null | string
+  /** 标题 */
+  title?: null | string
+  /** 描述 */
+  description?: null | string
+  /** 段落 */
+  paragraphs?: Array<{ text?: null | string } | null> | null
+  /** 列表 */
+  bullets?: Array<{ text?: null | string } | null> | null
+  /** 通用条目 */
+  items?: Array<{ text?: null | string } | null> | null
+  /** Markdown */
+  markdown?: null | string
+  /** 视觉样式 */
+  style?: null | string
+  /** 栅格列数 */
+  columns?: null | string
+  /** 卡片列表 */
+  cards?:
+    | Array<
+        | {
+            eyebrow?: null | string
+            title?: null | string
+            body?: null | string
+            paragraphs?: Array<{ text?: null | string } | null> | null
+            bullets?: Array<{ text?: null | string } | null> | null
+          }
+        | null
+      >
+    | null
+  /** 主按钮文案 */
+  primaryCtaLabel?: null | string
+  /** 主按钮链接 */
+  primaryCtaHref?: null | string
+  /** 次按钮文案 */
+  secondaryCtaLabel?: null | string
+  /** 次按钮链接 */
+  secondaryCtaHref?: null | string
 }
 
 /**
@@ -111,22 +450,364 @@ function getPublicReadOptions(previewEnabled: boolean): PublicReadOptions {
 }
 
 /**
+ * 清洗文本，统一去掉空字符串
+ * @param value 原始值
+ * @returns 清洗后的文本
+ */
+function normalizeText(value?: null | string): string | undefined {
+  const text = value?.trim()
+  return text ? text : undefined
+}
+
+/**
+ * 提取简单文本数组
+ * @param items 数组字段
+ * @returns 文本数组
+ */
+function extractTextArray(items?: Array<{ text?: null | string } | null> | null): string[] {
+  return (items ?? [])
+    .map((item) => normalizeText(item?.text))
+    .filter((item): item is string => Boolean(item))
+}
+
+/**
+ * 映射按钮配置
+ * @param label 原始文案
+ * @param href 原始链接
+ * @returns 可渲染按钮；无效时返回 undefined
+ */
+function mapButton(label?: null | string, href?: null | string): CmsButtonView | undefined {
+  const normalizedLabel = normalizeText(label)
+  const normalizedHref = normalizeText(href)
+
+  if (!normalizedLabel || !normalizedHref) {
+    return undefined
+  }
+
+  return {
+    label: normalizedLabel,
+    href: normalizedHref,
+  }
+}
+
+/**
+ * 映射 Hero 结构
+ * @param hero 原始 hero 字段
+ * @returns 前台 Hero 视图
+ */
+function mapHero(hero?: {
+  eyebrow?: null | string
+  title?: null | string
+  highlight?: null | string
+  description?: null | string
+  supportingText?: null | string
+  footnote?: null | string
+  primaryCtaLabel?: null | string
+  primaryCtaHref?: null | string
+  secondaryCtaLabel?: null | string
+  secondaryCtaHref?: null | string
+} | null): CmsHeroView {
+  return {
+    eyebrow: normalizeText(hero?.eyebrow),
+    title: normalizeText(hero?.title),
+    highlight: normalizeText(hero?.highlight),
+    description: normalizeText(hero?.description),
+    supportingText: normalizeText(hero?.supportingText),
+    footnote: normalizeText(hero?.footnote),
+    primaryCta: mapButton(hero?.primaryCtaLabel, hero?.primaryCtaHref),
+    secondaryCta: mapButton(hero?.secondaryCtaLabel, hero?.secondaryCtaHref),
+  }
+}
+
+/**
+ * 规范化媒体字段
+ * @param value 原始媒体值
+ * @returns 已展开媒体对象；未展开时返回 null
+ */
+function normalizeMedia(value: Media | number | null | undefined): Media | null {
+  return value && typeof value === 'object' ? value : null
+}
+
+/**
+ * 获取 section 槽位标识
+ * @param section section 视图
+ * @returns 槽位标识
+ */
+function getSlotKey(section: CmsPageSectionView | null | undefined): string | undefined {
+  return section?.slotKey
+}
+
+/**
+ * 判断 section 是否仍有可渲染内容
+ * @param section section 视图
+ * @returns 是否可渲染
+ */
+function isRenderableSection(section: CmsPageSectionView | null): section is CmsPageSectionView {
+  return Boolean(section)
+}
+
+/**
+ * 映射卡片列表
+ * @param cards 原始卡片列表
+ * @returns 可渲染卡片
+ */
+function mapCards(
+  cards?: RawSectionBlock['cards'],
+): CmsCardView[] {
+  return (cards ?? [])
+    .flatMap((card) => {
+      const title = normalizeText(card?.title)
+
+      if (!title) {
+        return []
+      }
+
+      return [
+        {
+          eyebrow: normalizeText(card?.eyebrow),
+          title,
+          body: normalizeText(card?.body),
+          paragraphs: extractTextArray(card?.paragraphs),
+          bullets: extractTextArray(card?.bullets),
+        },
+      ]
+    })
+}
+
+/**
+ * 解析卡片分节列数
+ * @param value 原始列数
+ * @returns 可渲染列数
+ */
+function normalizeCardGridColumns(value?: null | string): 2 | 3 | 4 {
+  switch (value) {
+    case '3':
+      return 3
+    case '4':
+      return 4
+    default:
+      return 2
+  }
+}
+
+/**
+ * 映射共享 section blocks
+ * @param sections 原始分节
+ * @returns 通用分节视图
+ */
+function mapSections(
+  sections?: Array<RawSectionBlock | null> | null,
+): CmsPageSectionView[] {
+  return (sections ?? [])
+    .map((section) => {
+      const slotKey = normalizeText(section?.slotKey)
+      const label = normalizeText(section?.label)
+      const title = normalizeText(section?.title)
+      const description = normalizeText(section?.description)
+      const paragraphs = extractTextArray(section?.paragraphs)
+      const bullets = extractTextArray(section?.bullets)
+
+      switch (section?.blockType) {
+        case 'rich-text-section': {
+          if (!label && !title && !description && paragraphs.length === 0 && bullets.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'richText',
+            slotKey,
+            label,
+            title,
+            description,
+            paragraphs,
+            bullets,
+            style:
+              section.style === 'article' || section.style === 'plain'
+                ? section.style
+                : 'panel',
+          } satisfies CmsRichTextSectionView
+        }
+        case 'card-grid-section': {
+          const cards = mapCards(section.cards)
+
+          if (
+            !label &&
+            !title &&
+            !description &&
+            paragraphs.length === 0 &&
+            bullets.length === 0 &&
+            cards.length === 0
+          ) {
+            return null
+          }
+
+          return {
+            type: 'cardGrid',
+            slotKey,
+            label,
+            title,
+            description,
+            paragraphs,
+            bullets,
+            columns: normalizeCardGridColumns(section.columns),
+            style: section.style === 'stats' || section.style === 'steps' ? section.style : 'default',
+            cards,
+          } satisfies CmsCardGridSectionView
+        }
+        case 'bullet-list-section': {
+          const items = extractTextArray(section.items)
+
+          if (!label && !title && !description && items.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'bulletList',
+            slotKey,
+            label,
+            title,
+            description,
+            items,
+            style: section.style === 'plain' ? 'plain' : 'panel',
+          } satisfies CmsBulletListSectionView
+        }
+        case 'cta-section': {
+          const primaryCta = mapButton(section.primaryCtaLabel, section.primaryCtaHref)
+          const secondaryCta = mapButton(section.secondaryCtaLabel, section.secondaryCtaHref)
+
+          if (!label && !title && !description && !primaryCta && !secondaryCta) {
+            return null
+          }
+
+          return {
+            type: 'cta',
+            slotKey,
+            label,
+            title,
+            description,
+            primaryCta,
+            secondaryCta,
+          } satisfies CmsCtaSectionView
+        }
+        case 'markdown-document': {
+          const markdown = normalizeText(section.markdown)
+
+          if (!markdown) {
+            return null
+          }
+
+          return {
+            type: 'markdownDocument',
+            slotKey,
+            label,
+            title,
+            markdown,
+          } satisfies CmsMarkdownDocumentSectionView
+        }
+        default:
+          return null
+      }
+    })
+    .filter(isRenderableSection)
+}
+
+/**
+ * 根据槽位查找指定类型的 section
+ * @param sections section 列表
+ * @param slotKey 目标槽位
+ * @param type 目标类型
+ * @returns 命中的 section
+ */
+function findSectionBySlot<
+  TType extends CmsPageSectionView['type'],
+>(
+  sections: CmsPageSectionView[],
+  slotKey: string,
+  type: TType,
+): Extract<CmsPageSectionView, { type: TType }> | null {
+  const section = sections.find(
+    (item): item is Extract<CmsPageSectionView, { type: TType }> =>
+      getSlotKey(item) === slotKey && item.type === type,
+  )
+
+  return section ?? null
+}
+
+/**
+ * 过滤掉指定槽位后的剩余 section
+ * @param sections 原始 section
+ * @param slotKeys 需要排除的槽位
+ * @returns 过滤后的 section
+ */
+function omitSectionsBySlotKeys(sections: CmsPageSectionView[], slotKeys: string[]): CmsPageSectionView[] {
+  if (slotKeys.length === 0) {
+    return sections
+  }
+
+  return sections.filter((section) => {
+    const slotKey = getSlotKey(section)
+    return !slotKey || !slotKeys.includes(slotKey)
+  })
+}
+
+/**
+ * 映射页面基础视图
+ * @param page 页面文档
+ * @returns 基础页面视图
+ */
+function mapBasicPageView(page: {
+  metaTitle?: null | string
+  metaDescription?: null | string
+  ogImage?: Media | number | null
+  hero?: HomePageDoc['hero'] | AboutPageDoc['hero'] | PricingPageDoc['hero'] | PrivacyPageDoc['hero'] | TermsPageDoc['hero']
+  sections?: HomePageDoc['sections'] | AboutPageDoc['sections'] | PricingPageDoc['sections'] | PrivacyPageDoc['sections'] | TermsPageDoc['sections']
+}): CmsBasicPageView {
+  return {
+    metaTitle: normalizeText(page.metaTitle),
+    metaDescription: normalizeText(page.metaDescription),
+    ogImage: normalizeMedia(page.ogImage),
+    hero: mapHero(page.hero ?? null),
+    sections: mapSections(page.sections as Array<RawSectionBlock | null> | null | undefined),
+  }
+}
+
+/**
+ * 读取公开 global 文档
+ * @param slug global slug
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns global 文档
+ */
+async function findPublicGlobal<TDoc>(
+  slug:
+    | 'about-page'
+    | 'home-page'
+    | 'pricing-page'
+    | 'privacy-page'
+    | 'site-settings'
+    | 'terms-page',
+  locale: SiteLocale,
+  previewEnabled: boolean,
+): Promise<TDoc> {
+  const payload = await getPayloadClient()
+
+  return payload.findGlobal({
+    slug,
+    depth: 1,
+    ...getPayloadLocaleOptions(locale),
+    ...getPublicReadOptions(previewEnabled),
+  }) as Promise<TDoc>
+}
+
+/**
  * 读取站点设置
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
  * @returns 站点设置
  */
-const getSiteSettingsByMode = cache(
-  async (locale: SiteLocale, previewEnabled: boolean) => {
-    const payload = await getPayloadClient()
-    return payload.findGlobal({
-      slug: 'site-settings',
-      depth: 1,
-      ...getPayloadLocaleOptions(locale),
-      ...getPublicReadOptions(previewEnabled),
-    })
-  },
-)
+const getSiteSettingsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+  return findPublicGlobal<SiteSetting>('site-settings', locale, previewEnabled)
+})
 
 /**
  * 读取站点设置
@@ -138,87 +819,128 @@ export async function getSiteSettings(locale: SiteLocale = DEFAULT_CONTENT_LOCAL
 }
 
 /**
- * 读取 about 页面
+ * 读取首页配置
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns about 内容
+ * @returns 首页文档
  */
-const getAboutPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({
-    slug: 'about-page',
-    depth: 0,
-    ...getPayloadLocaleOptions(locale),
-    ...getPublicReadOptions(previewEnabled),
-  })
+const getHomePageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+  return findPublicGlobal<HomePageDoc>('home-page', locale, previewEnabled)
 })
 
 /**
- * 读取 about 全局配置
+ * 读取首页视图
  * @param locale 站点语言
- * @returns about 内容
+ * @returns 首页视图模型
  */
-export async function getAboutPage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getAboutPageByMode(locale, await isDraftPreviewEnabled())
+export async function getHomePage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE): Promise<HomePageView> {
+  const page = await getHomePageByMode(locale, await isDraftPreviewEnabled())
+  const baseView = mapBasicPageView(page)
+
+  return {
+    ...baseView,
+    problemsSection: findSectionBySlot(baseView.sections, 'home-problems', 'cardGrid'),
+    featureIntroSection: findSectionBySlot(baseView.sections, 'home-feature-intro', 'richText'),
+    howItWorksSection: findSectionBySlot(baseView.sections, 'home-how-it-works', 'cardGrid'),
+    finalCtaSection: findSectionBySlot(baseView.sections, 'home-final-cta', 'cta'),
+  }
+}
+
+/**
+ * 读取 about 页面
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns about 文档
+ */
+const getAboutPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+  return findPublicGlobal<AboutPageDoc>('about-page', locale, previewEnabled)
+})
+
+/**
+ * 读取 about 页面视图
+ * @param locale 站点语言
+ * @returns about 视图模型
+ */
+export async function getAboutPageView(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<CmsStandalonePageView> {
+  const page = await getAboutPageByMode(locale, await isDraftPreviewEnabled())
+  return mapBasicPageView(page)
 }
 
 /**
  * 读取 pricing 页面
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns pricing 内容
+ * @returns pricing 文档
  */
 const getPricingPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({
-    slug: 'pricing-page',
-    depth: 0,
-    ...getPayloadLocaleOptions(locale),
-    ...getPublicReadOptions(previewEnabled),
-  })
+  return findPublicGlobal<PricingPageDoc>('pricing-page', locale, previewEnabled)
 })
 
 /**
- * 读取 pricing 全局配置
+ * 读取 pricing 页面视图
  * @param locale 站点语言
- * @returns pricing 内容
+ * @returns pricing 视图模型
  */
-export async function getPricingPage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getPricingPageByMode(locale, await isDraftPreviewEnabled())
+export async function getPricingPageView(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<CmsStandalonePageView> {
+  const page = await getPricingPageByMode(locale, await isDraftPreviewEnabled())
+  return mapBasicPageView(page)
 }
 
 /**
- * 读取法律页配置
+ * 读取隐私政策页面
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns legal 内容
+ * @returns 隐私政策文档
  */
-const getLegalPagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({
-    slug: 'legal-pages',
-    depth: 0,
-    ...getPayloadLocaleOptions(locale),
-    ...getPublicReadOptions(previewEnabled),
-  })
+const getPrivacyPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+  return findPublicGlobal<PrivacyPageDoc>('privacy-page', locale, previewEnabled)
 })
 
 /**
- * 读取 legal 全局配置
+ * 读取隐私政策页面视图
  * @param locale 站点语言
- * @returns legal 内容
+ * @returns 隐私政策视图模型
  */
-export async function getLegalPages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getLegalPagesByMode(locale, await isDraftPreviewEnabled())
+export async function getPrivacyPageView(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<CmsStandalonePageView> {
+  const page = await getPrivacyPageByMode(locale, await isDraftPreviewEnabled())
+  return mapBasicPageView(page)
+}
+
+/**
+ * 读取服务条款页面
+ * @param locale 站点语言
+ * @param previewEnabled 是否启用预览
+ * @returns 服务条款文档
+ */
+const getTermsPageByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+  return findPublicGlobal<TermsPageDoc>('terms-page', locale, previewEnabled)
+})
+
+/**
+ * 读取服务条款页面视图
+ * @param locale 站点语言
+ * @returns 服务条款视图模型
+ */
+export async function getTermsPageView(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<CmsStandalonePageView> {
+  const page = await getTermsPageByMode(locale, await isDraftPreviewEnabled())
+  return mapBasicPageView(page)
 }
 
 /**
  * 读取全部 feature 页面
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns feature 列表
+ * @returns feature 文档列表
  */
-const getFeaturePagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+const getFeatureDocsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'feature-pages',
@@ -233,24 +955,44 @@ const getFeaturePagesByMode = cache(async (locale: SiteLocale, previewEnabled: b
 })
 
 /**
- * 读取全部 feature 页面
- * @param locale 站点语言
- * @returns feature 列表
+ * 映射 feature 摘要卡片
+ * @param page feature 文档
+ * @returns 摘要视图
  */
-export async function getFeaturePages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getFeaturePagesByMode(locale, await isDraftPreviewEnabled())
+function mapFeaturePageSummary(page: FeaturePage): FeaturePageSummaryView {
+  const hero = mapHero(page.hero ?? null)
+  const sections = mapSections(page.sections as Array<RawSectionBlock | null> | null | undefined)
+  const summarySection = findSectionBySlot(sections, 'feature-summary', 'bulletList')
+
+  return {
+    slug: page.slug,
+    hero,
+    summaryItems: summarySection?.items ?? [],
+  }
+}
+
+/**
+ * 读取全部 feature 页面摘要
+ * @param locale 站点语言
+ * @returns feature 摘要列表
+ */
+export async function getFeaturePages(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<FeaturePageSummaryView[]> {
+  const docs = await getFeatureDocsByMode(locale, await isDraftPreviewEnabled())
+  return docs.map(mapFeaturePageSummary)
 }
 
 /**
  * 按 slug 读取 feature 页面
  * @param slug feature slug
  * @param locale 站点语言
- * @returns feature 页面
+ * @returns feature 视图模型
  */
-export async function getFeaturePageBySlug(
+export async function getFeaturePageView(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
-): Promise<FeaturePage | null> {
+): Promise<FeaturePageView | null> {
   const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
@@ -266,16 +1008,37 @@ export async function getFeaturePageBySlug(
     },
   })
 
-  return result.docs[0] ?? null
+  const page = result.docs[0]
+
+  if (!page) {
+    return null
+  }
+
+  const sections = mapSections(page.sections as Array<RawSectionBlock | null> | null | undefined)
+  const relatedFeatures = (page.relatedFeatures ?? [])
+    .filter((item): item is Exclude<typeof item, number | null> => typeof item === 'object' && Boolean(item))
+    .map((item) => mapFeaturePageSummary(item))
+
+  return {
+    slug: page.slug,
+    metaTitle: normalizeText(page.metaTitle),
+    metaDescription: normalizeText(page.metaDescription),
+    ogImage: normalizeMedia(page.ogImage),
+    hero: mapHero(page.hero ?? null),
+    summarySection: findSectionBySlot(sections, 'feature-summary', 'bulletList'),
+    sections: omitSectionsBySlotKeys(sections, ['feature-summary', 'feature-final-cta']),
+    relatedFeatures,
+    ctaSection: findSectionBySlot(sections, 'feature-final-cta', 'cta'),
+  }
 }
 
 /**
  * 读取全部 use case 页面
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns use case 列表
+ * @returns use case 文档列表
  */
-const getUseCasePagesByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+const getUseCaseDocsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'use-case-pages',
@@ -290,24 +1053,39 @@ const getUseCasePagesByMode = cache(async (locale: SiteLocale, previewEnabled: b
 })
 
 /**
- * 读取全部 use case 页面
- * @param locale 站点语言
- * @returns use case 列表
+ * 映射 use case 摘要
+ * @param page use case 文档
+ * @returns 摘要视图
  */
-export async function getUseCasePages(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getUseCasePagesByMode(locale, await isDraftPreviewEnabled())
+function mapUseCasePageSummary(page: UseCasePage): UseCasePageSummaryView {
+  return {
+    slug: page.slug,
+    hero: mapHero(page.hero ?? null),
+  }
+}
+
+/**
+ * 读取全部 use case 摘要
+ * @param locale 站点语言
+ * @returns use case 摘要列表
+ */
+export async function getUseCasePages(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<UseCasePageSummaryView[]> {
+  const docs = await getUseCaseDocsByMode(locale, await isDraftPreviewEnabled())
+  return docs.map(mapUseCasePageSummary)
 }
 
 /**
  * 按 slug 读取 use case 页面
  * @param slug use case slug
  * @param locale 站点语言
- * @returns use case 页面
+ * @returns use case 视图模型
  */
-export async function getUseCasePageBySlug(
+export async function getUseCasePageView(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
-): Promise<UseCasePage | null> {
+): Promise<UseCasePageView | null> {
   const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
@@ -323,16 +1101,36 @@ export async function getUseCasePageBySlug(
     },
   })
 
-  return result.docs[0] ?? null
+  const page = result.docs[0]
+
+  if (!page) {
+    return null
+  }
+
+  const sections = mapSections(page.sections as Array<RawSectionBlock | null> | null | undefined)
+  const relatedFeatures = (page.relatedFeatures ?? [])
+    .filter((item): item is Exclude<typeof item, number | null> => typeof item === 'object' && Boolean(item))
+    .map((item) => mapFeaturePageSummary(item))
+
+  return {
+    slug: page.slug,
+    metaTitle: normalizeText(page.metaTitle),
+    metaDescription: normalizeText(page.metaDescription),
+    ogImage: normalizeMedia(page.ogImage),
+    hero: mapHero(page.hero ?? null),
+    painPointsSection: findSectionBySlot(sections, 'use-case-pain-points', 'cardGrid'),
+    sections: omitSectionsBySlotKeys(sections, ['use-case-pain-points']),
+    relatedFeatures,
+  }
 }
 
 /**
  * 读取博客文章列表
  * @param locale 站点语言
  * @param previewEnabled 是否启用预览
- * @returns 文章列表
+ * @returns 文章文档列表
  */
-const getPublishedBlogPostsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
+const getPublishedBlogDocsByMode = cache(async (locale: SiteLocale, previewEnabled: boolean) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'blog-posts',
@@ -354,13 +1152,30 @@ const getPublishedBlogPostsByMode = cache(async (locale: SiteLocale, previewEnab
 })
 
 /**
- * 读取博客文章
- * 正常模式返回已发布文章，预览模式返回当前草稿内容。
- * @param locale 站点语言
- * @returns 文章列表
+ * 映射博客列表项
+ * @param post 博客文档
+ * @returns 列表项视图
  */
-export async function getPublishedBlogPosts(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  return getPublishedBlogPostsByMode(locale, await isDraftPreviewEnabled())
+function mapBlogPostSummary(post: BlogPost): BlogPostSummaryView {
+  return {
+    slug: post.slug,
+    title: post.title,
+    excerpt: normalizeText(post.excerpt),
+    author: normalizeText(post.author),
+    publishedAt: post.publishedAt ?? undefined,
+  }
+}
+
+/**
+ * 读取博客文章列表
+ * @param locale 站点语言
+ * @returns 文章列表视图
+ */
+export async function getPublishedBlogPosts(
+  locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
+): Promise<BlogPostSummaryView[]> {
+  const docs = await getPublishedBlogDocsByMode(locale, await isDraftPreviewEnabled())
+  return docs.map(mapBlogPostSummary)
 }
 
 /**
@@ -368,12 +1183,12 @@ export async function getPublishedBlogPosts(locale: SiteLocale = DEFAULT_CONTENT
  * 正常模式返回已发布内容，预览模式返回当前草稿内容。
  * @param slug 文章 slug
  * @param locale 站点语言
- * @returns 文章
+ * @returns 文章视图模型
  */
-export async function getPublishedBlogPostBySlug(
+export async function getBlogPostView(
   slug: string,
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
-): Promise<BlogPost | null> {
+): Promise<BlogPostView | null> {
   const previewEnabled = await isDraftPreviewEnabled()
   const payload = await getPayloadClient()
   const result = await payload.find({
@@ -404,7 +1219,32 @@ export async function getPublishedBlogPostBySlug(
         },
   })
 
-  return result.docs[0] ?? null
+  const post = result.docs[0]
+
+  if (!post) {
+    return null
+  }
+
+  const sections = mapSections(post.sections as Array<RawSectionBlock | null> | null | undefined)
+    .filter((section): section is CmsRichTextSectionView => section.type === 'richText')
+
+  return {
+    slug: post.slug,
+    title: post.title,
+    excerpt: normalizeText(post.excerpt),
+    metaTitle: normalizeText(post.metaTitle),
+    metaDescription: normalizeText(post.metaDescription),
+    ogImage: normalizeMedia(post.ogImage),
+    author: normalizeText(post.author),
+    publishedAt: post.publishedAt ?? undefined,
+    tags: (post.tags ?? [])
+      .map((tag) => normalizeText(tag?.tag))
+      .filter((tag): tag is string => Boolean(tag)),
+    sections: sections.map((section) => ({
+      ...section,
+      style: 'article',
+    })),
+  }
 }
 
 /**
@@ -455,17 +1295,6 @@ export async function getFaqItems(
 }
 
 /**
- * 提取简单文本数组
- * @param items 数组字段
- * @returns 文本数组
- */
-function extractTextArray(items?: Array<{ text?: string | null } | null> | null): string[] {
-  return (items ?? [])
-    .map((item) => item?.text?.trim())
-    .filter((item): item is string => Boolean(item))
-}
-
-/**
  * 映射导航配置
  * @param siteSettings 站点设置
  * @returns 可渲染导航
@@ -473,16 +1302,16 @@ function extractTextArray(items?: Array<{ text?: string | null } | null> | null)
 export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
   return (siteSettings.navLinks ?? [])
     .flatMap((item) => {
-      const label = item?.label?.trim()
+      const label = normalizeText(item?.label)
       if (!label) {
         return []
       }
 
-      const href = item.href?.trim() || undefined
+      const href = normalizeText(item?.href)
       const children = (item.children ?? [])
         .map((child) => {
-          const childLabel = child?.label?.trim()
-          const childHref = child?.href?.trim()
+          const childLabel = normalizeText(child?.label)
+          const childHref = normalizeText(child?.href)
           if (!childLabel || !childHref) {
             return null
           }
@@ -498,12 +1327,10 @@ export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
         label,
       }
 
-      // 仅在存在有效链接时写入字段，保持可选属性语义一致
       if (href) {
         navigationItem.href = href
       }
 
-      // 仅在存在有效子导航时写入字段，避免产生多余的 undefined 属性
       if (children.length > 0) {
         navigationItem.children = children
       }
@@ -520,15 +1347,15 @@ export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
 export function mapFooterColumns(siteSettings: SiteSetting): SiteFooterColumn[] {
   return (siteSettings.footerColumns ?? [])
     .map((column) => {
-      const title = column?.title?.trim()
+      const title = normalizeText(column?.title)
       if (!title) {
         return null
       }
 
       const links = (column.links ?? [])
         .map((link) => {
-          const label = link?.label?.trim()
-          const href = link?.href?.trim()
+          const label = normalizeText(link?.label)
+          const href = normalizeText(link?.href)
           if (!label || !href) {
             return null
           }
@@ -543,150 +1370,4 @@ export function mapFooterColumns(siteSettings: SiteSetting): SiteFooterColumn[] 
       }
     })
     .filter((column): column is SiteFooterColumn => Boolean(column))
-}
-
-/**
- * 映射首页问题卡片
- * @param siteSettings 站点设置
- * @returns 首页问题卡片
- */
-export function mapHomeProblems(siteSettings: SiteSetting) {
-  return (siteSettings.homeProblems ?? [])
-    .map((item) => {
-      const title = item?.title?.trim()
-      if (!title) {
-        return null
-      }
-
-      return {
-        title,
-        paragraphs: extractTextArray(item.paragraphs),
-      }
-    })
-    .filter((item): item is { title: string; paragraphs: string[] } => Boolean(item))
-}
-
-/**
- * 映射首页步骤
- * @param siteSettings 站点设置
- * @returns 首页步骤
- */
-export function mapHomeHowItWorks(siteSettings: SiteSetting) {
-  return (siteSettings.homeHowItWorks ?? [])
-    .map((item) => {
-      const title = item?.title?.trim()
-      const body = item?.body?.trim()
-      if (!title || !body) {
-        return null
-      }
-
-      return { title, body }
-    })
-    .filter((item): item is { title: string; body: string } => Boolean(item))
-}
-
-/**
- * 映射 feature 分节
- * @param sections feature 原始分节
- * @returns 可渲染分节
- */
-export function mapContentSections(
-  sections?:
-    | Array<{
-        label?: string | null
-        title?: string | null
-        paragraphs?: Array<{ text?: string | null } | null> | null
-        cards?: Array<{ title?: string | null; body?: string | null } | null> | null
-        bullets?: Array<{ text?: string | null } | null> | null
-      } | null>
-    | null,
-): CmsContentSection[] {
-  return (sections ?? [])
-    .flatMap((section) => {
-      const title = section?.title?.trim()
-      if (!title) {
-        return []
-      }
-
-      const cards = (section.cards ?? [])
-        .map((card) => {
-          const cardTitle = card?.title?.trim()
-          const cardBody = card?.body?.trim()
-          if (!cardTitle || !cardBody) {
-            return null
-          }
-
-          return {
-            title: cardTitle,
-            body: cardBody,
-          }
-        })
-        .filter((card): card is { title: string; body: string } => Boolean(card))
-
-      const contentSection: CmsContentSection = {
-        title,
-        paragraphs: extractTextArray(section.paragraphs),
-      }
-
-      const label = section.label?.trim()
-      if (label) {
-        contentSection.label = label
-      }
-
-      if (cards.length > 0) {
-        contentSection.cards = cards
-      }
-
-      const bullets = extractTextArray(section.bullets)
-      if (bullets.length > 0) {
-        contentSection.bullets = bullets
-      }
-
-      return [contentSection]
-    })
-}
-
-/**
- * 映射 about 文本段落
- * @param page about 内容
- * @returns about 页面段落
- */
-export function mapAboutParagraphs(page: AboutPageDoc, key: 'missionParagraphs' | 'storyParagraphs') {
-  return extractTextArray(page[key])
-}
-
-/**
- * 映射博客正文分节
- * @param post 文章
- * @returns 可渲染分节
- */
-export function mapBlogSections(post: BlogPost): Array<{
-  title: string
-  paragraphs: string[]
-  bullets?: string[]
-}> {
-  return (post.contentSections ?? [])
-    .flatMap((section) => {
-      const title = section?.title?.trim()
-      if (!title) {
-        return []
-      }
-
-      const bullets = extractTextArray(section.bullets)
-
-      const blogSection: {
-        title: string
-        paragraphs: string[]
-        bullets?: string[]
-      } = {
-        title,
-        paragraphs: extractTextArray(section.paragraphs),
-      }
-
-      if (bullets.length > 0) {
-        blogSection.bullets = bullets
-      }
-
-      return [blogSection]
-    })
 }

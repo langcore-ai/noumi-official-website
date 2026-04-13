@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import { MARKETING_SECTIONS_FIELD } from '@/fields/marketingContent'
 import {
   buildPreviewURL,
   contentDocumentReadAccess,
@@ -129,42 +130,6 @@ export const BlogPosts: CollectionConfig = {
         },
       ],
     },
-    {
-      name: 'contentSections',
-      type: 'array',
-      localized: true,
-      admin: {
-        description: '文章正文分节；前台按这里的结构渲染。',
-      },
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'paragraphs',
-          type: 'array',
-          fields: [
-            {
-              name: 'text',
-              type: 'textarea',
-              required: true,
-            },
-          ],
-        },
-        {
-          name: 'bullets',
-          type: 'array',
-          fields: [
-            {
-              name: 'text',
-              type: 'textarea',
-              required: true,
-            },
-          ],
-        },
-      ],
-    },
+    MARKETING_SECTIONS_FIELD,
   ],
 }

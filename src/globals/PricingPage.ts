@@ -1,5 +1,10 @@
 import type { GlobalConfig } from 'payload'
 
+import {
+  MARKETING_HERO_FIELD,
+  MARKETING_PAGE_SEO_FIELDS,
+  MARKETING_SECTIONS_FIELD,
+} from '@/fields/marketingContent'
 import { contentUpdateAccess } from '@/access/cms'
 import {
   buildPreviewURL,
@@ -27,44 +32,5 @@ export const PricingPage: GlobalConfig = {
         path: getGlobalPreviewPath('pricing-page'),
       }),
   },
-  fields: [
-    {
-      name: 'intro',
-      type: 'textarea',
-      localized: true,
-    },
-    {
-      name: 'plans',
-      type: 'array',
-      localized: true,
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          required: true,
-        },
-        {
-          name: 'highlights',
-          type: 'array',
-          fields: [
-            {
-              name: 'text',
-              type: 'text',
-              required: true,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'note',
-      type: 'textarea',
-      localized: true,
-    },
-  ],
+  fields: [...MARKETING_PAGE_SEO_FIELDS, MARKETING_HERO_FIELD, MARKETING_SECTIONS_FIELD],
 }

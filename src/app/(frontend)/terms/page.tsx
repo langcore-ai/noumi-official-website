@@ -1,5 +1,6 @@
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getTermsPageView } from '@/lib/site/cms'
@@ -41,11 +42,22 @@ export default async function TermsPage() {
 
       <section className="site-shell page__hero article">
         <span className="page__eyebrow">{page.hero.eyebrow || dictionary.legal.eyebrow}</span>
-        <h1>{page.hero.title || dictionary.legal.termsTitle}</h1>
-        {page.hero.description ? <p>{page.hero.description}</p> : null}
+        <TypesetText
+          as="h1"
+          locale={locale}
+          text={page.hero.title || dictionary.legal.termsTitle}
+          variant="pageTitle"
+        >
+          {page.hero.title || dictionary.legal.termsTitle}
+        </TypesetText>
+        {page.hero.description ? (
+          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+            {page.hero.description}
+          </TypesetText>
+        ) : null}
       </section>
 
-      <PageSections sections={page.sections} />
+      <PageSections locale={locale} sections={page.sections} />
     </div>
   )
 }

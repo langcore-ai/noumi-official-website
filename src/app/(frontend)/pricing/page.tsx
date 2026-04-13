@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getFaqItems, getPricingPageView } from '@/lib/site/cms'
@@ -46,18 +47,36 @@ export default async function PricingPage() {
 
       <section className="site-shell page__hero">
         <span className="page__eyebrow">{page.hero.eyebrow || dictionary.pricing.eyebrow}</span>
-        <h1>{page.hero.title || dictionary.pricing.title}</h1>
-        {page.hero.description ? <p>{page.hero.description}</p> : null}
-        {page.hero.supportingText ? <p className="page__hero-support">{page.hero.supportingText}</p> : null}
+        <TypesetText as="h1" locale={locale} text={page.hero.title || dictionary.pricing.title} variant="heroTitle">
+          {page.hero.title || dictionary.pricing.title}
+        </TypesetText>
+        {page.hero.description ? (
+          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+            {page.hero.description}
+          </TypesetText>
+        ) : null}
+        {page.hero.supportingText ? (
+          <TypesetText
+            as="p"
+            className="page__hero-support"
+            locale={locale}
+            text={page.hero.supportingText}
+            variant="heroBody"
+          >
+            {page.hero.supportingText}
+          </TypesetText>
+        ) : null}
       </section>
 
-      <PageSections fullScreen sections={page.sections} />
+      <PageSections fullScreen locale={locale} sections={page.sections} />
 
       {!page.sections.some((section) => section.type === 'cta') && faqItems.length > 0 ? (
         <section className="site-shell section section--screen">
           <div className="feature-detail__summary">
             <span className="page__eyebrow">{dictionary.pricing.noteEyebrow}</span>
-            <h2>{dictionary.pricing.noteTitle}</h2>
+            <TypesetText as="h2" locale={locale} text={dictionary.pricing.noteTitle} variant="sectionTitle">
+              {dictionary.pricing.noteTitle}
+            </TypesetText>
             <div className="page__hero-actions">
               <Link className="button button--solid" href="/faqs/">
                 {dictionary.pricing.readFaqs}

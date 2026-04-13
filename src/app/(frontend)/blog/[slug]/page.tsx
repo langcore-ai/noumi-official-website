@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getDateLocale, getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getBlogPostView } from '@/lib/site/cms'
@@ -95,11 +96,17 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
             <span key={tag}>{tag}</span>
           ))}
         </div>
-        <h1>{post.title}</h1>
-        {post.excerpt ? <p>{post.excerpt}</p> : null}
+        <TypesetText as="h1" locale={locale} text={post.title} variant="pageTitle">
+          {post.title}
+        </TypesetText>
+        {post.excerpt ? (
+          <TypesetText as="p" locale={locale} text={post.excerpt} variant="heroBody">
+            {post.excerpt}
+          </TypesetText>
+        ) : null}
       </section>
 
-      <PageSections sections={post.sections} />
+      <PageSections locale={locale} sections={post.sections} />
     </div>
   )
 }

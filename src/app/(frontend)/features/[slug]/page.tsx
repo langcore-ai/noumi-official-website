@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getFeaturePageView } from '@/lib/site/cms'
@@ -75,7 +76,12 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
         </nav>
         {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
         {page.hero.title ? (
-          <h1>
+          <TypesetText
+            as="h1"
+            locale={locale}
+            text={`${page.hero.title}${page.hero.highlight ? ` ${page.hero.highlight}` : ''}`}
+            variant="heroTitle"
+          >
             {page.hero.title}
             {page.hero.highlight ? (
               <>
@@ -83,14 +89,19 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
                 <span className="hero-highlight">{page.hero.highlight}</span>
               </>
             ) : null}
-          </h1>
+          </TypesetText>
         ) : null}
-        {page.hero.description ? <p>{page.hero.description}</p> : null}
+        {page.hero.description ? (
+          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+            {page.hero.description}
+          </TypesetText>
+        ) : null}
       </section>
 
       {page.summarySection ? (
         <PageSections
           fullScreen
+          locale={locale}
           sections={[
             {
               ...page.summarySection,
@@ -100,18 +111,25 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
         />
       ) : null}
 
-      <PageSections fullScreen sections={page.sections} />
+      <PageSections fullScreen locale={locale} sections={page.sections} />
 
       {page.relatedFeatures.length > 0 ? (
         <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.features.relatedEyebrow}</span>
-            <h2>{dictionary.features.relatedTitle}</h2>
+            <TypesetText as="h2" locale={locale} text={dictionary.features.relatedTitle} variant="sectionTitle">
+              {dictionary.features.relatedTitle}
+            </TypesetText>
           </div>
           <div className="cards cards--2">
             {page.relatedFeatures.map((relatedPage) => (
               <article key={relatedPage.slug} className="card">
-                <h3>
+                <TypesetText
+                  as="h3"
+                  locale={locale}
+                  text={`${relatedPage.hero.title}${relatedPage.hero.highlight ? ` ${relatedPage.hero.highlight}` : ''}`}
+                  variant="cardTitle"
+                >
                   {relatedPage.hero.title}
                   {relatedPage.hero.highlight ? (
                     <>
@@ -119,8 +137,12 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
                       <span className="hero-highlight">{relatedPage.hero.highlight}</span>
                     </>
                   ) : null}
-                </h3>
-                {relatedPage.hero.description ? <p>{relatedPage.hero.description}</p> : null}
+                </TypesetText>
+                {relatedPage.hero.description ? (
+                  <TypesetText as="p" locale={locale} text={relatedPage.hero.description} variant="body">
+                    {relatedPage.hero.description}
+                  </TypesetText>
+                ) : null}
                 <Link className="feature-grid__link" href={`/features/${relatedPage.slug}/`}>
                   {dictionary.features.viewDetail}
                 </Link>
@@ -133,6 +155,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
       {page.ctaSection ? (
         <PageSections
           fullScreen
+          locale={locale}
           sections={[
             {
               ...page.ctaSection,

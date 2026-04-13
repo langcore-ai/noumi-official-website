@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import {
@@ -81,10 +82,26 @@ export default async function HomePage() {
         {homePage.hero.eyebrow ? (
           <span className="page__eyebrow">{homePage.hero.eyebrow}</span>
         ) : null}
-        {homePage.hero.title ? <h1>{homePage.hero.title}</h1> : null}
-        {homePage.hero.description ? <p>{homePage.hero.description}</p> : null}
+        {homePage.hero.title ? (
+          <TypesetText as="h1" locale={locale} text={homePage.hero.title} variant="heroTitle">
+            {homePage.hero.title}
+          </TypesetText>
+        ) : null}
+        {homePage.hero.description ? (
+          <TypesetText as="p" locale={locale} text={homePage.hero.description} variant="heroBody">
+            {homePage.hero.description}
+          </TypesetText>
+        ) : null}
         {homePage.hero.supportingText ? (
-          <p className="page__hero-support">{homePage.hero.supportingText}</p>
+          <TypesetText
+            as="p"
+            className="page__hero-support"
+            locale={locale}
+            text={homePage.hero.supportingText}
+            variant="heroBody"
+          >
+            {homePage.hero.supportingText}
+          </TypesetText>
         ) : null}
         {homePage.hero.primaryCta || homePage.hero.secondaryCta ? (
           <div className="page__hero-actions">
@@ -101,7 +118,15 @@ export default async function HomePage() {
           </div>
         ) : null}
         {homePage.hero.footnote ? (
-          <p className="page__hero-support">{homePage.hero.footnote}</p>
+          <TypesetText
+            as="p"
+            className="page__hero-support"
+            locale={locale}
+            text={homePage.hero.footnote}
+            variant="body"
+          >
+            {homePage.hero.footnote}
+          </TypesetText>
         ) : null}
       </section>
 
@@ -111,15 +136,35 @@ export default async function HomePage() {
             <span className="page__eyebrow">
               {homePage.problemsSection.label || dictionary.home.problemEyebrow}
             </span>
-            <h2>{homePage.problemsSection.title || dictionary.home.problemTitle}</h2>
-            {homePage.problemsSection.description ? <p>{homePage.problemsSection.description}</p> : null}
+            <TypesetText
+              as="h2"
+              locale={locale}
+              text={homePage.problemsSection.title || dictionary.home.problemTitle}
+              variant="sectionTitle"
+            >
+              {homePage.problemsSection.title || dictionary.home.problemTitle}
+            </TypesetText>
+            {homePage.problemsSection.description ? (
+              <TypesetText
+                as="p"
+                locale={locale}
+                text={homePage.problemsSection.description}
+                variant="sectionBody"
+              >
+                {homePage.problemsSection.description}
+              </TypesetText>
+            ) : null}
           </div>
           <div className={`cards cards--${homePage.problemsSection.columns}`}>
             {homePage.problemsSection.cards.map((problem) => (
               <article key={problem.title} className="card">
-                <h3>{problem.title}</h3>
+                <TypesetText as="h3" locale={locale} text={problem.title} variant="cardTitle">
+                  {problem.title}
+                </TypesetText>
                 {(problem.body ? [problem.body] : []).concat(problem.paragraphs).map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                  <TypesetText key={paragraph} as="p" locale={locale} text={paragraph} variant="body">
+                    {paragraph}
+                  </TypesetText>
                 ))}
               </article>
             ))}
@@ -133,9 +178,29 @@ export default async function HomePage() {
             <span className="page__eyebrow">
               {homePage.featureIntroSection?.label || dictionary.home.featuresEyebrow}
             </span>
-            <h2>{homePage.featureIntroSection?.title || dictionary.home.featuresTitle}</h2>
-            {homePage.featureIntroSection?.description ? <p>{homePage.featureIntroSection.description}</p> : null}
-            {homePage.featureIntroSection?.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            <TypesetText
+              as="h2"
+              locale={locale}
+              text={homePage.featureIntroSection?.title || dictionary.home.featuresTitle}
+              variant="sectionTitle"
+            >
+              {homePage.featureIntroSection?.title || dictionary.home.featuresTitle}
+            </TypesetText>
+            {homePage.featureIntroSection?.description ? (
+              <TypesetText
+                as="p"
+                locale={locale}
+                text={homePage.featureIntroSection.description}
+                variant="sectionBody"
+              >
+                {homePage.featureIntroSection.description}
+              </TypesetText>
+            ) : null}
+            {homePage.featureIntroSection?.paragraphs.map((paragraph) => (
+              <TypesetText key={paragraph} as="p" locale={locale} text={paragraph} variant="sectionBody">
+                {paragraph}
+              </TypesetText>
+            ))}
           </div>
           <div className="cards cards--2">
             {features.map((feature) => (
@@ -143,7 +208,12 @@ export default async function HomePage() {
                 {feature.hero.eyebrow ? (
                   <span className="feature-grid__card-number">{feature.hero.eyebrow}</span>
                 ) : null}
-                <h3>
+                <TypesetText
+                  as="h3"
+                  locale={locale}
+                  text={`${feature.hero.title}${feature.hero.highlight ? ` ${feature.hero.highlight}` : ''}`}
+                  variant="cardTitle"
+                >
                   {feature.hero.title}
                   {feature.hero.highlight ? (
                     <>
@@ -151,12 +221,18 @@ export default async function HomePage() {
                       <span className="hero-highlight">{feature.hero.highlight}</span>
                     </>
                   ) : null}
-                </h3>
-                {feature.hero.description ? <p>{feature.hero.description}</p> : null}
+                </TypesetText>
+                {feature.hero.description ? (
+                  <TypesetText as="p" locale={locale} text={feature.hero.description} variant="body">
+                    {feature.hero.description}
+                  </TypesetText>
+                ) : null}
                 {feature.summaryItems.length > 0 ? (
                   <ul>
                     {feature.summaryItems.map((bullet) => (
-                      <li key={bullet}>{bullet}</li>
+                      <TypesetText key={bullet} as="li" locale={locale} text={bullet} variant="listItem">
+                        {bullet}
+                      </TypesetText>
                     ))}
                   </ul>
                 ) : null}
@@ -175,14 +251,39 @@ export default async function HomePage() {
             <span className="page__eyebrow">
               {homePage.howItWorksSection.label || dictionary.home.howItWorksEyebrow}
             </span>
-            <h2>{homePage.howItWorksSection.title || dictionary.home.howItWorksTitle}</h2>
-            {homePage.howItWorksSection.description ? <p>{homePage.howItWorksSection.description}</p> : null}
+            <TypesetText
+              as="h2"
+              locale={locale}
+              text={homePage.howItWorksSection.title || dictionary.home.howItWorksTitle}
+              variant="sectionTitle"
+            >
+              {homePage.howItWorksSection.title || dictionary.home.howItWorksTitle}
+            </TypesetText>
+            {homePage.howItWorksSection.description ? (
+              <TypesetText
+                as="p"
+                locale={locale}
+                text={homePage.howItWorksSection.description}
+                variant="sectionBody"
+              >
+                {homePage.howItWorksSection.description}
+              </TypesetText>
+            ) : null}
           </div>
           <div className="cards cards--3 steps">
             {homePage.howItWorksSection.cards.map((step) => (
               <article key={step.title} className="card step">
-                <h3>{step.title}</h3>
-                <p>{step.body || step.paragraphs[0] || ''}</p>
+                <TypesetText as="h3" locale={locale} text={step.title} variant="cardTitle">
+                  {step.title}
+                </TypesetText>
+                <TypesetText
+                  as="p"
+                  locale={locale}
+                  text={step.body || step.paragraphs[0] || ''}
+                  variant="body"
+                >
+                  {step.body || step.paragraphs[0] || ''}
+                </TypesetText>
               </article>
             ))}
           </div>
@@ -193,13 +294,21 @@ export default async function HomePage() {
         <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.useCasesEyebrow}</span>
-            <h2>{dictionary.home.useCasesTitle}</h2>
+            <TypesetText as="h2" locale={locale} text={dictionary.home.useCasesTitle} variant="sectionTitle">
+              {dictionary.home.useCasesTitle}
+            </TypesetText>
           </div>
           <div className="cards cards--2">
             {useCases.map((page) => (
               <article key={page.slug} className="card">
-                <h3>{page.hero.title}</h3>
-                {page.hero.description ? <p>{page.hero.description}</p> : null}
+                <TypesetText as="h3" locale={locale} text={page.hero.title} variant="cardTitle">
+                  {page.hero.title}
+                </TypesetText>
+                {page.hero.description ? (
+                  <TypesetText as="p" locale={locale} text={page.hero.description} variant="body">
+                    {page.hero.description}
+                  </TypesetText>
+                ) : null}
                 <Link className="feature-grid__link" href={`/use-cases/${page.slug}/`}>
                   {dictionary.home.viewUseCase}
                 </Link>
@@ -213,13 +322,17 @@ export default async function HomePage() {
         <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.faqEyebrow}</span>
-            <h2>{dictionary.home.faqTitle}</h2>
+            <TypesetText as="h2" locale={locale} text={dictionary.home.faqTitle} variant="sectionTitle">
+              {dictionary.home.faqTitle}
+            </TypesetText>
           </div>
           <div className="faq-list">
             {homeFaqItems.map((item) => (
               <details key={item.id}>
                 <summary>{item.question}</summary>
-                <p>{item.answer}</p>
+                <TypesetText as="p" locale={locale} text={item.answer} variant="body">
+                  {item.answer}
+                </TypesetText>
               </details>
             ))}
           </div>
@@ -230,18 +343,33 @@ export default async function HomePage() {
         <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.home.aboutEyebrow}</span>
-            <h2>{dictionary.home.aboutTitle}</h2>
-            {aboutPage.hero.description ? <p>{aboutPage.hero.description}</p> : null}
+            <TypesetText as="h2" locale={locale} text={dictionary.home.aboutTitle} variant="sectionTitle">
+              {dictionary.home.aboutTitle}
+            </TypesetText>
+            {aboutPage.hero.description ? (
+              <TypesetText as="p" locale={locale} text={aboutPage.hero.description} variant="sectionBody">
+                {aboutPage.hero.description}
+              </TypesetText>
+            ) : null}
           </div>
           <div className="cards cards--2">
             {(aboutOverviewSection?.cards ?? []).slice(0, 2).map((card, index) => (
               <article key={card.title} className="card">
-                <h3>
+                <TypesetText
+                  as="h3"
+                  locale={locale}
+                  text={
+                    card.title || (index === 0 ? dictionary.home.missionTitle : dictionary.home.storyTitle)
+                  }
+                  variant="cardTitle"
+                >
                   {card.title ||
                     (index === 0 ? dictionary.home.missionTitle : dictionary.home.storyTitle)}
-                </h3>
+                </TypesetText>
                 {(card.body ? [card.body] : []).concat(card.paragraphs).map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                  <TypesetText key={paragraph} as="p" locale={locale} text={paragraph} variant="body">
+                    {paragraph}
+                  </TypesetText>
                 ))}
                 {index === 1 ? (
                   <Link className="feature-grid__link" href="/about/">
@@ -254,11 +382,12 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {additionalSections.length > 0 ? <PageSections fullScreen sections={additionalSections} /> : null}
+      {additionalSections.length > 0 ? <PageSections fullScreen locale={locale} sections={additionalSections} /> : null}
 
       {homePage.finalCtaSection ? (
         <PageSections
           fullScreen
+          locale={locale}
           sections={[
             {
               ...homePage.finalCtaSection,

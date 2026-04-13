@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getAboutPageView } from '@/lib/site/cms'
@@ -47,12 +48,28 @@ export default async function AboutPage() {
 
       <section className="site-shell page__hero">
         <span className="page__eyebrow">{page.hero.eyebrow || dictionary.about.eyebrow}</span>
-        <h1>{page.hero.title || dictionary.about.title}</h1>
-        {page.hero.description ? <p>{page.hero.description}</p> : null}
-        {page.hero.supportingText ? <p className="page__hero-support">{page.hero.supportingText}</p> : null}
+        <TypesetText as="h1" locale={locale} text={page.hero.title || dictionary.about.title} variant="heroTitle">
+          {page.hero.title || dictionary.about.title}
+        </TypesetText>
+        {page.hero.description ? (
+          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+            {page.hero.description}
+          </TypesetText>
+        ) : null}
+        {page.hero.supportingText ? (
+          <TypesetText
+            as="p"
+            className="page__hero-support"
+            locale={locale}
+            text={page.hero.supportingText}
+            variant="heroBody"
+          >
+            {page.hero.supportingText}
+          </TypesetText>
+        ) : null}
       </section>
 
-      <PageSections fullScreen sections={page.sections} />
+      <PageSections fullScreen locale={locale} sections={page.sections} />
 
       {!page.sections.some((section) => section.type === 'cta') ? (
         <section className="site-shell section section--screen">

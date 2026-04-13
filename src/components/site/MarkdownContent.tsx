@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Fragment } from 'react'
 
+import { TypesetText } from '@/components/site/TypesetText'
+
 /**
  * Markdown 区块模型
  */
@@ -17,7 +19,7 @@ type MarkdownBlock =
  * @param props markdown 文本
  * @returns 解析后的 React 节点
  */
-export function MarkdownContent({ markdown }: { markdown: string }) {
+export function MarkdownContent({ locale, markdown }: { locale?: string; markdown: string }) {
   const blocks = parseMarkdown(markdown)
 
   return (
@@ -25,25 +27,43 @@ export function MarkdownContent({ markdown }: { markdown: string }) {
       {blocks.map((block, index) => {
         if (block.type === 'heading') {
           if (block.depth === 1) {
-            return <h1 key={index}>{renderInline(block.text)}</h1>
+            return (
+              <TypesetText key={index} as="h1" locale={locale} text={block.text} variant="pageTitle">
+                {renderInline(block.text)}
+              </TypesetText>
+            )
           }
 
           if (block.depth === 2) {
-            return <h2 key={index}>{renderInline(block.text)}</h2>
+            return (
+              <TypesetText key={index} as="h2" locale={locale} text={block.text} variant="sectionTitle">
+                {renderInline(block.text)}
+              </TypesetText>
+            )
           }
 
-          return <h3 key={index}>{renderInline(block.text)}</h3>
+          return (
+            <TypesetText key={index} as="h3" locale={locale} text={block.text} variant="cardTitle">
+              {renderInline(block.text)}
+            </TypesetText>
+          )
         }
 
         if (block.type === 'paragraph') {
-          return <p key={index}>{renderInline(block.text)}</p>
+          return (
+            <TypesetText key={index} as="p" locale={locale} text={block.text} variant="articleBody">
+              {renderInline(block.text)}
+            </TypesetText>
+          )
         }
 
         if (block.type === 'list') {
           return (
             <ul key={index}>
               {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>{renderInline(item)}</li>
+                <TypesetText key={itemIndex} as="li" locale={locale} text={item} variant="listItem">
+                  {renderInline(item)}
+                </TypesetText>
               ))}
             </ul>
           )
@@ -64,13 +84,17 @@ export function MarkdownContent({ markdown }: { markdown: string }) {
                 </thead>
                 <tbody>
                   {bodyRows.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {row.map((cell, cellIndex) => (
-                        <td key={cellIndex}>{renderInline(cell)}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
+                  <tr key={rowIndex}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex}>
+                        <TypesetText as="p" locale={locale} text={cell} variant="tableCell">
+                          {renderInline(cell)}
+                        </TypesetText>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
               </table>
             </div>
           )

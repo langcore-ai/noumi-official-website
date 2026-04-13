@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getUseCasePageView } from '@/lib/site/cms'
@@ -74,13 +75,22 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
           <span aria-current="page">{page.hero.eyebrow || page.slug}</span>
         </nav>
         {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
-        {page.hero.title ? <h1>{page.hero.title}</h1> : null}
-        {page.hero.description ? <p>{page.hero.description}</p> : null}
+        {page.hero.title ? (
+          <TypesetText as="h1" locale={locale} text={page.hero.title} variant="heroTitle">
+            {page.hero.title}
+          </TypesetText>
+        ) : null}
+        {page.hero.description ? (
+          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+            {page.hero.description}
+          </TypesetText>
+        ) : null}
       </section>
 
       {page.painPointsSection ? (
         <PageSections
           fullScreen
+          locale={locale}
           sections={[
             {
               ...page.painPointsSection,
@@ -91,18 +101,25 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
         />
       ) : null}
 
-      <PageSections fullScreen sections={page.sections} />
+      <PageSections fullScreen locale={locale} sections={page.sections} />
 
       {page.relatedFeatures.length > 0 ? (
         <section className="site-shell section section--screen">
           <div className="section__header">
             <span className="page__eyebrow">{dictionary.useCases.relatedEyebrow}</span>
-            <h2>{dictionary.useCases.relatedTitle}</h2>
+            <TypesetText as="h2" locale={locale} text={dictionary.useCases.relatedTitle} variant="sectionTitle">
+              {dictionary.useCases.relatedTitle}
+            </TypesetText>
           </div>
           <div className="cards cards--3">
             {page.relatedFeatures.map((feature) => (
               <article key={feature.slug} className="card">
-                <h3>
+                <TypesetText
+                  as="h3"
+                  locale={locale}
+                  text={`${feature.hero.title}${feature.hero.highlight ? ` ${feature.hero.highlight}` : ''}`}
+                  variant="cardTitle"
+                >
                   {feature.hero.title}
                   {feature.hero.highlight ? (
                     <>
@@ -110,8 +127,12 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
                       <span className="hero-highlight">{feature.hero.highlight}</span>
                     </>
                   ) : null}
-                </h3>
-                {feature.hero.description ? <p>{feature.hero.description}</p> : null}
+                </TypesetText>
+                {feature.hero.description ? (
+                  <TypesetText as="p" locale={locale} text={feature.hero.description} variant="body">
+                    {feature.hero.description}
+                  </TypesetText>
+                ) : null}
                 <Link className="feature-grid__link" href={`/features/${feature.slug}/`}>
                   {dictionary.useCases.exploreFeature}
                 </Link>

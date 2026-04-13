@@ -798,6 +798,26 @@ summary:focus-visible {
   background: var(--page-bg-subtle);
 }
 
+.typeset-text {
+  --typeset-width: auto;
+  --typeset-min-height: auto;
+}
+
+.typeset-text[data-typeset-ready="true"] {
+  min-height: var(--typeset-min-height);
+}
+
+.typeset-text[data-typeset-mode="balance"][data-typeset-ready="true"] {
+  max-width: min(var(--typeset-width), 100%);
+}
+
+.markdown-content td > .typeset-text,
+.markdown-content th > .typeset-text {
+  margin: 0;
+  max-width: none;
+  min-height: 0;
+}
+
 .site-footer {
   margin-top: 72px;
   padding-top: 28px;

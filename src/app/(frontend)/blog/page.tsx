@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
+import { TypesetText } from '@/components/site/TypesetText'
 import { getDateLocale, getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getPublishedBlogPosts } from '@/lib/site/cms'
@@ -40,8 +41,12 @@ export default async function BlogIndexPage() {
 
       <section className="site-shell page__hero">
         <span className="page__eyebrow">{dictionary.blog.eyebrow}</span>
-        <h1>{dictionary.blog.title}</h1>
-        <p>{dictionary.blog.intro}</p>
+        <TypesetText as="h1" locale={locale} text={dictionary.blog.title} variant="heroTitle">
+          {dictionary.blog.title}
+        </TypesetText>
+        <TypesetText as="p" locale={locale} text={dictionary.blog.intro} variant="heroBody">
+          {dictionary.blog.intro}
+        </TypesetText>
       </section>
 
       {posts.length > 0 ? (
@@ -55,8 +60,14 @@ export default async function BlogIndexPage() {
                   ) : null}
                   {post.author ? <span>{post.author}</span> : null}
                 </div>
-                <h2>{post.title}</h2>
-                {post.excerpt ? <p>{post.excerpt}</p> : null}
+                <TypesetText as="h2" locale={locale} text={post.title} variant="sectionTitle">
+                  {post.title}
+                </TypesetText>
+                {post.excerpt ? (
+                  <TypesetText as="p" locale={locale} text={post.excerpt} variant="body">
+                    {post.excerpt}
+                  </TypesetText>
+                ) : null}
                 <Link className="feature-grid__link" href={`/blog/${post.slug}/`}>
                   {dictionary.blog.readArticle}
                 </Link>

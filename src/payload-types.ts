@@ -289,6 +289,10 @@ export interface BlogPost {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -450,6 +454,10 @@ export interface FeaturePage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -613,6 +621,10 @@ export interface UseCasePage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -1034,6 +1046,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -1179,6 +1192,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -1326,6 +1340,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -1665,6 +1680,10 @@ export interface HomePage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -1815,6 +1834,10 @@ export interface AboutPage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -1965,6 +1988,10 @@ export interface PricingPage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -2115,6 +2142,10 @@ export interface PrivacyPage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -2265,6 +2296,10 @@ export interface TermsPage {
               | null;
             columns?: ('2' | '3' | '4') | null;
             style?: ('default' | 'steps' | 'stats') | null;
+            /**
+             * 默认卡片样式下可选自动计算布局或固定等宽网格。
+             */
+            layoutMode?: ('auto' | 'fixed') | null;
             cards?:
               | {
                   eyebrow?: string | null;
@@ -2464,6 +2499,7 @@ export interface HomePageSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -2603,6 +2639,7 @@ export interface AboutPageSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -2742,6 +2779,7 @@ export interface PricingPageSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -2881,6 +2919,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {
@@ -3020,6 +3059,7 @@ export interface TermsPageSelect<T extends boolean = true> {
                   };
               columns?: T;
               style?: T;
+              layoutMode?: T;
               cards?:
                 | T
                 | {

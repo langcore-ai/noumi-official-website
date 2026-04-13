@@ -143,6 +143,8 @@ export type CmsCardGridSectionView = {
   columns: 2 | 3 | 4
   /** 样式 */
   style: 'default' | 'stats' | 'steps'
+  /** 卡片布局模式 */
+  layoutMode: 'auto' | 'fixed'
   /** 卡片列表 */
   cards: CmsCardView[]
 }
@@ -383,6 +385,8 @@ type RawSectionBlock = {
   markdown?: null | string
   /** 视觉样式 */
   style?: null | string
+  /** 卡片布局模式 */
+  layoutMode?: null | string
   /** 栅格列数 */
   columns?: null | string
   /** 卡片列表 */
@@ -591,6 +595,15 @@ function normalizeCardGridColumns(value?: null | string): 2 | 3 | 4 {
 }
 
 /**
+ * 解析卡片分节布局模式
+ * @param value 原始布局模式
+ * @returns 可渲染布局模式
+ */
+function normalizeCardGridLayoutMode(value?: null | string): 'auto' | 'fixed' {
+  return value === 'fixed' ? 'fixed' : 'auto'
+}
+
+/**
  * 映射共享 section blocks
  * @param sections 原始分节
  * @returns 通用分节视图
@@ -651,6 +664,7 @@ function mapSections(
             bullets,
             columns: normalizeCardGridColumns(section.columns),
             style: section.style === 'stats' || section.style === 'steps' ? section.style : 'default',
+            layoutMode: normalizeCardGridLayoutMode(section.layoutMode),
             cards,
           } satisfies CmsCardGridSectionView
         }

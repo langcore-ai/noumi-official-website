@@ -254,6 +254,26 @@ const CARD_GRID_SECTION_BLOCK: Block = {
       ],
     },
     {
+      name: 'layoutMode',
+      type: 'select',
+      label: '卡片布局',
+      defaultValue: 'auto',
+      admin: {
+        description: '默认卡片样式下可选自动计算布局或固定等宽网格。',
+        condition: (_, siblingData) => siblingData?.style === 'default' || !siblingData?.style,
+      },
+      options: [
+        {
+          label: '自动计算卡片布局',
+          value: 'auto',
+        },
+        {
+          label: '固定卡片布局',
+          value: 'fixed',
+        },
+      ],
+    },
+    {
       name: 'cards',
       type: 'array',
       label: '卡片列表',

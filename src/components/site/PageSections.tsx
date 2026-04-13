@@ -139,7 +139,7 @@ function renderCardGrid(section: CmsCardGridSectionView, locale?: string): React
     return <div className="stats">{section.cards.map((card) => renderStatCard(card, locale))}</div>
   }
 
-  if (section.style === 'default' && section.cards.length > 1) {
+  if (section.style === 'default' && section.layoutMode === 'auto' && section.cards.length > 1) {
     return <PretextMasonryCards cards={section.cards} columns={section.columns} locale={locale} />
   }
 
@@ -251,7 +251,7 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                       ) : null}
                     </div>
                     <div className="panel-grid">
-                      {section.style === 'default' && section.cards.length > 1 ? (
+                      {section.style === 'default' && section.layoutMode === 'auto' && section.cards.length > 1 ? (
                         <PretextMasonryCards cards={section.cards} columns={section.columns} locale={locale} />
                       ) : (
                         section.cards.map((card, cardIndex) => (

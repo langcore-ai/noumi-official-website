@@ -1,4 +1,23 @@
-import type { CollectionConfig } from 'payload'
+import type { Access, CollectionConfig } from 'payload'
+
+/**
+ * 控制博客文章读取权限：
+ * - 已登录用户可读取全部状态，便于后台编辑与审核
+ * - 匿名请求仅允许读取已发布文章，避免草稿通过公开 API 暴露
+ */
+const canReadBlogPost: Access = ({ req: { user } }) => {
+  // 后台已登录用户保留完整读取能力
+  if (user) {
+    return true
+  }
+
+  // 匿名访问仅允许读取已发布文章
+  return {
+    status: {
+      equals: 'published',
+    },
+  }
+}
 
 /**
  * Blog 文章集合
@@ -15,8 +34,8 @@ export const BlogPosts: CollectionConfig = {
     group: 'Content',
   },
   access: {
-    /** 公开读取已迁移的官网内容 */
-    read: () => true,
+    /** 公开请求仅可读取已发布内容 */
+    read: canReadBlogPost,
     /** 已登录用户可维护内容 */
     create: ({ req: { user } }) => Boolean(user),
     update: ({ req: { user } }) => Boolean(user),

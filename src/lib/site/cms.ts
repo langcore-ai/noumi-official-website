@@ -229,6 +229,7 @@ export const getPublishedBlogPosts = cache(async (locale: SiteLocale = DEFAULT_C
     collection: 'blog-posts',
     depth: 1,
     limit: 100,
+    overrideAccess: false,
     ...getPayloadLocaleOptions(locale),
     sort: '-publishedAt',
     where: {
@@ -256,6 +257,7 @@ export async function getPublishedBlogPostBySlug(
     collection: 'blog-posts',
     depth: 1,
     limit: 1,
+    overrideAccess: false,
     ...getPayloadLocaleOptions(locale),
     where: {
       and: [

@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
 import {
-  authenticatedAccess,
   buildPreviewURL,
+  contentDocumentReadAccess,
   getCollectionPreviewPath,
   PUBLIC_COLLECTION_VERSIONS,
-  publishedDocumentReadAccess,
 } from '@/lib/site/publishing'
 
 /**
@@ -30,11 +30,11 @@ export const BlogPosts: CollectionConfig = {
   versions: PUBLIC_COLLECTION_VERSIONS,
   access: {
     /** 公开请求仅可读取已发布内容 */
-    read: publishedDocumentReadAccess,
-    /** 已登录用户可维护内容 */
-    create: authenticatedAccess,
-    update: authenticatedAccess,
-    delete: authenticatedAccess,
+    read: contentDocumentReadAccess,
+    /** 内容编辑可创建文章；翻译仅允许更新现有内容 */
+    create: contentCreateAccess,
+    update: contentUpdateAccess,
+    delete: contentCreateAccess,
   },
   fields: [
     {

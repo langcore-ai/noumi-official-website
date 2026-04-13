@@ -1,5 +1,6 @@
 import type { Access, CollectionConfig, GlobalConfig, PayloadRequest } from 'payload'
 
+import { CMS_CONTENT_UPDATE_ROLES, CMS_LEGAL_UPDATE_ROLES, hasAnyCmsRole, type CmsUserRole } from '@/access/cms'
 import { DEFAULT_CONTENT_LOCALE, normalizeSiteLocale, SITE_LOCALE_COOKIE, type SiteLocale } from '@/lib/site/i18n'
 
 /** 统一草稿配置 */
@@ -21,9 +22,6 @@ export const PUBLIC_GLOBAL_VERSIONS = {
   max: 50,
 } satisfies NonNullable<GlobalConfig['versions']>
 
-/** 仅允许登录用户执行的访问控制 */
-export const authenticatedAccess: Access = ({ req: { user } }) => Boolean(user)
-
 /**
  * 判断当前读取是否显式请求草稿内容
  * @param req Payload 请求对象
@@ -43,15 +41,17 @@ function isDraftReadRequest(req: PayloadRequest): boolean {
  * 公开集合默认只允许读取已发布版本
  * 后台用户仍可读取全部状态，便于编辑、审核与回滚。
  */
-export const publishedDocumentReadAccess: Access = ({ req }) => {
-  if (req.user) {
-    return true
-  }
+function createPublishedDocumentReadAccess(roles: readonly CmsUserRole[]): Access {
+  return ({ req }) => {
+    if (hasAnyCmsRole(req.user, roles)) {
+      return true
+    }
 
-  return {
-    _status: {
-      equals: 'published',
-    },
+    return {
+      _status: {
+        equals: 'published',
+      },
+    }
   }
 }
 
@@ -59,13 +59,22 @@ export const publishedDocumentReadAccess: Access = ({ req }) => {
  * 公开 global 默认仅允许匿名读取已发布内容
  * 匿名显式请求草稿时直接拒绝，避免通过公开 API 读取未发布版本。
  */
-export const publishedGlobalReadAccess: Access = ({ req }) => {
-  if (req.user) {
-    return true
-  }
+function createPublishedGlobalReadAccess(roles: readonly CmsUserRole[]): Access {
+  return ({ req }) => {
+    if (hasAnyCmsRole(req.user, roles)) {
+      return true
+    }
 
-  return !isDraftReadRequest(req)
+    return !isDraftReadRequest(req)
+  }
 }
+
+/** 营销内容集合的读取权限 */
+export const contentDocumentReadAccess = createPublishedDocumentReadAccess(CMS_CONTENT_UPDATE_ROLES)
+/** 营销类全局配置的读取权限 */
+export const marketingGlobalReadAccess = createPublishedGlobalReadAccess(CMS_CONTENT_UPDATE_ROLES)
+/** 法律类全局配置的读取权限 */
+export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_UPDATE_ROLES)
 
 /** 支持预览的集合 slug */
 type PreviewCollectionSlug = 'blog-posts' | 'feature-pages' | 'use-case-pages'

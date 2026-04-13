@@ -151,6 +151,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * 后台角色用于隔离内容、法务、翻译与管理员权限；默认新账号仅具备 viewer 权限。
+   */
+  roles: ('admin' | 'content-editor' | 'legal-editor' | 'translator' | 'viewer')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -611,6 +615,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

@@ -1,11 +1,11 @@
 import type { GlobalConfig } from 'payload'
 
+import { legalUpdateAccess } from '@/access/cms'
 import {
-  authenticatedAccess,
   buildPreviewURL,
   getGlobalPreviewPath,
+  legalGlobalReadAccess,
   PUBLIC_GLOBAL_VERSIONS,
-  publishedGlobalReadAccess,
 } from '@/lib/site/publishing'
 
 /**
@@ -16,8 +16,8 @@ export const LegalPages: GlobalConfig = {
   label: 'Legal Pages',
   versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
-    read: publishedGlobalReadAccess,
-    update: authenticatedAccess,
+    read: legalGlobalReadAccess,
+    update: legalUpdateAccess,
   },
   admin: {
     group: 'Pages',

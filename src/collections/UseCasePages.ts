@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
 import {
-  authenticatedAccess,
   buildPreviewURL,
+  contentDocumentReadAccess,
   getCollectionPreviewPath,
   PUBLIC_COLLECTION_VERSIONS,
-  publishedDocumentReadAccess,
 } from '@/lib/site/publishing'
 
 /**
@@ -29,10 +29,10 @@ export const UseCasePages: CollectionConfig = {
   },
   versions: PUBLIC_COLLECTION_VERSIONS,
   access: {
-    read: publishedDocumentReadAccess,
-    create: authenticatedAccess,
-    update: authenticatedAccess,
-    delete: authenticatedAccess,
+    read: contentDocumentReadAccess,
+    create: contentCreateAccess,
+    update: contentUpdateAccess,
+    delete: contentCreateAccess,
   },
   fields: [
     {

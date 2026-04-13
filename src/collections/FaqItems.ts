@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+
 /**
  * FAQ 集合
  */
@@ -16,9 +18,9 @@ export const FaqItems: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    create: contentCreateAccess,
+    update: contentUpdateAccess,
+    delete: contentCreateAccess,
   },
   fields: [
     {

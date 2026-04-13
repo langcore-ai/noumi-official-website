@@ -1,11 +1,11 @@
 import type { GlobalConfig } from 'payload'
 
+import { contentUpdateAccess } from '@/access/cms'
 import {
-  authenticatedAccess,
   buildPreviewURL,
   getGlobalPreviewPath,
+  marketingGlobalReadAccess,
   PUBLIC_GLOBAL_VERSIONS,
-  publishedGlobalReadAccess,
 } from '@/lib/site/publishing'
 
 /**
@@ -18,9 +18,9 @@ export const SiteSettings: GlobalConfig = {
   versions: PUBLIC_GLOBAL_VERSIONS,
   access: {
     /** 前台默认仅读取已发布配置；后台用户仍可读取草稿与历史版本 */
-    read: publishedGlobalReadAccess,
-    /** 仅登录用户可在后台更新站点配置 */
-    update: authenticatedAccess,
+    read: marketingGlobalReadAccess,
+    /** 仅内容编辑与翻译角色可在后台更新站点配置 */
+    update: contentUpdateAccess,
   },
   admin: {
     group: '设置',

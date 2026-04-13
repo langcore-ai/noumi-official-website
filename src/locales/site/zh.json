@@ -5,6 +5,8 @@
     "socialPreviewSuffix": "社交分享预览图",
     "mainNavigation": "主导航",
     "languageSwitcher": "语言切换",
+    "resourceSearchLabel": "浏览文章、FAQ 与产品更新...",
+    "resourceSearchHint": "博客",
     "breadcrumb": "面包屑导航",
     "localeNames": {
       "en": "EN",

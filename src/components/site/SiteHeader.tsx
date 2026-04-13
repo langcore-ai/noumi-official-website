@@ -15,6 +15,9 @@ export function SiteHeader(props: {
   localeSwitcherLabel: string
   mainNavigationLabel: string
   navigation: SiteNavigationItem[]
+  resourceSearchHint: string
+  resourceSearchHref: string
+  resourceSearchLabel: string
   siteName?: string | null
   siteLogoAlt: string
   navCtaText?: string | null
@@ -26,6 +29,9 @@ export function SiteHeader(props: {
     localeSwitcherLabel,
     mainNavigationLabel,
     navigation,
+    resourceSearchHint,
+    resourceSearchHref,
+    resourceSearchLabel,
     siteName,
     siteLogoAlt,
     navCtaText,
@@ -64,11 +70,7 @@ export function SiteHeader(props: {
 
               return (
                 <li key={item.label} className="site-nav__item site-nav__item--has-menu">
-                  <button
-                    aria-haspopup="true"
-                    className="site-nav__trigger"
-                    type="button"
-                  >
+                  <button aria-haspopup="true" className="site-nav__trigger" type="button">
                     {item.label}
                     <span aria-hidden="true">▾</span>
                   </button>
@@ -85,17 +87,24 @@ export function SiteHeader(props: {
           </ul>
         </nav>
 
-        <div className="site-header__actions">
-          <SiteLanguageSwitcher
-            ariaLabel={localeSwitcherLabel}
-            labels={localeLabels}
-            locale={locale}
-          />
-          {navCtaLabel && navCtaLink ? (
-            <Link className="button button--solid site-header__cta" href={navCtaLink}>
-              {navCtaLabel}
-            </Link>
-          ) : null}
+        <div className="site-header__utilities">
+          <Link className="site-header__search" href={resourceSearchHref}>
+            <span className="site-header__search-copy">{resourceSearchLabel}</span>
+            <span className="site-header__search-hint">{resourceSearchHint}</span>
+          </Link>
+
+          <div className="site-header__actions">
+            <SiteLanguageSwitcher
+              ariaLabel={localeSwitcherLabel}
+              labels={localeLabels}
+              locale={locale}
+            />
+            {navCtaLabel && navCtaLink ? (
+              <Link className="button button--solid site-header__cta" href={navCtaLink}>
+                {navCtaLabel}
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>

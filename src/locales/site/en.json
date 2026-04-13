@@ -5,6 +5,8 @@
     "socialPreviewSuffix": "social preview",
     "mainNavigation": "Main navigation",
     "languageSwitcher": "Language switcher",
+    "resourceSearchLabel": "Browse articles, FAQs, and product updates...",
+    "resourceSearchHint": "Blog",
     "breadcrumb": "Breadcrumb",
     "localeNames": {
       "en": "EN",

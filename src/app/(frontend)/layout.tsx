@@ -101,6 +101,9 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
             navCtaHref={siteSettings.navCtaHref}
             navCtaText={siteSettings.navCtaText}
             navigation={mapNavigation(siteSettings)}
+            resourceSearchHint={dictionary.common.resourceSearchHint}
+            resourceSearchHref="/blog/"
+            resourceSearchLabel={dictionary.common.resourceSearchLabel}
             siteName={siteSettings.siteName}
             siteLogoAlt={getSiteLogoAlt(locale, siteSettings.siteName)}
           />

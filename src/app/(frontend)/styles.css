@@ -20,7 +20,6 @@
   --accent-gold: #ffcf5a;
   --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.4);
   --shadow-card: 0 30px 60px rgba(0, 0, 0, 0.42);
-  --max-width: 1560px;
   --radius-xs: 8px;
   --radius-sm: 16px;
   --radius-md: 22px;
@@ -80,7 +79,7 @@ summary:focus-visible {
 }
 
 .site-shell {
-  width: min(100% - clamp(32px, 4vw, 88px), var(--max-width));
+  width: calc(100% - clamp(48px, 6vw, 144px));
   margin: 0 auto;
 }
 
@@ -426,7 +425,6 @@ summary:focus-visible {
 .page__hero h1,
 .markdown-content h1 {
   margin: 24px 0 0;
-  max-width: 1120px;
   font-size: clamp(3.1rem, 7vw, 6.2rem);
   font-weight: 650;
   line-height: 0.95;
@@ -437,7 +435,6 @@ summary:focus-visible {
 .page__intro,
 .markdown-content p {
   margin: 16px 0 0;
-  max-width: 920px;
   font-size: 1.16rem;
   font-weight: 420;
   line-height: 1.65;
@@ -481,7 +478,7 @@ summary:focus-visible {
 .home-hero h1,
 .home-hero p,
 .home-hero .page__hero-actions {
-  max-width: 1320px;
+  max-width: none;
 }
 
 .home-hero .page__hero-actions {
@@ -490,10 +487,6 @@ summary:focus-visible {
 
 .home-hero__lead {
   font-size: clamp(1.24rem, 2vw, 1.7rem);
-}
-
-.home-hero__support {
-  max-width: 1020px;
 }
 
 .home-hero__grid {
@@ -593,7 +586,6 @@ summary:focus-visible {
 
 .section__header {
   margin-bottom: 34px;
-  max-width: 1240px;
 }
 
 .section__header--inline {
@@ -624,7 +616,6 @@ summary:focus-visible {
 
 .section__header p {
   margin: 12px 0 0;
-  max-width: 860px;
   font-size: 1.07rem;
   font-weight: 430;
   line-height: 1.72;
@@ -639,6 +630,32 @@ summary:focus-visible {
 .home-proof__grid {
   display: grid;
   gap: 20px;
+}
+
+.pretext-masonry {
+  position: relative;
+  width: 100%;
+}
+
+.pretext-masonry[data-ready='false'] {
+  display: grid;
+  gap: 20px;
+}
+
+.pretext-masonry[data-ready='false'] .pretext-masonry__item {
+  position: relative;
+}
+
+.pretext-masonry[data-ready='true'] .pretext-masonry__item,
+.pretext-masonry__sample {
+  position: absolute;
+  inset: auto auto auto 0;
+}
+
+.pretext-masonry__sample {
+  visibility: hidden;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .cards--2 {
@@ -661,13 +678,11 @@ summary:focus-visible {
 .faq-list details,
 .stat {
   position: relative;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
-    var(--page-bg-panel);
+  background: transparent;
   color: var(--ink);
   border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(245, 245, 245, 0.12);
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -677,13 +692,7 @@ summary:focus-visible {
 .feature-detail__summary::before,
 .faq-list details::before,
 .stat::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 26%);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  display: none;
 }
 
 .card:hover,
@@ -692,17 +701,8 @@ summary:focus-visible {
 .feature-detail__summary:hover,
 .faq-list details:hover,
 .stat:hover {
-  border-color: var(--line-bright);
+  border-color: rgba(245, 245, 245, 0.2);
   transform: translateY(-2px);
-}
-
-.card:hover::before,
-.panel:hover::before,
-.blog-card:hover::before,
-.feature-detail__summary:hover::before,
-.faq-list details:hover::before,
-.stat:hover::before {
-  opacity: 1;
 }
 
 .card,
@@ -719,6 +719,11 @@ summary:focus-visible {
 
 .card {
   padding: 32px;
+}
+
+.card > .page__eyebrow,
+.panel > .page__eyebrow {
+  margin-bottom: 18px;
 }
 
 .card h3,
@@ -1335,10 +1340,6 @@ summary:focus-visible {
   color: var(--ink-muted);
 }
 
-.article {
-  max-width: 1080px;
-}
-
 .article .panel,
 .legal-page .panel {
   box-shadow: none;
@@ -1549,7 +1550,7 @@ summary:focus-visible {
 
 @media (max-width: 860px) {
   .site-shell {
-    width: min(100% - 28px, var(--max-width));
+    width: calc(100% - 28px);
   }
 
   .site-header__inner {
@@ -1591,6 +1592,19 @@ summary:focus-visible {
   .site-footer__grid,
   .home-proof__grid {
     grid-template-columns: 1fr;
+  }
+
+  .pretext-masonry {
+    height: auto !important;
+    display: grid;
+    gap: 20px;
+  }
+
+  .pretext-masonry__item {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
   }
 
   .page__hero-actions {

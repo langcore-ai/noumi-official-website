@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 import { MarkdownContent } from '@/components/site/MarkdownContent'
+import { PretextMasonryCards } from '@/components/site/PretextMasonryCards'
 import { TypesetText } from '@/components/site/TypesetText'
 import type {
   CmsButtonView,
@@ -138,6 +139,10 @@ function renderCardGrid(section: CmsCardGridSectionView, locale?: string): React
     return <div className="stats">{section.cards.map((card) => renderStatCard(card, locale))}</div>
   }
 
+  if (section.style === 'default' && section.cards.length > 1) {
+    return <PretextMasonryCards cards={section.cards} columns={section.columns} locale={locale} />
+  }
+
   const cardsClassName = ['cards', `cards--${section.columns}`]
 
   if (section.style === 'steps') {
@@ -146,8 +151,8 @@ function renderCardGrid(section: CmsCardGridSectionView, locale?: string): React
 
   return (
     <div className={cardsClassName.join(' ')}>
-      {section.cards.map((card) => (
-        <article key={card.title} className="card">
+      {section.cards.map((card, index) => (
+        <article key={`${card.title}-${index}`} className="card">
           {card.eyebrow ? <span className="page__eyebrow">{card.eyebrow}</span> : null}
           <TypesetText as="h3" locale={locale} text={card.title} variant="cardTitle">
             {card.title}
@@ -246,15 +251,19 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                       ) : null}
                     </div>
                     <div className="panel-grid">
-                      {section.cards.map((card) => (
-                        <article key={card.title} className="panel">
-                          {card.eyebrow ? <span className="page__eyebrow">{card.eyebrow}</span> : null}
-                          <TypesetText as="h3" locale={locale} text={card.title} variant="cardTitle">
-                            {card.title}
-                          </TypesetText>
-                          {renderCardBody(card, locale)}
-                        </article>
-                      ))}
+                      {section.style === 'default' && section.cards.length > 1 ? (
+                        <PretextMasonryCards cards={section.cards} columns={section.columns} locale={locale} />
+                      ) : (
+                        section.cards.map((card, cardIndex) => (
+                          <article key={`${card.title}-${cardIndex}`} className="panel">
+                            {card.eyebrow ? <span className="page__eyebrow">{card.eyebrow}</span> : null}
+                            <TypesetText as="h3" locale={locale} text={card.title} variant="cardTitle">
+                              {card.title}
+                            </TypesetText>
+                            {renderCardBody(card, locale)}
+                          </article>
+                        ))
+                      )}
                     </div>
                   </div>
                 ) : (

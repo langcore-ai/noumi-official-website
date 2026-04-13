@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 import { PageSections } from '@/components/site/PageSections'
+import { PretextMasonryCards } from '@/components/site/PretextMasonryCards'
 import { StructuredData } from '@/components/site/StructuredData'
 import { TypesetText } from '@/components/site/TypesetText'
 import { getSiteDictionary } from '@/lib/site/i18n'
@@ -244,44 +245,34 @@ export default async function HomePage() {
               </TypesetText>
             ) : null}
           </div>
-          <div className={`cards cards--${homePage.problemsSection.columns} overview-grid`}>
-            {homePage.problemsSection.cards.map((problem, index) => (
-              <article key={problem.title} className="card overview-card">
+          <PretextMasonryCards
+            cards={homePage.problemsSection.cards}
+            columns={homePage.problemsSection.columns}
+            getItemClassName={() => 'overview-card'}
+            locale={locale}
+            renderCardContent={(problem, index) => (
+              <>
                 <span className="overview-card__index">{String(index + 1).padStart(2, '0')}</span>
                 <TypesetText as="h3" locale={locale} text={problem.title} variant="cardTitle">
                   {problem.title}
                 </TypesetText>
-                {(problem.body ? [problem.body] : [])
-                  .concat(problem.paragraphs)
-                  .map((paragraph) => (
-                    <TypesetText
-                      key={paragraph}
-                      as="p"
-                      locale={locale}
-                      text={paragraph}
-                      variant="body"
-                    >
-                      {paragraph}
-                    </TypesetText>
-                  ))}
+                {(problem.body ? [problem.body] : []).concat(problem.paragraphs).map((paragraph) => (
+                  <TypesetText key={paragraph} as="p" locale={locale} text={paragraph} variant="body">
+                    {paragraph}
+                  </TypesetText>
+                ))}
                 {problem.bullets.length > 0 ? (
                   <ul>
                     {problem.bullets.map((bullet) => (
-                      <TypesetText
-                        key={bullet}
-                        as="li"
-                        locale={locale}
-                        text={bullet}
-                        variant="listItem"
-                      >
+                      <TypesetText key={bullet} as="li" locale={locale} text={bullet} variant="listItem">
                         {bullet}
                       </TypesetText>
                     ))}
                   </ul>
                 ) : null}
-              </article>
-            ))}
-          </div>
+              </>
+            )}
+          />
         </section>
       ) : null}
 

@@ -25,6 +25,11 @@ import { PrivacyPage } from './globals/PrivacyPage'
 import { PricingPage } from './globals/PricingPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
+import {
+  buildLivePreviewURL,
+  LIVE_PREVIEW_COLLECTIONS,
+  LIVE_PREVIEW_GLOBALS,
+} from './lib/site/publishing'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -149,6 +154,17 @@ export default buildConfig({
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    livePreview: {
+      collections: [...LIVE_PREVIEW_COLLECTIONS],
+      globals: [...LIVE_PREVIEW_GLOBALS],
+      url: ({ collectionConfig, data, globalConfig, locale }) =>
+        buildLivePreviewURL({
+          collectionSlug: collectionConfig?.slug,
+          data,
+          globalSlug: globalConfig?.slug,
+          locale,
+        }),
     },
   },
   collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
-import { draftMode } from 'next/headers'
+import { draftMode, headers } from 'next/headers'
+import { PayloadLivePreviewListener } from './PayloadLivePreviewListener'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { getSiteDictionary, getSiteLogoAlt } from '@/lib/site/i18n'
@@ -41,6 +42,26 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
+ * 解析当前请求对应的站点 origin
+ * live preview 官方组件要求传入准确的 serverURL，用于校验 postMessage 来源。
+ * @returns 当前请求 origin；缺失时返回 null
+ */
+async function getLivePreviewServerURL(): Promise<null | string> {
+  const requestHeaders = await headers()
+  const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
+
+  if (!host) {
+    return null
+  }
+
+  const protocol =
+    requestHeaders.get('x-forwarded-proto') ??
+    (host.includes('localhost') || host.startsWith('127.0.0.1') ? 'http' : 'https')
+
+  return `${protocol}://${host}`
+}
+
+/**
  * 官网页面布局
  * @param props 子节点
  * @returns 前台统一壳层
@@ -49,6 +70,7 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
   const { children } = props
   const locale = await getRequestLocale()
   const preview = await draftMode()
+  const livePreviewServerURL = preview.isEnabled ? await getLivePreviewServerURL() : null
   const dictionary = getSiteDictionary(locale)
   const siteSettings = await getSiteSettings(locale)
 
@@ -56,6 +78,9 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
     <html lang={locale}>
       <body>
         <div className="site-root">
+          {preview.isEnabled && livePreviewServerURL ? (
+            <PayloadLivePreviewListener serverURL={livePreviewServerURL} />
+          ) : null}
           {preview.isEnabled ? (
             <div className="preview-banner">
               <div className="site-shell preview-banner__inner">

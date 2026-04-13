@@ -7,6 +7,7 @@
       "dependencies": {
         "@opennextjs/cloudflare": "^1.11.0",
         "@payloadcms/db-d1-sqlite": "^3.81.0",
+        "@payloadcms/live-preview-react": "3.81.0",
         "@payloadcms/next": "^3.81.0",
         "@payloadcms/plugin-redirects": "^3.81.0",
         "@payloadcms/plugin-seo": "^3.81.0",
@@ -551,6 +552,10 @@
     "@payloadcms/drizzle": ["@payloadcms/drizzle@3.81.0", "https://registry.npmmirror.com/@payloadcms/drizzle/-/drizzle-3.81.0.tgz", { "dependencies": { "console-table-printer": "2.12.1", "dequal": "2.0.3", "drizzle-orm": "0.44.7", "prompts": "2.4.2", "to-snake-case": "1.0.0", "uuid": "9.0.0" }, "peerDependencies": { "payload": "3.81.0" } }, "sha512-0hheoLFbxk1piSLtMaiTUc34HOhS3GOMnGw2hYJkYckrFMTjcJjM2nB4IEbRmk94CueS4LGitSt8xu7XwdZbkA=="],
 
     "@payloadcms/graphql": ["@payloadcms/graphql@3.81.0", "https://registry.npmmirror.com/@payloadcms/graphql/-/graphql-3.81.0.tgz", { "dependencies": { "graphql-scalars": "1.22.2", "pluralize": "8.0.0", "ts-essentials": "10.0.3", "tsx": "4.21.0" }, "peerDependencies": { "graphql": "16.13.2", "payload": "3.81.0" }, "bin": { "payload-graphql": "bin.js" } }, "sha512-zAgXxvyeciis1yKkAysSVv8Fe4RqsOj+6JcodQMtYekx668ByFUr2GTFoZ+M3U72PKHj4e4BxtOeXxd7Hf1IYw=="],
+
+    "@payloadcms/live-preview": ["@payloadcms/live-preview@3.81.0", "https://registry.npmmirror.com/@payloadcms/live-preview/-/live-preview-3.81.0.tgz", {}, "sha512-vi0j7slY1232m7SzatjuhSv3ZQewa8J+hRVQhGZ5qZBao58b5y1fgbjAJWINV9/fFx/juV0L772beK3AcO76FA=="],
+
+    "@payloadcms/live-preview-react": ["@payloadcms/live-preview-react@3.81.0", "https://registry.npmmirror.com/@payloadcms/live-preview-react/-/live-preview-react-3.81.0.tgz", { "dependencies": { "@payloadcms/live-preview": "3.81.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1", "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.1 || ^19.1.2 || ^19.2.1" } }, "sha512-yN8jaFPEPJB+gGrYbHQtRCAMm9rWJLTAaqaGuXuI4Epf3THrM2nNpDLiuELUKQAtZsieRpHhjpchKH6ftd1TyA=="],
 
     "@payloadcms/next": ["@payloadcms/next@3.81.0", "https://registry.npmmirror.com/@payloadcms/next/-/next-3.81.0.tgz", { "dependencies": { "@dnd-kit/core": "6.3.1", "@dnd-kit/modifiers": "9.0.0", "@dnd-kit/sortable": "10.0.0", "@payloadcms/graphql": "3.81.0", "@payloadcms/translations": "3.81.0", "@payloadcms/ui": "3.81.0", "busboy": "1.6.0", "dequal": "2.0.3", "file-type": "21.3.4", "graphql-http": "1.22.4", "graphql-playground-html": "1.6.30", "http-status": "2.1.0", "path-to-regexp": "6.3.0", "qs-esm": "8.0.1", "sass": "1.77.4", "uuid": "10.0.0" }, "peerDependencies": { "graphql": "16.13.2", "next": "16.2.2", "payload": "3.81.0" } }, "sha512-5ynclSrQDZ/lEFRj0AUnUcD3Q+wtFp3u6PRSZTvp0u3I4tkKfV6BcZbUAH+Vx9kGZcNv7wuIRTdn2Rqa9s5lhA=="],
 

@@ -76,16 +76,22 @@ export const marketingGlobalReadAccess = createPublishedGlobalReadAccess(CMS_CON
 /** 法律类全局配置的读取权限 */
 export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_UPDATE_ROLES)
 
+/** 支持 Payload live preview 的集合 slug 列表 */
+export const LIVE_PREVIEW_COLLECTIONS = ['blog-posts', 'feature-pages', 'use-case-pages'] as const
+/** 支持 Payload live preview 的全局配置 slug 列表 */
+export const LIVE_PREVIEW_GLOBALS = [
+  'home-page',
+  'about-page',
+  'privacy-page',
+  'pricing-page',
+  'terms-page',
+  'site-settings',
+] as const
+
 /** 支持预览的集合 slug */
-type PreviewCollectionSlug = 'blog-posts' | 'feature-pages' | 'use-case-pages'
+type PreviewCollectionSlug = (typeof LIVE_PREVIEW_COLLECTIONS)[number]
 /** 支持预览的全局 slug */
-type PreviewGlobalSlug =
-  | 'home-page'
-  | 'about-page'
-  | 'privacy-page'
-  | 'pricing-page'
-  | 'terms-page'
-  | 'site-settings'
+type PreviewGlobalSlug = (typeof LIVE_PREVIEW_GLOBALS)[number]
 
 /** 预览文档的最小结构 */
 type PreviewDoc = {
@@ -100,6 +106,24 @@ const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
   'pricing-page': '/pricing/',
   'terms-page': '/terms/',
   'site-settings': '/',
+}
+
+/**
+ * 判断当前 slug 是否属于可预览集合
+ * @param value 原始 slug
+ * @returns 是否为集合预览 slug
+ */
+function isPreviewCollectionSlug(value?: null | string): value is PreviewCollectionSlug {
+  return Boolean(value && LIVE_PREVIEW_COLLECTIONS.includes(value as PreviewCollectionSlug))
+}
+
+/**
+ * 判断当前 slug 是否属于可预览 global
+ * @param value 原始 slug
+ * @returns 是否为 global 预览 slug
+ */
+function isPreviewGlobalSlug(value?: null | string): value is PreviewGlobalSlug {
+  return Boolean(value && LIVE_PREVIEW_GLOBALS.includes(value as PreviewGlobalSlug))
 }
 
 /**
@@ -200,6 +224,42 @@ export function buildPreviewURL(args: {
   })
 
   return `/api/preview?${searchParams.toString()}`
+}
+
+/**
+ * 构建 Payload live preview 地址
+ * 复用现有草稿预览入口，让 iframe / popup 先进入 draft mode 后再加载真实页面。
+ * @param args live preview 参数
+ * @returns 可交给 Payload admin.livePreview 使用的 URL
+ */
+export function buildLivePreviewURL(args: {
+  collectionSlug?: null | string
+  data?: PreviewDoc
+  globalSlug?: null | string
+  locale?:
+    | null
+    | string
+    | {
+        code?: null | string
+      }
+}): null | string {
+  const locale = typeof args.locale === 'object' ? args.locale?.code : args.locale
+
+  if (isPreviewCollectionSlug(args.collectionSlug)) {
+    return buildPreviewURL({
+      locale,
+      path: getCollectionPreviewPath(args.collectionSlug, args.data ?? {}),
+    })
+  }
+
+  if (isPreviewGlobalSlug(args.globalSlug)) {
+    return buildPreviewURL({
+      locale,
+      path: getGlobalPreviewPath(args.globalSlug),
+    })
+  }
+
+  return null
 }
 
 /**

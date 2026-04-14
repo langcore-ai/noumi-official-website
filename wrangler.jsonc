@@ -18,8 +18,8 @@
   "d1_databases": [
     {
       "binding": "D1",
-      "database_id": "0bd6a440-8f78-4497-9bdf-d8fcb6b5a4f6",
-      "database_name": "noumi_offical_website",
+      "database_id": "ec017448-7655-4189-ba4d-ecbfd9cefcf7",
+      "database_name": "noumi-official-website",
       "remote": true,
     },
   ],

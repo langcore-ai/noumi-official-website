@@ -48,10 +48,12 @@ export function SiteFooter(props: {
             </section>
           ))}
         </div>
-      </div>
 
-      <div className="wrap footer__inner">
-        {footerCopyright ? <small>{footerCopyright}</small> : null}
+        {footerCopyright ? (
+          <div className="footer__meta">
+            <small>{footerCopyright}</small>
+          </div>
+        ) : null}
       </div>
     </footer>
   )

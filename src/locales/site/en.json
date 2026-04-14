@@ -1,0 +1,110 @@
+{
+  "common": {
+    "siteLogoAlt": "Site logo",
+    "siteLogoSuffix": "logo",
+    "socialPreviewSuffix": "social preview",
+    "mainNavigation": "Main navigation",
+    "languageSwitcher": "Language switcher",
+    "resourceSearchLabel": "Browse articles, FAQs, and product updates...",
+    "resourceSearchHint": "Blog",
+    "breadcrumb": "Breadcrumb",
+    "localeNames": {
+      "en": "EN",
+      "zh": "中文"
+    },
+    "brandName": "Noumi"
+  },
+  "home": {
+    "problemEyebrow": "The Problem",
+    "problemTitle": "AI breaks first where context matters most.",
+    "featuresEyebrow": "Core Features",
+    "featuresTitle": "Five capabilities, one compounding system.",
+    "exploreFeature": "Explore feature →",
+    "howItWorksEyebrow": "How It Works",
+    "howItWorksTitle": "Work once. Improve every cycle after that.",
+    "useCasesEyebrow": "Use Cases",
+    "useCasesTitle": "Built for long-horizon knowledge work.",
+    "viewUseCase": "View use case →",
+    "faqEyebrow": "FAQ",
+    "faqTitle": "Common questions about Noumi.",
+    "aboutEyebrow": "About",
+    "aboutTitle": "Context-rich AI starts with a strong product point of view.",
+    "missionTitle": "Mission",
+    "storyTitle": "Story",
+    "learnMore": "Learn more about Noumi →",
+    "nextStepEyebrow": "Next Step"
+  },
+  "about": {
+    "metadataTitle": "About Noumi",
+    "metadataDescription": "Learn more about the Noumi team and company context.",
+    "breadcrumb": "About",
+    "eyebrow": "Company",
+    "title": "About Noumi",
+    "missionTitle": "Mission",
+    "storyTitle": "Story",
+    "statsEyebrow": "Stats",
+    "statsTitle": "Selected company milestones.",
+    "recognitionEyebrow": "Recognition",
+    "recognitionTitle": "Recent awards and milestones.",
+    "contactEyebrow": "Contact",
+    "viewPricing": "View Pricing"
+  },
+  "pricing": {
+    "metadataTitle": "Pricing | Noumi",
+    "metadataDescription": "Pricing content managed in Payload.",
+    "breadcrumb": "Pricing",
+    "eyebrow": "Pricing",
+    "title": "Pricing",
+    "noteEyebrow": "Note",
+    "noteTitle": "Pricing notes",
+    "readFaqs": "Read FAQs",
+    "aboutNoumi": "About Noumi"
+  },
+  "blog": {
+    "metadataTitle": "Noumi Blog",
+    "metadataDescription": "Read the latest published Noumi articles.",
+    "breadcrumb": "Blog",
+    "eyebrow": "Resources",
+    "title": "Noumi Blog",
+    "intro": "Published articles managed directly in Payload.",
+    "readArticle": "Read article →"
+  },
+  "faq": {
+    "metadataTitle": "FAQs | Noumi",
+    "metadataDescription": "Browse FAQ content managed in Payload.",
+    "breadcrumb": "FAQs",
+    "eyebrow": "Resources",
+    "title": "Frequently asked questions",
+    "moreEyebrow": "More",
+    "moreTitle": "Need a deeper product view?",
+    "exploreFeatures": "Explore Features",
+    "readBlog": "Read the Blog"
+  },
+  "features": {
+    "breadcrumb": "Features",
+    "summaryTitle": "Summary",
+    "relatedEyebrow": "Related Features",
+    "relatedTitle": "More capabilities from Noumi.",
+    "viewDetail": "View detail →",
+    "ctaEyebrow": "CTA",
+    "getStarted": "Get Started Free",
+    "readFaqs": "Read FAQs"
+  },
+  "useCases": {
+    "breadcrumb": "Use Cases",
+    "painPointsEyebrow": "Pain Points",
+    "painPointsTitle": "Why this role outgrows stateless AI quickly.",
+    "relatedEyebrow": "Related Features",
+    "relatedTitle": "Capabilities most relevant to this role.",
+    "exploreFeature": "Explore feature →"
+  },
+  "legal": {
+    "privacyMetadataTitle": "Privacy Policy | Noumi",
+    "privacyMetadataDescription": "Read the latest privacy policy managed in Payload.",
+    "privacyTitle": "Privacy Policy",
+    "termsMetadataTitle": "Terms of Service | Noumi",
+    "termsMetadataDescription": "Read the latest terms of service managed in Payload.",
+    "termsTitle": "Terms of Service",
+    "eyebrow": "Legal"
+  }
+}

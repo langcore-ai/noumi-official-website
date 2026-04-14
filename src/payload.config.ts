@@ -10,17 +10,34 @@ import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
+import { en as enTranslations } from '@payloadcms/translations/languages/en'
+import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { BlogPosts } from './collections/BlogPosts'
+import { FeaturePages } from './collections/FeaturePages'
+import { UseCasePages } from './collections/UseCasePages'
+import { FaqItems } from './collections/FaqItems'
+import { AboutPage } from './globals/AboutPage'
+import { HomePage } from './globals/HomePage'
+import { PrivacyPage } from './globals/PrivacyPage'
+import { PricingPage } from './globals/PricingPage'
 import { SiteSettings } from './globals/SiteSettings'
+import { TermsPage } from './globals/TermsPage'
+import {
+  buildLivePreviewURL,
+  ENABLE_PAYLOAD_LIVE_PREVIEW,
+  LIVE_PREVIEW_COLLECTIONS,
+  LIVE_PREVIEW_GLOBALS,
+} from './lib/site/publishing'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
 
 /** 是否正在通过 Payload CLI 执行命令 */
-const isCLI = process.argv.some((value) => realpath(value).endsWith(path.join('payload', 'bin.js')))
+const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
 /** 是否是 Next.js 生产构建阶段 */
 const isNextBuild =
   process.env.NEXT_PHASE === 'phase-production-build' ||
@@ -29,8 +46,8 @@ const isNextBuild =
     process.argv.includes('build'))
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
-/** redirects 插件可引用的内部集合；当前站点尚未接入页面内容集合 */
-const redirectTargetCollections: string[] = []
+/** redirects 插件可引用的内部集合 */
+const redirectTargetCollections: string[] = [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug]
 
 /**
  * 创建结构化日志方法
@@ -67,7 +84,7 @@ const payloadSecret = getPayloadSecret(cloudflare)
  * @returns 适配当前站点的跳转字段列表
  */
 function getRedirectFields(defaultFields: Field[]): Field[] {
-  // 尚无页面类集合时，只保留自定义 URL 跳转，避免 relationship 字段出现空 relationTo
+  // 若后续再次缩减页面集合，这里仍保留兜底逻辑，避免 relationship 字段出现空 relationTo
   if (redirectTargetCollections.length > 0) {
     return defaultFields
   }
@@ -139,15 +156,60 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    livePreview: ENABLE_PAYLOAD_LIVE_PREVIEW
+      ? {
+          collections: [...LIVE_PREVIEW_COLLECTIONS],
+          globals: [...LIVE_PREVIEW_GLOBALS],
+          url: ({ collectionConfig, data, globalConfig, locale }) =>
+            buildLivePreviewURL({
+              collectionSlug: collectionConfig?.slug,
+              data,
+              globalSlug: globalConfig?.slug,
+              locale,
+            }),
+        }
+      : undefined,
   },
-  collections: [Users, Media],
-  globals: [SiteSettings],
+  collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],
+  globals: [SiteSettings, HomePage, AboutPage, PricingPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
+  i18n: {
+    fallbackLanguage: 'zh',
+    supportedLanguages: {
+      en: enTranslations,
+      zh: zhTranslations,
+    },
+  },
+  localization: {
+    defaultLocale: 'en',
+    fallback: true,
+    locales: [
+      {
+        code: 'en',
+        label: {
+          en: 'English',
+          zh: '英文',
+        },
+      },
+      {
+        code: 'zh',
+        fallbackLocale: 'en',
+        label: {
+          en: 'Chinese',
+          zh: '中文',
+        },
+      },
+    ],
+  },
   secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
+  db: sqliteD1Adapter({
+    binding: cloudflare.env.D1,
+    // 本项目以 migration 为准，避免 dev 模式再次自动推送 schema 与正式迁移互相冲突。
+    push: false,
+  }),
   logger: isProduction ? cloudflareLogger : undefined,
   plugins: [
     r2Storage({
@@ -156,6 +218,7 @@ export default buildConfig({
     }),
     seoPlugin({
       globals: [SiteSettings.slug],
+      collections: [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug],
       uploadsCollection: Media.slug,
       tabbedUI: true,
       generateTitle: ({ doc }) => {

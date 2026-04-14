@@ -94,24 +94,18 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
             </div>
           ) : null}
           <SiteHeader
-            locale={locale}
-            localeLabels={dictionary.common.localeNames}
-            localeSwitcherLabel={dictionary.common.languageSwitcher}
             mainNavigationLabel={dictionary.common.mainNavigation}
             navCtaHref={siteSettings.navCtaHref}
             navCtaText={siteSettings.navCtaText}
             navigation={mapNavigation(siteSettings)}
-            resourceSearchHint={dictionary.common.resourceSearchHint}
-            resourceSearchHref="/blog/"
-            resourceSearchLabel={dictionary.common.resourceSearchLabel}
             siteName={siteSettings.siteName}
             siteLogoAlt={getSiteLogoAlt(locale, siteSettings.siteName)}
           />
           <main className="site-main">{children}</main>
           <SiteFooter
             columns={mapFooterColumns(siteSettings)}
-            copyright={siteSettings.footerCopyright}
             description={siteSettings.footerDescription}
+            copyright={siteSettings.footerCopyright}
             siteName={siteSettings.siteName}
             siteLogoAlt={getSiteLogoAlt(locale, siteSettings.siteName)}
           />

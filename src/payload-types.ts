@@ -360,6 +360,192 @@ export interface BlogPost {
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
             headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -541,6 +727,192 @@ export interface FeaturePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
             /**
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
@@ -728,6 +1100,192 @@ export interface UseCasePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
             /**
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
@@ -1150,6 +1708,158 @@ export interface BlogPostsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -1157,6 +1867,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -1301,6 +2012,158 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -1308,6 +2171,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -1454,6 +2318,158 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -1461,6 +2477,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -1826,6 +2843,192 @@ export interface HomePage {
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
             headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -1996,6 +3199,192 @@ export interface AboutPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
             /**
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
@@ -2174,6 +3563,192 @@ export interface PricingPage {
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
             headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -2348,6 +3923,192 @@ export interface PrivacyPage {
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
             headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -2518,6 +4279,192 @@ export interface TermsPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  eyebrow: string;
+                  title: string;
+                  lead?: string | null;
+                  body?: string | null;
+                  bullets?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  linkLabel?: string | null;
+                  linkHref?: string | null;
+                  visualVariant:
+                    | 'persistentMemory'
+                    | 'autonomousExecution'
+                    | 'selfEvolvingSkills'
+                    | 'intelligentFileSearch'
+                    | 'intentAlignment';
+                  reversed?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feature-showcase';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            steps?:
+              | {
+                  /**
+                   * 可选；未填写时前台自动按顺序生成 01/02/03。
+                   */
+                  label?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'process-steps';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            style?: ('tiers' | 'memory') | null;
+            entries?:
+              | {
+                  badge?: string | null;
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            panelTitle?: string | null;
+            panelItems?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'split-panel';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            items?:
+              | {
+                  role: string;
+                  title: string;
+                  paragraphs?:
+                    | {
+                        text: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  result?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'use-case-grid';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            missionTitle?: string | null;
+            missionLead?: string | null;
+            missionBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            storyTitle?: string | null;
+            storyLead?: string | null;
+            storyBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            recognitionTitle?: string | null;
+            recognitions?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactTitle?: string | null;
+            contactBody?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            contactLinkLabel?: string | null;
+            contactLinkHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'company-overview';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            description?: string | null;
+            footnote?: string | null;
             /**
              * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
              */
@@ -2718,6 +4665,158 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -2725,6 +4824,7 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -2863,6 +4963,158 @@ export interface AboutPageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -2870,6 +5122,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -3008,6 +5261,158 @@ export interface PricingPageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -3015,6 +5420,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -3153,6 +5559,158 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -3160,6 +5718,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
@@ -3298,6 +5857,158 @@ export interface TermsPageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'feature-showcase'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    eyebrow?: T;
+                    title?: T;
+                    lead?: T;
+                    body?: T;
+                    bullets?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    linkLabel?: T;
+                    linkHref?: T;
+                    visualVariant?: T;
+                    reversed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'process-steps'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'split-panel'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              style?: T;
+              entries?:
+                | T
+                | {
+                    badge?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              panelTitle?: T;
+              panelItems?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'use-case-grid'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              description?: T;
+              headerAlignment?: T;
+              items?:
+                | T
+                | {
+                    role?: T;
+                    title?: T;
+                    paragraphs?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                        };
+                    result?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'company-overview'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              subtitle?: T;
+              headerAlignment?: T;
+              missionTitle?: T;
+              missionLead?: T;
+              missionBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              storyTitle?: T;
+              storyLead?: T;
+              storyBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              recognitionTitle?: T;
+              recognitions?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactTitle?: T;
+              contactBody?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              contactLinkLabel?: T;
+              contactLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
         'cta-section'?:
           | T
           | {
@@ -3305,6 +6016,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              footnote?: T;
               headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;

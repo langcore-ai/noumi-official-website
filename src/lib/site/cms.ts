@@ -105,6 +105,69 @@ export type CmsCardView = {
 }
 
 /**
+ * 功能展示条目
+ */
+export type CmsFeatureShowcaseItemView = {
+  /** 角标 */
+  eyebrow: string
+  /** 标题 */
+  title: string
+  /** 导语 */
+  lead?: string
+  /** 正文 */
+  body?: string
+  /** 列表 */
+  bullets: string[]
+  /** 链接文案 */
+  linkLabel?: string
+  /** 链接地址 */
+  linkHref?: string
+  /** 图示样式 */
+  visualVariant:
+    | 'persistentMemory'
+    | 'autonomousExecution'
+    | 'selfEvolvingSkills'
+    | 'intelligentFileSearch'
+    | 'intentAlignment'
+  /** 是否反向排版 */
+  reversed: boolean
+}
+
+/**
+ * 流程步骤条目
+ */
+export type CmsProcessStepView = {
+  /** 编号 */
+  label?: string
+  /** 标题 */
+  title: string
+  /** 正文 */
+  body: string
+}
+
+/**
+ * 左侧条目视图
+ */
+export type CmsSplitPanelEntryView = {
+  /** 徽标 */
+  badge?: string
+  /** 标题 */
+  title: string
+  /** 正文 */
+  body: string
+}
+
+/**
+ * 统计项视图
+ */
+export type CmsStatItemView = {
+  /** 数值 */
+  value: string
+  /** 标签 */
+  label: string
+}
+
+/**
  * 富文本 section 视图
  */
 export type CmsRichTextSectionView = {
@@ -194,6 +257,8 @@ export type CmsCtaSectionView = {
   title?: string
   /** 描述 */
   description?: string
+  /** 尾注 */
+  footnote?: string
   /** 头部对齐方式 */
   headerAlignment?: CmsSectionHeaderAlignment
   /** 主按钮 */
@@ -221,12 +286,156 @@ export type CmsMarkdownDocumentSectionView = {
 }
 
 /**
+ * 功能展示 section 视图
+ */
+export type CmsFeatureShowcaseSectionView = {
+  /** 分节类型 */
+  type: 'featureShowcase'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
+  /** 功能条目 */
+  items: CmsFeatureShowcaseItemView[]
+}
+
+/**
+ * 流程步骤 section 视图
+ */
+export type CmsProcessStepsSectionView = {
+  /** 分节类型 */
+  type: 'processSteps'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
+  /** 流程步骤 */
+  steps: CmsProcessStepView[]
+}
+
+/**
+ * 左右分栏 section 视图
+ */
+export type CmsSplitPanelSectionView = {
+  /** 分节类型 */
+  type: 'splitPanel'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
+  /** 呈现风格 */
+  style: 'tiers' | 'memory'
+  /** 左侧条目 */
+  entries: CmsSplitPanelEntryView[]
+  /** 右侧面板标题 */
+  panelTitle?: string
+  /** 右侧条目 */
+  panelItems: string[]
+}
+
+/**
+ * Use Case 网格 section 视图
+ */
+export type CmsUseCaseGridSectionView = {
+  /** 分节类型 */
+  type: 'useCaseGrid'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
+  /** 用例条目 */
+  items: Array<{
+    /** 角色 */
+    role: string
+    /** 标题 */
+    title: string
+    /** 段落 */
+    paragraphs: string[]
+    /** 结果总结 */
+    result?: string
+    /** 跳转链接 */
+    href?: string
+  }>
+}
+
+/**
+ * 公司概览 section 视图
+ */
+export type CmsCompanyOverviewSectionView = {
+  /** 分节类型 */
+  type: 'companyOverview'
+  /** 稳定槽位标识 */
+  slotKey?: string
+  /** 可选角标 */
+  label?: string
+  /** 标题 */
+  title?: string
+  /** 副标题 */
+  subtitle?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
+  /** 使命标题 */
+  missionTitle?: string
+  /** 使命导语 */
+  missionLead?: string
+  /** 使命段落 */
+  missionParagraphs: string[]
+  /** 故事标题 */
+  storyTitle?: string
+  /** 故事导语 */
+  storyLead?: string
+  /** 故事段落 */
+  storyParagraphs: string[]
+  /** 统计项 */
+  stats: CmsStatItemView[]
+  /** 荣誉标题 */
+  recognitionTitle?: string
+  /** 荣誉列表 */
+  recognitionItems: string[]
+  /** 联系标题 */
+  contactTitle?: string
+  /** 联系段落 */
+  contactParagraphs: string[]
+  /** 联系链接 */
+  contactLink?: CmsButtonView
+}
+
+/**
  * 营销页通用分节视图
  */
 export type CmsPageSectionView =
   | CmsRichTextSectionView
   | CmsCardGridSectionView
   | CmsBulletListSectionView
+  | CmsFeatureShowcaseSectionView
+  | CmsProcessStepsSectionView
+  | CmsSplitPanelSectionView
+  | CmsUseCaseGridSectionView
+  | CmsCompanyOverviewSectionView
   | CmsCtaSectionView
   | CmsMarkdownDocumentSectionView
 
@@ -252,10 +461,18 @@ type CmsBasicPageView = {
 export type HomePageView = CmsBasicPageView & {
   /** 首页问题区 */
   problemsSection: CmsCardGridSectionView | null
-  /** 首页功能导语 */
-  featureIntroSection: CmsRichTextSectionView | null
+  /** 首页功能展示 */
+  featureShowcaseSection: CmsFeatureShowcaseSectionView | null
   /** 首页工作方式 */
-  howItWorksSection: CmsCardGridSectionView | null
+  howItWorksSection: CmsProcessStepsSectionView | null
+  /** 首页 Use Case 区 */
+  useCaseGridSection: CmsUseCaseGridSectionView | null
+  /** 首页 Skills 区 */
+  skillsSection: CmsSplitPanelSectionView | null
+  /** 首页 Memory 区 */
+  memorySection: CmsSplitPanelSectionView | null
+  /** 首页 FAQ 头部 */
+  faqIntroSection: CmsRichTextSectionView | null
   /** 首页底部行动区 */
   finalCtaSection: CmsCtaSectionView | null
 }
@@ -390,14 +607,35 @@ type RawSectionBlock = {
   title?: null | string
   /** 描述 */
   description?: null | string
+  /** 尾注 */
+  footnote?: null | string
   /** 头部对齐方式 */
   headerAlignment?: null | string
   /** 段落 */
   paragraphs?: Array<{ text?: null | string } | null> | null
   /** 列表 */
   bullets?: Array<{ text?: null | string } | null> | null
-  /** 通用条目 */
-  items?: Array<{ text?: null | string } | null> | null
+  items?:
+    | Array<
+        | { text?: null | string }
+        | {
+            eyebrow?: null | string
+            role?: null | string
+            title?: null | string
+            lead?: null | string
+            body?: null | string
+            bullets?: Array<{ text?: null | string } | null> | null
+            paragraphs?: Array<{ text?: null | string } | null> | null
+            result?: null | string
+            href?: null | string
+            linkLabel?: null | string
+            linkHref?: null | string
+            visualVariant?: null | string
+            reversed?: null | boolean
+          }
+        | null
+      >
+    | null
   /** Markdown */
   markdown?: null | string
   /** 视觉样式 */
@@ -427,6 +665,68 @@ type RawSectionBlock = {
   secondaryCtaLabel?: null | string
   /** 次按钮链接 */
   secondaryCtaHref?: null | string
+  /** 步骤列表 */
+  steps?:
+    | Array<
+        | {
+            label?: null | string
+            title?: null | string
+            body?: null | string
+          }
+        | null
+      >
+    | null
+  /** 左侧条目 */
+  entries?:
+    | Array<
+        | {
+            badge?: null | string
+            title?: null | string
+            body?: null | string
+          }
+        | null
+      >
+    | null
+  /** 右侧面板标题 */
+  panelTitle?: null | string
+  /** 右侧面板条目 */
+  panelItems?: Array<{ text?: null | string } | null> | null
+  /** 副标题 */
+  subtitle?: null | string
+  /** 使命标题 */
+  missionTitle?: null | string
+  /** 使命导语 */
+  missionLead?: null | string
+  /** 使命段落 */
+  missionBody?: Array<{ text?: null | string } | null> | null
+  /** 故事标题 */
+  storyTitle?: null | string
+  /** 故事导语 */
+  storyLead?: null | string
+  /** 故事段落 */
+  storyBody?: Array<{ text?: null | string } | null> | null
+  /** 统计项 */
+  stats?:
+    | Array<
+        | {
+            value?: null | string
+            label?: null | string
+          }
+        | null
+      >
+    | null
+  /** 荣誉标题 */
+  recognitionTitle?: null | string
+  /** 荣誉列表 */
+  recognitions?: Array<{ text?: null | string } | null> | null
+  /** 联系标题 */
+  contactTitle?: null | string
+  /** 联系段落 */
+  contactBody?: Array<{ text?: null | string } | null> | null
+  /** 联系链接文案 */
+  contactLinkLabel?: null | string
+  /** 联系链接地址 */
+  contactLinkHref?: null | string
 }
 
 /**
@@ -596,6 +896,144 @@ function mapCards(
 }
 
 /**
+ * 映射功能展示条目
+ * @param items 原始条目
+ * @returns 可渲染功能条目
+ */
+function mapFeatureShowcaseItems(items?: RawSectionBlock['items']): CmsFeatureShowcaseItemView[] {
+  return (items ?? [])
+    .flatMap((item) => {
+      const eyebrow = normalizeText(item && 'eyebrow' in item ? item.eyebrow : undefined)
+      const title = normalizeText(item && 'title' in item ? item.title : undefined)
+      const visualVariant = item && 'visualVariant' in item ? item.visualVariant : undefined
+
+      if (!eyebrow || !title) {
+        return []
+      }
+
+      if (
+        visualVariant !== 'persistentMemory' &&
+        visualVariant !== 'autonomousExecution' &&
+        visualVariant !== 'selfEvolvingSkills' &&
+        visualVariant !== 'intelligentFileSearch' &&
+        visualVariant !== 'intentAlignment'
+      ) {
+        return []
+      }
+
+      return [
+        {
+          eyebrow,
+          title,
+          lead: normalizeText('lead' in item ? item.lead : undefined),
+          body: normalizeText('body' in item ? item.body : undefined),
+          bullets: extractTextArray('bullets' in item ? item.bullets : undefined),
+          linkLabel: normalizeText('linkLabel' in item ? item.linkLabel : undefined),
+          linkHref: normalizeText('linkHref' in item ? item.linkHref : undefined),
+          visualVariant,
+          reversed: Boolean('reversed' in item ? item.reversed : false),
+        },
+      ]
+    })
+}
+
+/**
+ * 映射流程步骤
+ * @param steps 原始步骤
+ * @returns 可渲染步骤
+ */
+function mapProcessSteps(steps?: RawSectionBlock['steps']): CmsProcessStepView[] {
+  return (steps ?? [])
+    .flatMap((step) => {
+      const title = normalizeText(step?.title)
+      const body = normalizeText(step?.body)
+
+      if (!title || !body) {
+        return []
+      }
+
+      return [
+        {
+          label: normalizeText(step?.label),
+          title,
+          body,
+        },
+      ]
+    })
+}
+
+/**
+ * 映射左右分栏左侧条目
+ * @param entries 原始条目
+ * @returns 可渲染条目
+ */
+function mapSplitPanelEntries(entries?: RawSectionBlock['entries']): CmsSplitPanelEntryView[] {
+  return (entries ?? [])
+    .flatMap((entry) => {
+      const title = normalizeText(entry?.title)
+      const body = normalizeText(entry?.body)
+
+      if (!title || !body) {
+        return []
+      }
+
+      return [
+        {
+          badge: normalizeText(entry?.badge),
+          title,
+          body,
+        },
+      ]
+    })
+}
+
+/**
+ * 映射 Use Case 条目
+ * @param items 原始条目
+ * @returns 可渲染条目
+ */
+function mapUseCaseItems(items?: RawSectionBlock['items']): CmsUseCaseGridSectionView['items'] {
+  return (items ?? [])
+    .flatMap((item) => {
+      const role = normalizeText(item && 'role' in item ? item.role : undefined)
+      const title = normalizeText(item && 'title' in item ? item.title : undefined)
+
+      if (!role || !title) {
+        return []
+      }
+
+      return [
+        {
+          role,
+          title,
+          paragraphs: extractTextArray('paragraphs' in item ? item.paragraphs : undefined),
+          result: normalizeText('result' in item ? item.result : undefined),
+          href: normalizeText('href' in item ? item.href : undefined),
+        },
+      ]
+    })
+}
+
+/**
+ * 映射公司统计项
+ * @param stats 原始统计项
+ * @returns 可渲染统计项
+ */
+function mapStats(stats?: RawSectionBlock['stats']): CmsStatItemView[] {
+  return (stats ?? [])
+    .flatMap((item) => {
+      const value = normalizeText(item?.value)
+      const label = normalizeText(item?.label)
+
+      if (!value || !label) {
+        return []
+      }
+
+      return [{ value, label }]
+    })
+}
+
+/**
  * 解析卡片分节列数
  * @param value 原始列数
  * @returns 可渲染列数
@@ -633,6 +1071,15 @@ function normalizeSectionHeaderAlignment(
   }
 
   return undefined
+}
+
+/**
+ * 解析左右分栏 section 风格
+ * @param value 原始风格
+ * @returns 可渲染风格
+ */
+function normalizeSplitPanelStyle(value?: null | string): CmsSplitPanelSectionView['style'] {
+  return value === 'memory' ? 'memory' : 'tiers'
 }
 
 /**
@@ -704,7 +1151,10 @@ function mapSections(
           } satisfies CmsCardGridSectionView
         }
         case 'bullet-list-section': {
-          const items = extractTextArray(section.items)
+          // 该 block 在后台仅允许录入简单文本项，这里显式收窄联合类型，避免构建期误判。
+          const items = extractTextArray(
+            section.items as Array<{ text?: null | string } | null> | null | undefined,
+          )
 
           if (!label && !title && !description && items.length === 0) {
             return null
@@ -721,6 +1171,123 @@ function mapSections(
             style: section.style === 'plain' ? 'plain' : 'panel',
           } satisfies CmsBulletListSectionView
         }
+        case 'feature-showcase': {
+          const items = mapFeatureShowcaseItems(section.items)
+
+          if (!label && !title && !description && items.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'featureShowcase',
+            slotKey,
+            label,
+            title,
+            description,
+            headerAlignment,
+            items,
+          } satisfies CmsFeatureShowcaseSectionView
+        }
+        case 'process-steps': {
+          const steps = mapProcessSteps(section.steps)
+
+          if (!label && !title && !description && steps.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'processSteps',
+            slotKey,
+            label,
+            title,
+            description,
+            headerAlignment,
+            steps,
+          } satisfies CmsProcessStepsSectionView
+        }
+        case 'split-panel': {
+          const entries = mapSplitPanelEntries(section.entries)
+          const panelItems = extractTextArray(section.panelItems)
+
+          if (!label && !title && !description && entries.length === 0 && panelItems.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'splitPanel',
+            slotKey,
+            label,
+            title,
+            description,
+            headerAlignment,
+            style: normalizeSplitPanelStyle(section.style),
+            entries,
+            panelTitle: normalizeText(section.panelTitle),
+            panelItems,
+          } satisfies CmsSplitPanelSectionView
+        }
+        case 'use-case-grid': {
+          const items = mapUseCaseItems(section.items)
+
+          if (!label && !title && !description && items.length === 0) {
+            return null
+          }
+
+          return {
+            type: 'useCaseGrid',
+            slotKey,
+            label,
+            title,
+            description,
+            headerAlignment,
+            items,
+          } satisfies CmsUseCaseGridSectionView
+        }
+        case 'company-overview': {
+          const missionParagraphs = extractTextArray(section.missionBody)
+          const storyParagraphs = extractTextArray(section.storyBody)
+          const recognitionItems = extractTextArray(section.recognitions)
+          const contactParagraphs = extractTextArray(section.contactBody)
+          const stats = mapStats(section.stats)
+          const contactLink = mapButton(section.contactLinkLabel, section.contactLinkHref)
+
+          if (
+            !label &&
+            !title &&
+            !section.subtitle &&
+            !section.missionTitle &&
+            !section.storyTitle &&
+            missionParagraphs.length === 0 &&
+            storyParagraphs.length === 0 &&
+            stats.length === 0 &&
+            recognitionItems.length === 0 &&
+            contactParagraphs.length === 0 &&
+            !contactLink
+          ) {
+            return null
+          }
+
+          return {
+            type: 'companyOverview',
+            slotKey,
+            label,
+            title,
+            subtitle: normalizeText(section.subtitle),
+            headerAlignment,
+            missionTitle: normalizeText(section.missionTitle),
+            missionLead: normalizeText(section.missionLead),
+            missionParagraphs,
+            storyTitle: normalizeText(section.storyTitle),
+            storyLead: normalizeText(section.storyLead),
+            storyParagraphs,
+            stats,
+            recognitionTitle: normalizeText(section.recognitionTitle),
+            recognitionItems,
+            contactTitle: normalizeText(section.contactTitle),
+            contactParagraphs,
+            contactLink,
+          } satisfies CmsCompanyOverviewSectionView
+        }
         case 'cta-section': {
           const primaryCta = mapButton(section.primaryCtaLabel, section.primaryCtaHref)
           const secondaryCta = mapButton(section.secondaryCtaLabel, section.secondaryCtaHref)
@@ -735,6 +1302,7 @@ function mapSections(
             label,
             title,
             description,
+            footnote: normalizeText(section.footnote),
             headerAlignment,
             primaryCta,
             secondaryCta,
@@ -892,8 +1460,12 @@ export async function getHomePage(locale: SiteLocale = DEFAULT_CONTENT_LOCALE): 
   return {
     ...baseView,
     problemsSection: findSectionBySlot(baseView.sections, 'home-problems', 'cardGrid'),
-    featureIntroSection: findSectionBySlot(baseView.sections, 'home-feature-intro', 'richText'),
-    howItWorksSection: findSectionBySlot(baseView.sections, 'home-how-it-works', 'cardGrid'),
+    featureShowcaseSection: findSectionBySlot(baseView.sections, 'home-features', 'featureShowcase'),
+    howItWorksSection: findSectionBySlot(baseView.sections, 'home-how-it-works', 'processSteps'),
+    useCaseGridSection: findSectionBySlot(baseView.sections, 'home-use-cases', 'useCaseGrid'),
+    skillsSection: findSectionBySlot(baseView.sections, 'home-skills', 'splitPanel'),
+    memorySection: findSectionBySlot(baseView.sections, 'home-memory', 'splitPanel'),
+    faqIntroSection: findSectionBySlot(baseView.sections, 'home-faq-intro', 'richText'),
     finalCtaSection: findSectionBySlot(baseView.sections, 'home-final-cta', 'cta'),
   }
 }

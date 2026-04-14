@@ -1,8 +1,6 @@
 import Link from 'next/link'
 
-import { SiteLanguageSwitcher } from '@/components/site/SiteLanguageSwitcher'
 import type { SiteNavigationItem } from '@/lib/site/cms'
-import type { SiteLocale } from '@/lib/site/i18n'
 
 /**
  * 官网头部导航
@@ -10,103 +8,62 @@ import type { SiteLocale } from '@/lib/site/i18n'
  * @returns 顶部导航栏
  */
 export function SiteHeader(props: {
-  locale: SiteLocale
-  localeLabels: Record<SiteLocale, string>
-  localeSwitcherLabel: string
   mainNavigationLabel: string
   navigation: SiteNavigationItem[]
-  resourceSearchHint: string
-  resourceSearchHref: string
-  resourceSearchLabel: string
   siteName?: string | null
   siteLogoAlt: string
   navCtaText?: string | null
   navCtaHref?: string | null
 }) {
-  const {
-    locale,
-    localeLabels,
-    localeSwitcherLabel,
-    mainNavigationLabel,
-    navigation,
-    resourceSearchHint,
-    resourceSearchHref,
-    resourceSearchLabel,
-    siteName,
-    siteLogoAlt,
-    navCtaText,
-    navCtaHref,
-  } = props
+  const { mainNavigationLabel, navigation, siteName, siteLogoAlt, navCtaText, navCtaHref } = props
   const siteNameText = siteName?.trim()
   const navCtaLabel = navCtaText?.trim()
   const navCtaLink = navCtaHref?.trim()
 
   return (
-    <header className="site-header" data-site-header>
-      <div className="site-shell site-header__inner">
-        <Link className="site-brand" href="/">
-          <img
-            alt={siteLogoAlt}
-            className="site-brand__logo"
-            height="40"
-            src="/Noumi-Logo.svg"
-            width="40"
-          />
-          {siteNameText ? <span className="site-brand__wordmark">{siteNameText}</span> : null}
+    <nav className="nav" aria-label={mainNavigationLabel} data-site-header>
+      <div className="wrap nav__inner">
+        <Link className="nav__logo" href="/" aria-label={`${siteNameText || 'Noumi'} homepage`}>
+          <img alt={siteLogoAlt} className="nav__logo-mark" height="28" src="/Noumi-Logo.svg" width="28" />
+          {siteNameText ? <span className="nav__wordmark">{siteNameText}</span> : null}
         </Link>
 
-        <nav aria-label={mainNavigationLabel} className="site-nav">
-          <ul className="site-nav__list">
-            {navigation.map((item) => {
-              if (!item.children?.length) {
-                return (
-                  <li key={item.label} className="site-nav__item">
-                    <Link className="site-nav__link" href={item.href ?? '/'}>
-                      {item.label}
-                    </Link>
-                  </li>
-                )
-              }
-
+        <ul className="nav__links">
+          {navigation.map((item) => {
+            if (!item.children?.length) {
               return (
-                <li key={item.label} className="site-nav__item site-nav__item--has-menu">
-                  <button aria-haspopup="true" className="site-nav__trigger" type="button">
-                    {item.label}
-                    <span aria-hidden="true">▾</span>
-                  </button>
-                  <div className="site-nav__menu">
-                    {item.children.map((child) => (
-                      <Link key={child.href} className="site-nav__menu-link" href={child.href}>
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
+                <li key={item.label} className="nav__item">
+                  <Link href={item.href ?? '/'}>{item.label}</Link>
                 </li>
               )
-            })}
-          </ul>
-        </nav>
+            }
 
-        <div className="site-header__utilities">
-          <Link className="site-header__search" href={resourceSearchHref}>
-            <span className="site-header__search-copy">{resourceSearchLabel}</span>
-            <span className="site-header__search-hint">{resourceSearchHint}</span>
+            return (
+              <li key={item.label} className="nav__item nav__item--has-menu">
+                <button aria-haspopup="true" className="nav__trigger" type="button">
+                  <span>{item.label}</span>
+                  <span aria-hidden="true" className="nav__caret">
+                    ▾
+                  </span>
+                </button>
+                <div className="nav__menu">
+                  {item.children.map((child) => (
+                    <Link key={child.href} className="nav__menu-link" href={child.href}>
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+
+        {navCtaLabel && navCtaLink ? (
+          <Link className="nav__cta" href={navCtaLink}>
+            {navCtaLabel}
           </Link>
-
-          <div className="site-header__actions">
-            <SiteLanguageSwitcher
-              ariaLabel={localeSwitcherLabel}
-              labels={localeLabels}
-              locale={locale}
-            />
-            {navCtaLabel && navCtaLink ? (
-              <Link className="button button--solid site-header__cta" href={navCtaLink}>
-                {navCtaLabel}
-              </Link>
-            ) : null}
-          </div>
-        </div>
+        ) : null}
       </div>
-    </header>
+    </nav>
   )
 }

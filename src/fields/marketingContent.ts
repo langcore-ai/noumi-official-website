@@ -4,12 +4,14 @@ import type { Block, Field } from 'payload'
  * 复用的纯文本列表字段
  * @param name 字段名
  * @param label 后台标签
+ * @param dbName 可选数据库字段名
  * @returns Payload 数组字段
  */
-function createTextListField(name: string, label: string): Field {
+function createTextListField(name: string, label: string, dbName?: string): Field {
   return {
     name,
     type: 'array',
+    dbName,
     label,
     fields: [
       {
@@ -423,6 +425,11 @@ const CTA_SECTION_BLOCK: Block = {
       type: 'textarea',
       label: '描述',
     },
+    {
+      name: 'footnote',
+      type: 'textarea',
+      label: '尾注',
+    },
     createSectionHeaderAlignmentField(),
     ...CTA_FIELDS,
   ],
@@ -468,12 +475,448 @@ const MARKDOWN_DOCUMENT_BLOCK: Block = {
 }
 
 /**
+ * 首页功能展示 section
+ * 适合承载“图示 + 文案 + 列表 + 跳转”的交错功能模块。
+ */
+const FEATURE_SHOWCASE_SECTION_BLOCK: Block = {
+  slug: 'feature-showcase',
+  labels: {
+    singular: 'Feature Showcase Section',
+    plural: 'Feature Showcase Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: '描述',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'items',
+      type: 'array',
+      label: '功能项',
+      fields: [
+        {
+          name: 'eyebrow',
+          type: 'text',
+          label: '功能角标',
+          required: true,
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: '功能标题',
+          required: true,
+        },
+        {
+          name: 'lead',
+          type: 'textarea',
+          label: '导语',
+        },
+        {
+          name: 'body',
+          type: 'textarea',
+          label: '正文',
+        },
+        createTextListField('bullets', '亮点列表'),
+        {
+          name: 'linkLabel',
+          type: 'text',
+          label: '链接文案',
+        },
+        {
+          name: 'linkHref',
+          type: 'text',
+          label: '链接地址',
+        },
+        {
+          name: 'visualVariant',
+          type: 'select',
+          dbName: 'vis_var',
+          label: '图示样式',
+          required: true,
+          options: [
+            {
+              label: 'Persistent Memory',
+              value: 'persistentMemory',
+            },
+            {
+              label: 'Autonomous Execution',
+              value: 'autonomousExecution',
+            },
+            {
+              label: 'Self-Evolving Skills',
+              value: 'selfEvolvingSkills',
+            },
+            {
+              label: 'Intelligent File Search',
+              value: 'intelligentFileSearch',
+            },
+            {
+              label: 'Intent Alignment',
+              value: 'intentAlignment',
+            },
+          ],
+        },
+        {
+          name: 'reversed',
+          type: 'checkbox',
+          label: '反向排版',
+          defaultValue: false,
+        },
+      ],
+    },
+  ],
+}
+
+/**
+ * 流程步骤 section
+ * 适合“步骤编号 + 标题 + 说明”的纵向流程内容。
+ */
+const PROCESS_STEPS_SECTION_BLOCK: Block = {
+  slug: 'process-steps',
+  labels: {
+    singular: 'Process Steps Section',
+    plural: 'Process Steps Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: '描述',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'steps',
+      type: 'array',
+      label: '步骤列表',
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          label: '编号',
+          admin: {
+            description: '可选；未填写时前台自动按顺序生成 01/02/03。',
+          },
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: '步骤标题',
+          required: true,
+        },
+        {
+          name: 'body',
+          type: 'textarea',
+          label: '步骤说明',
+          required: true,
+        },
+      ],
+    },
+  ],
+}
+
+/**
+ * 左右分栏信息 section
+ * 可用于 Skills / Memory 等“左侧卡片堆叠 + 右侧摘要面板”结构。
+ */
+const SPLIT_PANEL_SECTION_BLOCK: Block = {
+  slug: 'split-panel',
+  labels: {
+    singular: 'Split Panel Section',
+    plural: 'Split Panel Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: '描述',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'style',
+      type: 'select',
+      label: '版式风格',
+      defaultValue: 'tiers',
+      options: [
+        {
+          label: 'Skills / Tier Cards',
+          value: 'tiers',
+        },
+        {
+          label: 'Memory / Layer Summary',
+          value: 'memory',
+        },
+      ],
+    },
+    {
+      name: 'entries',
+      type: 'array',
+      label: '左侧条目',
+      fields: [
+        {
+          name: 'badge',
+          type: 'text',
+          label: '徽标',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: '标题',
+          required: true,
+        },
+        {
+          name: 'body',
+          type: 'textarea',
+          label: '说明',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'panelTitle',
+      type: 'text',
+      label: '右侧面板标题',
+    },
+    createTextListField('panelItems', '右侧条目'),
+  ],
+}
+
+/**
+ * Use Case 网格 section
+ * 适合“角色 + 卡片正文 + 结果总结”的多卡片业务场景。
+ */
+const USE_CASE_GRID_SECTION_BLOCK: Block = {
+  slug: 'use-case-grid',
+  labels: {
+    singular: 'Use Case Grid Section',
+    plural: 'Use Case Grid Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: '描述',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'items',
+      type: 'array',
+      label: '用例卡片',
+      fields: [
+        {
+          name: 'role',
+          type: 'text',
+          label: '角色',
+          required: true,
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: '标题',
+          required: true,
+        },
+        createTextListField('paragraphs', '正文段落'),
+        {
+          name: 'result',
+          type: 'textarea',
+          label: '结果总结',
+        },
+        {
+          name: 'href',
+          type: 'text',
+          label: '跳转链接',
+        },
+      ],
+    },
+  ],
+}
+
+/**
+ * 公司概览 section
+ * 适合承载 About 页面中的使命、故事、统计、荣誉与联系信息。
+ */
+const COMPANY_OVERVIEW_SECTION_BLOCK: Block = {
+  slug: 'company-overview',
+  labels: {
+    singular: 'Company Overview Section',
+    plural: 'Company Overview Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    {
+      name: 'subtitle',
+      type: 'textarea',
+      label: '副标题',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'missionTitle',
+      type: 'text',
+      label: '使命标题',
+    },
+    {
+      name: 'missionLead',
+      type: 'textarea',
+      label: '使命导语',
+    },
+    createTextListField('missionBody', '使命段落'),
+    {
+      name: 'storyTitle',
+      type: 'text',
+      label: '故事标题',
+    },
+    {
+      name: 'storyLead',
+      type: 'textarea',
+      label: '故事导语',
+    },
+    createTextListField('storyBody', '故事段落'),
+    {
+      name: 'stats',
+      type: 'array',
+      label: '统计数据',
+      fields: [
+        {
+          name: 'value',
+          type: 'text',
+          label: '数值',
+          required: true,
+        },
+        {
+          name: 'label',
+          type: 'text',
+          label: '标签',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'recognitionTitle',
+      type: 'text',
+      label: '荣誉标题',
+    },
+    createTextListField('recognitions', '荣誉条目'),
+    {
+      name: 'contactTitle',
+      type: 'text',
+      label: '联系标题',
+    },
+    createTextListField('contactBody', '联系段落'),
+    {
+      name: 'contactLinkLabel',
+      type: 'text',
+      label: '联系链接文案',
+    },
+    {
+      name: 'contactLinkHref',
+      type: 'text',
+      label: '联系链接地址',
+    },
+  ],
+}
+
+/**
  * 共享 section blocks 列表
  */
 export const MARKETING_SECTION_BLOCKS: Block[] = [
   RICH_TEXT_SECTION_BLOCK,
   CARD_GRID_SECTION_BLOCK,
   BULLET_LIST_SECTION_BLOCK,
+  FEATURE_SHOWCASE_SECTION_BLOCK,
+  PROCESS_STEPS_SECTION_BLOCK,
+  SPLIT_PANEL_SECTION_BLOCK,
+  USE_CASE_GRID_SECTION_BLOCK,
+  COMPANY_OVERVIEW_SECTION_BLOCK,
   CTA_SECTION_BLOCK,
   MARKDOWN_DOCUMENT_BLOCK,
 ]

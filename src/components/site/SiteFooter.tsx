@@ -20,41 +20,37 @@ export function SiteFooter(props: {
   const footerCopyright = copyright?.trim()
 
   return (
-    <footer className="site-footer">
-      <div className="site-shell site-footer__grid">
-        <div className="site-footer__intro">
-          <Link className="site-brand" href="/">
-            <img
-              alt={siteLogoAlt}
-              className="site-brand__logo"
-              height="40"
-              src="/Noumi-Logo.svg"
-              width="40"
-            />
-            {siteNameText ? <span className="site-brand__wordmark">{siteNameText}</span> : null}
+    <footer role="contentinfo">
+      <div className="wrap footer__content">
+        <div className="footer__intro">
+          <Link className="footer__brand" href="/" aria-label={`${siteNameText || 'Noumi'} homepage`}>
+            <img alt={siteLogoAlt} className="footer__logo-mark" height="22" src="/Noumi-Logo.svg" width="22" />
+            {siteNameText ? <span className="footer__wordmark">{siteNameText}</span> : null}
           </Link>
-          {footerDescription ? <p>{footerDescription}</p> : null}
+          {footerDescription ? <p className="footer__description">{footerDescription}</p> : null}
         </div>
 
-        {columns.map((column) => (
-          <section key={column.title} className="site-footer__column">
-            <h2>{column.title}</h2>
-            <ul>
-              {column.links.map((link) => (
-                <li key={link.href}>
-                  {link.href.startsWith('mailto:') ? (
-                    <a href={link.href}>{link.label}</a>
-                  ) : (
-                    <Link href={link.href}>{link.label}</Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <div className="footer__columns">
+          {columns.map((column) => (
+            <section key={column.title} className="footer__column" aria-label={column.title}>
+              <h2>{column.title}</h2>
+              <ul className="footer__links">
+                {column.links.map((link) => (
+                  <li key={`${column.title}-${link.href}-${link.label}`}>
+                    {link.href.startsWith('mailto:') ? (
+                      <a href={link.href}>{link.label}</a>
+                    ) : (
+                      <Link href={link.href}>{link.label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </div>
 
-      <div className="site-shell site-footer__bottom">
+      <div className="wrap footer__inner">
         {footerCopyright ? <small>{footerCopyright}</small> : null}
       </div>
     </footer>

@@ -722,6 +722,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -1272,6 +1279,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -1500,6 +1514,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -1626,6 +1647,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -1770,6 +1798,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -2406,6 +2441,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -2998,6 +3040,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -3240,6 +3289,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -3373,6 +3429,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -3524,6 +3587,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -4177,6 +4247,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -4727,6 +4804,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -4955,6 +5039,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -5081,6 +5172,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -5225,6 +5323,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -5908,6 +6013,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -6500,6 +6612,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -6742,6 +6861,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -6875,6 +7001,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -7026,6 +7159,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -7814,6 +7954,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -8364,6 +8511,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -8592,6 +8746,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -8718,6 +8879,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -8862,6 +9030,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -9545,6 +9720,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -10137,6 +10319,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -10379,6 +10568,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -10512,6 +10708,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -10663,6 +10866,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -13964,6 +14174,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -14514,6 +14731,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -14742,6 +14966,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -14868,6 +15099,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -15012,6 +15250,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -15531,6 +15776,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -16128,6 +16380,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -16370,6 +16629,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -16503,6 +16769,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -16654,6 +16927,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -17257,6 +17537,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -17807,6 +18094,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -18035,6 +18329,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -18161,6 +18462,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -18305,6 +18613,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -18824,6 +19139,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -19421,6 +19743,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -19663,6 +19992,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -19796,6 +20132,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -19947,6 +20290,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -20550,6 +20900,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -21100,6 +21457,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -21328,6 +21692,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -21454,6 +21825,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -21598,6 +21976,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -22117,6 +22502,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -22714,6 +23106,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -22956,6 +23355,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -23089,6 +23495,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -23240,6 +23653,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -23843,6 +24263,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -24393,6 +24820,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -24621,6 +25055,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -24747,6 +25188,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -24891,6 +25339,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -25410,6 +25865,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -26007,6 +26469,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -26249,6 +26718,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -26382,6 +26858,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -26533,6 +27016,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -27136,6 +27626,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -27686,6 +28183,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -27914,6 +28418,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -28040,6 +28551,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -28184,6 +28702,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -28703,6 +29228,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -29300,6 +29832,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "columns": {
           "name": "columns",
           "type": "text",
@@ -29542,6 +30081,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "header_alignment": {
+          "name": "header_alignment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "style": {
           "name": "style",
           "type": "text",
@@ -29675,6 +30221,13 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -29826,6 +30379,13 @@
         },
         "title": {
           "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "header_alignment": {
+          "name": "header_alignment",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -30211,6 +30771,6 @@
   "internal": {
     "indexes": {}
   },
-  "id": "f0217fac-da1d-44b5-9d6f-f54cb2bd75b3",
+  "id": "b51c3492-f51f-4b93-8909-725951964505",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import type { CSSProperties, ReactNode } from 'react'
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { layout, prepare, setLocale } from '@chenglou/pretext'
 
@@ -99,8 +99,9 @@ export function PretextMasonryCards(props: PretextMasonryCardsProps) {
   /**
    * 执行一次 masonry 测量。
    * 这里直接复用 Pretext 的布局引擎估算每张卡的文本高度。
+   * 当前发布构建链路不支持 useEffectEvent，这里改为 useCallback 保持兼容。
    */
-  const runMeasurement = useEffectEvent(async () => {
+  const runMeasurement = useCallback(async () => {
     const container = containerRef.current
     const sampleCard = sampleCardRef.current
     const sampleEyebrow = sampleEyebrowRef.current
@@ -156,11 +157,11 @@ export function PretextMasonryCards(props: PretextMasonryCardsProps) {
     })
 
     setLayoutState(nextLayoutState)
-  })
+  }, [cards, columns, locale])
 
   useEffect(() => {
     void runMeasurement()
-  }, [cards, columns, locale, runMeasurement])
+  }, [runMeasurement])
 
   useEffect(() => {
     const container = containerRef.current

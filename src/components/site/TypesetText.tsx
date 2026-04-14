@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 import { createElement } from 'react'
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { layout, measureLineStats, prepare, prepareWithSegments, setLocale, walkLineRanges } from '@chenglou/pretext'
 
@@ -69,9 +69,9 @@ export function TypesetText<TTag extends TypesetTag>(props: TypesetTextProps<TTa
 
   /**
    * 执行一次排版测量。
-   * 使用 effect event 避免在 ResizeObserver 中反复解绑回调。
+   * 当前发布构建链路不支持 useEffectEvent，这里退回到 useCallback 兼容实现。
    */
-  const runMeasurement = useEffectEvent(async () => {
+  const runMeasurement = useCallback(async () => {
     const element = elementRef.current
 
     if (!element || !text.trim()) {
@@ -145,11 +145,11 @@ export function TypesetText<TTag extends TypesetTag>(props: TypesetTextProps<TTa
       setMeasurement(null)
       setIsReady(false)
     }
-  })
+  }, [locale, policy, text])
 
   useEffect(() => {
     void runMeasurement()
-  }, [locale, runMeasurement, text, variant])
+  }, [runMeasurement])
 
   useEffect(() => {
     const element = elementRef.current

@@ -1,6 +1,6 @@
 'use client'
 
-import { startTransition, useEffectEvent } from 'react'
+import { startTransition, useCallback } from 'react'
 
 import { RefreshRouteOnSave } from '@payloadcms/live-preview-react'
 import { useRouter } from 'next/navigation'
@@ -22,12 +22,15 @@ type PayloadLivePreviewListenerProps = {
 export function PayloadLivePreviewListener(props: PayloadLivePreviewListenerProps): React.JSX.Element {
   const { serverURL } = props
   const router = useRouter()
-  const refreshRoute = useEffectEvent(() => {
+  /**
+   * 兼容当前发布构建链路，避免依赖未被导出的 useEffectEvent。
+   */
+  const refreshRoute = useCallback(() => {
     // 使用 transition 避免编辑高频保存时阻塞当前交互
     startTransition(() => {
       router.refresh()
     })
-  })
+  }, [router])
 
   return <RefreshRouteOnSave refresh={refreshRoute} serverURL={serverURL} />
 }

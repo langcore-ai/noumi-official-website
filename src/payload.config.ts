@@ -27,6 +27,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
 import {
   buildLivePreviewURL,
+  ENABLE_PAYLOAD_LIVE_PREVIEW,
   LIVE_PREVIEW_COLLECTIONS,
   LIVE_PREVIEW_GLOBALS,
 } from './lib/site/publishing'
@@ -155,17 +156,19 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    livePreview: {
-      collections: [...LIVE_PREVIEW_COLLECTIONS],
-      globals: [...LIVE_PREVIEW_GLOBALS],
-      url: ({ collectionConfig, data, globalConfig, locale }) =>
-        buildLivePreviewURL({
-          collectionSlug: collectionConfig?.slug,
-          data,
-          globalSlug: globalConfig?.slug,
-          locale,
-        }),
-    },
+    livePreview: ENABLE_PAYLOAD_LIVE_PREVIEW
+      ? {
+          collections: [...LIVE_PREVIEW_COLLECTIONS],
+          globals: [...LIVE_PREVIEW_GLOBALS],
+          url: ({ collectionConfig, data, globalConfig, locale }) =>
+            buildLivePreviewURL({
+              collectionSlug: collectionConfig?.slug,
+              data,
+              globalSlug: globalConfig?.slug,
+              locale,
+            }),
+        }
+      : undefined,
   },
   collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],
   globals: [SiteSettings, HomePage, AboutPage, PricingPage, PrivacyPage, TermsPage],

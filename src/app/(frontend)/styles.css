@@ -601,8 +601,8 @@ summary:focus-visible {
   text-align: center;
 }
 
-.section__header--center .page__eyebrow {
-  align-self: center;
+.section__header--right {
+  text-align: right;
 }
 
 .section__header h2,

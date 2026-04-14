@@ -10,6 +10,7 @@ import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import {
   type CmsPageSectionView,
+  type CmsSectionHeaderAlignment,
   getAboutPageView,
   getFaqItems,
   getFeaturePages,
@@ -54,6 +55,33 @@ function getHomeAdditionalSections(sections: CmsPageSectionView[]): CmsPageSecti
  */
 function getFeatureArtworkVariant(index: number): (typeof FEATURE_ARTWORK_VARIANTS)[number] {
   return FEATURE_ARTWORK_VARIANTS[index % FEATURE_ARTWORK_VARIANTS.length]
+}
+
+/**
+ * 生成首页固定分节头部类名
+ * @param alignment 后台配置的对齐方式
+ * @param options 版位默认布局
+ * @returns className
+ */
+function getHomeSectionHeaderClassName(
+  alignment: CmsSectionHeaderAlignment | undefined,
+  options: { centeredByDefault?: boolean; inline?: boolean },
+): string {
+  const classNames = ['section__header']
+
+  if (options.inline) {
+    classNames.push('section__header--inline')
+  }
+
+  if (alignment === 'center' || (!alignment && options.centeredByDefault)) {
+    classNames.push('section__header--center')
+  }
+
+  if (alignment === 'right') {
+    classNames.push('section__header--right')
+  }
+
+  return classNames.join(' ')
 }
 
 /**
@@ -220,7 +248,11 @@ export default async function HomePage() {
 
       {homePage.problemsSection && homePage.problemsSection.cards.length > 0 ? (
         <section className="site-shell section section--screen home-section home-section--overview">
-          <div className="section__header section__header--inline">
+          <div
+            className={getHomeSectionHeaderClassName(homePage.problemsSection.headerAlignment, {
+              inline: true,
+            })}
+          >
             <div>
               <span className="page__eyebrow">
                 {homePage.problemsSection.label || dictionary.home.problemEyebrow}
@@ -305,7 +337,11 @@ export default async function HomePage() {
 
       {features.length > 0 ? (
         <section className="site-shell section section--screen home-section home-section--features">
-          <div className="section__header section__header--inline">
+          <div
+            className={getHomeSectionHeaderClassName(homePage.featureIntroSection?.headerAlignment, {
+              inline: true,
+            })}
+          >
             <div>
               <span className="page__eyebrow">
                 {homePage.featureIntroSection?.label || dictionary.home.featuresEyebrow}
@@ -406,7 +442,11 @@ export default async function HomePage() {
 
       {homePage.howItWorksSection && homePage.howItWorksSection.cards.length > 0 ? (
         <section className="site-shell section section--screen home-foundation">
-          <div className="section__header section__header--center">
+          <div
+            className={getHomeSectionHeaderClassName(homePage.howItWorksSection.headerAlignment, {
+              centeredByDefault: true,
+            })}
+          >
             <span className="page__eyebrow">
               {homePage.howItWorksSection.label || dictionary.home.howItWorksEyebrow}
             </span>

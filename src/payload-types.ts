@@ -250,6 +250,10 @@ export interface BlogPost {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -275,6 +279,10 @@ export interface BlogPost {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -325,6 +333,10 @@ export interface BlogPost {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -344,6 +356,10 @@ export interface BlogPost {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -359,6 +375,10 @@ export interface BlogPost {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -415,6 +435,10 @@ export interface FeaturePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -440,6 +464,10 @@ export interface FeaturePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -490,6 +518,10 @@ export interface FeaturePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -509,6 +541,10 @@ export interface FeaturePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -524,6 +560,10 @@ export interface FeaturePage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -582,6 +622,10 @@ export interface UseCasePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -607,6 +651,10 @@ export interface UseCasePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -657,6 +705,10 @@ export interface UseCasePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -676,6 +728,10 @@ export interface UseCasePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -691,6 +747,10 @@ export interface UseCasePage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -1009,6 +1069,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1032,6 +1093,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1077,6 +1139,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -1094,6 +1157,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -1107,6 +1171,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -1155,6 +1220,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1178,6 +1244,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1223,6 +1290,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -1240,6 +1308,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -1253,6 +1322,7 @@ export interface FeaturePagesSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -1303,6 +1373,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1326,6 +1397,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -1371,6 +1443,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -1388,6 +1461,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -1401,6 +1475,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -1641,6 +1716,10 @@ export interface HomePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -1666,6 +1745,10 @@ export interface HomePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -1716,6 +1799,10 @@ export interface HomePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -1735,6 +1822,10 @@ export interface HomePage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -1750,6 +1841,10 @@ export interface HomePage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -1795,6 +1890,10 @@ export interface AboutPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -1820,6 +1919,10 @@ export interface AboutPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -1870,6 +1973,10 @@ export interface AboutPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -1889,6 +1996,10 @@ export interface AboutPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -1904,6 +2015,10 @@ export interface AboutPage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -1949,6 +2064,10 @@ export interface PricingPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -1974,6 +2093,10 @@ export interface PricingPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -2024,6 +2147,10 @@ export interface PricingPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -2043,6 +2170,10 @@ export interface PricingPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -2058,6 +2189,10 @@ export interface PricingPage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -2103,6 +2238,10 @@ export interface PrivacyPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -2128,6 +2267,10 @@ export interface PrivacyPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -2178,6 +2321,10 @@ export interface PrivacyPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -2197,6 +2344,10 @@ export interface PrivacyPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -2212,6 +2363,10 @@ export interface PrivacyPage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -2257,6 +2412,10 @@ export interface TermsPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -2282,6 +2441,10 @@ export interface TermsPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             paragraphs?:
               | {
                   text: string;
@@ -2332,6 +2495,10 @@ export interface TermsPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             items?:
               | {
                   text: string;
@@ -2351,6 +2518,10 @@ export interface TermsPage {
             label?: string | null;
             title?: string | null;
             description?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             primaryCtaLabel?: string | null;
             primaryCtaHref?: string | null;
             secondaryCtaLabel?: string | null;
@@ -2366,6 +2537,10 @@ export interface TermsPage {
             slotKey?: string | null;
             label?: string | null;
             title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
             markdown: string;
             id?: string | null;
             blockName?: string | null;
@@ -2462,6 +2637,7 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2485,6 +2661,7 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2530,6 +2707,7 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -2547,6 +2725,7 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -2560,6 +2739,7 @@ export interface HomePageSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -2602,6 +2782,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2625,6 +2806,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2670,6 +2852,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -2687,6 +2870,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -2700,6 +2884,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -2742,6 +2927,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2765,6 +2951,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2810,6 +2997,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -2827,6 +3015,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -2840,6 +3029,7 @@ export interface PricingPageSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -2882,6 +3072,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2905,6 +3096,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -2950,6 +3142,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -2967,6 +3160,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -2980,6 +3174,7 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;
@@ -3022,6 +3217,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -3045,6 +3241,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               paragraphs?:
                 | T
                 | {
@@ -3090,6 +3287,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               items?:
                 | T
                 | {
@@ -3107,6 +3305,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               label?: T;
               title?: T;
               description?: T;
+              headerAlignment?: T;
               primaryCtaLabel?: T;
               primaryCtaHref?: T;
               secondaryCtaLabel?: T;
@@ -3120,6 +3319,7 @@ export interface TermsPageSelect<T extends boolean = true> {
               slotKey?: T;
               label?: T;
               title?: T;
+              headerAlignment?: T;
               markdown?: T;
               id?: T;
               blockName?: T;

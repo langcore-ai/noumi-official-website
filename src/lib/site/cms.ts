@@ -62,6 +62,11 @@ export type CmsButtonView = {
 }
 
 /**
+ * 分节头部对齐方式
+ */
+export type CmsSectionHeaderAlignment = 'left' | 'center' | 'right'
+
+/**
  * 通用 Hero 视图
  */
 export type CmsHeroView = {
@@ -113,6 +118,8 @@ export type CmsRichTextSectionView = {
   title?: string
   /** 描述 */
   description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
   /** 段落 */
   paragraphs: string[]
   /** 列表 */
@@ -135,6 +142,8 @@ export type CmsCardGridSectionView = {
   title?: string
   /** 描述 */
   description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
   /** 左侧段落 */
   paragraphs: string[]
   /** 左侧列表 */
@@ -163,6 +172,8 @@ export type CmsBulletListSectionView = {
   title?: string
   /** 描述 */
   description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
   /** 条目 */
   items: string[]
   /** 样式 */
@@ -183,6 +194,8 @@ export type CmsCtaSectionView = {
   title?: string
   /** 描述 */
   description?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
   /** 主按钮 */
   primaryCta?: CmsButtonView
   /** 次按钮 */
@@ -201,6 +214,8 @@ export type CmsMarkdownDocumentSectionView = {
   label?: string
   /** 标题 */
   title?: string
+  /** 头部对齐方式 */
+  headerAlignment?: CmsSectionHeaderAlignment
   /** Markdown 原稿 */
   markdown: string
 }
@@ -375,6 +390,8 @@ type RawSectionBlock = {
   title?: null | string
   /** 描述 */
   description?: null | string
+  /** 头部对齐方式 */
+  headerAlignment?: null | string
   /** 段落 */
   paragraphs?: Array<{ text?: null | string } | null> | null
   /** 列表 */
@@ -604,6 +621,21 @@ function normalizeCardGridLayoutMode(value?: null | string): 'auto' | 'fixed' {
 }
 
 /**
+ * 解析分节头部对齐方式
+ * @param value 原始对齐方式
+ * @returns 可渲染对齐方式
+ */
+function normalizeSectionHeaderAlignment(
+  value?: null | string,
+): CmsSectionHeaderAlignment | undefined {
+  if (value === 'left' || value === 'center' || value === 'right') {
+    return value
+  }
+
+  return undefined
+}
+
+/**
  * 映射共享 section blocks
  * @param sections 原始分节
  * @returns 通用分节视图
@@ -617,6 +649,7 @@ function mapSections(
       const label = normalizeText(section?.label)
       const title = normalizeText(section?.title)
       const description = normalizeText(section?.description)
+      const headerAlignment = normalizeSectionHeaderAlignment(section?.headerAlignment)
       const paragraphs = extractTextArray(section?.paragraphs)
       const bullets = extractTextArray(section?.bullets)
 
@@ -632,6 +665,7 @@ function mapSections(
             label,
             title,
             description,
+            headerAlignment,
             paragraphs,
             bullets,
             style:
@@ -660,6 +694,7 @@ function mapSections(
             label,
             title,
             description,
+            headerAlignment,
             paragraphs,
             bullets,
             columns: normalizeCardGridColumns(section.columns),
@@ -681,6 +716,7 @@ function mapSections(
             label,
             title,
             description,
+            headerAlignment,
             items,
             style: section.style === 'plain' ? 'plain' : 'panel',
           } satisfies CmsBulletListSectionView
@@ -699,6 +735,7 @@ function mapSections(
             label,
             title,
             description,
+            headerAlignment,
             primaryCta,
             secondaryCta,
           } satisfies CmsCtaSectionView
@@ -715,6 +752,7 @@ function mapSections(
             slotKey,
             label,
             title,
+            headerAlignment,
             markdown,
           } satisfies CmsMarkdownDocumentSectionView
         }

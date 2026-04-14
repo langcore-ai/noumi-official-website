@@ -49,6 +49,37 @@ const CTA_FIELDS: Field[] = [
 ]
 
 /**
+ * 复用的 section 头部对齐字段
+ * @returns Payload 选择字段
+ */
+function createSectionHeaderAlignmentField(): Field {
+  return {
+    name: 'headerAlignment',
+    type: 'select',
+    // 缩短数据库字段名，避免 block 表上的枚举标识超过 D1 / Drizzle 长度限制。
+    dbName: 'hdr_align',
+    label: '标题对齐',
+    admin: {
+      description: '控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。',
+    },
+    options: [
+      {
+        label: '左对齐',
+        value: 'left',
+      },
+      {
+        label: '居中',
+        value: 'center',
+      },
+      {
+        label: '右对齐',
+        value: 'right',
+      },
+    ],
+  }
+}
+
+/**
  * 共享 SEO 字段
  * 页面级 global 使用这组字段承接自定义 metadata。
  */
@@ -152,6 +183,7 @@ const RICH_TEXT_SECTION_BLOCK: Block = {
       type: 'textarea',
       label: '描述',
     },
+    createSectionHeaderAlignmentField(),
     createTextListField('paragraphs', '段落'),
     createTextListField('bullets', '列表'),
     {
@@ -211,6 +243,7 @@ const CARD_GRID_SECTION_BLOCK: Block = {
       type: 'textarea',
       label: '描述',
     },
+    createSectionHeaderAlignmentField(),
     createTextListField('paragraphs', '左侧段落'),
     createTextListField('bullets', '左侧列表'),
     {
@@ -335,6 +368,7 @@ const BULLET_LIST_SECTION_BLOCK: Block = {
       type: 'textarea',
       label: '描述',
     },
+    createSectionHeaderAlignmentField(),
     createTextListField('items', '条目'),
     {
       name: 'style',
@@ -389,6 +423,7 @@ const CTA_SECTION_BLOCK: Block = {
       type: 'textarea',
       label: '描述',
     },
+    createSectionHeaderAlignmentField(),
     ...CTA_FIELDS,
   ],
 }
@@ -422,6 +457,7 @@ const MARKDOWN_DOCUMENT_BLOCK: Block = {
       type: 'text',
       label: '标题',
     },
+    createSectionHeaderAlignmentField(),
     {
       name: 'markdown',
       type: 'textarea',

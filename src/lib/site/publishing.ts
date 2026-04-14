@@ -3,9 +3,24 @@ import type { Access, CollectionConfig, GlobalConfig, PayloadRequest } from 'pay
 import { CMS_CONTENT_UPDATE_ROLES, CMS_LEGAL_UPDATE_ROLES, hasAnyCmsRole, type CmsUserRole } from '@/access/cms'
 import { DEFAULT_CONTENT_LOCALE, normalizeSiteLocale, SITE_LOCALE_COOKIE, type SiteLocale } from '@/lib/site/i18n'
 
+/** 是否为生产环境。 */
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+/** 本地开发是否显式开启高频 autosave。 */
+const ENABLE_DEV_AUTOSAVE = process.env.PAYLOAD_ENABLE_DEV_AUTOSAVE === 'true'
+/** 本地开发是否显式开启 live preview。 */
+const ENABLE_DEV_LIVE_PREVIEW = process.env.PAYLOAD_ENABLE_DEV_LIVE_PREVIEW === 'true'
+
+/**
+ * 是否启用 Payload admin live preview。
+ * 本地 D1 + Miniflare 在写入版本表同时触发前台预览读取时，容易出现锁竞争；
+ * 因此开发环境默认关闭，确有需要时可通过环境变量重新开启。
+ */
+export const ENABLE_PAYLOAD_LIVE_PREVIEW = IS_PRODUCTION || ENABLE_DEV_LIVE_PREVIEW
+
 /** 统一草稿配置 */
 const DRAFTS_CONFIG = {
-  autosave: true,
+  // 本地开发默认关闭 autosave，避免每次输入都向 D1 版本表发起写入。
+  autosave: IS_PRODUCTION || ENABLE_DEV_AUTOSAVE,
   schedulePublish: true,
   validate: false,
 } as const

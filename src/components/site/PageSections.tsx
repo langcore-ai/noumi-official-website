@@ -10,13 +10,33 @@ import type {
   CmsCardGridSectionView,
   CmsCardView,
   CmsPageSectionView,
+  CmsSectionHeaderAlignment,
 } from '@/lib/site/cms'
 
 /**
+ * 生成带对齐修饰符的 className
+ * @param baseClassName 基础类名
+ * @param alignment 头部对齐方式
+ * @returns className
+ */
+function getAlignedHeaderClassName(
+  baseClassName: string,
+  alignment?: CmsSectionHeaderAlignment,
+): string {
+  if (!alignment || alignment === 'left') {
+    return baseClassName
+  }
+
+  return `${baseClassName} ${baseClassName}--${alignment}`
+}
+
+/**
  * 渲染 section 公共头部
+ * @param locale 当前语言
  * @param label 角标
  * @param title 标题
  * @param description 描述
+ * @param alignment 头部对齐方式
  * @returns 头部节点
  */
 function renderSectionHeader(
@@ -24,13 +44,14 @@ function renderSectionHeader(
   label?: string,
   title?: string,
   description?: string,
+  alignment?: CmsSectionHeaderAlignment,
 ): ReactNode {
   if (!label && !title && !description) {
     return null
   }
 
   return (
-    <div className="section__header">
+    <div className={getAlignedHeaderClassName('section__header', alignment)}>
       {label ? <span className="page__eyebrow">{label}</span> : null}
       {title ? (
         <TypesetText as="h2" locale={locale} text={title} variant="sectionTitle">
@@ -204,7 +225,13 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                   fullScreen,
                 })}
               >
-                {renderSectionHeader(locale, section.label, section.title, section.description)}
+                {renderSectionHeader(
+                  locale,
+                  section.label,
+                  section.title,
+                  section.description,
+                  section.headerAlignment,
+                )}
                 {section.paragraphs.length > 0 || section.bullets.length > 0 ? (
                   <div className={section.style === 'plain' ? undefined : 'panel'}>
                     {section.paragraphs.map((paragraph) => (
@@ -231,7 +258,13 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                 key={`${section.type}-${section.slotKey ?? index}`}
                 className={getSectionClassName({ fullScreen })}
               >
-                {renderSectionHeader(locale, section.label, section.title, section.description)}
+                {renderSectionHeader(
+                  locale,
+                  section.label,
+                  section.title,
+                  section.description,
+                  section.headerAlignment,
+                )}
                 {section.cards.length > 0 && (section.paragraphs.length > 0 || section.bullets.length > 0) ? (
                   <div className="feature-detail__layout">
                     <div className="panel">
@@ -278,22 +311,24 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                 className={getSectionClassName({ fullScreen })}
               >
                 {section.style === 'plain'
-                  ? renderSectionHeader(locale, section.label, section.title, section.description)
+                  ? renderSectionHeader(
+                      locale,
+                      section.label,
+                      section.title,
+                      section.description,
+                      section.headerAlignment,
+                    )
                   : null}
                 <div className={section.style === 'plain' ? 'panel' : 'feature-detail__summary'}>
-                  {section.style !== 'plain' && section.label ? (
-                    <span className="page__eyebrow">{section.label}</span>
-                  ) : null}
-                  {section.title ? (
-                    <TypesetText as="h2" locale={locale} text={section.title} variant="sectionTitle">
-                      {section.title}
-                    </TypesetText>
-                  ) : null}
-                  {section.description ? (
-                    <TypesetText as="p" locale={locale} text={section.description} variant="sectionBody">
-                      {section.description}
-                    </TypesetText>
-                  ) : null}
+                  {section.style !== 'plain'
+                    ? renderSectionHeader(
+                        locale,
+                        section.label,
+                        section.title,
+                        section.description,
+                        section.headerAlignment,
+                      )
+                    : null}
                   {section.items.length > 0 ? (
                     <ul>
                       {section.items.map((item) => (
@@ -313,17 +348,13 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                 className={getSectionClassName({ fullScreen })}
               >
                 <div className="feature-detail__summary">
-                  {section.label ? <span className="page__eyebrow">{section.label}</span> : null}
-                  {section.title ? (
-                    <TypesetText as="h2" locale={locale} text={section.title} variant="sectionTitle">
-                      {section.title}
-                    </TypesetText>
-                  ) : null}
-                  {section.description ? (
-                    <TypesetText as="p" locale={locale} text={section.description} variant="sectionBody">
-                      {section.description}
-                    </TypesetText>
-                  ) : null}
+                  {renderSectionHeader(
+                    locale,
+                    section.label,
+                    section.title,
+                    section.description,
+                    section.headerAlignment,
+                  )}
                   {section.primaryCta || section.secondaryCta ? (
                     <div className="page__hero-actions">
                       {section.primaryCta ? renderButton(section.primaryCta, 'button--solid') : null}
@@ -339,7 +370,13 @@ export function PageSections(props: { fullScreen?: boolean; locale?: string; sec
                 key={`${section.type}-${section.slotKey ?? index}`}
                 className={getSectionClassName({ article: true, fullScreen })}
               >
-                {renderSectionHeader(locale, section.label, section.title, undefined)}
+                {renderSectionHeader(
+                  locale,
+                  section.label,
+                  section.title,
+                  undefined,
+                  section.headerAlignment,
+                )}
                 <div className="panel">
                   <MarkdownContent locale={locale} markdown={section.markdown} />
                 </div>

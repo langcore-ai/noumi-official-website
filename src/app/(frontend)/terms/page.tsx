@@ -1,6 +1,7 @@
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
 import { TypesetText } from '@/components/site/TypesetText'
+import { hasRenderableHeroContent } from '@/lib/site/hero'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getTermsPageView } from '@/lib/site/cms'
@@ -31,6 +32,7 @@ export default async function TermsPage() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
   const page = await getTermsPageView(locale)
+  const hasHero = hasRenderableHeroContent(page.hero)
   const breadcrumbJsonLd = await createBreadcrumbJsonLd([
     { name: dictionary.common.brandName, pathname: '/' },
     { name: dictionary.legal.termsTitle, pathname: '/terms/' },
@@ -40,22 +42,21 @@ export default async function TermsPage() {
     <div className="page legal-page">
       <StructuredData data={breadcrumbJsonLd} />
 
-      <section className="site-shell page__hero article">
-        <span className="page__eyebrow">{page.hero.eyebrow || dictionary.legal.eyebrow}</span>
-        <TypesetText
-          as="h1"
-          locale={locale}
-          text={page.hero.title || dictionary.legal.termsTitle}
-          variant="pageTitle"
-        >
-          {page.hero.title || dictionary.legal.termsTitle}
-        </TypesetText>
-        {page.hero.description ? (
-          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
-            {page.hero.description}
-          </TypesetText>
-        ) : null}
-      </section>
+      {hasHero ? (
+        <section className="site-shell page__hero article">
+          {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
+          {page.hero.title ? (
+            <TypesetText as="h1" locale={locale} text={page.hero.title} variant="pageTitle">
+              {page.hero.title}
+            </TypesetText>
+          ) : null}
+          {page.hero.description ? (
+            <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+              {page.hero.description}
+            </TypesetText>
+          ) : null}
+        </section>
+      ) : null}
 
       <PageSections locale={locale} sections={page.sections} />
     </div>

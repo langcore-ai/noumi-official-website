@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { PageSections } from '@/components/site/PageSections'
 import { StructuredData } from '@/components/site/StructuredData'
 import { TypesetText } from '@/components/site/TypesetText'
+import { hasRenderableHeroContent } from '@/lib/site/hero'
 import { getSiteDictionary } from '@/lib/site/i18n'
 import { getRequestLocale } from '@/lib/site/i18n.server'
 import { getAboutPageView } from '@/lib/site/cms'
@@ -33,6 +34,7 @@ export default async function AboutPage() {
   const locale = await getRequestLocale()
   const dictionary = getSiteDictionary(locale)
   const page = await getAboutPageView(locale)
+  const hasHero = hasRenderableHeroContent(page.hero)
   const [breadcrumbJsonLd, organizationJsonLd] = await Promise.all([
     createBreadcrumbJsonLd([
       { name: dictionary.common.brandName, pathname: '/' },
@@ -46,28 +48,32 @@ export default async function AboutPage() {
       <StructuredData data={breadcrumbJsonLd} />
       {organizationJsonLd ? <StructuredData data={organizationJsonLd} /> : null}
 
-      <section className="site-shell page__hero">
-        <span className="page__eyebrow">{page.hero.eyebrow || dictionary.about.eyebrow}</span>
-        <TypesetText as="h1" locale={locale} text={page.hero.title || dictionary.about.title} variant="heroTitle">
-          {page.hero.title || dictionary.about.title}
-        </TypesetText>
-        {page.hero.description ? (
-          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
-            {page.hero.description}
-          </TypesetText>
-        ) : null}
-        {page.hero.supportingText ? (
-          <TypesetText
-            as="p"
-            className="page__hero-support"
-            locale={locale}
-            text={page.hero.supportingText}
-            variant="heroBody"
-          >
-            {page.hero.supportingText}
-          </TypesetText>
-        ) : null}
-      </section>
+      {hasHero ? (
+        <section className="site-shell page__hero">
+          {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
+          {page.hero.title ? (
+            <TypesetText as="h1" locale={locale} text={page.hero.title} variant="heroTitle">
+              {page.hero.title}
+            </TypesetText>
+          ) : null}
+          {page.hero.description ? (
+            <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
+              {page.hero.description}
+            </TypesetText>
+          ) : null}
+          {page.hero.supportingText ? (
+            <TypesetText
+              as="p"
+              className="page__hero-support"
+              locale={locale}
+              text={page.hero.supportingText}
+              variant="heroBody"
+            >
+              {page.hero.supportingText}
+            </TypesetText>
+          ) : null}
+        </section>
+      ) : null}
 
       <PageSections fullScreen locale={locale} sections={page.sections} />
 

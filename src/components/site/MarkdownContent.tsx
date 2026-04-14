@@ -7,8 +7,13 @@ import { TypesetText } from '@/components/site/TypesetText'
 /**
  * Markdown 区块模型
  */
+type MarkdownHeadingDepth = 1 | 2 | 3
+
+/**
+ * Markdown 区块模型
+ */
 type MarkdownBlock =
-  | { type: 'heading'; depth: 1 | 2 | 3; text: string }
+  | { type: 'heading'; depth: MarkdownHeadingDepth; text: string }
   | { type: 'paragraph'; text: string }
   | { type: 'list'; items: string[] }
   | { type: 'table'; rows: string[][] }
@@ -84,17 +89,17 @@ export function MarkdownContent({ locale, markdown }: { locale?: string; markdow
                 </thead>
                 <tbody>
                   {bodyRows.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {row.map((cell, cellIndex) => (
-                      <td key={cellIndex}>
-                        <TypesetText as="p" locale={locale} text={cell} variant="tableCell">
-                          {renderInline(cell)}
-                        </TypesetText>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
+                    <tr key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <td key={cellIndex}>
+                          <TypesetText as="p" locale={locale} text={cell} variant="tableCell">
+                            {renderInline(cell)}
+                          </TypesetText>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
           )
@@ -118,6 +123,7 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
 
   while (index < lines.length) {
     const line = lines[index]?.trim() ?? ''
+    const heading = parseHeadingLine(line)
 
     if (!line) {
       index += 1
@@ -130,20 +136,8 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
       continue
     }
 
-    if (line.startsWith('# ')) {
-      blocks.push({ type: 'heading', depth: 1, text: line.replace(/^# /, '').trim() })
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('## ')) {
-      blocks.push({ type: 'heading', depth: 2, text: line.replace(/^## /, '').trim() })
-      index += 1
-      continue
-    }
-
-    if (line.startsWith('### ')) {
-      blocks.push({ type: 'heading', depth: 3, text: line.replace(/^### /, '').trim() })
+    if (heading) {
+      blocks.push(heading)
       index += 1
       continue
     }
@@ -194,7 +188,7 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
       const paragraphLine = lines[index]?.trim() ?? ''
       if (
         !paragraphLine ||
-        paragraphLine.startsWith('#') ||
+        Boolean(parseHeadingLine(paragraphLine)) ||
         paragraphLine.startsWith('|') ||
         /^(\* |- )/.test(paragraphLine) ||
         /^\*{3,}$/.test(paragraphLine) ||
@@ -212,6 +206,44 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   }
 
   return blocks
+}
+
+/**
+ * 解析 Markdown 标题行。
+ * 超过三级的标题统一降级到三级标题，避免未消费行导致死循环。
+ * @param line 当前行文本
+ * @returns 标题区块；不是标题时返回 null
+ */
+function parseHeadingLine(line: string): Extract<MarkdownBlock, { type: 'heading' }> | null {
+  const match = line.match(/^(#{1,6})\s+(.+)$/)
+
+  if (!match) {
+    return null
+  }
+
+  return {
+    type: 'heading',
+    depth: normalizeHeadingDepth(match[1].length),
+    text: match[2].trim(),
+  }
+}
+
+/**
+ * 规范化标题层级。
+ * 当前页面样式只支持到三级，因此更深层级统一映射为三级。
+ * @param depth 原始标题层级
+ * @returns 归一化后的标题层级
+ */
+function normalizeHeadingDepth(depth: number): MarkdownHeadingDepth {
+  if (depth <= 1) {
+    return 1
+  }
+
+  if (depth === 2) {
+    return 2
+  }
+
+  return 3
 }
 
 /**

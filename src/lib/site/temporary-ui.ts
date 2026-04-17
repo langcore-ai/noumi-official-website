@@ -35,6 +35,11 @@ export const TEMPORARY_UI_STATIC_REWRITES: TemporaryUiRewriteRule[] = [
   },
 ]
 
+/** 临时 UI 对外暴露的公开页面路径，可供 sitemap 等逻辑复用 */
+export const TEMPORARY_UI_PUBLIC_PATHS = Array.from(
+  new Set(TEMPORARY_UI_STATIC_REWRITES.map(({ source }) => source)),
+)
+
 /**
  * 屏蔽外部对原始 HTML 文件的直接访问。
  * 只有内部 route handler fetch 会携带专用 header，从而绕过这组规则。

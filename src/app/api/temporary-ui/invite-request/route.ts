@@ -1,5 +1,5 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { NextResponse } from 'next/server'
-import { getProjectCloudflareContext } from '@/lib/cloudflare/context'
 import {
   ensureTemporaryInviteRequestTable,
   TEMPORARY_INVITE_REQUESTS_TABLE,
@@ -24,7 +24,7 @@ function isValidEmail(value: string): boolean {
  * @returns 写入结果
  */
 export async function POST(request: Request) {
-  const cloudflare = await getProjectCloudflareContext()
+  const cloudflare = await getCloudflareContext({ async: true })
   const database = cloudflare.env?.D1
 
   if (!database) {

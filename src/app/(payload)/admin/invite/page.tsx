@@ -1,4 +1,5 @@
 import configPromise from '@payload-config'
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
@@ -6,7 +7,6 @@ import { getPayload } from 'payload'
 import type { CSSProperties, ReactNode } from 'react'
 
 import { CMS_ADMIN_ROLES, hasAnyCmsRole } from '@/access/cms'
-import { getProjectCloudflareContext } from '@/lib/cloudflare/context'
 import {
   listTemporaryInviteRequests,
   type TemporaryInviteRequestRecord,
@@ -77,7 +77,7 @@ async function assertCmsAdminAccess(): Promise<void> {
 export default async function InviteAdminPage() {
   await assertCmsAdminAccess()
 
-  const cloudflare = await getProjectCloudflareContext()
+  const cloudflare = await getCloudflareContext({ async: true })
   const database = cloudflare.env?.D1
 
   if (!database) {

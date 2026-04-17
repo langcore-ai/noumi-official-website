@@ -10,12 +10,24 @@ const isCLI = process.argv.some(
 )
 
 /**
+ * 是否正在执行 OpenNext Cloudflare 构建命令。
+ * Worker 部署阶段会走这条命令链，但此时仍不具备真实运行时上下文。
+ */
+const isOpenNextBuild = process.argv.some(
+  (value) =>
+    (value.endsWith('/opennextjs-cloudflare') || value.endsWith('\\opennextjs-cloudflare')) &&
+    process.argv.includes('build'),
+)
+
+/**
  * 是否是 Next.js 生产构建阶段。
  * 构建期间不应尝试连接真实 Cloudflare 运行时。
  */
 const isNextBuild =
   process.env.NEXT_PHASE === 'phase-production-build' ||
   process.env.npm_lifecycle_event === 'build' ||
+  process.env.npm_lifecycle_event === 'preview' ||
+  isOpenNextBuild ||
   process.argv.some(
     (value) =>
       (value.endsWith('/next/dist/bin/next') || value.endsWith('\\next\\dist\\bin\\next')) &&
@@ -24,6 +36,20 @@ const isNextBuild =
 
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
+
+/**
+ * 创建构建期占位 Cloudflare 上下文。
+ * 仅用于静态收集配置，禁止在真正运行时依赖这些占位绑定。
+ * @returns 仅含占位绑定的 Cloudflare 上下文
+ */
+function createBuildFallbackCloudflareContext(): CloudflareContext {
+  return {
+    env: {
+      D1: {} as CloudflareContext['env']['D1'],
+      R2: {} as CloudflareContext['env']['R2'],
+    },
+  } as CloudflareContext
+}
 
 // Adapted from OpenNext Cloudflare runtime context bootstrap.
 /**
@@ -49,17 +75,21 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
 export async function getProjectCloudflareContext(): Promise<CloudflareContext> {
   // 构建阶段只需要占位绑定，避免 next build 期间触发真实连接。
   if (isNextBuild) {
-    return {
-      env: {
-        D1: {} as CloudflareContext['env']['D1'],
-        R2: {} as CloudflareContext['env']['R2'],
-      },
-    } as CloudflareContext
+    return createBuildFallbackCloudflareContext()
   }
 
   if (isCLI || !isProduction) {
     return getCloudflareContextFromWrangler()
   }
 
-  return getCloudflareContext({ async: true })
+  try {
+    return await getCloudflareContext({ async: true })
+  } catch (error) {
+    // OpenNext Worker 构建时若误入此分支，需要继续回退到占位 context，避免部署阶段直接失败。
+    if (isOpenNextBuild) {
+      return createBuildFallbackCloudflareContext()
+    }
+
+    throw error
+  }
 }

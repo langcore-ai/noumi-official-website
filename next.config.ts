@@ -1,9 +1,14 @@
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 import { withPayload } from '@payloadcms/next/withPayload'
 
 import {
   TEMPORARY_UI_BLOCKED_HTML_REWRITES,
   TEMPORARY_UI_STATIC_REWRITES,
 } from './src/lib/site/temporary-ui'
+
+// 按 OpenNext Cloudflare 官方建议初始化本地 / Node 侧上下文，
+// 避免配置求值阶段调用 getCloudflareContext 时直接抛错。
+initOpenNextCloudflareForDev()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

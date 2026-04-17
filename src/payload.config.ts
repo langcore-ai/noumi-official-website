@@ -38,6 +38,12 @@ const dirname = path.dirname(filename)
 const isNextBuild =
   process.env.NEXT_PHASE === 'phase-production-build' ||
   process.env.npm_lifecycle_event === 'build' ||
+  process.env.npm_lifecycle_event === 'preview' ||
+  process.argv.some(
+    (value) =>
+      (value.endsWith('/opennextjs-cloudflare') || value.endsWith('\\opennextjs-cloudflare')) &&
+      process.argv.includes('build'),
+  ) ||
   (process.argv.some((value) => {
     const resolvedPath = fs.existsSync(value) ? fs.realpathSync(value) : undefined
 
@@ -75,7 +81,52 @@ const cloudflareLogger = {
   silent: () => {},
 } as any // Use PayloadLogger type when it's exported
 
-const cloudflare = await getProjectCloudflareContext()
+/**
+ * 判断错误是否来自 OpenNext Cloudflare 上下文初始化缺失。
+ * 构建期若命中该错误，说明当前仅处于配置收集阶段，应回退到占位 binding。
+ * @param error 捕获到的异常
+ * @returns 是否为可安全降级的上下文初始化错误
+ */
+function isMissingOpenNextCloudflareContextError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+
+  return (
+    message.includes('initOpenNextCloudflareForDev') || message.includes('getCloudflareContextAsync')
+  )
+}
+
+/**
+ * 创建供 Payload 配置收集阶段使用的占位 Cloudflare 上下文。
+ * 这里只为避免构建失败，真正运行时仍需使用真实 binding。
+ * @returns 仅含占位 binding 的 Cloudflare 上下文
+ */
+function createPayloadConfigFallbackCloudflareContext(): CloudflareContext {
+  return {
+    env: {
+      D1: {} as CloudflareContext['env']['D1'],
+      R2: {} as CloudflareContext['env']['R2'],
+    },
+  } as CloudflareContext
+}
+
+/**
+ * 安全获取 Payload 配置初始化所需的 Cloudflare 上下文。
+ * 部署构建阶段若缺少 runtime context，则退回占位 binding，避免构建中断。
+ * @returns 可用于本次 Payload 配置初始化的 Cloudflare 上下文
+ */
+async function getPayloadConfigCloudflareContext(): Promise<CloudflareContext> {
+  try {
+    return await getProjectCloudflareContext()
+  } catch (error) {
+    if (isNextBuild || isMissingOpenNextCloudflareContextError(error)) {
+      return createPayloadConfigFallbackCloudflareContext()
+    }
+
+    throw error
+  }
+}
+
+const cloudflare = await getPayloadConfigCloudflareContext()
 const payloadSecret = getPayloadSecret(cloudflare)
 
 /**

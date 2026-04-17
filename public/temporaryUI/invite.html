@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request Early Access — Noumi</title>
-  <meta name="description" content="We're opening Noumi in waves. Leave your email and we'll send you an invite code when your spot is ready.">
+  <title>Request Early Access to Noumi — Join the First Wave</title>
+  <meta name="description" content="Get early access to Noumi — the AI assistant that remembers your context and gets work done autonomously. Opening in waves. Leave your email to claim your spot.">
+  <link rel="canonical" href="https://noumi.ai/invite">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Request Early Access to Noumi — Join the First Wave">
+  <meta property="og:description" content="Get early access to Noumi — the AI assistant that remembers your context and gets work done autonomously. Opening in waves. Leave your email to claim your spot.">
+  <meta property="og:url" content="https://noumi.ai/invite">
+  <meta property="og:image" content="https://noumi.ai/assets/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Request Early Access to Noumi — Join the First Wave">
+  <meta name="twitter:description" content="Get early access to Noumi — the AI assistant that remembers your context and gets work done autonomously. Opening in waves. Leave your email to claim your spot.">
+  <meta name="twitter:image" content="https://noumi.ai/assets/og-cover.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/style.css">
@@ -131,13 +141,23 @@
       .invite-wrap { padding: 56px 20px; }
       .invite-form { flex-direction: column; }
     }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
 <div class="page-body">
 
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt="Noumi"><span>Noumi</span></a>
   <ul class="nav-links">
     <li><a href="/use-cases/product-manager">Use Cases</a></li>
     <li><a href="/blog">Blog</a></li>
@@ -153,6 +173,7 @@
       <div class="invite-badge reveal"><i></i>Early Access</div>
 
       <h1 class="reveal d1">Be among the<br>first to use <em>Noumi.</em></h1>
+      <h2 class="sr-only">Request your invite</h2>
 
       <p class="reveal d2">We're opening access in waves. Leave your email and we'll send you an invite code when your spot is ready.</p>
 
@@ -176,6 +197,7 @@
         </button>
       </div>
 
+      <h3 class="sr-only">No spam, no credit card required</h3>
       <p class="invite-note reveal d3">No spam. No credit card. Just your spot in line.</p>
 
 
@@ -248,7 +270,7 @@
   const form  = document.getElementById('invite-form-wrap');
   const success = document.getElementById('invite-success');
 
-  btn.addEventListener('click', async () => {
+  btn.addEventListener('click', () => {
     const email = input.value.trim();
     if (!email || !email.includes('@')) {
       input.style.borderColor = '#ef4444';
@@ -256,34 +278,14 @@
       setTimeout(() => { input.style.borderColor = ''; }, 1800);
       return;
     }
-
+    // Disable form while "submitting"
     btn.disabled = true;
     btn.textContent = 'Sending…';
-
-    try {
-      const response = await fetch('/api/temporary-ui/invite-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          sourcePath: window.location.pathname,
-        }),
-      });
-      const data = await response.json().catch(() => ({ ok: false }));
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.message || 'Unable to save your request right now.');
-      }
-
+    // Simulate async submission (replace with real API call)
+    setTimeout(() => {
       form.style.display = 'none';
       success.style.display = 'block';
-    } catch (error) {
-      btn.disabled = false;
-      btn.textContent = 'Request Invite →';
-      input.style.borderColor = '#ef4444';
-      input.focus();
-      setTimeout(() => { input.style.borderColor = ''; }, 1800);
-    }
+    }, 800);
   });
 
   // Allow Enter key

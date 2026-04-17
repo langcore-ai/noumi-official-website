@@ -18,6 +18,14 @@ export const TEMPORARY_UI_STATIC_REWRITES: TemporaryUiRewriteRule[] = [
   { source: '/', destination: '/temporary-ui-static/__home' },
   { source: '/about', destination: '/temporary-ui-static/__about' },
   { source: '/blog', destination: '/temporary-ui-static/__blog' },
+  {
+    source: '/blog/how-to-delegate-weekly-work-to-ai-agent',
+    destination: '/temporary-ui-static/__blog-how-to-delegate-weekly-work-to-ai-agent',
+  },
+  {
+    source: '/blog/why-your-ai-should-know-you-better-every-week',
+    destination: '/temporary-ui-static/__blog-why-your-ai-should-know-you-better-every-week',
+  },
   { source: '/contact', destination: '/temporary-ui-static/__contact' },
   { source: '/faqs', destination: '/temporary-ui-static/__faqs' },
   { source: '/invite', destination: '/temporary-ui-static/__invite' },

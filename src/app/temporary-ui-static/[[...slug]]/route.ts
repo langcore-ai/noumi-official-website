@@ -7,6 +7,10 @@ export const dynamic = 'force-dynamic'
 const TEMPORARY_UI_ALIAS_TO_ASSET_PATH: Record<string, string> = {
   __about: '/temporaryUI/company/about.html',
   __blog: '/temporaryUI/resources/blog.html',
+  '__blog-how-to-delegate-weekly-work-to-ai-agent':
+    '/temporaryUI/resources/blog/how-to-delegate-weekly-work-to-ai-agent.html',
+  '__blog-why-your-ai-should-know-you-better-every-week':
+    '/temporaryUI/resources/blog/why-your-ai-should-know-you-better-every-week.html',
   __contact: '/temporaryUI/company/contact.html',
   __faqs: '/temporaryUI/resources/faq.html',
   __home: '/temporaryUI/index.html',

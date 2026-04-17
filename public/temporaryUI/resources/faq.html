@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Noumi</title>
+  <meta name="description" content="Frequently asked questions about Noumi — the self-refining Digital Twin that remembers your context and gets work done.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .faq-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 48px 96px;
+    }
+
+    .faq-category {
+      margin-bottom: 64px;
+    }
+    .faq-category-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    details.faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    details.faq-item:last-child { border-bottom: none; }
+
+    summary.faq-q {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      transition: color 0.2s;
+      user-select: none;
+    }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    summary.faq-q:hover { color: var(--accent); }
+    summary.faq-q::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+    details[open] summary.faq-q::after {
+      transform: rotate(45deg);
+      color: var(--accent);
+    }
+    details[open] summary.faq-q { color: var(--ink); }
+
+    .faq-a {
+      padding: 0 0 24px;
+      font-size: 15.5px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.8;
+    }
+    .faq-a a { color: var(--accent); }
+
+    .faq-footer {
+      text-align: center;
+      padding: 64px 0 0;
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+    }
+    .faq-footer p {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      margin-bottom: 20px;
+    }
+    .faq-footer a {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+      .faq-wrap { padding: 0 24px 72px; }
+    }
+    @media (max-width: 600px) {
+      .faq-wrap { padding: 0 20px 56px; }
+      summary.faq-q { font-size: 15px; padding: 18px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-body">
+
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="../assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <ul class="nav-links">
+    <li><a href="/use-cases/product-manager">Use Cases</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/invite" class="nav-cta">Try Free →</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════ -->
+<header class="page-hero">
+  <h1 class="reveal">Frequently Asked Questions</h1>
+  <p class="reveal d1">Can't find what you're looking for? Email us at <a href="mailto:official@noumi.ai" style="color:var(--accent)">official@noumi.ai</a></p>
+</header>
+
+<!-- ═══ FAQ ═══════════════════════════════════════════ -->
+<main class="faq-wrap">
+
+  <!-- What is Noumi -->
+  <div class="faq-category reveal">
+    <p class="faq-category-label">What is Noumi?</p>
+
+    <details class="faq-item">
+      <summary class="faq-q">What is Noumi?</summary>
+      <div class="faq-a">Noumi is a self-refining Digital Twin — an AI that remembers your context, learns your working preferences, and executes tasks on your behalf. Unlike general AI assistants that reset with every conversation, Noumi compounds with use. The longer you work with it, the less you have to explain.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">How is Noumi different from ChatGPT or other AI tools?</summary>
+      <div class="faq-a">Most AI tools treat every conversation as a blank slate. Noumi persists your context, rules, and preferences across sessions. Over time, it stops needing instructions — it already knows how you work.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Who is Noumi built for?</summary>
+      <div class="faq-a">Noumi is built for professionals who handle complex, recurring work — product managers, journalists, analysts, solutions engineers, and anyone who's tired of starting over with every AI conversation.</div>
+    </details>
+  </div>
+
+  <!-- Features -->
+  <div class="faq-category reveal">
+    <p class="faq-category-label">Features</p>
+
+    <details class="faq-item">
+      <summary class="faq-q">What does "Persistent Memory" mean?</summary>
+      <div class="faq-a">When you share context with Noumi — your project background, writing style, recurring tasks — it remembers. Next session, next week, next month: you don't explain it again.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">How do "Self-Evolving Skills" work?</summary>
+      <div class="faq-a">Every time you correct Noumi's output or set a preference, it stores that as a rule. Future tasks apply your rules automatically — no retraining, no re-explaining. Your corrections become its defaults.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">What is "Agentic Execution"?</summary>
+      <div class="faq-a">Noumi can break down complex tasks, use tools, and complete multi-step work on its own. You describe the goal. Noumi handles the steps, and comes back with finished work.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Can Noumi handle files and documents?</summary>
+      <div class="faq-a">Yes. You can upload documents, transcripts, research notes, and other materials into your workspace. Noumi works with them as part of your persistent context.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Can I use Noumi for my team?</summary>
+      <div class="faq-a">Noumi is built for individual professionals today. Team features are on our roadmap.</div>
+    </details>
+  </div>
+
+  <!-- Privacy & Data -->
+  <div class="faq-category reveal">
+    <p class="faq-category-label">Privacy &amp; Data</p>
+
+    <details class="faq-item">
+      <summary class="faq-q">Is my data private?</summary>
+      <div class="faq-a">Your workspace, memory, and uploaded files are private to you. We do not use your data to train shared models. See our <a href="/privacy">Privacy Policy</a> for details.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Where is my data stored?</summary>
+      <div class="faq-a">Your data is stored securely in the cloud. We use industry-standard encryption in transit and at rest.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Can I delete my data?</summary>
+      <div class="faq-a">Yes. You can cancel your account at any time, and your data will be deleted within 30 days. You can also request deletion of specific content. Contact us at <a href="mailto:official@noumi.ai">official@noumi.ai</a>.</div>
+    </details>
+  </div>
+
+  <!-- Getting Started -->
+  <div class="faq-category reveal">
+    <p class="faq-category-label">Getting Started</p>
+
+    <details class="faq-item">
+      <summary class="faq-q">How do I get started?</summary>
+      <div class="faq-a">Sign up for free, set up your workspace with your context and working preferences, and give Noumi its first task. Most users find the value within their first few sessions.</div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-q">Do I need technical skills to use Noumi?</summary>
+      <div class="faq-a">No. Noumi is designed for professionals, not developers. If you can write a message, you can use Noumi.</div>
+    </details>
+
+    <details class="faq-item" open>
+      <summary class="faq-q">Is there a free plan?</summary>
+      <div class="faq-a">Yes. Noumi offers a free tier so you can get started without a credit card. See our <a href="/pricing">Pricing</a> page for details on what's included.</div>
+    </details>
+  </div>
+
+  <!-- Footer -->
+  <div class="faq-footer reveal">
+    <p>Still have questions?</p>
+    <a href="mailto:official@noumi.ai">official@noumi.ai</a>
+  </div>
+
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">Noumi</a>
+        <p class="footer-tagline">Don't teach your AI twice.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Use Cases</h4>
+        <ul>
+          <li><a href="/use-cases/product-manager">For Product Managers</a></li>
+          <li><a href="/use-cases/journalist">For Journalists</a></li>
+          <li><a href="/use-cases/solutions-engineer">For Solutions Engineers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faqs">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Noumi. All rights reserved.</p>
+      <p class="footer-copy">noumi.ai</p>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none';
+  }, { passive: true });
+</script>
+</body>
+</html>

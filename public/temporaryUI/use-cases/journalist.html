@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noumi for Journalists — AI that masters your beat</title>
+  <meta name="description" content="Noumi internalizes your style and masters your beats, so you can focus on the story — not the setup.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    /* ── Role tabs ────────────────────────────────────── */
+    .role-tabs-wrap {
+      background: var(--cream-mid);
+      border-bottom: 1px solid var(--border);
+    }
+    .role-tabs {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+      display: flex;
+      gap: 0;
+      justify-content: center;
+    }
+    .role-tab {
+      padding: 14px 24px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink-muted);
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .role-tab:hover { color: var(--ink); }
+    .role-tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+    /* ── Role hero ────────────────────────────────────── */
+    .role-hero {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 72px 48px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .role-hero-text h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .role-advantage {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+    .pain-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .pain-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      font-weight: 300;
+      line-height: 1.55;
+    }
+    .pain-list li::before {
+      content: '·';
+      font-size: 22px;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    /* Hero visual */
+    .role-hero-visual {
+      border-radius: 18px;
+      background: linear-gradient(150deg, #2A2760 0%, #1B1940 60%, #2E1B6E 100%);
+      border: 1px solid rgba(28,27,46,0.08);
+      box-shadow: 0 24px 64px rgba(28,27,46,0.12);
+      overflow: hidden;
+      min-height: 360px;
+    }
+    .rh-chrome {
+      height: 36px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 6px;
+    }
+    .rh-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .rh-dot:nth-child(1) { background:#FF5F57; }
+    .rh-dot:nth-child(2) { background:#FFBD2E; }
+    .rh-dot:nth-child(3) { background:#28CA41; }
+    .rh-body { padding: 20px; }
+    .rh-label {
+      font-size: 9px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rh-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+    .rh-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 9px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .rh-item-head { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.72); margin-bottom: 5px; }
+    .rh-item-body { font-size: 9px; color: rgba(255,255,255,0.35); line-height: 1.5; }
+    .rh-tag {
+      display: inline-block;
+      background: rgba(75,75,232,0.22);
+      color: rgba(165,172,255,0.85);
+      font-size: 8px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 7px;
+    }
+
+    /* ── Workflow section ─────────────────────────────── */
+    .workflow-section {
+      background: var(--cream-mid);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 0;
+    }
+    .workflow-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 48px; }
+    .workflow-title { text-align: center; margin-bottom: 56px; }
+    .workflow-title h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(28px, 3.5vw, 46px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .workflow-title p { font-size: 16px; font-weight: 300; color: var(--ink-muted); }
+
+    .workflow-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 48px;
+      align-items: stretch;
+    }
+    .workflow-steps { display: flex; flex-direction: column; gap: 0; justify-content: space-between; background: var(--cream); border: 1px solid var(--border-med); border-radius: 18px; padding: 20px; }
+    .wf-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .wf-step:hover { background: rgba(28,27,46,0.04); transform: translateX(2px); }
+    .wf-step.active { background: var(--cream); border-color: var(--border-med); box-shadow: 0 2px 12px rgba(28,27,46,0.06); }
+    .wf-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--cream-dark);
+      border: 1px solid var(--border-med);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ff-display);
+      font-style: italic;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .wf-step.active .wf-num { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 0 0 3px rgba(75,75,232,0.18); }
+    .wf-title { font-size: 14px; font-weight: 500; color: var(--ink-soft); line-height: 1.4; padding-top: 3px; white-space: nowrap; transition: color 0.2s; }
+    .wf-step.active .wf-title { color: var(--ink); }
+
+    .workflow-content { background: var(--cream); border: 1px solid var(--border-med); border-radius: 18px; overflow: hidden; min-height: 380px; }
+    .wf-panel { display: none; }
+    .wf-panel.active { display: block; }
+    .wf-panel-text { padding: 36px 36px 28px; }
+    .wf-panel-text h3 { font-family: var(--ff-display); font-size: 24px; font-weight: 700; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
+    .wf-panel-text p { font-size: 15.5px; font-weight: 300; color: var(--ink-soft); line-height: 1.75; }
+
+    .wf-demo { margin: 0 24px 24px; border-radius: 12px; background: linear-gradient(150deg, #2A2760 0%, #1B1940 100%); padding: 20px; min-height: 140px; }
+    .wf-demo-label {
+      font-size: 9px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wf-demo-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
+    .wf-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .wf-row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+    .wf-row-text { font-size: 10px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+    .wf-row-tag { display: inline-block; background: rgba(75,75,232,0.2); color: rgba(165,172,255,0.8); font-size: 8px; padding: 2px 7px; border-radius: 4px; margin-top: 5px; }
+
+    /* Social proof */
+    .social-proof {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 72px 48px;
+      text-align: center;
+    }
+    .proof-quote {
+      font-family: var(--ff-display);
+      font-style: italic;
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+    .proof-attr {
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+
+    @media (max-width: 960px) {
+      .role-hero { grid-template-columns: 1fr; gap: 48px; padding: 56px 24px 48px; }
+      .workflow-inner { padding: 0 24px; }
+      .workflow-layout { grid-template-columns: 1fr; gap: 32px; }
+      .role-tabs { padding: 0 24px; overflow-x: auto; }
+      .social-proof { padding: 56px 24px; }
+    }
+    @media (max-width: 600px) {
+      .role-hero { padding: 48px 20px 40px; }
+      .role-tab { padding: 12px 16px; font-size: 13px; }
+      .wf-panel-text { padding: 24px 20px 18px; }
+      .wf-demo { margin: 0 16px 16px; }
+    }
+    .cta-band h2 { font-size: clamp(22px, 3vw, 42px) !important; max-width: 720px !important; }
+    .cta-band h2 em { white-space: nowrap; }
+  </style>
+</head>
+<body>
+<div class="page-body">
+
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="../assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <ul class="nav-links">
+    <li><a href="/use-cases/product-manager">Use Cases</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/invite" class="nav-cta">Try Free →</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ ROLE TABS ════════════════════════════════════ -->
+<div class="role-tabs-wrap">
+  <nav class="role-tabs" aria-label="Use case navigation">
+    <a href="/use-cases/product-manager" class="role-tab">Product Manager</a>
+    <a href="/use-cases/journalist" class="role-tab active">Journalist</a>
+    <a href="/use-cases/solutions-engineer" class="role-tab">Solutions Engineer</a>
+  </nav>
+</div>
+
+<!-- ═══ HERO + PAIN ══════════════════════════════════ -->
+<section class="role-hero" aria-labelledby="j-h1">
+  <div class="role-hero-text reveal">
+    <h1 id="j-h1">Journalist</h1>
+    <p class="role-advantage">Noumi internalizes your style and masters your beats, so you can focus on the story — not the setup.</p>
+    <ul class="pain-list">
+      <li>You re-paste the same outlet style rules into every new assignment.</li>
+      <li>Following up on a beat means rebuilding context from scattered notes and old files.</li>
+      <li>Your draft follows the rules you remembered — not all the ones that matter.</li>
+    </ul>
+    <a href="/invite" class="btn-fill">Try Free →</a>
+  </div>
+
+  <div class="role-hero-visual reveal d2" role="img" aria-label="Noumi workspace for journalists">
+    <div class="rh-chrome">
+      <div class="rh-dot"></div><div class="rh-dot"></div><div class="rh-dot"></div>
+    </div>
+    <div class="rh-body">
+      <div class="rh-label">Tech Policy Beat — Memory loaded</div>
+      <div class="rh-item">
+        <div class="rh-item-head">Outlet Style Rules — Huxiu</div>
+        <div class="rh-item-body">Inverted pyramid. No passive voice. Sources cited inline. 1,200–1,800 words for features. Last updated: 2026-04-10.</div>
+        <span class="rh-tag">auto-applied</span>
+      </div>
+      <div class="rh-item">
+        <div class="rh-item-head">Beat Context: AI Regulation (China)</div>
+        <div class="rh-item-body">8 prior stories. 14 source contacts. Open threads: MIIT draft rules, CAICT response. Last story: March 2026.</div>
+        <span class="rh-tag">persistent</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WORKFLOW ══════════════════════════════════════ -->
+<section class="workflow-section" aria-labelledby="j-workflow-h2">
+  <div class="workflow-inner">
+    <div class="workflow-title reveal">
+      <span class="sec-label">See how Noumi works</span>
+      <h2 id="j-workflow-h2">Your sources. Your rules. Your beat.</h2>
+      <p>All in one workspace.</p>
+    </div>
+
+    <div class="workflow-layout reveal d1">
+
+      <div class="workflow-steps" role="tablist">
+        <button class="wf-step active" role="tab" aria-selected="true" aria-controls="panel-1" data-panel="1">
+          <div class="wf-num">1</div>
+          <div class="wf-title">Sources to Story Structure</div>
+        </button>
+        <button class="wf-step" role="tab" aria-selected="false" aria-controls="panel-2" data-panel="2">
+          <div class="wf-num">2</div>
+          <div class="wf-title">Draft Under Outlet Rules</div>
+        </button>
+        <button class="wf-step" role="tab" aria-selected="false" aria-controls="panel-3" data-panel="3">
+          <div class="wf-num">3</div>
+          <div class="wf-title">Keep the Beat Alive</div>
+        </button>
+      </div>
+
+      <div class="workflow-content">
+
+        <div class="wf-panel active" id="panel-1" role="tabpanel">
+          <div class="wf-panel-text">
+            <h3>Sources to Story Structure</h3>
+            <p>Ingest multilingual sources, extract claims, flag contradictions. Your reporting scaffold, built before you write a word.</p>
+          </div>
+          <div class="wf-demo">
+            <div class="wf-demo-label">Processing 6 sources</div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#22C55E"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Lead claim confirmed</strong><br>
+                Ministry statement + 2 independent analyst quotes aligned.<br>
+                <span class="wf-row-tag" style="background:rgba(34,197,94,0.14);color:rgba(134,239,172,0.85)">3 sources agree</span>
+              </div>
+            </div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#F87171"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Contradiction flagged</strong><br>
+                Reuters timeline differs from MIIT announcement by 14 days. Needs verification.<br>
+                <span class="wf-row-tag" style="background:rgba(248,113,113,0.14);color:rgba(252,165,165,0.85)">check required</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wf-panel" id="panel-2" role="tabpanel">
+          <div class="wf-panel-text">
+            <h3>Draft Under Outlet Rules</h3>
+            <p>Your publication's naming, tone, and structure rules are already in the workspace. Noumi applies them every time — not just this time.</p>
+          </div>
+          <div class="wf-demo">
+            <div class="wf-demo-label">Draft — Huxiu rules applied</div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#22C55E"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Structure: inverted pyramid</strong><br>
+                Lead: key finding. Nut graf: policy context. Body: source quotes. Applied from rule set.<br>
+                <span class="wf-row-tag" style="background:rgba(34,197,94,0.14);color:rgba(134,239,172,0.85)">rule applied</span>
+              </div>
+            </div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#4B4BE8"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Word count: 1,340</strong><br>
+                Within Huxiu feature range (1,200–1,800). All sources cited inline per style guide.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wf-panel" id="panel-3" role="tabpanel">
+          <div class="wf-panel-text">
+            <h3>Keep the Beat Alive</h3>
+            <p>Your prior coverage, open questions, and source notes stay available. The next piece begins where the last one ended.</p>
+          </div>
+          <div class="wf-demo">
+            <div class="wf-demo-label">Beat continuity — AI Regulation</div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#9090F5"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Open thread: CAICT response</strong><br>
+                Carried from March story. Last contact: 2026-03-18. Follow-up due.<br>
+                <span class="wf-row-tag">from prior story</span>
+              </div>
+            </div>
+            <div class="wf-row">
+              <div class="wf-row-dot" style="background:#4B4BE8"></div>
+              <div class="wf-row-text">
+                <strong style="color:rgba(255,255,255,0.8)">Source map: 14 contacts</strong><br>
+                Beat context updated with 3 new sources from this story. Persistent across assignments.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOCIAL PROOF ══════════════════════════════════ -->
+<section class="social-proof" aria-label="Testimonial">
+  <blockquote class="proof-quote reveal">"A deep-reporting editor at Huxiu compressed turnaround from one week to two days — while keeping full editorial ownership of angle and fact judgment."</blockquote>
+</section>
+
+<!-- ═══ CTA ═══════════════════════════════════════════ -->
+<section class="cta-band" aria-labelledby="j-cta">
+  <h2 id="j-cta" class="reveal">
+    Your sources. Your rules. Your beat.<br><em>All in one workspace.</em>
+  </h2>
+  <p class="reveal d1">Free to start. No credit card required.</p>
+  <a href="/invite" class="btn-cream reveal d2">Start building your AI today →</a>
+</section>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">Noumi</a>
+        <p class="footer-tagline">Don't teach your AI twice.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Use Cases</h4>
+        <ul>
+          <li><a href="/use-cases/product-manager">For Product Managers</a></li>
+          <li><a href="/use-cases/journalist">For Journalists</a></li>
+          <li><a href="/use-cases/solutions-engineer">For Solutions Engineers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faqs">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Noumi. All rights reserved.</p>
+      <p class="footer-copy">noumi.ai</p>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none';
+  }, { passive: true });
+  const steps = document.querySelectorAll('.wf-step');
+  const panels = document.querySelectorAll('.wf-panel');
+  steps.forEach(step => {
+    step.addEventListener('click', () => {
+      const target = step.dataset.panel;
+      steps.forEach(s => { s.classList.remove('active'); s.setAttribute('aria-selected','false'); });
+      panels.forEach(p => p.classList.remove('active'));
+      step.classList.add('active');
+      step.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

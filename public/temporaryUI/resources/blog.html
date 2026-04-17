@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Noumi</title>
+  <meta name="description" content="Stories and insights about AI, work, and the future of knowledge work. From the team at Noumi.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .blog-wrap {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px 120px;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 64px;
+    }
+
+    /* Empty state */
+    .blog-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 0;
+      border: 1px dashed var(--border-med);
+      border-radius: 18px;
+    }
+    .blog-empty-icon {
+      font-size: 40px;
+      margin-bottom: 24px;
+      opacity: 0.3;
+    }
+    .blog-empty h3 {
+      font-family: var(--ff-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .blog-empty p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-muted);
+      max-width: 360px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    /* Newsletter subscribe */
+    .blog-subscribe {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+    }
+    .blog-subscribe h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .blog-subscribe p {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .subscribe-form {
+      display: flex;
+      gap: 10px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .subscribe-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-med);
+      background: var(--cream-mid);
+      font-family: var(--ff-body);
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .subscribe-input:focus { border-color: var(--accent); }
+    .subscribe-input::placeholder { color: var(--ink-muted); }
+    .subscribe-btn {
+      padding: 12px 20px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--ff-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .subscribe-btn:hover { background: var(--ink-soft); }
+
+    @media (max-width: 960px) {
+      .blog-wrap { padding: 0 24px 80px; }
+      .blog-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .blog-grid { grid-template-columns: 1fr; }
+      .subscribe-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-body">
+
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="../assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <ul class="nav-links">
+    <li><a href="/use-cases/product-manager">Use Cases</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/invite" class="nav-cta">Try Free →</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════ -->
+<header class="page-hero">
+  <span class="sec-label reveal">From the team</span>
+  <h1 class="reveal d1">Blog</h1>
+  <p class="reveal d2">Stories and insights about AI, work, and the future of knowledge work.</p>
+</header>
+
+<!-- ═══ POSTS ═════════════════════════════════════════ -->
+<main class="blog-wrap">
+  <div class="blog-grid reveal">
+    <div class="blog-empty">
+      <div class="blog-empty-icon">✦</div>
+      <h3>Coming soon.</h3>
+      <p>We're working on our first posts. Subscribe below to be notified when they're live.</p>
+      <a href="mailto:official@noumi.ai" class="btn-outline" style="font-size:14px;padding:10px 22px;">Get notified →</a>
+    </div>
+  </div>
+
+  <div class="blog-subscribe reveal">
+    <h3>Stay in the loop</h3>
+    <p>No spam. Just the best thinking on AI, memory, and how knowledge work is changing.</p>
+    <div class="subscribe-form">
+      <input type="email" class="subscribe-input" placeholder="your@email.com">
+      <button class="subscribe-btn">Subscribe</button>
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">Noumi</a>
+        <p class="footer-tagline">Don't teach your AI twice.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Use Cases</h4>
+        <ul>
+          <li><a href="/use-cases/product-manager">For Product Managers</a></li>
+          <li><a href="/use-cases/journalist">For Journalists</a></li>
+          <li><a href="/use-cases/solutions-engineer">For Solutions Engineers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faqs">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Noumi. All rights reserved.</p>
+      <p class="footer-copy">noumi.ai</p>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none';
+  }, { passive: true });
+</script>
+</body>
+</html>

@@ -1,5 +1,10 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
+import {
+  TEMPORARY_UI_BLOCKED_HTML_REWRITES,
+  TEMPORARY_UI_STATIC_REWRITES,
+} from './src/lib/site/temporary-ui'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -19,6 +24,14 @@ const nextConfig = {
   ],
 
   // Your Next.js config here
+  async rewrites() {
+    return {
+      beforeFiles: [
+        ...TEMPORARY_UI_STATIC_REWRITES,
+        ...TEMPORARY_UI_BLOCKED_HTML_REWRITES,
+      ],
+    }
+  },
   webpack: (webpackConfig: any) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

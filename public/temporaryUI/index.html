@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noumi — A self-refining Digital Twin that does the work for you.</title>
+  <meta name="description" content="Noumi remembers everything and gets the work done. For the heavy-context professionals — PMs, journalists, and solution experts. And for anyone done starting over.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Variables ─────────────────────────────────── */
+    :root {
+      --cream:        #F5F0E8;
+      --cream-mid:    #EDE8DC;
+      --cream-dark:   #E5DFD0;
+      --ink:          #1C1B2E;
+      --ink-soft:     #3D3B52;
+      --ink-muted:    #7C7A90;
+      --accent:       #4B4BE8;
+      --accent-soft:  #9090F5;
+      --accent-glow:  rgba(75,75,232,0.12);
+      --border:       rgba(28,27,46,0.10);
+      --border-med:   rgba(28,27,46,0.18);
+
+      --ff-display: 'Playfair Display', Georgia, serif;
+      --ff-body:    'DM Sans', system-ui, sans-serif;
+      --max-w: 1140px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--ff-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    .nav-logo { display: flex; flex-direction: row; align-items: center; gap: 8px; font-family: var(--ff-display); font-size: 21px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+    .nav-logo img { height: 20px; width: 20px; max-width: 20px; }
+
+    /* ── Nav ───────────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 200;
+      height: 64px;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(245,240,232,0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-soft);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-cta {
+      background: var(--ink) !important;
+      color: var(--cream) !important;
+      padding: 9px 22px;
+      border-radius: 7px;
+      font-weight: 500 !important;
+      transition: background 0.2s, transform 0.15s !important;
+    }
+    .nav-cta:hover { background: var(--ink-soft) !important; transform: translateY(-1px); }
+
+    /* ── Hero ──────────────────────────────────────── */
+    .hero {
+      padding: 156px 48px 80px;
+      text-align: center;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-med);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      letter-spacing: 0.025em;
+      margin-bottom: 36px;
+    }
+    .badge i {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .hero-h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(42px, 5.2vw, 72px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      max-width: 860px;
+      margin: 0 auto 28px;
+    }
+    .hero-h1 em { font-style: italic; color: var(--accent); white-space: nowrap; }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      max-width: 720px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .btn-fill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 14px 30px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-fill:hover { background: var(--ink-soft); transform: translateY(-2px); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--ink);
+      padding: 14px 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border-med);
+      font-size: 15px;
+      font-weight: 400;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .btn-outline:hover { background: rgba(28,27,46,0.05); transform: translateY(-2px); }
+
+    /* ── Hero Mockup ───────────────────────────────── */
+    .hero-mockup {
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow:
+        0 0 0 1px rgba(28,27,46,0.08),
+        0 48px 96px rgba(28,27,46,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.5);
+      background: linear-gradient(160deg, #2A2760 0%, #1A1840 55%, #2E1B6E 100%);
+    }
+
+    .m-chrome {
+      height: 38px;
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 7px;
+    }
+    .m-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .m-dot:nth-child(1) { background: #FF5F57; }
+    .m-dot:nth-child(2) { background: #FFBD2E; }
+    .m-dot:nth-child(3) { background: #28CA41; }
+    .m-title {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.28);
+      letter-spacing: 0.05em;
+    }
+
+    .m-body {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      min-height: 300px;
+    }
+
+    .m-sidebar {
+      background: rgba(255,255,255,0.03);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 20px 14px;
+    }
+    .m-sidebar-label {
+      font-size: 9px;
+      color: rgba(255,255,255,0.28);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
+    }
+    .m-card {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .m-card-name { font-size: 9.5px; color: rgba(255,255,255,0.75); font-weight: 500; margin-bottom: 4px; }
+    .m-card-body { font-size: 8.5px; color: rgba(255,255,255,0.35); line-height: 1.45; }
+    .m-tag {
+      display: inline-block;
+      background: rgba(75,75,232,0.28);
+      color: rgba(165,172,255,0.9);
+      font-size: 8px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 7px;
+    }
+
+    .m-main {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .m-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+    .m-bubble.user {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.72);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+    .m-bubble.ai {
+      background: linear-gradient(135deg, rgba(75,75,232,0.22), rgba(124,58,237,0.14));
+      border: 1px solid rgba(75,75,232,0.22);
+      color: rgba(255,255,255,0.82);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+    .m-ctx-bar {
+      font-size: 8px;
+      color: rgba(165,172,255,0.65);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding-bottom: 7px;
+      margin-bottom: 7px;
+      border-bottom: 1px solid rgba(75,75,232,0.18);
+    }
+
+    /* ── Ornament ──────────────────────────────────── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .ornament::before, .ornament::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .ornament span { font-size: 16px; color: var(--ink-muted); opacity: 0.4; }
+
+    /* ── Features ──────────────────────────────────── */
+    .features-wrap { padding: 80px 0; }
+
+    .feature {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 88px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 88px;
+      align-items: center;
+    }
+    .feature.reverse .f-text { order: 2; }
+    .feature.reverse .f-demo  { order: 1; }
+
+    .f-num {
+      display: block;
+      font-family: var(--ff-display);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 18px;
+      letter-spacing: 0.01em;
+    }
+
+    .f-text h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(30px, 3.6vw, 50px);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.028em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .f-text p {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      max-width: 400px;
+    }
+
+    .f-demo {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(28,27,46,0.08);
+      box-shadow: 0 24px 60px rgba(28,27,46,0.09);
+      background: linear-gradient(155deg, #2A2760 0%, #1B1940 100%);
+      min-height: 340px;
+    }
+
+    .f-demo-inner { padding: 26px; height: 100%; }
+
+    /* Demo labels */
+    .demo-label {
+      font-size: 9.5px;
+      color: rgba(255,255,255,0.32);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .demo-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+
+    /* Memory demo */
+    .ctx-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 10px;
+      color: rgba(134,239,172,0.9);
+      margin-bottom: 14px;
+    }
+    .ctx-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(75,75,232,0.14);
+      border: 1px solid rgba(75,75,232,0.22);
+      border-radius: 7px;
+      padding: 7px 12px;
+      font-size: 10px;
+      color: rgba(165,172,255,0.88);
+      margin-bottom: 8px;
+      width: 100%;
+    }
+    .demo-bubble {
+      background: linear-gradient(135deg, rgba(75,75,232,0.2), rgba(124,58,237,0.12));
+      border: 1px solid rgba(75,75,232,0.18);
+      border-radius: 10px;
+      border-bottom-left-radius: 3px;
+      padding: 10px 14px;
+      font-size: 10px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.8);
+      margin-top: 14px;
+    }
+    .demo-bubble-tag {
+      font-size: 8px;
+      color: rgba(165,172,255,0.6);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Skills demo */
+    .correction-row {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .c-before { font-size: 10px; color: rgba(252,165,165,0.8); text-decoration: line-through; margin-bottom: 4px; }
+    .c-after  { font-size: 10px; color: rgba(134,239,172,0.9); margin-bottom: 8px; }
+    .c-rule {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(75,75,232,0.16);
+      border-radius: 4px;
+      padding: 3px 9px;
+      font-size: 8px;
+      color: rgba(165,172,255,0.85);
+    }
+    .skills-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 10px;
+      color: rgba(165,172,255,0.6);
+    }
+
+    /* Agent demo */
+    .task-prompt {
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 18px;
+      font-style: italic;
+      border-left: 2px solid rgba(75,75,232,0.5);
+    }
+    .step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .step-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      margin-top: 1px;
+    }
+    .step-dot.done    { background: rgba(34,197,94,0.18); border: 1px solid rgba(34,197,94,0.35); color: rgba(134,239,172,0.9); }
+    .step-dot.active  { background: rgba(75,75,232,0.2);  border: 1px solid rgba(75,75,232,0.4);  color: rgba(165,172,255,0.9); animation: pulse 1.6s infinite; }
+    .step-dot.pending { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.22); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+    .step-label { font-size: 11px; line-height: 1.45; }
+    .step-label.done    { color: rgba(255,255,255,0.82); }
+    .step-label.active  { color: rgba(165,172,255,0.9); }
+    .step-label.pending { color: rgba(255,255,255,0.3); }
+    .agent-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 10px;
+      color: rgba(255,255,255,0.28);
+    }
+
+    /* ── Feature divider ───────────────────────────── */
+    .f-divider {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .f-divider hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── CTA Banner ────────────────────────────────── */
+    .cta-band {
+      background: var(--ink);
+      padding: 128px 48px;
+      text-align: center;
+    }
+    .cta-band h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(28px, 3.8vw, 52px);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.028em;
+      color: var(--cream);
+      max-width: 760px;
+      margin: 0 auto 16px;
+    }
+    .cta-band h2 em { font-style: italic; color: var(--accent-soft); white-space: nowrap; }
+    .cta-band p {
+      font-size: 16px;
+      color: rgba(245,240,232,0.45);
+      margin-bottom: 44px;
+      font-weight: 300;
+    }
+    .btn-cream {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cream);
+      color: var(--ink);
+      padding: 16px 34px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-cream:hover { background: var(--cream-mid); transform: translateY(-2px); }
+
+    /* ── Footer ────────────────────────────────────── */
+    footer {
+      background: var(--cream-mid);
+      border-top: 1px solid var(--border);
+      padding: 76px 48px 40px;
+    }
+    .footer-grid {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .footer-top-row {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 64px;
+    }
+    .footer-brand-logo {
+      font-family: var(--ff-display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .footer-brand-tag { font-size: 13.5px; color: var(--ink-muted); line-height: 1.5; }
+    .footer-col-head {
+      font-size: 11.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 11px; }
+    .footer-col ul li a { font-size: 13.5px; color: var(--ink-muted); transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--ink); }
+    .footer-bottom-row {
+      max-width: var(--max-w);
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy { font-size: 12.5px; color: var(--ink-muted); }
+
+    /* ── Scroll animations ─────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.72s ease, transform 0.72s ease;
+    }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.10s; }
+    .d2 { transition-delay: 0.20s; }
+    .d3 { transition-delay: 0.32s; }
+    .d4 { transition-delay: 0.44s; }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 960px) {
+      nav    { padding: 0 24px; }
+      .nav-links { gap: 22px; }
+
+      .hero  { padding: 130px 24px 64px; }
+      .hero-h1 { font-size: 42px; }
+      .hero-sub { font-size: 16px; }
+
+      .feature {
+        grid-template-columns: 1fr;
+        gap: 44px;
+        padding: 64px 24px;
+      }
+      .feature.reverse .f-text { order: 1; }
+      .feature.reverse .f-demo  { order: 2; }
+      .f-text p { max-width: 100%; }
+      .ornament { padding: 0 24px; }
+      .f-divider { padding: 0 24px; }
+
+      .footer-top-row { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .footer-brand   { grid-column: span 2; }
+
+      .m-body { grid-template-columns: 1fr; }
+      .m-sidebar { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .nav-links li:not(:last-child) { display: none; }
+
+      .hero-h1 { font-size: 35px; }
+      .hero-ctas { flex-direction: column; align-items: stretch; }
+      .btn-fill, .btn-outline { justify-content: center; }
+
+      .footer-top-row { grid-template-columns: 1fr; gap: 36px; }
+      .footer-brand   { grid-column: span 1; }
+      .footer-bottom-row { flex-direction: column; gap: 10px; text-align: center; }
+
+      .cta-band { padding: 80px 24px; }
+      footer { padding: 56px 24px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <ul class="nav-links">
+    <li><a href="/use-cases/product-manager">Use Cases</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/invite" class="nav-cta">Try Free →</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ═══ HERO ════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-h1">
+
+  <div class="badge reveal"><i></i>Don't teach your AI twice.</div>
+
+  <h1 class="hero-h1 reveal d1" id="hero-h1">
+    A self-refining <em>Digital Twin</em><br>that does the work for you.
+  </h1>
+
+  <p class="hero-sub reveal d2">
+    Noumi remembers everything and gets the work done.<br>For the heavy-context professionals — PMs, journalists, and solution experts.<br>And for anyone done starting over.
+  </p>
+
+  <div class="hero-ctas reveal d3">
+    <a href="/invite" class="btn-fill">Try Free →</a>
+    <a href="#features" class="btn-outline">See How It Works</a>
+  </div>
+
+</section>
+
+<!-- ═══ FEATURES ════════════════════════════════════ -->
+<section id="features" class="features-wrap" aria-label="Product features">
+
+  <div class="ornament"><span>✦</span></div>
+
+  <!-- 01 — Persistent Memory -->
+  <div class="feature">
+    <div class="f-text reveal">
+      <span class="f-num">01 — Feature</span>
+      <h2>Persistent Memory</h2>
+      <p>Tell Noumi once. It remembers for every conversation after. Your projects, preferences, and rules — always present, never re-explained.</p>
+    </div>
+    <div class="f-demo reveal d2" role="img" aria-label="Persistent Memory demo">
+      <div class="f-demo-inner">
+        <div class="demo-label">New conversation</div>
+        <div class="ctx-banner">✓ &nbsp; 3 memory cards loaded automatically</div>
+        <div class="ctx-chip">📁 &nbsp; Project: Noumi Website Redesign — Sprint 4</div>
+        <div class="ctx-chip">✍️ &nbsp; Style: Concise, no buzzwords, Oxford comma</div>
+        <div class="ctx-chip">🔁 &nbsp; Rule: Always export in Markdown format</div>
+        <div class="demo-bubble">
+          <div class="demo-bubble-tag">⚡ Continuing from last session</div>
+          Back to the website copy. You left off on the Features section — want me to pick up from Persistent Memory?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-divider"><hr></div>
+
+  <!-- 02 — Self-Evolving Skills -->
+  <div class="feature reverse">
+    <div class="f-text reveal">
+      <span class="f-num">02 — Feature</span>
+      <h2>Self-Evolving Skills</h2>
+      <p>Every correction becomes a rule. Your preferences become its defaults. Noumi learns from how you work — and applies it every time after.</p>
+    </div>
+    <div class="f-demo reveal d2" role="img" aria-label="Self-Evolving Skills demo">
+      <div class="f-demo-inner">
+        <div class="demo-label">Corrections → Rules</div>
+        <div class="correction-row">
+          <div class="c-before">"leverage synergies across touchpoints"</div>
+          <div class="c-after">→ "work together across teams"</div>
+          <div class="c-rule">✓ Rule saved: avoid business jargon</div>
+        </div>
+        <div class="correction-row">
+          <div class="c-before">Numbered list format</div>
+          <div class="c-after">→ Bullet points with sub-items</div>
+          <div class="c-rule">✓ Rule saved: use bullet points</div>
+        </div>
+        <div class="correction-row">
+          <div class="c-before">Passive voice throughout</div>
+          <div class="c-after">→ Active, direct sentences</div>
+          <div class="c-rule">✓ Rule saved: active voice preferred</div>
+        </div>
+        <div class="skills-footer">3 rules active · Applied to all future tasks automatically</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-divider"><hr></div>
+
+  <!-- 03 — Agentic Execution -->
+  <div class="feature">
+    <div class="f-text reveal">
+      <span class="f-num">03 — Feature</span>
+      <h2>Agentic Execution</h2>
+      <p>Set the task. Walk away. Come back to finished work. Noumi breaks down complex jobs, uses the right tools, and delivers while you focus on what matters.</p>
+    </div>
+    <div class="f-demo reveal d2" role="img" aria-label="Agentic Execution demo">
+      <div class="f-demo-inner">
+        <div class="demo-label">Task in progress</div>
+        <div class="task-prompt">"Prepare the Q3 competitor analysis and format as a slide deck"</div>
+        <div class="step-row">
+          <div class="step-dot done">✓</div>
+          <div class="step-label done">Research 5 competitors via web search</div>
+        </div>
+        <div class="step-row">
+          <div class="step-dot done">✓</div>
+          <div class="step-label done">Pull pricing data and feature comparison</div>
+        </div>
+        <div class="step-row">
+          <div class="step-dot done">✓</div>
+          <div class="step-label done">Apply your slide template and brand colors</div>
+        </div>
+        <div class="step-row">
+          <div class="step-dot active">⟳</div>
+          <div class="step-label active">Generating executive summary slide…</div>
+        </div>
+        <div class="step-row">
+          <div class="step-dot pending">○</div>
+          <div class="step-label pending">Export and share to Google Drive</div>
+        </div>
+        <div class="agent-footer">Step 4 of 5 &nbsp;·&nbsp; Est. 2 min remaining</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ornament"><span>✦</span></div>
+
+</section>
+
+<!-- ═══ CTA BAND ════════════════════════════════════ -->
+<section class="cta-band" aria-labelledby="cta-h2">
+  <h2 id="cta-h2" class="reveal">
+    The longer you use Noumi,<br>the <em>less you have to explain.</em>
+  </h2>
+  <p class="reveal d1">Free to start. No credit card required.</p>
+  <a href="/invite" class="btn-cream reveal d2">Start building your AI today →</a>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ══════════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-top-row">
+      <div class="footer-brand">
+        <a href="/" class="footer-brand-logo">Noumi</a>
+        <p class="footer-brand-tag">Don't teach your AI twice.</p>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-head">Use Cases</div>
+        <ul>
+          <li><a href="/use-cases/product-manager">For Product Managers</a></li>
+          <li><a href="/use-cases/journalist">For Journalists</a></li>
+          <li><a href="/use-cases/solutions-engineer">For Solutions Engineers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-head">Company</div>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-head">Resources</div>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faqs">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-head">Legal</div>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-row">
+      <p class="footer-copy">© 2026 Noumi. All rights reserved.</p>
+      <p class="footer-copy">noumi.ai</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav shadow on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 16
+      ? '0 4px 28px rgba(28,27,46,0.07)'
+      : 'none';
+  }, { passive: true });
+</script>
+
+</body>
+</html>

@@ -7,8 +7,7 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import type { Field } from 'payload'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { GetPlatformProxyOptions } from 'wrangler'
+import { CloudflareContext } from '@opennextjs/cloudflare'
 import { r2Storage } from '@payloadcms/storage-r2'
 import { en as enTranslations } from '@payloadcms/translations/languages/en'
 import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
@@ -31,18 +30,19 @@ import {
   LIVE_PREVIEW_COLLECTIONS,
   LIVE_PREVIEW_GLOBALS,
 } from './lib/site/publishing'
+import { getProjectCloudflareContext } from './lib/cloudflare/context'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
-
-/** 是否正在通过 Payload CLI 执行命令 */
-const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
 /** 是否是 Next.js 生产构建阶段 */
 const isNextBuild =
   process.env.NEXT_PHASE === 'phase-production-build' ||
   process.env.npm_lifecycle_event === 'build' ||
-  (process.argv.some((value) => realpath(value)?.endsWith(path.join('next', 'dist', 'bin', 'next'))) &&
+  (process.argv.some((value) => {
+    const resolvedPath = fs.existsSync(value) ? fs.realpathSync(value) : undefined
+
+    return resolvedPath?.endsWith(path.join('next', 'dist', 'bin', 'next'))
+  }) &&
     process.argv.includes('build'))
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
@@ -75,7 +75,7 @@ const cloudflareLogger = {
   silent: () => {},
 } as any // Use PayloadLogger type when it's exported
 
-const cloudflare = await getCloudflareContextForPayload()
+const cloudflare = await getProjectCloudflareContext()
 const payloadSecret = getPayloadSecret(cloudflare)
 
 /**
@@ -127,8 +127,9 @@ function getRedirectFields(defaultFields: Field[]): Field[] {
  * @returns 可用于初始化 Payload 的密钥
  */
 function getPayloadSecret(cloudflare: CloudflareContext): string {
-  const cloudflarePayloadSecret = (cloudflare.env as CloudflareContext['env'] & { PAYLOAD_SECRET?: string })
-    .PAYLOAD_SECRET
+  const cloudflarePayloadSecret = (
+    cloudflare.env as CloudflareContext['env'] & { PAYLOAD_SECRET?: string }
+  ).PAYLOAD_SECRET
 
   if (process.env.PAYLOAD_SECRET) {
     return process.env.PAYLOAD_SECRET
@@ -239,40 +240,3 @@ export default buildConfig({
     }),
   ],
 })
-
-// Adapted from https://github.com/opennextjs/opennextjs-cloudflare/blob/d00b3a13e42e65aad76fba41774815726422cc39/packages/cloudflare/src/api/cloudflare-context.ts#L328C36-L328C46
-/**
- * 从 Wrangler 侧获取 Cloudflare 上下文
- * @returns Cloudflare 运行时上下文
- */
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
-      } satisfies GetPlatformProxyOptions),
-  )
-}
-
-/**
- * 为 Payload 选择合适的 Cloudflare 上下文来源
- * @returns 可供 Payload 使用的 Cloudflare 上下文
- */
-async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
-  // Next.js 构建阶段只需要能成功创建 Payload 配置；此时不应启动 Wrangler 远程代理
-  if (isNextBuild) {
-    return {
-      env: {
-        D1: {} as CloudflareContext['env']['D1'],
-        R2: {} as CloudflareContext['env']['R2'],
-      },
-    } as CloudflareContext
-  }
-
-  if (isCLI || !isProduction) {
-    return getCloudflareContextFromWrangler()
-  }
-
-  return getCloudflareContext({ async: true })
-}

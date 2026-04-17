@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Early Access — Noumi</title>
+  <meta name="description" content="We're opening Noumi in waves. Leave your email and we'll send you an invite code when your spot is ready.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* ── Invite page ────────────────────────────────── */
+    .invite-wrap {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 48px;
+    }
+
+    .invite-inner {
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .invite-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-med);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      letter-spacing: 0.025em;
+      margin-bottom: 32px;
+    }
+    .invite-badge i {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .invite-inner h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .invite-inner h1 em { font-style: italic; color: var(--accent); }
+
+    .invite-inner p {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.72;
+      margin-bottom: 44px;
+    }
+
+    /* Form */
+    .invite-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .invite-input {
+      flex: 1;
+      padding: 15px 18px;
+      border-radius: 9px;
+      border: 1px solid var(--border-med);
+      background: var(--cream-mid);
+      font-family: var(--ff-body);
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .invite-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(75,75,232,0.10);
+    }
+    .invite-input::placeholder { color: var(--ink-muted); }
+
+    .invite-submit {
+      padding: 15px 28px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      border-radius: 9px;
+      font-family: var(--ff-body);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .invite-submit:hover { background: var(--ink-soft); transform: translateY(-1px); }
+    .invite-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .invite-note {
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+
+    /* Success state */
+    .invite-success {
+      display: none;
+      padding: 20px 24px;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.22);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .invite-success p {
+      font-size: 15px;
+      color: var(--ink);
+      font-weight: 400;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .invite-success p strong { color: #16a34a; }
+
+    @media (max-width: 600px) {
+      .invite-wrap { padding: 56px 20px; }
+      .invite-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-body">
+
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt=""><span>Noumi</span></a>
+  <ul class="nav-links">
+    <li><a href="/use-cases/product-manager">Use Cases</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/invite" class="nav-cta">Try Free →</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="invite-wrap">
+    <div class="invite-inner">
+
+      <div class="invite-badge reveal"><i></i>Early Access</div>
+
+      <h1 class="reveal d1">Be among the<br>first to use <em>Noumi.</em></h1>
+
+      <p class="reveal d2">We're opening access in waves. Leave your email and we'll send you an invite code when your spot is ready.</p>
+
+      <!-- Success message (hidden by default) -->
+      <div class="invite-success" id="invite-success">
+        <p><strong>You're on the list.</strong> We'll email you an invite code when your spot opens up. Keep an eye on your inbox.</p>
+      </div>
+
+      <!-- Form -->
+      <div class="invite-form reveal d3" id="invite-form-wrap">
+        <input
+          type="email"
+          id="invite-email"
+          class="invite-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+          required
+        >
+        <button class="invite-submit" id="invite-btn" type="button">
+          Request Invite →
+        </button>
+      </div>
+
+      <p class="invite-note reveal d3">No spam. No credit card. Just your spot in line.</p>
+
+
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">Noumi</a>
+        <p class="footer-tagline">Don't teach your AI twice.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Use Cases</h4>
+        <ul>
+          <li><a href="/use-cases/product-manager">For Product Managers</a></li>
+          <li><a href="/use-cases/journalist">For Journalists</a></li>
+          <li><a href="/use-cases/solutions-engineer">For Solutions Engineers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/faqs">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Noumi. All rights reserved.</p>
+      <p class="footer-copy">noumi.ai</p>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script>
+  // Reveal animations
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none';
+  }, { passive: true });
+
+  // Form submit
+  const btn   = document.getElementById('invite-btn');
+  const input = document.getElementById('invite-email');
+  const form  = document.getElementById('invite-form-wrap');
+  const success = document.getElementById('invite-success');
+
+  btn.addEventListener('click', async () => {
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) {
+      input.style.borderColor = '#ef4444';
+      input.focus();
+      setTimeout(() => { input.style.borderColor = ''; }, 1800);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const response = await fetch('/api/temporary-ui/invite-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          sourcePath: window.location.pathname,
+        }),
+      });
+      const data = await response.json().catch(() => ({ ok: false }));
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message || 'Unable to save your request right now.');
+      }
+
+      form.style.display = 'none';
+      success.style.display = 'block';
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Request Invite →';
+      input.style.borderColor = '#ef4444';
+      input.focus();
+      setTimeout(() => { input.style.borderColor = ''; }, 1800);
+    }
+  });
+
+  // Allow Enter key
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') btn.click();
+  });
+</script>
+</body>
+</html>

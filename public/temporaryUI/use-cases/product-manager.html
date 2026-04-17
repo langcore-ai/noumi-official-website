@@ -44,7 +44,6 @@
       gap: 80px;
       align-items: center;
     }
-    .role-hero-text {}
     .role-hero-text h1 {
       font-family: var(--ff-display);
       font-size: clamp(38px, 5vw, 64px);
@@ -85,78 +84,110 @@
       line-height: 1.2;
     }
 
-    /* Hero illustration */
+    /* ── Hero visual: overlapping cream cards ─────────── */
     .role-hero-visual {
-      border-radius: 18px;
-      background: linear-gradient(150deg, #2A2760 0%, #1B1940 60%, #2E1B6E 100%);
-      border: 1px solid rgba(28,27,46,0.08);
-      box-shadow: 0 24px 64px rgba(28,27,46,0.12);
-      overflow: hidden;
-      min-height: 380px;
+      position: relative;
+      overflow: visible;
+      padding-top: 24px;
     }
-    .rh-chrome {
-      height: 36px;
-      background: rgba(255,255,255,0.04);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      gap: 6px;
+    .rh-window {
+      background: #FDFAF4;
+      border: 1px solid rgba(28,27,46,0.10);
+      border-radius: 14px;
+      padding: 20px 22px;
+      position: relative;
     }
-    .rh-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .rh-dot:nth-child(1) { background:#FF5F57; }
-    .rh-dot:nth-child(2) { background:#FFBD2E; }
-    .rh-dot:nth-child(3) { background:#28CA41; }
-    .rh-body { padding: 20px; }
-    .rh-label {
-      font-size: 9px;
-      color: rgba(255,255,255,0.25);
+    .rh-window-back {
+      z-index: 1;
+      transform: rotate(-2.5deg);
+      transform-origin: center top;
+      box-shadow: 0 6px 22px rgba(28,27,46,0.07), 0 2px 8px rgba(28,27,46,0.04);
+      margin-bottom: -68px;
+      transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .rh-window-front {
+      z-index: 2;
+      transform: rotate(1.2deg);
+      transform-origin: center top;
+      box-shadow: 0 20px 56px rgba(28,27,46,0.13), 0 6px 18px rgba(28,27,46,0.07);
+      transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .role-hero-visual:hover .rh-window-back {
+      transform: rotate(-5.5deg) translate(-22px, -14px);
+      z-index: 3;
+    }
+    .role-hero-visual:hover .rh-window-front {
+      transform: rotate(3deg) translate(16px, 14px);
+      box-shadow: 0 26px 70px rgba(28,27,46,0.16), 0 8px 22px rgba(28,27,46,0.08);
+    }
+    .rhw-label {
+      font-size: 9.5px;
+      color: var(--ink-muted);
       text-transform: uppercase;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.13em;
       margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .rh-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
-    .rh-item {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 9px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-    }
-    .rh-item-head {
-      font-size: 10px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.72);
-      margin-bottom: 5px;
-    }
-    .rh-item-body {
-      font-size: 9px;
-      color: rgba(255,255,255,0.35);
+    .rhw-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .rhw-item-raw {
+      font-size: 11px;
+      color: var(--ink-muted);
+      padding: 7px 11px;
+      background: rgba(28,27,46,0.03);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      margin-bottom: 7px;
+      font-style: italic;
       line-height: 1.5;
     }
-    .rh-tag {
-      display: inline-block;
-      background: rgba(75,75,232,0.22);
-      color: rgba(165,172,255,0.85);
-      font-size: 8px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-top: 7px;
+    .rhw-story {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
     }
-    .rh-tag.green {
-      background: rgba(34,197,94,0.14);
-      color: rgba(134,239,172,0.85);
+    .rhw-story:last-child { border-bottom: none; }
+    .rhw-story-id {
+      font-family: var(--ff-display);
+      font-style: italic;
+      font-size: 11px; font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0; width: 36px; padding-top: 1px;
     }
+    .rhw-story-title {
+      font-size: 11.5px; font-weight: 500; color: var(--ink); margin-bottom: 3px;
+    }
+    .rhw-story-meta {
+      font-size: 10px; color: var(--ink-muted);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .rhw-badge {
+      background: rgba(75,75,232,0.08);
+      border: 1px solid rgba(75,75,232,0.15);
+      color: var(--accent);
+      font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 500;
+    }
+    .rhw-priority {
+      font-size: 9px; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px; flex-shrink: 0;
+    }
+    .rhw-priority.p0 { background: rgba(239,68,68,0.09); color: #DC2626; }
+    .rhw-priority.p1 { background: rgba(251,191,36,0.12); color: #B45309; }
+    .rhw-priority.p2 { background: rgba(28,27,46,0.06); color: var(--ink-muted); }
+    .rhw-footer {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--ink-muted);
+      flex-wrap: wrap;
+    }
+    .rhw-footer-dot { color: var(--border-med); }
 
     /* ── Workflow section ─────────────────────────────── */
     .workflow-section {
       background: var(--cream-mid);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: 80px 0;
+      padding: 48px 0;
     }
     .workflow-inner {
       max-width: var(--max-w);
@@ -165,18 +196,18 @@
     }
     .workflow-title {
       text-align: center;
-      margin-bottom: 56px;
+      margin-bottom: 28px;
     }
     .workflow-title h2 {
       font-family: var(--ff-display);
-      font-size: clamp(28px, 3.5vw, 46px);
+      font-size: clamp(24px, 3vw, 38px);
       font-weight: 700;
       letter-spacing: -0.025em;
       color: var(--ink);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .workflow-title p {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 300;
       color: var(--ink-muted);
     }
@@ -185,157 +216,378 @@
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 48px;
-      align-items: stretch;
+      align-items: stretch; /* both columns same height */
     }
+
+    /* Left: step list */
     .workflow-steps {
       display: flex;
       flex-direction: column;
-      gap: 0;
       justify-content: space-between;
       background: var(--cream);
-      border: 1px solid var(--border-med);
       border-radius: 18px;
-      padding: 20px;
+      padding: 20px 16px;
     }
     .wf-step {
       display: flex;
       align-items: flex-start;
       gap: 14px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       border-radius: 12px;
       cursor: pointer;
-      border: 1px solid transparent;
-      transition: background 0.2s, border-color 0.2s;
+      border: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
     }
-    .wf-step:hover { background: rgba(28,27,46,0.04); transform: translateX(2px); }
+    .wf-step:hover:not(.active) { background: rgba(28,27,46,0.04); transform: translateX(3px); }
+    .wf-step:active { transform: scale(0.97) translateX(1px); }
     .wf-step.active {
-      background: var(--cream);
-      border-color: var(--border-med);
-      box-shadow: 0 2px 12px rgba(28,27,46,0.06);
+      background: rgba(75,75,232,0.05);
+      box-shadow: inset 3px 0 0 var(--accent);
     }
+
+    /* Step number: plain italic Playfair, no circle */
     .wf-num {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: var(--cream-dark);
-      border: 1px solid var(--border-med);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: var(--ff-display);
       font-style: italic;
-      font-size: 13px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--ink-muted);
       flex-shrink: 0;
-      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      min-width: 30px;
+      line-height: 1;
+      padding-top: 2px;
+      transition: color 0.2s;
     }
-    .wf-step.active .wf-num {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
-      box-shadow: 0 0 0 3px rgba(75,75,232,0.18);
-    }
+    .wf-step.active .wf-num { color: var(--accent); }
+
     .wf-title {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 14px; font-weight: 500;
       color: var(--ink-soft);
       line-height: 1.4;
-      padding-top: 3px;
+      padding-top: 2px;
       white-space: nowrap;
       transition: color 0.2s;
     }
     .wf-step.active .wf-title { color: var(--ink); }
 
-    /* Content panel */
+    /* Right: content panel — fixed height prevents any layout shift on panel switch */
     .workflow-content {
       background: var(--cream);
       border: 1px solid var(--border-med);
       border-radius: 18px;
       overflow: hidden;
-      min-height: 380px;
+      height: 460px;
     }
     .wf-panel { display: none; }
-    .wf-panel.active { display: block; }
+    .wf-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-    .wf-panel-text {
-      padding: 36px 36px 28px;
-    }
+    .wf-panel-text { padding: 22px 26px 14px; }
     .wf-panel-text h3 {
       font-family: var(--ff-display);
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 12px;
+      font-size: 19px; font-weight: 700;
+      color: var(--ink); margin-bottom: 7px;
       letter-spacing: -0.02em;
     }
     .wf-panel-text p {
-      font-size: 15.5px;
-      font-weight: 300;
-      color: var(--ink-soft);
-      line-height: 1.75;
+      font-size: 14px; font-weight: 300;
+      color: var(--ink-soft); line-height: 1.65;
     }
 
-    /* Mock UI in panel */
+    /* Light demo box fills remaining space */
     .wf-demo {
-      margin: 0 24px 24px;
+      margin: 0 18px 18px;
       border-radius: 12px;
-      background: linear-gradient(150deg, #2A2760 0%, #1B1940 100%);
-      padding: 20px;
-      min-height: 160px;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     .wf-demo-label {
-      font-size: 9px;
-      color: rgba(255,255,255,0.25);
+      font-size: 9.5px;
+      color: var(--ink-muted);
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .wf-demo-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.06); }
-    .wf-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-    }
-    .wf-row-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
+      letter-spacing: 0.13em;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
       flex-shrink: 0;
-      margin-top: 3px;
     }
-    .wf-row-text { font-size: 10px; color: rgba(255,255,255,0.65); line-height: 1.5; }
-    .wf-row-tag {
-      display: inline-block;
-      background: rgba(75,75,232,0.2);
-      color: rgba(165,172,255,0.8);
-      font-size: 8px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      margin-top: 5px;
+    .wf-demo-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .wf-demo-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 10.5px; color: var(--ink-muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wf-demo-footer-badge {
+      background: rgba(75,75,232,0.07);
+      border: 1px solid rgba(75,75,232,0.14);
+      color: var(--accent);
+      font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 500;
     }
 
-    /* ── CTA band + footer handled by shared CSS ─────── */
+    /* Panel 1: User story list */
+    .wf-us-row {
+      display: flex; align-items: flex-start; gap: 11px;
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+    }
+    .wf-us-row:last-child { border-bottom: none; }
+    .wf-us-badge {
+      font-size: 9.5px; font-weight: 700;
+      padding: 2px 7px; border-radius: 5px; flex-shrink: 0; margin-top: 2px;
+    }
+    .wf-us-badge.p0 { background: rgba(239,68,68,0.09); color: #DC2626; }
+    .wf-us-badge.p1 { background: rgba(251,191,36,0.12); color: #B45309; }
+    .wf-us-badge.p2 { background: rgba(28,27,46,0.06); color: var(--ink-muted); }
+    .wf-us-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+    .wf-us-src { font-size: 10px; color: var(--ink-muted); }
+    .wf-us-src span { color: var(--accent); font-weight: 500; }
+
+    /* Workspace context chip */
+    .wf-ws-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(28,27,46,0.04);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 5px 10px;
+      font-size: 10.5px; color: var(--ink-soft);
+      margin-bottom: 14px;
+    }
+    .wf-ws-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* Panel 2: PRD with inline sourcing */
+    .wf-prd-section {
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .wf-prd-section:last-child { border-bottom: none; }
+    .wf-prd-head {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      font-size: 12px; font-weight: 600; color: var(--ink);
+      margin-bottom: 5px;
+    }
+    .wf-src-tag {
+      font-size: 9px; color: var(--accent);
+      background: rgba(75,75,232,0.07);
+      border: 1px solid rgba(75,75,232,0.15);
+      padding: 1px 7px; border-radius: 4px; font-weight: 500;
+    }
+    .wf-prd-body {
+      font-size: 11.5px; color: var(--ink-soft); line-height: 1.65;
+    }
+    /* PRD status row */
+    .wf-prd-meta {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0 0;
+      font-size: 10px; color: var(--ink-muted);
+    }
+    .wf-prd-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(34,197,94,0.07);
+      border: 1px solid rgba(34,197,94,0.18);
+      border-radius: 5px; padding: 2px 8px;
+      font-size: 9px; color: #166534; font-weight: 500;
+    }
+
+    /* Panel 3: Screen flow diagram */
+    .wf-flow {
+      display: flex; align-items: stretch; gap: 6px;
+      margin-bottom: 12px;
+    }
+    .wf-screen {
+      flex: 1; border: 1px solid var(--border-med);
+      border-radius: 9px; padding: 10px 10px 10px;
+      background: var(--cream);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .wf-screen-title {
+      font-size: 9.5px; font-weight: 600; color: var(--ink);
+      margin-bottom: 6px; text-align: center;
+    }
+    .wf-screen-line {
+      height: 5px; background: var(--border); border-radius: 2px;
+    }
+    .wf-screen-line.short { width: 65%; }
+    .wf-screen-line.accent { background: rgba(75,75,232,0.2); width: 45%; }
+    .wf-screen-rect {
+      height: 26px; background: var(--border); border-radius: 5px;
+    }
+    .wf-screen-rect.small { height: 16px; width: 55%; }
+    .wf-flow-arrow {
+      display: flex; align-items: center;
+      color: var(--ink-muted); font-size: 18px;
+      flex-shrink: 0; padding: 0 2px;
+    }
+    .wf-flag {
+      border: 1px solid rgba(251,191,36,0.4);
+      background: rgba(251,191,36,0.06);
+      border-radius: 9px; padding: 11px 14px;
+    }
+    .wf-flag-head {
+      font-size: 10px; font-weight: 600; color: #B45309; margin-bottom: 4px;
+    }
+    .wf-flag-body { font-size: 11px; color: var(--ink-soft); line-height: 1.55; }
+
+    /* Panel 4: Release checklist */
+    .wf-check {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .wf-check:last-child { border-bottom: none; }
+    .wf-check-dot {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; margin-top: 1px;
+    }
+    .wf-check-dot.pass { background: #DCFCE7; border: 1.5px solid #86EFAC; color: #166534; }
+    .wf-check-dot.pending { background: rgba(251,191,36,0.1); border: 1.5px solid rgba(251,191,36,0.4); color: #B45309; }
+    .wf-check-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+    .wf-check-result { font-size: 10px; color: var(--ink-muted); }
+    .wf-check-trace { color: var(--accent); font-weight: 500; }
+    /* Release progress bar */
+    .wf-release-progress {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 10.5px; color: var(--ink-muted);
+    }
+    .wf-progress-bar {
+      flex: 1; height: 4px; background: var(--border-med);
+      border-radius: 2px; overflow: hidden;
+    }
+    .wf-progress-fill {
+      height: 100%; width: 66%; background: #22C55E; border-radius: 2px;
+    }
+
+    /* ── Colorful source tiles (Panel 1) ─────────────── */
+    .wf-sources-bar {
+      display: flex; align-items: flex-end; gap: 7px;
+      margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .wf-src-tile-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .wf-src-tile {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; letter-spacing: 0;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+    .wf-src-tile-label {
+      font-size: 8px; color: var(--ink-muted); text-align: center; line-height: 1.2;
+    }
+    .wf-src-tile-overflow {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(28,27,46,0.05); border: 1.5px dashed var(--border-med);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--ink-muted);
+    }
+    .wf-arrow-sep {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 9px; color: var(--ink-muted); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 8px;
+    }
+    .wf-arrow-sep::before, .wf-arrow-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Colored PRD sections (Panel 2) ──────────────── */
+    .wf-prd-section.c-blue { border-left: 3px solid rgba(75,75,232,0.45); padding-left: 12px; }
+    .wf-prd-section.c-green { border-left: 3px solid rgba(34,197,94,0.5); padding-left: 12px; }
+    .wf-prd-section.c-amber { border-left: 3px solid rgba(245,158,11,0.5); padding-left: 12px; }
+    .wf-src-tag.c-green { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); color: #166534; }
+    .wf-src-tag.c-amber { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); color: #92400E; }
+
+    /* ── Colored wireframe screens (Panel 3) ─────────── */
+    .wf-screen-hdr {
+      height: 15px; margin: -10px -10px 7px -10px;
+      border-radius: 8px 8px 0 0;
+    }
+    .wf-screen-btn {
+      height: 19px; border-radius: 4px; margin-top: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 7.5px; font-weight: 700; color: #fff; letter-spacing: 0.03em;
+    }
+
+    /* ── Colored check rows (Panel 4) ────────────────── */
+    .wf-check.row-pass {
+      background: rgba(34,197,94,0.05); border-radius: 8px;
+      padding: 7px 8px; margin: 1px -2px;
+      border-bottom: 1px solid rgba(34,197,94,0.12);
+    }
+    .wf-check.row-pass:last-child { border-bottom: none; }
+    .wf-check.row-pending {
+      background: rgba(245,158,11,0.05); border-radius: 8px;
+      padding: 7px 8px; margin: 1px -2px;
+      border-bottom: none;
+    }
+
+    /* ── PRD doc header (Panel 2) ────────────────────── */
+    .wf-doc-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px; padding-bottom: 11px;
+      border-bottom: 1px solid var(--border);
+    }
+    .wf-doc-hdr-title { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+    .wf-doc-hdr-meta { display: flex; align-items: center; gap: 4px; }
+    .wf-doc-avatar {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 8.5px; font-weight: 700; color: #fff;
+    }
+
+    /* ── File icons grid (Panel 3 upload screen) ─────── */
+    .wf-file-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 4px 0;
+    }
+    .wf-file-icon {
+      background: #fff; border: 1px solid var(--border); border-radius: 5px;
+      padding: 4px 5px; display: flex; align-items: center; gap: 4px;
+      font-size: 7.5px; color: var(--ink-soft); font-weight: 500;
+      white-space: nowrap; overflow: hidden;
+    }
+    .wf-file-ext {
+      width: 14px; height: 18px; border-radius: 2px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6px; font-weight: 800; color: #fff;
+    }
+
+    /* ── Workspace option list (Panel 3 screen 1) ────── */
+    .wf-ws-list { display: flex; flex-direction: column; gap: 3px; margin: 4px 0; }
+    .wf-ws-opt {
+      font-size: 8px; padding: 4px 6px; border-radius: 4px;
+      color: var(--ink-muted); border: 1px solid transparent; line-height: 1.2;
+    }
+    .wf-ws-opt.sel {
+      background: rgba(75,75,232,0.08); color: var(--accent);
+      border-color: rgba(75,75,232,0.2); font-weight: 500;
+    }
+
+    /* ── Confirm summary rows (Panel 3 screen 3) ─────── */
+    .wf-confirm-rows { display: flex; flex-direction: column; gap: 2px; margin: 4px 0; }
+    .wf-confirm-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 7.5px; color: var(--ink-muted); padding: 3px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .wf-confirm-row:last-child { border-bottom: none; }
+    .wf-confirm-val { font-weight: 600; color: var(--ink); }
+
+    /* ── CTA overrides ─────────────────────────────────── */
     .cta-band h2 { font-size: clamp(22px, 3vw, 42px) !important; max-width: 720px !important; }
     .cta-band h2 em { white-space: nowrap; }
 
     @media (max-width: 960px) {
       .role-hero { grid-template-columns: 1fr; gap: 48px; padding: 56px 24px 48px; }
+      .role-hero-visual { padding-top: 16px; }
       .workflow-inner { padding: 0 24px; }
       .workflow-layout { grid-template-columns: 1fr; gap: 32px; }
+      .workflow-steps { justify-content: flex-start; gap: 4px; }
       .role-tabs { padding: 0 24px; overflow-x: auto; }
     }
     @media (max-width: 600px) {
       .role-hero { padding: 48px 20px 40px; }
       .role-tab { padding: 12px 16px; font-size: 13px; }
-      .wf-panel-text { padding: 24px 20px 18px; }
-      .wf-demo { margin: 0 16px 16px; }
+      .wf-panel-text { padding: 22px 18px 16px; }
+      .wf-demo { margin: 0 14px 16px; padding: 14px 16px; }
     }
   </style>
 </head>
@@ -361,7 +613,7 @@
   </nav>
 </div>
 
-<!-- ═══ HERO + PAIN ══════════════════════════════════ -->
+<!-- ═══ HERO ══════════════════════════════════════════ -->
 <section class="role-hero" aria-labelledby="pm-h1">
   <div class="role-hero-text reveal">
     <h1 id="pm-h1">Product Manager</h1>
@@ -374,26 +626,54 @@
     <a href="/invite" class="btn-fill">Try Free →</a>
   </div>
 
-  <div class="role-hero-visual reveal d2" role="img" aria-label="Noumi workspace for product managers">
-    <div class="rh-chrome">
-      <div class="rh-dot"></div><div class="rh-dot"></div><div class="rh-dot"></div>
+  <div class="role-hero-visual reveal d2" role="img" aria-label="Noumi synthesizing user feedback into user stories">
+    <!-- Back card: raw feedback -->
+    <div class="rh-window rh-window-back">
+      <div class="rhw-label">47 interviews · just uploaded</div>
+      <div class="rhw-item-raw">"Step 3 is confusing — I gave up at the file upload screen."</div>
+      <div class="rhw-item-raw">"Never got past step 3 on mobile, just abandoned it."</div>
+      <div class="rhw-item-raw">"A progress bar would help me feel less lost."</div>
+      <div class="rhw-item-raw" style="opacity:0.45; font-style:normal; font-size:10px;">+ 44 more interviews...</div>
     </div>
-    <div class="rh-body">
-      <div class="rh-label">Q3 Launch Project — Memory loaded</div>
-      <div class="rh-item">
-        <div class="rh-item-head">User Research Synthesis</div>
-        <div class="rh-item-body">47 interview clips processed. Top friction: onboarding step 3 dropout (62% of users). Priority themes extracted.</div>
-        <span class="rh-tag">auto-analyzed</span>
+    <!-- Front card: synthesized stories + export status -->
+    <div class="rh-window rh-window-front">
+      <div class="rhw-label">Synthesized · Q3 Launch workspace</div>
+      <div class="rhw-story">
+        <div class="rhw-story-id">US-14</div>
+        <div>
+          <div class="rhw-story-title">Simplify onboarding step 3</div>
+          <div class="rhw-story-meta">
+            <span class="rhw-priority p0">P0</span>
+            20 sources · <span class="rhw-badge">auto-traced</span>
+          </div>
+        </div>
       </div>
-      <div class="rh-item">
-        <div class="rh-item-head">PRD Draft — v3</div>
-        <div class="rh-item-body">Generated from research synthesis + prior sprint decisions. Acceptance criteria linked to tickets.</div>
-        <span class="rh-tag green">ready to review</span>
+      <div class="rhw-story">
+        <div class="rhw-story-id">US-15</div>
+        <div>
+          <div class="rhw-story-title">Add onboarding progress indicator</div>
+          <div class="rhw-story-meta">
+            <span class="rhw-priority p1">P1</span>
+            6 sources · <span class="rhw-badge">auto-traced</span>
+          </div>
+        </div>
       </div>
-      <div class="rh-item">
-        <div class="rh-item-head">Release Checklist</div>
-        <div class="rh-item-body">12 criteria from PRD v3. 9 passed. 3 pending sign-off. Trace to original spec preserved.</div>
-        <span class="rh-tag">in progress</span>
+      <div class="rhw-story">
+        <div class="rhw-story-id">US-16</div>
+        <div>
+          <div class="rhw-story-title">Email reminders for incomplete signup</div>
+          <div class="rhw-story-meta">
+            <span class="rhw-priority p2">P2</span>
+            2 sources · <span class="rhw-badge">auto-traced</span>
+          </div>
+        </div>
+      </div>
+      <div class="rhw-footer">
+        <span>3 stories generated</span>
+        <span class="rhw-footer-dot">·</span>
+        <span>47 sources indexed</span>
+        <span class="rhw-footer-dot">·</span>
+        <span class="rhw-badge">synced to Jira</span>
       </div>
     </div>
   </div>
@@ -413,19 +693,19 @@
       <!-- Steps sidebar -->
       <div class="workflow-steps" role="tablist" aria-label="Workflow steps">
         <button class="wf-step active" role="tab" aria-selected="true" aria-controls="panel-1" data-panel="1">
-          <div class="wf-num">1</div>
+          <div class="wf-num">01</div>
           <div class="wf-title">Feedback to User Stories</div>
         </button>
         <button class="wf-step" role="tab" aria-selected="false" aria-controls="panel-2" data-panel="2">
-          <div class="wf-num">2</div>
+          <div class="wf-num">02</div>
           <div class="wf-title">Draft Your PRD in Context</div>
         </button>
         <button class="wf-step" role="tab" aria-selected="false" aria-controls="panel-3" data-panel="3">
-          <div class="wf-num">3</div>
+          <div class="wf-num">03</div>
           <div class="wf-title">Spec to Clickable Prototype</div>
         </button>
         <button class="wf-step" role="tab" aria-selected="false" aria-controls="panel-4" data-panel="4">
-          <div class="wf-num">4</div>
+          <div class="wf-num">04</div>
           <div class="wf-title">Release Validation</div>
         </button>
       </div>
@@ -433,108 +713,222 @@
       <!-- Content panels -->
       <div class="workflow-content">
 
+        <!-- Panel 1: User story synthesis -->
         <div class="wf-panel active" id="panel-1" role="tabpanel">
           <div class="wf-panel-text">
             <h3>Feedback to User Stories</h3>
             <p>From a pile of tickets and interviews to a prioritized backlog, with source traceability built in.</p>
           </div>
           <div class="wf-demo">
-            <div class="wf-demo-label">Processing 47 feedback items</div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#4B4BE8"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">US-14: Simplify onboarding step 3</strong><br>
-                Priority: P0 · Source: 12 interviews + 8 Intercom tickets<br>
-                <span class="wf-row-tag">traced to feedback</span>
+            <div class="wf-demo-label">47 items processed · backlog generated</div>
+
+            <!-- Colorful source tiles -->
+            <div class="wf-sources-bar">
+              <div class="wf-src-tile-wrap">
+                <div class="wf-src-tile" style="background:linear-gradient(145deg,#BE7A5E,#A86347)">IC</div>
+                <span class="wf-src-tile-label">Intercom</span>
+              </div>
+              <div class="wf-src-tile-wrap">
+                <div class="wf-src-tile" style="background:linear-gradient(145deg,#7266A6,#5D5290)">SL</div>
+                <span class="wf-src-tile-label">Slack</span>
+              </div>
+              <div class="wf-src-tile-wrap">
+                <div class="wf-src-tile" style="background:linear-gradient(145deg,#4E7AB2,#3B6296)">GF</div>
+                <span class="wf-src-tile-label">Forms</span>
+              </div>
+              <div class="wf-src-tile-wrap">
+                <div class="wf-src-tile" style="background:linear-gradient(145deg,#9E895C,#88754A)">NT</div>
+                <span class="wf-src-tile-label">Notes</span>
+              </div>
+              <div class="wf-src-tile-wrap">
+                <div class="wf-src-tile-overflow">+43</div>
+                <span class="wf-src-tile-label">more</span>
               </div>
             </div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#9090F5"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">US-15: Add progress indicator</strong><br>
-                Priority: P1 · Source: 6 interviews<br>
-                <span class="wf-row-tag">traced to feedback</span>
+            <div class="wf-arrow-sep">synthesized to backlog</div>
+            <div class="wf-us-row">
+              <span class="wf-us-badge p0">P0</span>
+              <div>
+                <div class="wf-us-title">Simplify onboarding step 3</div>
+                <div class="wf-us-src"><span>20 sources</span> · 12 interviews + 8 Intercom tickets</div>
               </div>
             </div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:rgba(255,255,255,0.2)"></div>
-              <div class="wf-row-text" style="color:rgba(255,255,255,0.35)">US-16: Email reminders · P2 · 2 interviews</div>
+            <div class="wf-us-row">
+              <span class="wf-us-badge p1">P1</span>
+              <div>
+                <div class="wf-us-title">Add progress indicator to onboarding</div>
+                <div class="wf-us-src"><span>6 sources</span> · 6 interviews</div>
+              </div>
+            </div>
+            <div class="wf-us-row">
+              <span class="wf-us-badge p2">P2</span>
+              <div>
+                <div class="wf-us-title">Email reminders for incomplete signup</div>
+                <div class="wf-us-src"><span>2 sources</span> · 2 interviews</div>
+              </div>
+            </div>
+            <div class="wf-demo-footer">
+              Full backlog · 47 items
+              <span class="wf-demo-footer-badge">source trace preserved</span>
+              <span style="margin-left:auto">Exported to Jira →</span>
             </div>
           </div>
         </div>
 
+        <!-- Panel 2: PRD with inline sourcing -->
         <div class="wf-panel" id="panel-2" role="tabpanel">
           <div class="wf-panel-text">
             <h3>Draft Your PRD in Context</h3>
             <p>Pull from prior analysis and decisions. Your first draft already has the reasoning behind it.</p>
           </div>
           <div class="wf-demo">
-            <div class="wf-demo-label">PRD draft — built from context</div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#22C55E"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Problem Statement</strong><br>
-                Auto-pulled from Q3 user research synthesis. 4 key pain points linked.<br>
-                <span class="wf-row-tag" style="background:rgba(34,197,94,0.14);color:rgba(134,239,172,0.85)">linked to research</span>
+            <div class="wf-demo-label">PRD — v3 · built from context</div>
+            <div class="wf-prd-section c-blue">
+              <div class="wf-prd-head">
+                Problem Statement
+                <span class="wf-src-tag">from: Q3 Research</span>
               </div>
+              <div class="wf-prd-body">62% of users abandon at onboarding step 3. Friction: unclear progress and confusing file-upload on mobile. Validated across 20 interviews.</div>
             </div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#4B4BE8"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Acceptance Criteria</strong><br>
-                Generated from US-14 and US-15. Tied to sprint agreement from 2026-04-08.<br>
-                <span class="wf-row-tag">context-aware</span>
+            <div class="wf-prd-section c-green">
+              <div class="wf-prd-head">
+                Acceptance Criteria
+                <span class="wf-src-tag c-green">from: US-14, US-15</span>
               </div>
+              <div class="wf-prd-body">Step 3 dropout ≤ 35% · Progress bar at all breakpoints · Zero upload regression · Mobile parity ≥ desktop</div>
+            </div>
+            <div class="wf-prd-section c-amber">
+              <div class="wf-prd-head">
+                Sprint Constraints
+                <span class="wf-src-tag c-amber">from: standup 2026-04-08</span>
+              </div>
+              <div class="wf-prd-body">Design handoff April 18 · No backend changes · Accessibility audit before merge</div>
+            </div>
+            <div class="wf-prd-section" style="border-left:3px solid rgba(220,38,38,0.35);padding-left:12px">
+              <div class="wf-prd-head">
+                Open Questions
+                <span class="wf-src-tag" style="background:rgba(220,38,38,0.07);border-color:rgba(220,38,38,0.18);color:#B91C1C">2 unresolved</span>
+              </div>
+              <div class="wf-prd-body">Empty-state for zero integrations at step 3? Condensed vs. full progress bar on mobile?</div>
+            </div>
+            <div class="wf-demo-footer">
+              <span class="wf-prd-status">● ready to review</span>
+              v3 · 4 sections · all sources linked
             </div>
           </div>
         </div>
 
+        <!-- Panel 3: Screen flow / wireframe diagram -->
         <div class="wf-panel" id="panel-3" role="tabpanel">
           <div class="wf-panel-text">
             <h3>Spec to Clickable Prototype</h3>
             <p>Test the interaction logic before design handoff. Find weak edges before they become rework.</p>
           </div>
           <div class="wf-demo">
-            <div class="wf-demo-label">Prototype — onboarding step 3</div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#4B4BE8"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Flow: Connect workspace</strong><br>
-                3 screens generated from spec. Interaction logic verified against US-14.
+            <div class="wf-demo-label">Prototype · onboarding step 3 · 3 screens</div>
+            <div class="wf-flow">
+
+              <!-- Screen 1: Choose workspace -->
+              <div class="wf-screen">
+                <div class="wf-screen-hdr" style="background:rgba(75,75,232,0.12)"></div>
+                <div class="wf-screen-title">Choose workspace</div>
+                <div class="wf-ws-list">
+                  <div class="wf-ws-opt sel">· Q3 Launch</div>
+                  <div class="wf-ws-opt">· Product Research</div>
+                  <div class="wf-ws-opt">· Onboarding Team</div>
+                </div>
+                <div class="wf-screen-btn" style="background:#5B5EC4">Select →</div>
               </div>
+              <div class="wf-flow-arrow">→</div>
+
+              <!-- Screen 2: Upload files with file-type icons -->
+              <div class="wf-screen">
+                <div class="wf-screen-hdr" style="background:rgba(45,140,126,0.14)"></div>
+                <div class="wf-screen-title">Upload files</div>
+                <div class="wf-file-grid">
+                  <div class="wf-file-icon">
+                    <div class="wf-file-ext" style="background:#4E7AB2">W</div>doc
+                  </div>
+                  <div class="wf-file-icon">
+                    <div class="wf-file-ext" style="background:#5A9A6A">X</div>xlsx
+                  </div>
+                  <div class="wf-file-icon">
+                    <div class="wf-file-ext" style="background:#B85C52">A</div>pdf
+                  </div>
+                  <div class="wf-file-icon">
+                    <div class="wf-file-ext" style="background:#9E895C">▲</div>png
+                  </div>
+                </div>
+                <div class="wf-screen-btn" style="background:#2D8C7E">Upload ↑</div>
+              </div>
+              <div class="wf-flow-arrow">→</div>
+
+              <!-- Screen 3: Confirm with summary rows -->
+              <div class="wf-screen">
+                <div class="wf-screen-hdr" style="background:rgba(155,124,74,0.14)"></div>
+                <div class="wf-screen-title">Confirm &amp; finish</div>
+                <div class="wf-confirm-rows">
+                  <div class="wf-confirm-row"><span>Workspace</span><span class="wf-confirm-val">Q3 Launch</span></div>
+                  <div class="wf-confirm-row"><span>Files</span><span class="wf-confirm-val">4 ready</span></div>
+                  <div class="wf-confirm-row"><span>Status</span><span class="wf-confirm-val" style="color:#2D8C7E">✓ OK</span></div>
+                </div>
+                <div class="wf-screen-btn" style="background:#9B7A45">Confirm ✓</div>
+              </div>
+
             </div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#FBBF24"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Edge case flagged</strong><br>
-                Empty state for zero integrations not covered in spec. Needs design decision.<br>
-                <span class="wf-row-tag" style="background:rgba(251,191,36,0.14);color:rgba(253,230,138,0.85)">review needed</span>
-              </div>
+            <div class="wf-flag">
+              <div class="wf-flag-head">2 edge cases flagged</div>
+              <div class="wf-flag-body"><strong style="color:#B45309">Empty state:</strong> Zero integrations at step 3 not covered in spec — design decision needed before handoff.<br><strong style="color:#B45309">Timeout:</strong> Large uploads (&gt;100 MB) may exceed session limit — backend check required.</div>
+            </div>
+            <div class="wf-demo-footer">
+              3 screens generated from spec
+              <span class="wf-demo-footer-badge">linked to US-14</span>
+              <span style="margin-left:auto">2 flags need review</span>
             </div>
           </div>
         </div>
 
+        <!-- Panel 4: Release checklist -->
         <div class="wf-panel" id="panel-4" role="tabpanel">
           <div class="wf-panel-text">
             <h3>Release Validation</h3>
             <p>Carry your acceptance criteria into release checks. Trace every pass-fail back to what was agreed.</p>
           </div>
           <div class="wf-demo">
-            <div class="wf-demo-label">Release checklist — v3 criteria</div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#22C55E"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Step 3 dropout rate</strong><br>
-                Target: below 35%. Measured: 28%. Traced to US-14 acceptance criteria.<br>
-                <span class="wf-row-tag" style="background:rgba(34,197,94,0.14);color:rgba(134,239,172,0.85)">passed</span>
+            <div class="wf-demo-label">Release checklist · v3 criteria · 3 of 4 passed</div>
+            <div class="wf-check row-pass">
+              <div class="wf-check-dot pass">✓</div>
+              <div>
+                <div class="wf-check-title">Step 3 dropout rate ≤ 35%</div>
+                <div class="wf-check-result">Measured: 28% · passes · <span class="wf-check-trace">US-14</span></div>
               </div>
             </div>
-            <div class="wf-row">
-              <div class="wf-row-dot" style="background:#22C55E"></div>
-              <div class="wf-row-text">
-                <strong style="color:rgba(255,255,255,0.8)">Progress indicator visible</strong><br>
-                Confirmed in QA across 3 device types. Traced to US-15.<br>
-                <span class="wf-row-tag" style="background:rgba(34,197,94,0.14);color:rgba(134,239,172,0.85)">passed</span>
+            <div class="wf-check row-pass">
+              <div class="wf-check-dot pass">✓</div>
+              <div>
+                <div class="wf-check-title">Progress bar visible at all breakpoints</div>
+                <div class="wf-check-result">Confirmed across 3 device types · <span class="wf-check-trace">US-15</span></div>
+              </div>
+            </div>
+            <div class="wf-check row-pass">
+              <div class="wf-check-dot pass">✓</div>
+              <div>
+                <div class="wf-check-title">Zero upload regression on desktop</div>
+                <div class="wf-check-result">Success rate: 99.1% · <span class="wf-check-trace">sprint constraint</span></div>
+              </div>
+            </div>
+            <div class="wf-check row-pending">
+              <div class="wf-check-dot pending">·</div>
+              <div>
+                <div class="wf-check-title">Accessibility audit passing</div>
+                <div class="wf-check-result">Pending design sign-off · <span class="wf-check-trace">sprint constraint</span></div>
+              </div>
+            </div>
+            <div class="wf-demo-footer">
+              <div class="wf-release-progress">
+                <span>3 / 4 passed</span>
+                <div class="wf-progress-bar"><div class="wf-progress-fill" style="width:75%"></div></div>
+                <span>75%</span>
               </div>
             </div>
           </div>
@@ -601,19 +995,16 @@
 
 </div>
 <script>
-  // Reveal animations
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Nav shadow
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none';
   }, { passive: true });
 
-  // Workflow tab switcher
   const steps = document.querySelectorAll('.wf-step');
   const panels = document.querySelectorAll('.wf-panel');
   steps.forEach(step => {

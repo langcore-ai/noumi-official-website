@@ -345,145 +345,183 @@
     }
 
     .f-demo {
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(28,27,46,0.08);
-      box-shadow: 0 24px 60px rgba(28,27,46,0.09);
-      background: linear-gradient(155deg, #2A2760 0%, #1B1940 100%);
-      min-height: 340px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+      min-height: 360px;
     }
 
-    .f-demo-inner { padding: 26px; height: 100%; }
+    .f-demo-inner { padding: 24px 4px 4px; display: flex; flex-direction: column; }
 
-    /* Demo labels */
-    .demo-label {
+    /* Overlapping demo windows */
+    .demo-window {
+      background: #FDFAF4;
+      border: 1px solid rgba(28,27,46,0.10);
+      border-radius: 14px;
+      padding: 20px 22px;
+    }
+    .demo-window-back {
+      position: relative;
+      z-index: 1;
+      transform: rotate(-2.8deg);
+      transform-origin: center top;
+      box-shadow: 0 6px 22px rgba(28,27,46,0.07), 0 2px 8px rgba(28,27,46,0.04);
+      margin-bottom: -60px;
+      transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .demo-window-front {
+      position: relative;
+      z-index: 2;
+      transform: rotate(1.2deg);
+      transform-origin: center top;
+      box-shadow: 0 20px 56px rgba(28,27,46,0.13), 0 6px 18px rgba(28,27,46,0.07);
+      transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .f-demo-inner:hover .demo-window-back {
+      transform: rotate(-6deg) translate(-24px, -16px);
+      box-shadow: 0 12px 40px rgba(28,27,46,0.10), 0 4px 14px rgba(28,27,46,0.06);
+      z-index: 3;
+    }
+    .f-demo-inner:hover .demo-window-front {
+      transform: rotate(3deg) translate(18px, 16px);
+      box-shadow: 0 28px 72px rgba(28,27,46,0.15), 0 8px 24px rgba(28,27,46,0.08);
+    }
+
+    /* Shared window label */
+    .dw-label {
       font-size: 9.5px;
-      color: rgba(255,255,255,0.32);
+      color: var(--ink-muted);
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .demo-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
-
-    /* Memory demo */
-    .ctx-banner {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(34,197,94,0.1);
-      border: 1px solid rgba(34,197,94,0.2);
-      border-radius: 8px;
-      padding: 9px 13px;
-      font-size: 10px;
-      color: rgba(134,239,172,0.9);
+      letter-spacing: 0.13em;
       margin-bottom: 14px;
-    }
-    .ctx-chip {
       display: flex;
       align-items: center;
-      gap: 7px;
-      background: rgba(75,75,232,0.14);
-      border: 1px solid rgba(75,75,232,0.22);
-      border-radius: 7px;
-      padding: 7px 12px;
-      font-size: 10px;
-      color: rgba(165,172,255,0.88);
-      margin-bottom: 8px;
-      width: 100%;
+      gap: 10px;
     }
-    .demo-bubble {
-      background: linear-gradient(135deg, rgba(75,75,232,0.2), rgba(124,58,237,0.12));
-      border: 1px solid rgba(75,75,232,0.18);
-      border-radius: 10px;
-      border-bottom-left-radius: 3px;
-      padding: 10px 14px;
-      font-size: 10px;
+    .dw-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Chat bubbles (memory back card) */
+    .dw-bubble {
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 11px;
       line-height: 1.55;
-      color: rgba(255,255,255,0.8);
-      margin-top: 14px;
+      margin-bottom: 7px;
     }
-    .demo-bubble-tag {
-      font-size: 8px;
-      color: rgba(165,172,255,0.6);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    .dw-bubble.user {
+      background: var(--cream-dark);
+      color: var(--ink-soft);
+      margin-left: 18%;
+      border-bottom-right-radius: 3px;
+    }
+    .dw-bubble.ai {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--ink-soft);
+      border-bottom-left-radius: 3px;
     }
 
-    /* Skills demo */
-    .correction-row {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+    /* Memory front card */
+    .mem-loaded-bar {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: #166534; font-weight: 500;
+      margin-bottom: 12px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
     }
-    .c-before { font-size: 10px; color: rgba(252,165,165,0.8); text-decoration: line-through; margin-bottom: 4px; }
-    .c-after  { font-size: 10px; color: rgba(134,239,172,0.9); margin-bottom: 8px; }
-    .c-rule {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(75,75,232,0.16);
-      border-radius: 4px;
-      padding: 3px 9px;
-      font-size: 8px;
-      color: rgba(165,172,255,0.85);
+    .mem-dot-green { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; flex-shrink: 0; }
+    .mem-chip {
+      font-size: 11px; color: var(--ink-soft);
+      padding: 6px 11px;
+      background: rgba(75,75,232,0.06);
+      border: 1px solid rgba(75,75,232,0.12);
+      border-radius: 7px;
+      margin-bottom: 7px;
     }
-    .skills-footer {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      font-size: 10px;
-      color: rgba(165,172,255,0.6);
+    .dw-ai-reply {
+      margin-top: 12px; padding: 10px 14px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(75,75,232,0.14);
+      border-radius: 9px; border-top-left-radius: 3px;
+      font-size: 11px; color: var(--ink-soft); font-style: italic; line-height: 1.6;
+    }
+
+    /* Skills cards */
+    .dw-text-struck {
+      font-size: 12px; color: var(--ink-muted);
+      text-decoration: line-through; line-height: 1.65;
+      padding: 10px 13px;
+      background: rgba(239,68,68,0.04);
+      border: 1px solid rgba(239,68,68,0.10);
+      border-radius: 9px;
+      margin-bottom: 0;
+    }
+    .dw-text-clean {
+      font-size: 12px; color: var(--ink);
+      line-height: 1.65; font-weight: 500;
+      padding: 10px 13px;
+      background: rgba(34,197,94,0.05);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: 9px;
+    }
+    .dw-rule-badge {
+      margin-top: 14px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(75,75,232,0.06);
+      border: 1px solid rgba(75,75,232,0.15);
+      border-radius: 6px;
+      padding: 5px 11px;
+      font-size: 9.5px; color: var(--accent); font-weight: 500;
     }
 
     /* Agent demo */
-    .task-prompt {
-      background: rgba(255,255,255,0.06);
-      border-radius: 8px;
+    .dw-prompt {
+      font-size: 12px; color: var(--ink-soft);
+      font-style: italic; line-height: 1.6; margin: 0;
       padding: 10px 14px;
-      font-size: 10px;
-      color: rgba(255,255,255,0.65);
-      margin-bottom: 18px;
-      font-style: italic;
-      border-left: 2px solid rgba(75,75,232,0.5);
+      border-left: 3px solid var(--accent);
+      background: rgba(75,75,232,0.04);
+      border-radius: 9px;
     }
-    .step-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
+    .agent-steps { display: flex; flex-direction: column; position: relative; margin-top: 4px; }
+    .agent-steps::before {
+      content: '';
+      position: absolute;
+      left: 10px; top: 14px; bottom: 14px;
+      width: 1px;
+      background: var(--border-med);
     }
-    .step-dot {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      margin-top: 1px;
+    .agent-step { display: flex; align-items: flex-start; gap: 13px; padding: 7px 0; position: relative; }
+    .agent-step-dot {
+      width: 21px; height: 21px;
+      border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; z-index: 1;
     }
-    .step-dot.done    { background: rgba(34,197,94,0.18); border: 1px solid rgba(34,197,94,0.35); color: rgba(134,239,172,0.9); }
-    .step-dot.active  { background: rgba(75,75,232,0.2);  border: 1px solid rgba(75,75,232,0.4);  color: rgba(165,172,255,0.9); animation: pulse 1.6s infinite; }
-    .step-dot.pending { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.22); }
+    .agent-step-dot.done    { background: #DCFCE7; border: 1.5px solid #86EFAC; color: #166534; }
+    .agent-step-dot.active  { background: var(--accent-glow); border: 1.5px solid var(--accent); position: relative; }
+    .agent-step-dot.active::after {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent); animation: pulse 1.6s infinite; position: absolute;
+    }
+    .agent-step-dot.pending { background: #fff; border: 1.5px solid var(--border-med); color: var(--ink-muted); }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
-    .step-label { font-size: 11px; line-height: 1.45; }
-    .step-label.done    { color: rgba(255,255,255,0.82); }
-    .step-label.active  { color: rgba(165,172,255,0.9); }
-    .step-label.pending { color: rgba(255,255,255,0.3); }
+    .agent-step-text { font-size: 11px; line-height: 1.5; padding-top: 3px; }
+    .agent-step-text.done    { color: var(--ink); }
+    .agent-step-text.active  { color: var(--accent); font-weight: 500; }
+    .agent-step-text.pending { color: var(--ink-muted); }
     .agent-footer {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      font-size: 10px;
-      color: rgba(255,255,255,0.28);
+      margin-top: 12px; padding-top: 11px;
+      border-top: 1px solid var(--border);
+      font-size: 10.5px; color: var(--ink-muted);
+      display: flex; align-items: center; justify-content: space-between;
     }
+    .agent-progress-bar {
+      width: 72px; height: 3px; background: var(--border-med);
+      border-radius: 2px; overflow: hidden;
+      display: inline-block; vertical-align: middle; margin: 0 6px;
+    }
+    .agent-progress-fill { height: 100%; width: 70%; background: var(--accent); border-radius: 2px; }
 
     /* ── Feature divider ───────────────────────────── */
     .f-divider {
@@ -683,14 +721,21 @@
     </div>
     <div class="f-demo reveal d2" role="img" aria-label="Persistent Memory demo">
       <div class="f-demo-inner">
-        <div class="demo-label">New conversation</div>
-        <div class="ctx-banner">✓ &nbsp; 3 memory cards loaded automatically</div>
-        <div class="ctx-chip">📁 &nbsp; Project: Noumi Website Redesign — Sprint 4</div>
-        <div class="ctx-chip">✍️ &nbsp; Style: Concise, no buzzwords, Oxford comma</div>
-        <div class="ctx-chip">🔁 &nbsp; Rule: Always export in Markdown format</div>
-        <div class="demo-bubble">
-          <div class="demo-bubble-tag">⚡ Continuing from last session</div>
-          Back to the website copy. You left off on the Features section — want me to pick up from Persistent Memory?
+        <div class="demo-window demo-window-back">
+          <div class="dw-label">Last session</div>
+          <div class="dw-bubble user">Always export your output in Markdown format.</div>
+          <div class="dw-bubble ai">Got it — I've saved that as a default rule. Every output from here on will be in Markdown.</div>
+        </div>
+        <div class="demo-window demo-window-front">
+          <div class="dw-label">New conversation · 3 days later</div>
+          <div class="mem-loaded-bar">
+            <span class="mem-dot-green"></span>
+            3 memory cards loaded automatically
+          </div>
+          <div class="mem-chip">Project: Noumi Website — Sprint 4</div>
+          <div class="mem-chip">Style: Concise, no buzzwords, Oxford comma</div>
+          <div class="mem-chip">Rule: Export in Markdown format</div>
+          <div class="dw-ai-reply">Back to the website copy — want me to pick up where we left off on the Features section?</div>
         </div>
       </div>
     </div>
@@ -707,23 +752,15 @@
     </div>
     <div class="f-demo reveal d2" role="img" aria-label="Self-Evolving Skills demo">
       <div class="f-demo-inner">
-        <div class="demo-label">Corrections → Rules</div>
-        <div class="correction-row">
-          <div class="c-before">"leverage synergies across touchpoints"</div>
-          <div class="c-after">→ "work together across teams"</div>
-          <div class="c-rule">✓ Rule saved: avoid business jargon</div>
+        <div class="demo-window demo-window-back">
+          <div class="dw-label">AI output · first draft</div>
+          <div class="dw-text-struck">Our platform leverages synergistic cross-functional touchpoints to drive scalable value across enterprise ecosystems.</div>
         </div>
-        <div class="correction-row">
-          <div class="c-before">Numbered list format</div>
-          <div class="c-after">→ Bullet points with sub-items</div>
-          <div class="c-rule">✓ Rule saved: use bullet points</div>
+        <div class="demo-window demo-window-front">
+          <div class="dw-label">After your correction</div>
+          <div class="dw-text-clean">Our platform helps teams work better together — from first contact to signed contract.</div>
+          <div class="dw-rule-badge">Rule saved: avoid business jargon · always active</div>
         </div>
-        <div class="correction-row">
-          <div class="c-before">Passive voice throughout</div>
-          <div class="c-after">→ Active, direct sentences</div>
-          <div class="c-rule">✓ Rule saved: active voice preferred</div>
-        </div>
-        <div class="skills-footer">3 rules active · Applied to all future tasks automatically</div>
       </div>
     </div>
   </div>
@@ -739,29 +776,39 @@
     </div>
     <div class="f-demo reveal d2" role="img" aria-label="Agentic Execution demo">
       <div class="f-demo-inner">
-        <div class="demo-label">Task in progress</div>
-        <div class="task-prompt">"Prepare the Q3 competitor analysis and format as a slide deck"</div>
-        <div class="step-row">
-          <div class="step-dot done">✓</div>
-          <div class="step-label done">Research 5 competitors via web search</div>
+        <div class="demo-window demo-window-back">
+          <div class="dw-label">Your instruction</div>
+          <p class="dw-prompt">"Prepare the Q3 competitor analysis and format it as a slide deck."</p>
         </div>
-        <div class="step-row">
-          <div class="step-dot done">✓</div>
-          <div class="step-label done">Pull pricing data and feature comparison</div>
+        <div class="demo-window demo-window-front">
+          <div class="dw-label">Running now · Step 4 of 5</div>
+          <div class="agent-steps">
+            <div class="agent-step">
+              <div class="agent-step-dot done">✓</div>
+              <div class="agent-step-text done">Research 5 competitors via web search</div>
+            </div>
+            <div class="agent-step">
+              <div class="agent-step-dot done">✓</div>
+              <div class="agent-step-text done">Pull pricing data and feature comparison</div>
+            </div>
+            <div class="agent-step">
+              <div class="agent-step-dot done">✓</div>
+              <div class="agent-step-text done">Apply your slide template and brand colors</div>
+            </div>
+            <div class="agent-step">
+              <div class="agent-step-dot active"></div>
+              <div class="agent-step-text active">Generating executive summary slide…</div>
+            </div>
+            <div class="agent-step">
+              <div class="agent-step-dot pending">5</div>
+              <div class="agent-step-text pending">Export and share to Google Drive</div>
+            </div>
+          </div>
+          <div class="agent-footer">
+            <span>Step 4 of 5</span>
+            <span><div class="agent-progress-bar"><div class="agent-progress-fill"></div></div> Est. 2 min</span>
+          </div>
         </div>
-        <div class="step-row">
-          <div class="step-dot done">✓</div>
-          <div class="step-label done">Apply your slide template and brand colors</div>
-        </div>
-        <div class="step-row">
-          <div class="step-dot active">⟳</div>
-          <div class="step-label active">Generating executive summary slide…</div>
-        </div>
-        <div class="step-row">
-          <div class="step-dot pending">○</div>
-          <div class="step-label pending">Export and share to Google Drive</div>
-        </div>
-        <div class="agent-footer">Step 4 of 5 &nbsp;·&nbsp; Est. 2 min remaining</div>
       </div>
     </div>
   </div>

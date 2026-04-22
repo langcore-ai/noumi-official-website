@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://noumi.ai/sitemap.xml

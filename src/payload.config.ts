@@ -16,13 +16,9 @@ import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
-import { FeaturePages } from './collections/FeaturePages'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
-import { AboutPage } from './globals/AboutPage'
-import { HomePage } from './globals/HomePage'
 import { PrivacyPage } from './globals/PrivacyPage'
-import { PricingPage } from './globals/PricingPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
 import {
@@ -47,7 +43,7 @@ const isNextBuild =
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
 /** redirects 插件可引用的内部集合 */
-const redirectTargetCollections: string[] = [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug]
+const redirectTargetCollections: string[] = [BlogPosts.slug, UseCasePages.slug]
 
 /**
  * 创建结构化日志方法
@@ -207,8 +203,8 @@ export default buildConfig({
         }
       : undefined,
   },
-  collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],
-  globals: [SiteSettings, HomePage, AboutPage, PricingPage, PrivacyPage, TermsPage],
+  collections: [Users, Media, BlogPosts, UseCasePages, FaqItems],
+  globals: [SiteSettings, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',
@@ -255,7 +251,7 @@ export default buildConfig({
     }),
     seoPlugin({
       globals: [SiteSettings.slug],
-      collections: [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug],
+      collections: [BlogPosts.slug, UseCasePages.slug],
       uploadsCollection: Media.slug,
       tabbedUI: true,
       generateTitle: ({ doc }) => {

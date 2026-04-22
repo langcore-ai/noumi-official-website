@@ -70,7 +70,6 @@ export interface Config {
     users: User;
     media: Media;
     'blog-posts': BlogPost;
-    'feature-pages': FeaturePage;
     'use-case-pages': UseCasePage;
     'faq-items': FaqItem;
     redirects: Redirect;
@@ -85,7 +84,6 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
-    'feature-pages': FeaturePagesSelect<false> | FeaturePagesSelect<true>;
     'use-case-pages': UseCasePagesSelect<false> | UseCasePagesSelect<true>;
     'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -101,17 +99,11 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
-    'home-page': HomePage;
-    'about-page': AboutPage;
-    'pricing-page': PricingPage;
     'privacy-page': PrivacyPage;
     'terms-page': TermsPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
-    'home-page': HomePageSelect<false> | HomePageSelect<true>;
-    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
-    'pricing-page': PricingPageSelect<false> | PricingPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
     'terms-page': TermsPageSelect<false> | TermsPageSelect<true>;
   };
@@ -202,13 +194,41 @@ export interface Media {
 export interface BlogPost {
   id: number;
   /**
+   * 默认模板沿用当前文章结构；HTML 模式只需要 slug 与 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
    * 文章标题，同时可作为默认 H1。
    */
-  title: string;
+  title?: string | null;
   /**
    * 文章 URL slug；上线后应谨慎变更，避免 SEO 权重丢失。
    */
   slug: string;
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
+  /**
+   * Blog 列表卡片顶部图片。
+   */
+  htmlCardImage?: (number | null) | Media;
+  /**
+   * Blog 列表卡片第一行左侧标签。
+   */
+  htmlCardTag?: string | null;
+  /**
+   * Blog 列表卡片第二行标题；未填写时回退到 slug。
+   */
+  htmlCardTitle?: string | null;
+  /**
+   * Blog 列表卡片第三行描述。
+   */
+  htmlCardDescription?: string | null;
+  /**
+   * Blog 列表卡片右下角阅读时间，例如 7 min read。
+   */
+  htmlCardReadingTime?: string | null;
   /**
    * 可选 SEO 标题；未填写时前台可回退到 title。
    */
@@ -222,13 +242,25 @@ export interface BlogPost {
    */
   excerpt?: string | null;
   /**
+   * 文章页头部导语；未填写时前台可回退到 excerpt。
+   */
+  lead?: string | null;
+  /**
    * 文章分享图；如未上传，前台可回退到站点默认 OG 图。
    */
   ogImage?: (number | null) | Media;
   /**
+   * 文章卡片与详情页顶部封面图；支持上传 SVG。
+   */
+  coverImage?: (number | null) | Media;
+  /**
    * 作者展示名。
    */
   author?: string | null;
+  /**
+   * 阅读时长展示文案，例如 7 min read。
+   */
+  readingTime?: string | null;
   publishedAt?: string | null;
   status: 'draft' | 'review' | 'published';
   tags?:
@@ -238,190 +270,9 @@ export interface BlogPost {
       }[]
     | null;
   /**
-   * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
+   * 文章页底部推荐阅读；未填写时前台可自动补一个已发布文章。
    */
-  sections?:
-    | (
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain' | 'article') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'rich-text-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            columns?: ('2' | '3' | '4') | null;
-            style?: ('default' | 'steps' | 'stats') | null;
-            /**
-             * 默认卡片样式下可选自动计算布局或固定等宽网格。
-             */
-            layoutMode?: ('auto' | 'fixed') | null;
-            cards?:
-              | {
-                  eyebrow?: string | null;
-                  title: string;
-                  body?: string | null;
-                  paragraphs?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  bullets?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'card-grid-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            items?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'bullet-list-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            primaryCtaLabel?: string | null;
-            primaryCtaHref?: string | null;
-            secondaryCtaLabel?: string | null;
-            secondaryCtaHref?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            markdown: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'markdown-document';
-          }
-      )[]
-    | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "feature-pages".
- */
-export interface FeaturePage {
-  id: number;
-  /**
-   * Feature 路由 slug；应与前台固定 URL 保持一致。
-   */
-  slug: string;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
-  hero?: {
-    eyebrow?: string | null;
-    title?: string | null;
-    highlight?: string | null;
-    description?: string | null;
-    supportingText?: string | null;
-    footnote?: string | null;
-    primaryCtaLabel?: string | null;
-    primaryCtaHref?: string | null;
-    secondaryCtaLabel?: string | null;
-    secondaryCtaHref?: string | null;
-  };
+  relatedPosts?: (number | BlogPost)[] | null;
   /**
    * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
    */
@@ -569,10 +420,26 @@ export interface FeaturePage {
             blockName?: string | null;
             blockType: 'markdown-document';
           }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            image: number | Media;
+            alt?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'image-section';
+          }
       )[]
     | null;
-  relatedFeatures?: (number | FeaturePage)[] | null;
-  ogImage?: (number | null) | Media;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -592,9 +459,21 @@ export interface FeaturePage {
 export interface UseCasePage {
   id: number;
   /**
+   * 默认模板沿用当前 use case 结构；HTML 模式只需要 slug 与 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
    * Use case 路由 slug；应与固定外部 URL 保持一致。
    */
   slug: string;
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
+  /**
+   * 页签与页脚使用的短标题，例如 For Product Managers。
+   */
+  navigationLabel?: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
   hero?: {
@@ -609,6 +488,44 @@ export interface UseCasePage {
     secondaryCtaLabel?: string | null;
     secondaryCtaHref?: string | null;
   };
+  heroLead?: string | null;
+  painPoints?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  workflowEyebrow?: string | null;
+  workflowTitle?: string | null;
+  workflowDescription?: string | null;
+  workflowSteps?:
+    | {
+        title: string;
+        panelTitle: string;
+        panelDescription?: string | null;
+        panelMarkdown: string;
+        footerLabel?: string | null;
+        footerBadge?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  testimonialsEyebrow?: string | null;
+  testimonialsTitle?: string | null;
+  testimonialsDescription?: string | null;
+  testimonials?:
+    | {
+        quote: string;
+        name: string;
+        role: string;
+        avatar?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  ctaEyebrow?: string | null;
+  ctaTitle?: string | null;
+  ctaDescription?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
   /**
    * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
    */
@@ -756,9 +673,26 @@ export interface UseCasePage {
             blockName?: string | null;
             blockType: 'markdown-document';
           }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            image: number | Media;
+            alt?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'image-section';
+          }
       )[]
     | null;
-  relatedFeatures?: (number | FeaturePage)[] | null;
   ogImage?: (number | null) | Media;
   meta?: {
     title?: string | null;
@@ -780,7 +714,10 @@ export interface FaqItem {
   id: number;
   question: string;
   answer: string;
-  page: 'home' | 'faqs' | 'pricing';
+  /**
+   * FAQ 页面中的分组标题，例如 What is Noumi?、Features。
+   */
+  category: string;
   sortOrder?: number | null;
   isActive?: boolean | null;
   updatedAt: string;
@@ -799,10 +736,6 @@ export interface Redirect {
       | ({
           relationTo: 'blog-posts';
           value: number | BlogPost;
-        } | null)
-      | ({
-          relationTo: 'feature-pages';
-          value: number | FeaturePage;
         } | null)
       | ({
           relationTo: 'use-case-pages';
@@ -943,10 +876,6 @@ export interface PayloadLockedDocument {
         value: number | BlogPost;
       } | null)
     | ({
-        relationTo: 'feature-pages';
-        value: number | FeaturePage;
-      } | null)
-    | ({
         relationTo: 'use-case-pages';
         value: number | UseCasePage;
       } | null)
@@ -1044,13 +973,23 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "blog-posts_select".
  */
 export interface BlogPostsSelect<T extends boolean = true> {
+  renderMode?: T;
   title?: T;
   slug?: T;
+  htmlContent?: T;
+  htmlCardImage?: T;
+  htmlCardTag?: T;
+  htmlCardTitle?: T;
+  htmlCardDescription?: T;
+  htmlCardReadingTime?: T;
   metaTitle?: T;
   metaDescription?: T;
   excerpt?: T;
+  lead?: T;
   ogImage?: T;
+  coverImage?: T;
   author?: T;
+  readingTime?: T;
   publishedAt?: T;
   status?: T;
   tags?:
@@ -1059,6 +998,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  relatedPosts?: T;
   sections?:
     | T
     | {
@@ -1176,160 +1116,20 @@ export interface BlogPostsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-      };
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "feature-pages_select".
- */
-export interface FeaturePagesSelect<T extends boolean = true> {
-  slug?: T;
-  metaTitle?: T;
-  metaDescription?: T;
-  hero?:
-    | T
-    | {
-        eyebrow?: T;
-        title?: T;
-        highlight?: T;
-        description?: T;
-        supportingText?: T;
-        footnote?: T;
-        primaryCtaLabel?: T;
-        primaryCtaHref?: T;
-        secondaryCtaLabel?: T;
-        secondaryCtaHref?: T;
-      };
-  sections?:
-    | T
-    | {
-        'rich-text-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'card-grid-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              columns?: T;
-              style?: T;
-              layoutMode?: T;
-              cards?:
-                | T
-                | {
-                    eyebrow?: T;
-                    title?: T;
-                    body?: T;
-                    paragraphs?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    bullets?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        'bullet-list-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              items?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'cta-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              primaryCtaLabel?: T;
-              primaryCtaHref?: T;
-              secondaryCtaLabel?: T;
-              secondaryCtaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'markdown-document'?:
+        'image-section'?:
           | T
           | {
               slotKey?: T;
               label?: T;
               title?: T;
               headerAlignment?: T;
-              markdown?: T;
+              image?: T;
+              alt?: T;
+              caption?: T;
               id?: T;
               blockName?: T;
             };
       };
-  relatedFeatures?: T;
-  ogImage?: T;
   meta?:
     | T
     | {
@@ -1346,7 +1146,10 @@ export interface FeaturePagesSelect<T extends boolean = true> {
  * via the `definition` "use-case-pages_select".
  */
 export interface UseCasePagesSelect<T extends boolean = true> {
+  renderMode?: T;
   slug?: T;
+  htmlContent?: T;
+  navigationLabel?: T;
   metaTitle?: T;
   metaDescription?: T;
   hero?:
@@ -1363,6 +1166,44 @@ export interface UseCasePagesSelect<T extends boolean = true> {
         secondaryCtaLabel?: T;
         secondaryCtaHref?: T;
       };
+  heroLead?: T;
+  painPoints?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  workflowEyebrow?: T;
+  workflowTitle?: T;
+  workflowDescription?: T;
+  workflowSteps?:
+    | T
+    | {
+        title?: T;
+        panelTitle?: T;
+        panelDescription?: T;
+        panelMarkdown?: T;
+        footerLabel?: T;
+        footerBadge?: T;
+        id?: T;
+      };
+  testimonialsEyebrow?: T;
+  testimonialsTitle?: T;
+  testimonialsDescription?: T;
+  testimonials?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        role?: T;
+        avatar?: T;
+        id?: T;
+      };
+  ctaEyebrow?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
   sections?:
     | T
     | {
@@ -1480,8 +1321,20 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'image-section'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              headerAlignment?: T;
+              image?: T;
+              alt?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
-  relatedFeatures?: T;
   ogImage?: T;
   meta?:
     | T
@@ -1501,7 +1354,7 @@ export interface UseCasePagesSelect<T extends boolean = true> {
 export interface FaqItemsSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
-  page?: T;
+  category?: T;
   sortOrder?: T;
   isActive?: T;
   updatedAt?: T;
@@ -1684,528 +1537,6 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home-page".
- */
-export interface HomePage {
-  id: number;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
-  ogImage?: (number | null) | Media;
-  hero?: {
-    eyebrow?: string | null;
-    title?: string | null;
-    highlight?: string | null;
-    description?: string | null;
-    supportingText?: string | null;
-    footnote?: string | null;
-    primaryCtaLabel?: string | null;
-    primaryCtaHref?: string | null;
-    secondaryCtaLabel?: string | null;
-    secondaryCtaHref?: string | null;
-  };
-  /**
-   * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
-   */
-  sections?:
-    | (
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain' | 'article') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'rich-text-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            columns?: ('2' | '3' | '4') | null;
-            style?: ('default' | 'steps' | 'stats') | null;
-            /**
-             * 默认卡片样式下可选自动计算布局或固定等宽网格。
-             */
-            layoutMode?: ('auto' | 'fixed') | null;
-            cards?:
-              | {
-                  eyebrow?: string | null;
-                  title: string;
-                  body?: string | null;
-                  paragraphs?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  bullets?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'card-grid-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            items?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'bullet-list-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            primaryCtaLabel?: string | null;
-            primaryCtaHref?: string | null;
-            secondaryCtaLabel?: string | null;
-            secondaryCtaHref?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            markdown: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'markdown-document';
-          }
-      )[]
-    | null;
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about-page".
- */
-export interface AboutPage {
-  id: number;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
-  ogImage?: (number | null) | Media;
-  hero?: {
-    eyebrow?: string | null;
-    title?: string | null;
-    highlight?: string | null;
-    description?: string | null;
-    supportingText?: string | null;
-    footnote?: string | null;
-    primaryCtaLabel?: string | null;
-    primaryCtaHref?: string | null;
-    secondaryCtaLabel?: string | null;
-    secondaryCtaHref?: string | null;
-  };
-  /**
-   * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
-   */
-  sections?:
-    | (
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain' | 'article') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'rich-text-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            columns?: ('2' | '3' | '4') | null;
-            style?: ('default' | 'steps' | 'stats') | null;
-            /**
-             * 默认卡片样式下可选自动计算布局或固定等宽网格。
-             */
-            layoutMode?: ('auto' | 'fixed') | null;
-            cards?:
-              | {
-                  eyebrow?: string | null;
-                  title: string;
-                  body?: string | null;
-                  paragraphs?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  bullets?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'card-grid-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            items?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'bullet-list-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            primaryCtaLabel?: string | null;
-            primaryCtaHref?: string | null;
-            secondaryCtaLabel?: string | null;
-            secondaryCtaHref?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            markdown: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'markdown-document';
-          }
-      )[]
-    | null;
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pricing-page".
- */
-export interface PricingPage {
-  id: number;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
-  ogImage?: (number | null) | Media;
-  hero?: {
-    eyebrow?: string | null;
-    title?: string | null;
-    highlight?: string | null;
-    description?: string | null;
-    supportingText?: string | null;
-    footnote?: string | null;
-    primaryCtaLabel?: string | null;
-    primaryCtaHref?: string | null;
-    secondaryCtaLabel?: string | null;
-    secondaryCtaHref?: string | null;
-  };
-  /**
-   * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
-   */
-  sections?:
-    | (
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain' | 'article') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'rich-text-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            paragraphs?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            bullets?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            columns?: ('2' | '3' | '4') | null;
-            style?: ('default' | 'steps' | 'stats') | null;
-            /**
-             * 默认卡片样式下可选自动计算布局或固定等宽网格。
-             */
-            layoutMode?: ('auto' | 'fixed') | null;
-            cards?:
-              | {
-                  eyebrow?: string | null;
-                  title: string;
-                  body?: string | null;
-                  paragraphs?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  bullets?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'card-grid-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            items?:
-              | {
-                  text: string;
-                  id?: string | null;
-                }[]
-              | null;
-            style?: ('panel' | 'plain') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'bullet-list-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            description?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            primaryCtaLabel?: string | null;
-            primaryCtaHref?: string | null;
-            secondaryCtaLabel?: string | null;
-            secondaryCtaHref?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta-section';
-          }
-        | {
-            /**
-             * 仅在前台存在固定插槽时填写；一般内容块可留空。
-             */
-            slotKey?: string | null;
-            label?: string | null;
-            title?: string | null;
-            /**
-             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
-             */
-            headerAlignment?: ('left' | 'center' | 'right') | null;
-            markdown: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'markdown-document';
-          }
-      )[]
-    | null;
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "privacy-page".
  */
 export interface PrivacyPage {
@@ -2371,6 +1702,24 @@ export interface PrivacyPage {
             id?: string | null;
             blockName?: string | null;
             blockType: 'markdown-document';
+          }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            image: number | Media;
+            alt?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'image-section';
           }
       )[]
     | null;
@@ -2546,6 +1895,24 @@ export interface TermsPage {
             blockName?: string | null;
             blockType: 'markdown-document';
           }
+        | {
+            /**
+             * 仅在前台存在固定插槽时填写；一般内容块可留空。
+             */
+            slotKey?: string | null;
+            label?: string | null;
+            title?: string | null;
+            /**
+             * 控制角标、标题与描述的对齐方式；留空时沿用当前版式默认对齐。
+             */
+            headerAlignment?: ('left' | 'center' | 'right') | null;
+            image: number | Media;
+            alt?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'image-section';
+          }
       )[]
     | null;
   _status?: ('draft' | 'published') | null;
@@ -2599,441 +1966,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
-      };
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home-page_select".
- */
-export interface HomePageSelect<T extends boolean = true> {
-  metaTitle?: T;
-  metaDescription?: T;
-  ogImage?: T;
-  hero?:
-    | T
-    | {
-        eyebrow?: T;
-        title?: T;
-        highlight?: T;
-        description?: T;
-        supportingText?: T;
-        footnote?: T;
-        primaryCtaLabel?: T;
-        primaryCtaHref?: T;
-        secondaryCtaLabel?: T;
-        secondaryCtaHref?: T;
-      };
-  sections?:
-    | T
-    | {
-        'rich-text-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'card-grid-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              columns?: T;
-              style?: T;
-              layoutMode?: T;
-              cards?:
-                | T
-                | {
-                    eyebrow?: T;
-                    title?: T;
-                    body?: T;
-                    paragraphs?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    bullets?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        'bullet-list-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              items?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'cta-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              primaryCtaLabel?: T;
-              primaryCtaHref?: T;
-              secondaryCtaLabel?: T;
-              secondaryCtaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'markdown-document'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              headerAlignment?: T;
-              markdown?: T;
-              id?: T;
-              blockName?: T;
-            };
-      };
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about-page_select".
- */
-export interface AboutPageSelect<T extends boolean = true> {
-  metaTitle?: T;
-  metaDescription?: T;
-  ogImage?: T;
-  hero?:
-    | T
-    | {
-        eyebrow?: T;
-        title?: T;
-        highlight?: T;
-        description?: T;
-        supportingText?: T;
-        footnote?: T;
-        primaryCtaLabel?: T;
-        primaryCtaHref?: T;
-        secondaryCtaLabel?: T;
-        secondaryCtaHref?: T;
-      };
-  sections?:
-    | T
-    | {
-        'rich-text-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'card-grid-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              columns?: T;
-              style?: T;
-              layoutMode?: T;
-              cards?:
-                | T
-                | {
-                    eyebrow?: T;
-                    title?: T;
-                    body?: T;
-                    paragraphs?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    bullets?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        'bullet-list-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              items?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'cta-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              primaryCtaLabel?: T;
-              primaryCtaHref?: T;
-              secondaryCtaLabel?: T;
-              secondaryCtaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'markdown-document'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              headerAlignment?: T;
-              markdown?: T;
-              id?: T;
-              blockName?: T;
-            };
-      };
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pricing-page_select".
- */
-export interface PricingPageSelect<T extends boolean = true> {
-  metaTitle?: T;
-  metaDescription?: T;
-  ogImage?: T;
-  hero?:
-    | T
-    | {
-        eyebrow?: T;
-        title?: T;
-        highlight?: T;
-        description?: T;
-        supportingText?: T;
-        footnote?: T;
-        primaryCtaLabel?: T;
-        primaryCtaHref?: T;
-        secondaryCtaLabel?: T;
-        secondaryCtaHref?: T;
-      };
-  sections?:
-    | T
-    | {
-        'rich-text-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'card-grid-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              paragraphs?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              bullets?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              columns?: T;
-              style?: T;
-              layoutMode?: T;
-              cards?:
-                | T
-                | {
-                    eyebrow?: T;
-                    title?: T;
-                    body?: T;
-                    paragraphs?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    bullets?:
-                      | T
-                      | {
-                          text?: T;
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        'bullet-list-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              items?:
-                | T
-                | {
-                    text?: T;
-                    id?: T;
-                  };
-              style?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'cta-section'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              description?: T;
-              headerAlignment?: T;
-              primaryCtaLabel?: T;
-              primaryCtaHref?: T;
-              secondaryCtaLabel?: T;
-              secondaryCtaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'markdown-document'?:
-          | T
-          | {
-              slotKey?: T;
-              label?: T;
-              title?: T;
-              headerAlignment?: T;
-              markdown?: T;
-              id?: T;
-              blockName?: T;
-            };
       };
   _status?: T;
   updatedAt?: T;
@@ -3176,6 +2108,19 @@ export interface PrivacyPageSelect<T extends boolean = true> {
               title?: T;
               headerAlignment?: T;
               markdown?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'image-section'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              headerAlignment?: T;
+              image?: T;
+              alt?: T;
+              caption?: T;
               id?: T;
               blockName?: T;
             };
@@ -3324,6 +2269,19 @@ export interface TermsPageSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        'image-section'?:
+          | T
+          | {
+              slotKey?: T;
+              label?: T;
+              title?: T;
+              headerAlignment?: T;
+              image?: T;
+              alt?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   _status?: T;
   updatedAt?: T;
@@ -3354,14 +2312,10 @@ export interface TaskSchedulePublish {
           value: number | BlogPost;
         } | null)
       | ({
-          relationTo: 'feature-pages';
-          value: number | FeaturePage;
-        } | null)
-      | ({
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
-    global?: ('site-settings' | 'home-page' | 'about-page' | 'pricing-page' | 'privacy-page' | 'terms-page') | null;
+    global?: ('site-settings' | 'privacy-page' | 'terms-page') | null;
     user?: (number | null) | User;
   };
   output?: unknown;

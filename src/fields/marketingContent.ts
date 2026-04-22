@@ -468,6 +468,56 @@ const MARKDOWN_DOCUMENT_BLOCK: Block = {
 }
 
 /**
+ * 共享图片 section
+ * 用于文章封面之后的插图、法律页配图或营销页中的静态视觉节点。
+ */
+const IMAGE_SECTION_BLOCK: Block = {
+  slug: 'image-section',
+  labels: {
+    singular: 'Image Section',
+    plural: 'Image Sections',
+  },
+  fields: [
+    {
+      name: 'slotKey',
+      type: 'text',
+      label: '槽位标识',
+      admin: {
+        description: '仅在前台存在固定插槽时填写；一般内容块可留空。',
+      },
+    },
+    {
+      name: 'label',
+      type: 'text',
+      label: '角标',
+    },
+    {
+      name: 'title',
+      type: 'text',
+      label: '标题',
+    },
+    createSectionHeaderAlignmentField(),
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: '图片',
+      required: true,
+    },
+    {
+      name: 'alt',
+      type: 'text',
+      label: '替代文本',
+    },
+    {
+      name: 'caption',
+      type: 'textarea',
+      label: '说明文字',
+    },
+  ],
+}
+
+/**
  * 共享 section blocks 列表
  */
 export const MARKETING_SECTION_BLOCKS: Block[] = [
@@ -476,6 +526,7 @@ export const MARKETING_SECTION_BLOCKS: Block[] = [
   BULLET_LIST_SECTION_BLOCK,
   CTA_SECTION_BLOCK,
   MARKDOWN_DOCUMENT_BLOCK,
+  IMAGE_SECTION_BLOCK,
 ]
 
 /**

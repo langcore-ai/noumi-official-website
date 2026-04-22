@@ -13,7 +13,7 @@ export const FaqItems: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'question',
-    defaultColumns: ['question', 'page', 'isActive'],
+    defaultColumns: ['question', 'category', 'isActive'],
     group: 'Content',
   },
   access: {
@@ -36,15 +36,13 @@ export const FaqItems: CollectionConfig = {
       required: true,
     },
     {
-      name: 'page',
-      type: 'select',
-      defaultValue: 'home',
-      options: [
-        { label: 'Home', value: 'home' },
-        { label: 'FAQs', value: 'faqs' },
-        { label: 'Pricing', value: 'pricing' },
-      ],
+      name: 'category',
+      type: 'text',
+      localized: true,
       required: true,
+      admin: {
+        description: 'FAQ 页面中的分组标题，例如 What is Noumi?、Features。',
+      },
     },
     {
       name: 'sortOrder',

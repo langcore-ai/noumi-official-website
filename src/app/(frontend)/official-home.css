@@ -54,8 +54,8 @@ button {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  inset: 0 0 auto 0;
   z-index: 30;
   background: color-mix(in srgb, var(--bg-page) 87%, white 13%);
   backdrop-filter: blur(18px);
@@ -109,6 +109,33 @@ button {
   display: flex;
   align-items: center;
   gap: 18px;
+}
+
+.site-nav--use-case {
+  flex: 1;
+  justify-content: center;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.site-nav--use-case::-webkit-scrollbar {
+  display: none;
+}
+
+.site-nav--use-case a {
+  padding: 10px 14px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.site-nav--use-case a:hover {
+  color: var(--text-primary);
+}
+
+.site-nav--use-case a.is-active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-purple);
 }
 
 .site-nav a {
@@ -184,7 +211,7 @@ button {
 }
 
 .hero {
-  padding-top: 88px;
+  padding-top: 180px;
 }
 
 .hero__inner {
@@ -218,10 +245,11 @@ button {
 
 .hero__title,
 .feature-copy h2,
-.cta-band h2 {
+.cta-band h2,
+.home-cta-band h2 {
   font-family: "Cormorant Garamond", serif;
   letter-spacing: -0.04em;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .hero__title {
@@ -233,9 +261,18 @@ button {
 }
 
 .hero__title span,
-.cta-band h2 span {
+.cta-band h2 span,
+.home-cta-band h2 span {
   color: var(--accent-purple-soft);
   font-style: italic;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.cta-band h2,
+.home-cta-band h2 {
+  max-width: 760px;
+  text-align: center;
 }
 
 .hero__copy {
@@ -812,22 +849,23 @@ button {
   background: linear-gradient(90deg, #6b63ff 0%, #5c57f3 100%);
 }
 
-.cta-band {
+.home-cta-band {
   position: relative;
   margin-top: 84px;
   background: #312b69;
   color: var(--text-inverse);
   overflow: hidden;
+  text-align: center;
 }
 
-.cta-band__inner {
+.home-cta-band__inner {
   position: relative;
   z-index: 2;
   text-align: center;
   padding: 132px 0 144px;
 }
 
-.cta-band__cat {
+.home-cta-band__cat {
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -839,16 +877,24 @@ button {
   animation: bottom-cat-float 7.2s ease-in-out infinite;
 }
 
-.cta-band h2 {
+.home-cta-band h2 {
   font-size: clamp(50px, 5.8vw, 82px);
   line-height: 0.96;
   font-weight: 700;
+  color: var(--text-inverse);
+  max-width: 980px;
 }
 
-.cta-band p {
+.home-cta-band__line {
+  display: block;
+  white-space: nowrap;
+}
+
+.home-cta-band p {
   margin: 24px 0 36px;
   color: rgba(246, 240, 231, 0.62);
   font-size: 18px;
+  text-align: center;
 }
 
 .site-footer {
@@ -912,6 +958,7 @@ button {
     transform 0.7s ease;
 }
 
+.reveal.in,
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
@@ -1082,18 +1129,22 @@ button {
     padding: 18px;
   }
 
-  .cta-band__inner {
+  .home-cta-band__inner {
     padding: 96px 0 108px;
   }
 
-  .cta-band__cat {
+  .home-cta-band__cat {
     width: min(65vw, 440px);
     transform: translateX(-14%);
     bottom: 0;
   }
 
-  .cta-band h2 {
+  .home-cta-band h2 {
     font-size: clamp(42px, 12vw, 58px);
+  }
+
+  .home-cta-band__line {
+    white-space: normal;
   }
 
   .footer-grid {

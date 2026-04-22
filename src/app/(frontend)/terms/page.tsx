@@ -1,26 +1,18 @@
-import { PageSections } from '@/components/site/PageSections'
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { hasRenderableHeroContent } from '@/lib/site/hero'
-import { getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getTermsPageView } from '@/lib/site/cms'
-import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
+import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
+import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { getOfficialTermsPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
 
 /**
  * Terms 页面 metadata
  */
 export async function generateMetadata() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const page = await getTermsPageView(locale)
+  const page = await getOfficialTermsPage()
 
-  return createPageMetadata({
-    locale,
-    title: page.metaTitle || page.hero.title || dictionary.legal.termsMetadataTitle,
-    description: page.metaDescription || page.hero.description || dictionary.legal.termsMetadataDescription,
+  return createOfficialMetadata({
+    title: page.metaTitle || page.heroTitle || 'Terms of Service',
+    description: page.metaDescription || page.heroDescription || 'Terms of Service',
     pathname: '/terms/',
-    image: page.ogImage,
   })
 }
 
@@ -29,36 +21,20 @@ export async function generateMetadata() {
  * @returns 法律文档页面
  */
 export default async function TermsPage() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const page = await getTermsPageView(locale)
-  const hasHero = hasRenderableHeroContent(page.hero)
-  const breadcrumbJsonLd = await createBreadcrumbJsonLd([
-    { name: dictionary.common.brandName, pathname: '/' },
-    { name: dictionary.legal.termsTitle, pathname: '/terms/' },
-  ], locale)
+  const [page, useCases] = await Promise.all([
+    getOfficialTermsPage(),
+    getOfficialUseCaseNavItems(),
+  ])
 
   return (
-    <div className="page legal-page">
-      <StructuredData data={breadcrumbJsonLd} />
-
-      {hasHero ? (
-        <section className="site-shell page__hero article">
-          {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
-          {page.hero.title ? (
-            <TypesetText as="h1" locale={locale} text={page.hero.title} variant="pageTitle">
-              {page.hero.title}
-            </TypesetText>
-          ) : null}
-          {page.hero.description ? (
-            <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
-              {page.hero.description}
-            </TypesetText>
-          ) : null}
-        </section>
-      ) : null}
-
-      <PageSections locale={locale} sections={page.sections} />
+    <div className="page-body">
+      <OfficialHomeHeader useCases={useCases} />
+      <header className="legal-header">
+        <h1>{page.heroTitle || 'Terms of Service'}</h1>
+        {page.heroDescription ? <p className="legal-meta">{page.heroDescription}</p> : null}
+      </header>
+      <OfficialContentSections sections={page.sections} />
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

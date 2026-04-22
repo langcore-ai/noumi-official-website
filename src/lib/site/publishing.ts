@@ -92,13 +92,10 @@ export const marketingGlobalReadAccess = createPublishedGlobalReadAccess(CMS_CON
 export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_UPDATE_ROLES)
 
 /** 支持 Payload live preview 的集合 slug 列表 */
-export const LIVE_PREVIEW_COLLECTIONS = ['blog-posts', 'feature-pages', 'use-case-pages'] as const
+export const LIVE_PREVIEW_COLLECTIONS = ['blog-posts', 'use-case-pages'] as const
 /** 支持 Payload live preview 的全局配置 slug 列表 */
 export const LIVE_PREVIEW_GLOBALS = [
-  'home-page',
-  'about-page',
   'privacy-page',
-  'pricing-page',
   'terms-page',
   'site-settings',
 ] as const
@@ -115,10 +112,7 @@ type PreviewDoc = {
 
 /** 全局页面预览路径映射 */
 const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
-  'home-page': '/',
-  'about-page': '/about/',
   'privacy-page': '/privacy/',
-  'pricing-page': '/pricing/',
   'terms-page': '/terms/',
   'site-settings': '/',
 }
@@ -194,8 +188,6 @@ export function getCollectionPreviewPath(
   switch (collectionSlug) {
     case 'blog-posts':
       return `/blog/${slug}/`
-    case 'feature-pages':
-      return `/features/${slug}/`
     case 'use-case-pages':
       return `/use-cases/${slug}/`
     default:

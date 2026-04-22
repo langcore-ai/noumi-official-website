@@ -161,7 +161,120 @@
       .wf-panel-text { padding: 18px 16px 12px; }
       .wf-demo { margin: 0 12px 14px; padding: 12px 14px; }
     }
+
+    /* ── Testimonials ────────────────────────────────── */
+    .testimonials {
+      padding: 80px 0 72px;
+      border-top: 1px solid var(--border);
+    }
+    .testimonials-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .testimonials-head {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .testimonials-head .sec-label { display: block; margin-bottom: 10px; }
+    .testimonials-head h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .testimonials-head p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-muted);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .tcard {
+      background: var(--cream);
+      border: 1px solid var(--border-med);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tcard-stars {
+      display: flex;
+      gap: 2px;
+      font-size: 14px;
+      color: #F59E0B;
+      line-height: 1;
+    }
+    .tcard-quote {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.72;
+      flex: 1;
+    }
+    .tcard-author {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .tcard-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .tcard-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .tcard-role {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      line-height: 1.3;
+    }
+    @media (max-width: 900px) {
+      .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+      .testimonials-inner { padding: 0 24px; }
+    }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://noumi.ai/use-cases/solutions-engineer#webpage",
+        "url": "https://noumi.ai/use-cases/solutions-engineer",
+        "name": "Noumi for Solutions Engineers — AI that closes the gap",
+        "description": "Noumi closes the gap between what was said and what gets done. No drift, no double-work. For solutions engineers who can't afford to lose context between calls.",
+        "isPartOf": { "@id": "https://noumi.ai/#website" },
+        "inLanguage": "en-US",
+        "breadcrumb": { "@id": "https://noumi.ai/use-cases/solutions-engineer#breadcrumb" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://noumi.ai/use-cases/solutions-engineer#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://noumi.ai" },
+          { "@type": "ListItem", "position": 2, "name": "Use Cases", "item": "https://noumi.ai/use-cases" },
+          { "@type": "ListItem", "position": 3, "name": "Solutions Engineers" }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <div class="page-body">
@@ -179,9 +292,9 @@
 <!-- ═══ ROLE TABS ════════════════════════════════════ -->
 <div class="role-tabs-wrap">
   <nav class="role-tabs" aria-label="Use case navigation">
-    <a href="/use-cases/product-manager" class="role-tab">Product Manager</a>
-    <a href="/use-cases/journalist" class="role-tab">Journalist</a>
-    <a href="/use-cases/solutions-engineer" class="role-tab active">Solutions Engineer</a>
+    <a href="product-manager" class="role-tab">Product Manager</a>
+    <a href="journalist" class="role-tab">Journalist</a>
+    <a href="solutions-engineer" class="role-tab active">Solutions Engineer</a>
   </nav>
 </div>
 
@@ -195,7 +308,7 @@
       <li>Your proposal drifts from the requirements your team already confirmed.</li>
       <li>After a meeting, reconstructing follow-up takes longer than the meeting itself.</li>
     </ul>
-    <a href="/invite" class="btn-fill">Try Free →</a>
+    <a href="../invite" class="btn-fill">Try Free →</a>
   </div>
 
   <div class="role-hero-visual reveal d2" role="img" aria-label="Noumi assembling scattered lead data into a structured account workspace">
@@ -432,6 +545,53 @@
 </section>
 
 <!-- ═══ CTA ═══════════════════════════════════════════ -->
+
+<!-- ═══ TESTIMONIALS ══════════════════════════════════ -->
+<section class="testimonials" aria-labelledby="se-testimonials-h">
+  <div class="testimonials-inner">
+    <div class="testimonials-head reveal">
+      <span class="sec-label">What people are saying</span>
+      <h2 id="se-testimonials-h">SEs who always walk in prepared.</h2>
+      <p>Every account's history, loaded before the first call.</p>
+    </div>
+    <div class="testimonials-grid">
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"Every time I onboard a new account, I used to rebuild context mentally — their stack, their objections, what the last call surfaced. Noumi just loads all of that. The first call of a new engagement actually feels informed now."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca7"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca7)"><rect width="48" height="48" fill="#E5EBF0"/><circle cx="24" cy="56" r="22" fill="#5A7FA0"/><circle cx="24" cy="21" r="10.5" fill="#F0C48A"/><path d="M14.5 17.5 C14.5 10 33.5 10 33.5 17.5 L33 13 Q30 7.5 24 7.5 Q18 7.5 15 13 Z" fill="#7B4B2A"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Tom Hartley</div>
+        <div class="tcard-role">Senior Solutions Engineer · Salesforce</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"We were preparing a complex technical proposal and I said 'pull everything we know about their compliance concerns.' It did. Three months of context, instantly organized. I couldn't have done that manually without an hour of prep."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca8"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca8)"><rect width="48" height="48" fill="#F0E8E0"/><circle cx="24" cy="56" r="22" fill="#D45048"/><circle cx="24" cy="21" r="10.5" fill="#7D4A2A"/><ellipse cx="24" cy="10.5" rx="13.5" ry="9" fill="#1A0800"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Rachel Osei</div>
+        <div class="tcard-role">Solutions Lead · Stripe</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"My manager asked how I always seem so prepared going into customer calls. Honest answer: I'm not — Noumi is. It holds all the background so I can stay focused on the conversation instead of trying to reconstruct it."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca9"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca9)"><rect width="48" height="48" fill="#E5EDEA"/><circle cx="24" cy="56" r="22" fill="#3D7A5F"/><circle cx="24" cy="21" r="10.5" fill="#C68B5A"/><path d="M15 18 C15 11 33 11 33 18 L32.5 14 Q30 8.5 24 8.5 Q18 8.5 15.5 14 Z" fill="#0D0D0D"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Marcus Webb</div>
+        <div class="tcard-role">Solutions Architect · ServiceNow</div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</section>
+
 <section class="cta-band" aria-labelledby="se-cta">
   <h2 id="se-cta" class="reveal">
     From the first email to the signed SOW.<br><em>One account workspace. Zero context rebuilding.</em>

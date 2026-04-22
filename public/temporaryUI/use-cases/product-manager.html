@@ -606,7 +606,120 @@
       .wf-panel-text { padding: 22px 18px 16px; }
       .wf-demo { margin: 0 14px 16px; padding: 14px 16px; }
     }
+
+    /* ── Testimonials ────────────────────────────────── */
+    .testimonials {
+      padding: 80px 0 72px;
+      border-top: 1px solid var(--border);
+    }
+    .testimonials-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .testimonials-head {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .testimonials-head .sec-label { display: block; margin-bottom: 10px; }
+    .testimonials-head h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .testimonials-head p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-muted);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .tcard {
+      background: var(--cream);
+      border: 1px solid var(--border-med);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tcard-stars {
+      display: flex;
+      gap: 2px;
+      font-size: 14px;
+      color: #F59E0B;
+      line-height: 1;
+    }
+    .tcard-quote {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.72;
+      flex: 1;
+    }
+    .tcard-author {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .tcard-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .tcard-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .tcard-role {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      line-height: 1.3;
+    }
+    @media (max-width: 900px) {
+      .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+      .testimonials-inner { padding: 0 24px; }
+    }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://noumi.ai/use-cases/product-manager#webpage",
+        "url": "https://noumi.ai/use-cases/product-manager",
+        "name": "Noumi for Product Managers — AI that remembers your roadmap",
+        "description": "Noumi captures the reasoning, builds the context, and ensures every ship stays on course. Built for product managers who are tired of starting from scratch.",
+        "isPartOf": { "@id": "https://noumi.ai/#website" },
+        "inLanguage": "en-US",
+        "breadcrumb": { "@id": "https://noumi.ai/use-cases/product-manager#breadcrumb" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://noumi.ai/use-cases/product-manager#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://noumi.ai" },
+          { "@type": "ListItem", "position": 2, "name": "Use Cases", "item": "https://noumi.ai/use-cases" },
+          { "@type": "ListItem", "position": 3, "name": "Product Managers" }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <div class="page-body">
@@ -624,9 +737,9 @@
 <!-- ═══ ROLE TABS ════════════════════════════════════ -->
 <div class="role-tabs-wrap">
   <nav class="role-tabs" aria-label="Use case navigation">
-    <a href="/use-cases/product-manager" class="role-tab active">Product Manager</a>
-    <a href="/use-cases/journalist" class="role-tab">Journalist</a>
-    <a href="/use-cases/solutions-engineer" class="role-tab">Solutions Engineer</a>
+    <a href="product-manager" class="role-tab active">Product Manager</a>
+    <a href="journalist" class="role-tab">Journalist</a>
+    <a href="solutions-engineer" class="role-tab">Solutions Engineer</a>
   </nav>
 </div>
 
@@ -640,7 +753,7 @@
       <li>Your PRD starts from a blank page, even when the reasoning already exists.</li>
       <li>By release, no one is sure if what shipped matches what was agreed.</li>
     </ul>
-    <a href="/invite" class="btn-fill">Try Free →</a>
+    <a href="../invite" class="btn-fill">Try Free →</a>
   </div>
 
   <div class="role-hero-visual reveal d2" role="img" aria-label="Noumi synthesizing user feedback into user stories">
@@ -957,12 +1070,59 @@
 </section>
 
 <!-- ═══ CTA ═══════════════════════════════════════════ -->
+
+<!-- ═══ TESTIMONIALS ══════════════════════════════════ -->
+<section class="testimonials" aria-labelledby="pm-testimonials-h">
+  <div class="testimonials-inner">
+    <div class="testimonials-head reveal">
+      <span class="sec-label">What people are saying</span>
+      <h2 id="pm-testimonials-h">PMs who stopped starting over.</h2>
+      <p>From the first ticket to the release note — in one workspace.</p>
+    </div>
+    <div class="testimonials-grid">
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"I used to spend the first 20 minutes of every sprint re-explaining what was decided last week. Noumi just knows. I open it and it's already where we left off. That's not a small thing when you're running four workstreams at once."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca1"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca1)"><rect width="48" height="48" fill="#F0E5D8"/><circle cx="24" cy="56" r="22" fill="#4361EE"/><circle cx="24" cy="21" r="10.5" fill="#D4915D"/><path d="M13.5 17.5 C13.5 9.5 34.5 9.5 34.5 17.5 L34 13 Q30 6.5 24 6.5 Q18 6.5 14 13 Z" fill="#1C0D00"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Alex Rivera</div>
+        <div class="tcard-role">Senior Product Manager · Atlassian</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"The best part isn't the memory — it's that when I'm drafting a PRD, Noumi already knows which constraints came from the design team and which came from the data. I don't have to re-link everything by hand."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca2"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca2)"><rect width="48" height="48" fill="#E8EEF5"/><circle cx="24" cy="56" r="22" fill="#2D8C7E"/><circle cx="24" cy="21" r="10.5" fill="#F2C89A"/><ellipse cx="24" cy="13.5" rx="11.5" ry="5.5" fill="#9E7B55"/><rect x="12.5" y="11" width="4.5" height="13" rx="2.2" fill="#9E7B55"/><rect x="31" y="11" width="4.5" height="13" rx="2.2" fill="#9E7B55"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Sophie Laurent</div>
+        <div class="tcard-role">Product Lead · Linear</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"Six months in, someone asked why we made a certain architecture call. I hadn't documented it, but Noumi had. Not just the decision — the conversation that led to it. That kind of thing used to fall through the cracks every time."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca3"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca3)"><rect width="48" height="48" fill="#E5EAE5"/><circle cx="24" cy="56" r="22" fill="#1C1B2E"/><circle cx="24" cy="21" r="10.5" fill="#F4D5B0"/><path d="M14 17 C14 9 34 9 34 17 L33.5 13 Q30 7 24 7 Q18 7 14.5 13 Z" fill="#9BA3A0"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">James Whitfield</div>
+        <div class="tcard-role">VP of Product · Intercom</div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</section>
+
 <section class="cta-band" aria-labelledby="pm-cta">
   <h2 id="pm-cta" class="reveal">
     From the first ticket to the release note<br><em>one workspace, one line of reasoning.</em>
   </h2>
   <p class="reveal d1">Free to start. No credit card required.</p>
-  <a href="/invite" class="btn-cream reveal d2">Start building your AI today →</a>
+  <a href="../invite" class="btn-cream reveal d2">Start building your AI today →</a>
 </section>
 
 <footer role="contentinfo">

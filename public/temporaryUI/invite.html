@@ -157,7 +157,7 @@
 <div class="page-body">
 
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt="Noumi"><span>Noumi</span></a>
+  <a href="/" class="nav-logo"><img src="../assets/Noumi-Logo.svg" alt="Noumi"><span>Noumi</span></a>
   <ul class="nav-links">
     <li><a href="/use-cases/product-manager">Use Cases</a></li>
     <li><a href="/blog">Blog</a></li>
@@ -270,7 +270,7 @@
   const form  = document.getElementById('invite-form-wrap');
   const success = document.getElementById('invite-success');
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     const email = input.value.trim();
     if (!email || !email.includes('@')) {
       input.style.borderColor = '#ef4444';
@@ -278,14 +278,34 @@
       setTimeout(() => { input.style.borderColor = ''; }, 1800);
       return;
     }
-    // Disable form while "submitting"
+
     btn.disabled = true;
     btn.textContent = 'Sending…';
-    // Simulate async submission (replace with real API call)
-    setTimeout(() => {
+
+    try {
+      const response = await fetch('/api/temporary-ui/invite-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          sourcePath: window.location.pathname,
+        }),
+      });
+      const data = await response.json().catch(() => ({ ok: false }));
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message || 'Unable to save your request right now.');
+      }
+
       form.style.display = 'none';
       success.style.display = 'block';
-    }, 800);
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Request Invite →';
+      input.style.borderColor = '#ef4444';
+      input.focus();
+      setTimeout(() => { input.style.borderColor = ''; }, 1800);
+    }
   });
 
   // Allow Enter key

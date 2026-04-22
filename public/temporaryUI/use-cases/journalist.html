@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Noumi for Journalists — AI that masters your beat</title>
-  <meta name="description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists who are done rebuilding context on every assignment.">
+  <meta name="description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists done rebuilding context on every assignment.">
 
   <link rel="canonical" href="https://noumi.ai/use-cases/journalist">
 
@@ -12,14 +12,14 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Noumi">
   <meta property="og:title" content="Noumi for Journalists — AI that masters your beat">
-  <meta property="og:description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists who are done rebuilding context on every assignment.">
+  <meta property="og:description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists done rebuilding context on every assignment.">
   <meta property="og:url" content="https://noumi.ai/use-cases/journalist">
   <meta property="og:image" content="https://noumi.ai/assets/og-cover.png">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Noumi for Journalists — AI that masters your beat">
-  <meta name="twitter:description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists who are done rebuilding context on every assignment.">
+  <meta name="twitter:description" content="Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists done rebuilding context on every assignment.">
   <meta name="twitter:image" content="https://noumi.ai/assets/og-cover.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -156,7 +156,120 @@
       .wf-panel-text { padding: 18px 16px 12px; }
       .wf-demo { margin: 0 12px 14px; padding: 12px 14px; }
     }
+
+    /* ── Testimonials ────────────────────────────────── */
+    .testimonials {
+      padding: 80px 0 72px;
+      border-top: 1px solid var(--border);
+    }
+    .testimonials-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .testimonials-head {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .testimonials-head .sec-label { display: block; margin-bottom: 10px; }
+    .testimonials-head h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .testimonials-head p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-muted);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .tcard {
+      background: var(--cream);
+      border: 1px solid var(--border-med);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tcard-stars {
+      display: flex;
+      gap: 2px;
+      font-size: 14px;
+      color: #F59E0B;
+      line-height: 1;
+    }
+    .tcard-quote {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.72;
+      flex: 1;
+    }
+    .tcard-author {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .tcard-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .tcard-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .tcard-role {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      line-height: 1.3;
+    }
+    @media (max-width: 900px) {
+      .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+      .testimonials-inner { padding: 0 24px; }
+    }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://noumi.ai/use-cases/journalist#webpage",
+        "url": "https://noumi.ai/use-cases/journalist",
+        "name": "Noumi for Journalists — AI that masters your beat",
+        "description": "Noumi internalizes your style and masters your beats. Focus on the story, not the setup — built for journalists done rebuilding context on every assignment.",
+        "isPartOf": { "@id": "https://noumi.ai/#website" },
+        "inLanguage": "en-US",
+        "breadcrumb": { "@id": "https://noumi.ai/use-cases/journalist#breadcrumb" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://noumi.ai/use-cases/journalist#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://noumi.ai" },
+          { "@type": "ListItem", "position": 2, "name": "Use Cases", "item": "https://noumi.ai/use-cases" },
+          { "@type": "ListItem", "position": 3, "name": "Journalists" }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <div class="page-body">
@@ -412,6 +525,53 @@
 </section>
 
 <!-- ═══ CTA ═══════════════════════════════════════════ -->
+
+<!-- ═══ TESTIMONIALS ══════════════════════════════════ -->
+<section class="testimonials" aria-labelledby="j-testimonials-h">
+  <div class="testimonials-inner">
+    <div class="testimonials-head reveal">
+      <span class="sec-label">What people are saying</span>
+      <h2 id="j-testimonials-h">Reporters who never lose the thread.</h2>
+      <p>Context that stays with every story, every source, every draft.</p>
+    </div>
+    <div class="testimonials-grid">
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"I'm usually running six to eight stories at once. Noumi keeps each one separate but connected — it knows which sources said what, which angles I've already tried, and where I left off. It's like a research partner who actually reads everything."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca4"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca4)"><rect width="48" height="48" fill="#F5EDE0"/><circle cx="24" cy="56" r="22" fill="#D4722A"/><circle cx="24" cy="21" r="10.5" fill="#F2C89A"/><ellipse cx="24" cy="13" rx="11.5" ry="5" fill="#C8A050"/><rect x="12.5" y="10" width="4.5" height="16" rx="2.2" fill="#C8A050"/><rect x="31" y="10" width="4.5" height="16" rx="2.2" fill="#C8A050"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Emma Lawson</div>
+        <div class="tcard-role">Tech Reporter · The Verge</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"Persistent memory sounds like a small feature until you're three months into an investigation. I added context once in February. In May, it was still shaping every query I made. That's the part that changes how you actually work."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca5"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca5)"><rect width="48" height="48" fill="#E8EEF0"/><circle cx="24" cy="56" r="22" fill="#3B7A50"/><circle cx="24" cy="21" r="10.5" fill="#D9AB7A"/><path d="M14 17.5 C14 9 34 9 34 17.5 L33.5 13 Q31 7 24 7 Q17 7 14.5 13 Z" fill="#0D0D0D"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Daniel Park</div>
+        <div class="tcard-role">Senior Correspondent · Bloomberg</div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-stars">★★★★★</div>
+    <p class="tcard-quote">"I taught it my interview protocol once — how I structure prep, what I flag during the conversation, how I write up afterward. Now I call it with one line and it handles all the scaffolding. I just do the reporting."</p>
+    <div class="tcard-author">
+      <div class="tcard-avatar"><svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="ca6"><circle cx="24" cy="24" r="24"/></clipPath></defs><g clip-path="url(#ca6)"><rect width="48" height="48" fill="#F5EED8"/><circle cx="24" cy="56" r="22" fill="#7E4A9E"/><circle cx="24" cy="21" r="10.5" fill="#A0633A"/><ellipse cx="24" cy="12.5" rx="11.5" ry="5" fill="#0D0D0D"/><rect x="12.5" y="10" width="4.5" height="18" rx="2.2" fill="#0D0D0D"/><rect x="31" y="10" width="4.5" height="18" rx="2.2" fill="#0D0D0D"/><circle cx="20.5" cy="20.5" r="1.4" fill="#0D0500"/><circle cx="27.5" cy="20.5" r="1.4" fill="#0D0500"/><path d="M20 26 Q24 28.5 28 26" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none" stroke-linecap="round"/></g></svg></div>
+      <div>
+        <div class="tcard-name">Priya Nair</div>
+        <div class="tcard-role">Investigative Reporter · Reuters</div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</section>
+
 <section class="cta-band" aria-labelledby="j-cta">
   <h2 id="j-cta" class="reveal">
     Your sources. Your rules. Your beat.<br><em>All in one workspace.</em>

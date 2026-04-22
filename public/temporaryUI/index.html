@@ -111,6 +111,12 @@
       text-align: center;
       max-width: var(--max-w);
       margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
     }
 
     .badge {
@@ -687,13 +693,101 @@
       .cta-band { padding: 80px 24px; }
       footer { padding: 56px 24px 36px; }
     }
+
+    /* ── Trusted By ─────────────────────────────────── */
+    .trusted {
+      padding-block: 48px 56px;
+      overflow: hidden;
+    }
+    .trusted__label {
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 32px;
+    }
+    .trusted__track-wrapper {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 13%, black 87%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 13%, black 87%, transparent);
+    }
+    .trusted__track {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      width: max-content;
+      animation: trusted-scroll 40s linear infinite;
+    }
+    .trusted__track:hover { animation-play-state: paused; }
+    @keyframes trusted-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .trusted__item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 160px;
+      height: 52px;
+      opacity: 0.75;
+      transition: opacity 0.22s ease;
+    }
+    .trusted__item:hover { opacity: 1; }
+    .trusted__item img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      mix-blend-mode: multiply;
+    }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://noumi.ai/#website",
+        "url": "https://noumi.ai",
+        "name": "Noumi",
+        "description": "Noumi is an AI assistant that remembers your context and executes work autonomously.",
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://noumi.ai/#organization",
+        "name": "Noumi",
+        "url": "https://noumi.ai",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://noumi.ai/assets/og-cover.png"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://noumi.ai/#webpage",
+        "url": "https://noumi.ai",
+        "name": "Noumi — Your AI Digital Twin That Gets Work Done",
+        "isPartOf": { "@id": "https://noumi.ai/#website" },
+        "about": { "@id": "https://noumi.ai/#organization" },
+        "description": "Noumi is an AI assistant that remembers your context and executes work autonomously. For PMs, journalists, and solution experts — and anyone done starting over.",
+        "inLanguage": "en-US"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
 <!-- ═══ NAV ═══════════════════════════════════════ -->
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="/" class="nav-logo"><img src="assets/Noumi-Logo.svg" alt="Noumi"><span>Noumi</span></a>
+  <a href="/" class="nav-logo"><img src="../assets/Noumi-Logo.svg" alt="Noumi"><span>Noumi</span></a>
   <ul class="nav-links">
     <li><a href="/use-cases/product-manager">Use Cases</a></li>
     <li><a href="/blog">Blog</a></li>
@@ -718,10 +812,38 @@
   </p>
 
   <div class="hero-ctas reveal d3">
-    <a href="/invite" class="btn-fill">Try Free →</a>
+    <a href="invite" class="btn-fill">Try Free →</a>
     <a href="#features" class="btn-outline">See How It Works</a>
   </div>
 
+</section>
+
+<!-- ═══ TRUSTED BY ══════════════════════════════════ -->
+<section class="trusted" aria-label="Trusted by">
+  <p class="trusted__label">Trusted by people from</p>
+  <div class="trusted__track-wrapper">
+    <div class="trusted__track">
+      <div class="trusted__item"><img src="assets/logos/microsoft.png" alt="Microsoft" /></div>
+      <div class="trusted__item"><img src="assets/logos/nvidia.png" alt="NVIDIA" /></div>
+      <div class="trusted__item"><img src="assets/logos/tencent.png" alt="Tencent" /></div>
+      <div class="trusted__item"><img src="assets/logos/siemens.png" alt="Siemens" /></div>
+      <div class="trusted__item"><img src="assets/logos/amd.png" alt="AMD" /></div>
+      <div class="trusted__item"><img src="assets/logos/dominos.png" alt="Domino's" /></div>
+      <div class="trusted__item"><img src="assets/logos/alibaba-cloud.png" alt="Alibaba Cloud" /></div>
+      <div class="trusted__item"><img src="assets/logos/plug-and-play.png" alt="Plug and Play" /></div>
+      <div class="trusted__item"><img src="assets/logos/ascend.png" alt="Ascend" /></div>
+      <!-- duplicate for seamless loop -->
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/microsoft.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/nvidia.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/tencent.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/siemens.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/amd.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/dominos.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/alibaba-cloud.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/plug-and-play.png" alt="" /></div>
+      <div class="trusted__item" aria-hidden="true"><img src="assets/logos/ascend.png" alt="" /></div>
+    </div>
+  </div>
 </section>
 
 <!-- ═══ FEATURES ════════════════════════════════════ -->

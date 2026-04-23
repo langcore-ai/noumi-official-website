@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 /**
  * 邀请申请表单
- * 继续复用现有临时 invite API，避免额外引入新的后端链路。
+ * 提交到正式 invite 申请接口，由 Payload collection 统一写入 D1。
  * @returns 表单节点
  */
 export function OfficialInviteRequestForm() {
@@ -23,7 +23,7 @@ export function OfficialInviteRequestForm() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/temporary-ui/invite-request', {
+      const response = await fetch('/api/invite-requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

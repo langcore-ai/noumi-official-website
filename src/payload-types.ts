@@ -72,6 +72,7 @@ export interface Config {
     'blog-posts': BlogPost;
     'use-case-pages': UseCasePage;
     'faq-items': FaqItem;
+    'invite-requests': InviteRequest;
     redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -86,6 +87,7 @@ export interface Config {
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
     'use-case-pages': UseCasePagesSelect<false> | UseCasePagesSelect<true>;
     'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
+    'invite-requests': InviteRequestsSelect<false> | InviteRequestsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -705,6 +707,43 @@ export interface FaqItem {
   category: string;
   sortOrder?: number | null;
   isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invite-requests".
+ */
+export interface InviteRequest {
+  id: number;
+  /**
+   * 申请 invite 的邮箱；同一邮箱重复提交时会刷新上下文信息。
+   */
+  email: string;
+  /**
+   * 后台处理状态，用于后续筛选和跟进。
+   */
+  status: 'new' | 'contacted' | 'invited' | 'archived';
+  /**
+   * 用户提交申请时所在页面路径。
+   */
+  sourcePath?: string | null;
+  /**
+   * 提交请求来源 IP，仅用于排查异常提交。
+   */
+  ipAddress?: string | null;
+  /**
+   * 提交请求的 User-Agent，仅用于排查异常提交。
+   */
+  userAgent?: string | null;
+  /**
+   * 最近一次提交时间；重复提交会刷新该时间。
+   */
+  submittedAt: string;
+  /**
+   * 管理员内部备注，不会展示给用户。
+   */
+  internalNote?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1336,6 +1375,21 @@ export interface FaqItemsSelect<T extends boolean = true> {
   category?: T;
   sortOrder?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invite-requests_select".
+ */
+export interface InviteRequestsSelect<T extends boolean = true> {
+  email?: T;
+  status?: T;
+  sourcePath?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  submittedAt?: T;
+  internalNote?: T;
   updatedAt?: T;
   createdAt?: T;
 }

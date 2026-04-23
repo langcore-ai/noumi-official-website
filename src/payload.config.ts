@@ -18,6 +18,7 @@ import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
+import { InviteRequests } from './collections/InviteRequests'
 import { PrivacyPage } from './globals/PrivacyPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
@@ -278,10 +279,6 @@ async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
 export default buildConfig({
   admin: {
     user: Users.slug,
-    components: {
-      // 临时 invite 申请仍由独立只读页承载，这里只把入口挂进后台导航。
-      beforeNavLinks: ['/components/admin/InviteAdminNavLink'],
-    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -299,7 +296,7 @@ export default buildConfig({
         }
       : undefined,
   },
-  collections: [Users, Media, BlogPosts, UseCasePages, FaqItems],
+  collections: [Users, Media, BlogPosts, UseCasePages, FaqItems, InviteRequests],
   globals: [SiteSettings, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {

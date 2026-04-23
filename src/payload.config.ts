@@ -186,6 +186,10 @@ async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      // 临时 invite 申请仍由独立只读页承载，这里只把入口挂进后台导航。
+      beforeNavLinks: ['/components/admin/InviteAdminNavLink'],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

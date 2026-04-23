@@ -13,7 +13,7 @@ export async function generateMetadata() {
     title: 'Request Early Access to Noumi — Join the First Wave',
     description:
       'Get early access to Noumi — the AI assistant that remembers your context and gets work done autonomously. Opening in waves. Leave your email to claim your spot.',
-    pathname: '/invite/',
+    pathname: '/invite',
   })
 }
 

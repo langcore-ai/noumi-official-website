@@ -129,9 +129,9 @@ function generateSeoURL(doc: unknown, collectionSlug?: string): string {
   const slug = readPayloadText(doc, ['slug'])
   const pathname =
     collectionSlug === BlogPosts.slug && slug
-      ? `/blog/${slug}/`
+      ? `/blog/${slug}`
       : collectionSlug === UseCasePages.slug && slug
-        ? `/use-cases/${slug}/`
+        ? `/use-cases/${slug}`
         : '/'
 
   return collectionSlug ? new URL(pathname, siteUrl).toString() : siteUrl

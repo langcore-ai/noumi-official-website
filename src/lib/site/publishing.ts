@@ -2,6 +2,7 @@ import type { Access, CollectionConfig, GlobalConfig, PayloadRequest } from 'pay
 
 import { CMS_CONTENT_UPDATE_ROLES, CMS_LEGAL_UPDATE_ROLES, hasAnyCmsRole, type CmsUserRole } from '@/access/cms'
 import { DEFAULT_CONTENT_LOCALE, normalizeSiteLocale, SITE_LOCALE_COOKIE, type SiteLocale } from '@/lib/site/i18n'
+import { normalizeSiteHref } from '@/lib/site/url'
 
 /** 是否为生产环境。 */
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
@@ -147,7 +148,7 @@ export function sanitizePreviewPath(value?: null | string): string {
     return '/'
   }
 
-  return path
+  return normalizeSiteHref(path)
 }
 
 /**
@@ -187,9 +188,9 @@ export function getCollectionPreviewPath(
 
   switch (collectionSlug) {
     case 'blog-posts':
-      return `/blog/${slug}/`
+      return `/blog/${slug}`
     case 'use-case-pages':
-      return `/use-cases/${slug}/`
+      return `/use-cases/${slug}`
     default:
       return null
   }

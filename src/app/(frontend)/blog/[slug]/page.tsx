@@ -34,7 +34,7 @@ export async function generateMetadata(props: BlogPostPageProps) {
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt || post.lead || '',
     image: post.ogImage?.url,
-    pathname: `/blog/${post.slug}/`,
+    pathname: `/blog/${post.slug}`,
     type: 'article',
   })
 }
@@ -70,7 +70,7 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
       <OfficialHomeHeader useCases={useCases} />
 
       <main className={styles.postWrap}>
-        <Link className={`${styles.postBack} reveal`} href="/blog/">← Back to Blog</Link>
+        <Link className={`${styles.postBack} reveal`} href="/blog">← Back to Blog</Link>
 
         <article>
           <header className={`${styles.postHeader} reveal d1`}>
@@ -98,9 +98,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
         <section className={`${styles.postWrap} ${styles.moreSection}`}>
           <div className={styles.moreTop}>
             <h2>More from the blog</h2>
-            <Link className={styles.moreViewAll} href="/blog/">View all →</Link>
+            <Link className={styles.moreViewAll} href="/blog">View all →</Link>
           </div>
-          <Link className={styles.moreCard} href={`/blog/${post.relatedPosts[0].slug}/`}>
+          <Link className={styles.moreCard} href={`/blog/${post.relatedPosts[0].slug}`}>
             <div className={styles.moreThumb}>
               {post.relatedPosts[0].coverImage?.url ? <img alt="" src={post.relatedPosts[0].coverImage.url} /> : null}
             </div>

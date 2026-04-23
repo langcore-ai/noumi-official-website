@@ -12,7 +12,7 @@ export async function generateMetadata() {
     title: "Contact Noumi — We'd Love to Hear from You",
     description:
       "Questions, feedback, or just want to say hi — reach us at official@noumi.ai. We read every message. For hiring inquiries or legal questions, we're here too.",
-    pathname: '/contact/',
+    pathname: '/contact',
   })
 }
 
@@ -52,8 +52,8 @@ export default async function ContactPage() {
             </p>
             <h3 className={styles.screenReaderOnly}>Legal and privacy</h3>
             <p className={`${styles.contactAlt} reveal`}>
-              Legal or privacy inquiries? See our <a href="/privacy/">Privacy Policy</a> or{' '}
-              <a href="/terms/">Terms of Service</a>
+              Legal or privacy inquiries? See our <a href="/privacy">Privacy Policy</a> or{' '}
+              <a href="/terms">Terms of Service</a>
             </p>
           </div>
         </div>

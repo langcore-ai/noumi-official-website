@@ -1,8 +1,8 @@
-import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Fragment } from 'react'
 
 import { TypesetText } from '@/components/site/TypesetText'
+import { normalizeSiteHref } from '@/lib/site/url'
 
 /**
  * Markdown 区块模型
@@ -262,14 +262,16 @@ function renderInline(text: string): ReactNode[] {
     const markdownLink = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
     if (markdownLink) {
       const [, label, href] = markdownLink
-      return isExternalHref(href) ? (
-        <a key={index} href={href} rel="noreferrer" target="_blank">
+      const normalizedHref = normalizeSiteHref(href)
+
+      return isExternalHref(normalizedHref) ? (
+        <a key={index} href={normalizedHref} rel="noreferrer" target="_blank">
           {label}
         </a>
       ) : (
-        <Link key={index} href={href}>
+        <a key={index} href={normalizedHref}>
           {label}
-        </Link>
+        </a>
       )
     }
 

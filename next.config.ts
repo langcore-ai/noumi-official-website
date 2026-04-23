@@ -2,6 +2,8 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 重定向状态码由 middleware 控制为 301，避免 Next 内置 trailing slash 跳转返回 308。
+  skipTrailingSlashRedirect: true,
   images: {
     localPatterns: [
       {

@@ -3,6 +3,7 @@ import { cache } from 'react'
 import { getPayload } from 'payload'
 
 import config from '@/payload.config'
+import { normalizeSiteHref } from '@/lib/site/url'
 import type { Media, SiteSetting } from '@/payload-types'
 
 /**
@@ -107,6 +108,8 @@ export async function getSiteSettings(): Promise<SiteSetting> {
  * @returns 导航列表
  */
 export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
+  const siteUrl = siteSettings.siteUrl
+
   return (siteSettings.navLinks ?? [])
     .map((item) => {
       const label = item?.label?.trim()
@@ -117,7 +120,7 @@ export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
 
       return {
         label,
-        href: item?.href?.trim() || undefined,
+        href: item?.href ? normalizeSiteHref(item.href, siteUrl) : undefined,
         children: (item?.children ?? [])
           .map((child) => {
             const childLabel = child?.label?.trim()
@@ -129,7 +132,7 @@ export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
 
             return {
               label: childLabel,
-              href: childHref,
+              href: normalizeSiteHref(childHref, siteUrl),
             }
           })
           .filter(isPresent),
@@ -144,6 +147,8 @@ export function mapNavigation(siteSettings: SiteSetting): SiteNavigationItem[] {
  * @returns 页脚列
  */
 export function mapFooterColumns(siteSettings: SiteSetting): SiteFooterColumn[] {
+  const siteUrl = siteSettings.siteUrl
+
   return (siteSettings.footerColumns ?? [])
     .map((column) => {
       const title = column?.title?.trim()
@@ -165,7 +170,7 @@ export function mapFooterColumns(siteSettings: SiteSetting): SiteFooterColumn[] 
 
             return {
               label,
-              href,
+              href: normalizeSiteHref(href, siteUrl),
             }
           })
           .filter(isPresent),

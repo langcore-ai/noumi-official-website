@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 
+import { normalizeSiteHref } from '@/lib/site/url'
+
 /**
  * HTML 模式中需要在浏览器端重新执行的脚本
  */
@@ -117,6 +119,22 @@ function unwrapPageBody(markup: string): string {
 }
 
 /**
+ * 规范化 CMS HTML 片段里的 href，保证正文站内链接也输出首选 URL
+ * @param markup HTML 片段
+ * @returns 已规范化 href 的 HTML
+ */
+function normalizeHtmlHrefs(markup: string): string {
+  return markup.replace(
+    /\bhref\s*=\s*(["'])([^"']*)\1/gi,
+    (matched, quote: string, href: string) => {
+      const normalizedHref = normalizeSiteHref(href)
+
+      return normalizedHref === href ? matched : `href=${quote}${normalizedHref}${quote}`
+    },
+  )
+}
+
+/**
  * 把管理员粘贴的整页 HTML 转成“仅页面主体”的可渲染片段
  * @param html 原始 HTML
  * @returns 清理后的 HTML 与脚本
@@ -139,7 +157,9 @@ function prepareOfficialRawHtml(html: string): PreparedRawHtml {
       return ''
     },
   )
-  const markup = unwrapPageBody(removeEmbeddedChrome(removeInlineStyles(withoutScripts)))
+  const markup = normalizeHtmlHrefs(
+    unwrapPageBody(removeEmbeddedChrome(removeInlineStyles(withoutScripts))),
+  )
 
   return {
     markup: [...styles, markup].join('\n'),

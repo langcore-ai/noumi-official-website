@@ -24,10 +24,10 @@ export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }
         </Link>
 
         <nav aria-label="Primary" className="site-nav">
-          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}/` : '/'}>Use Cases</Link>
-          <Link href="/blog/">Blog</Link>
-          <Link href="/pricing/">Pricing</Link>
-          <Link className="button button--dark button--nav" href="/invite/">
+          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link className="button button--dark button--nav" href="/invite">
             Try Free
             <span aria-hidden="true">→</span>
           </Link>
@@ -66,7 +66,7 @@ export function OfficialUseCaseHeader(props: {
             <Link
               aria-current={useCase.slug === activeSlug ? 'page' : undefined}
               className={useCase.slug === activeSlug ? 'is-active' : undefined}
-              href={`/use-cases/${useCase.slug}/`}
+              href={`/use-cases/${useCase.slug}`}
               key={useCase.slug}
             >
               {useCase.label.replace(/^For\s+/i, '')}
@@ -75,10 +75,10 @@ export function OfficialUseCaseHeader(props: {
         </nav>
 
         <nav aria-label="Primary" className="site-nav">
-          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}/` : '/'}>Use Cases</Link>
-          <Link href="/blog/">Blog</Link>
-          <Link href="/pricing/">Pricing</Link>
-          <Link className="button button--dark button--nav" href="/invite/">
+          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link className="button button--dark button--nav" href="/invite">
             Try Free
             <span aria-hidden="true">→</span>
           </Link>
@@ -113,26 +113,26 @@ export function OfficialHomeFooter(props: { useCases: OfficialUseCaseNavItem[] }
         <div>
           <p className="footer-heading">USE CASES</p>
           {useCases.map((useCase) => (
-            <Link href={`/use-cases/${useCase.slug}/`} key={useCase.slug}>
+            <Link href={`/use-cases/${useCase.slug}`} key={useCase.slug}>
               {useCase.label}
             </Link>
           ))}
         </div>
         <div>
           <p className="footer-heading">COMPANY</p>
-          <Link href="/about/">About</Link>
-          <Link href="/contact/">Contact</Link>
-          <Link href="/pricing/">Pricing</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/pricing">Pricing</Link>
         </div>
         <div>
           <p className="footer-heading">RESOURCES</p>
-          <Link href="/blog/">Blog</Link>
-          <Link href="/faqs/">FAQ</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/faqs">FAQ</Link>
         </div>
         <div>
           <p className="footer-heading">LEGAL</p>
-          <Link href="/privacy/">Privacy</Link>
-          <Link href="/terms/">Terms of Service</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms of Service</Link>
         </div>
       </div>
 

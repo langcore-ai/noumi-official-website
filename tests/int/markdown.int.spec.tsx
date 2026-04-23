@@ -33,4 +33,12 @@ describe('MarkdownContent', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Gmail' })).toBeTruthy()
     expect(screen.getByText('Send emails only when you explicitly instruct Noumi to do so.')).toBeTruthy()
   })
+
+  it('renders internal markdown links with the preferred URL', () => {
+    render(<MarkdownContent markdown="[Read blog](/blog/?tag=ai#top)" />)
+
+    expect(screen.getByRole('link', { name: 'Read blog' }).getAttribute('href')).toBe(
+      '/blog?tag=ai#top',
+    )
+  })
 })

@@ -14,7 +14,7 @@ export async function generateMetadata() {
     title: 'Noumi Pricing — Start Free, Upgrade When Ready',
     description:
       'Simple, transparent pricing for Noumi. Try the Starter plan free for a month — no credit card required. Upgrade to Pro when Noumi earns it.',
-    pathname: '/pricing/',
+    pathname: '/pricing',
   })
 }
 
@@ -48,7 +48,7 @@ export default async function PricingPage() {
             </div>
             <div className={styles.trialBadge}>Free for 1 month</div>
           </div>
-          <Link className={styles.planCta} href="/invite/">Start free →</Link>
+          <Link className={styles.planCta} href="/invite">Start free →</Link>
           <ul className={styles.planFeatures}>
             <li>1,200 points / month</li>
             <li>Claude Sonnet model</li>
@@ -70,7 +70,7 @@ export default async function PricingPage() {
             <span className={styles.amount}>$100</span>
             <span className={styles.period}>/ month</span>
           </div>
-          <Link className={styles.planCta} href="/invite/">Get started →</Link>
+          <Link className={styles.planCta} href="/invite">Get started →</Link>
           <ul className={styles.planFeatures}>
             <li>6,000 points / month</li>
             <li>Claude Sonnet + Opus models</li>
@@ -160,7 +160,7 @@ export default async function PricingPage() {
           Noumi <em>more yours.</em>
         </h2>
         <p className="reveal d1">Start free. Your first session is already a head start.</p>
-        <Link className="btn-cream reveal d2" href="/invite/">
+        <Link className="btn-cream reveal d2" href="/invite">
           Try Noumi Free →
         </Link>
       </section>

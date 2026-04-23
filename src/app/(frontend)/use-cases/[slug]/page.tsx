@@ -37,7 +37,7 @@ export async function generateMetadata(props: UseCasePageProps) {
     title: page.metaTitle || page.heroTitle || page.navigationLabel,
     description: page.metaDescription || page.heroDescription || '',
     image: page.ogImage?.url,
-    pathname: `/use-cases/${page.slug}/`,
+    pathname: `/use-cases/${page.slug}`,
   })
 }
 

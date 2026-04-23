@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 
+import { buildPreferredAbsoluteUrl, PREFERRED_SITE_URL } from '@/lib/site/url'
+
 /**
  * 站点名称
  */
@@ -8,7 +10,7 @@ export const OFFICIAL_SITE_NAME = 'Noumi'
 /**
  * 站点地址
  */
-export const OFFICIAL_SITE_URL = 'https://noumi.ai'
+export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 
 /**
  * 默认分享图
@@ -23,7 +25,7 @@ export const OFFICIAL_OG_IMAGE = '/assets/og-cover.png'
 function resolveOfficialImageUrl(image?: null | string): string {
   const rawImage = image?.trim() || OFFICIAL_OG_IMAGE
 
-  return new URL(rawImage, OFFICIAL_SITE_URL).toString()
+  return buildPreferredAbsoluteUrl(rawImage, OFFICIAL_SITE_URL)
 }
 
 /**
@@ -38,7 +40,7 @@ export function createOfficialMetadata(options: {
   title: string
   type?: 'article' | 'website'
 }): Metadata {
-  const canonical = new URL(options.pathname, OFFICIAL_SITE_URL).toString()
+  const canonical = buildPreferredAbsoluteUrl(options.pathname, OFFICIAL_SITE_URL)
   const imageUrl = resolveOfficialImageUrl(options.image)
 
   return {
@@ -46,6 +48,9 @@ export function createOfficialMetadata(options: {
     description: options.description,
     alternates: {
       canonical,
+      languages: {
+        'x-default': canonical,
+      },
     },
     openGraph: {
       type: options.type ?? 'website',

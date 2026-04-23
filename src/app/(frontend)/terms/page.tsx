@@ -13,7 +13,7 @@ export async function generateMetadata() {
     title: page.metaTitle || page.heroTitle || 'Terms of Service',
     description: page.metaDescription || page.heroDescription || 'Terms of Service',
     image: page.ogImage?.url,
-    pathname: '/terms/',
+    pathname: '/terms',
   })
 }
 

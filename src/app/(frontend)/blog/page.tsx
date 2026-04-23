@@ -14,7 +14,7 @@ export async function generateMetadata() {
     title: 'Blog — Noumi | AI Agents, Memory & the Future of Work',
     description:
       'Stories and insights about AI agents, persistent memory, and how knowledge work is changing — from the team building Noumi, for the professionals who use it.',
-    pathname: '/blog/',
+    pathname: '/blog',
   })
 }
 
@@ -43,7 +43,7 @@ export default async function BlogIndexPage() {
       <main className={styles.blogWrap}>
         <div className={`${styles.blogGrid} reveal`}>
           {posts.map((post) => (
-            <Link className={styles.blogCard} href={`/blog/${post.slug}/`} key={post.slug}>
+            <Link className={styles.blogCard} href={`/blog/${post.slug}`} key={post.slug}>
               <div aria-hidden="true" className={styles.blogCardCover}>
                 {post.coverImage?.url ? <img alt="" src={post.coverImage.url} /> : null}
               </div>

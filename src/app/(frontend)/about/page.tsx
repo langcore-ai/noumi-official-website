@@ -12,7 +12,7 @@ export async function generateMetadata() {
     title: 'About Noumi — We Believe AI Should Know You Better Over Time',
     description:
       'We believe your AI should get smarter every time you use it — not reset. Learn why we built Noumi and what it means to have an AI that truly learns how you work.',
-    pathname: '/about/',
+    pathname: '/about',
   })
 }
 
@@ -77,7 +77,7 @@ export default async function AboutPage() {
           the <em>less you have to explain.</em>
         </h2>
         <p className="reveal d1">Free to start. No credit card required.</p>
-        <a className="btn-cream reveal d2" href="/invite/">
+        <a className="btn-cream reveal d2" href="/invite">
           Start building your AI today →
         </a>
       </section>

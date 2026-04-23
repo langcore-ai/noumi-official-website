@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 
 import { getOfficialBlogPosts, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import { buildPreferredAbsoluteUrl } from '@/lib/site/url'
 
 /** sitemap 依赖运行时 CMS 数据 */
 export const dynamic = 'force-dynamic'
@@ -18,17 +19,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     '',
-    '/about/',
-    '/blog/',
-    '/contact/',
-    '/faqs/',
-    '/invite/',
-    '/pricing/',
-    '/privacy/',
-    '/terms/',
-    ...blogPosts.map((post) => `/blog/${post.slug}/`),
-    ...useCases.map((useCase) => `/use-cases/${useCase.slug}/`),
+    '/about',
+    '/blog',
+    '/contact',
+    '/faqs',
+    '/invite',
+    '/pricing',
+    '/privacy',
+    '/terms',
+    ...blogPosts.map((post) => `/blog/${post.slug}`),
+    ...useCases.map((useCase) => `/use-cases/${useCase.slug}`),
   ].map((pathname) => ({
-    url: new URL(pathname || '/', OFFICIAL_SITE_URL).toString(),
+    url: buildPreferredAbsoluteUrl(pathname || '/', OFFICIAL_SITE_URL),
   }))
 }

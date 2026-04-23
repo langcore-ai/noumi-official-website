@@ -7,6 +7,7 @@ import {
   type SiteLocale,
 } from '@/lib/site/i18n'
 import { getSiteSettings } from '@/lib/site/cms'
+import { buildPreferredAbsoluteUrl } from '@/lib/site/url'
 import type { Media } from '@/payload-types'
 
 /**
@@ -64,7 +65,7 @@ type ArticleConfig = {
  * @returns 绝对地址
  */
 export function buildAbsoluteUrl(pathname: string, siteUrl: string): string {
-  return new URL(pathname, siteUrl).toString()
+  return buildPreferredAbsoluteUrl(pathname, siteUrl)
 }
 
 /**
@@ -130,6 +131,9 @@ export async function createPageMetadata(config: SeoConfig): Promise<Metadata> {
     alternates: canonical
       ? {
           canonical,
+          languages: {
+            'x-default': canonical,
+          },
         }
       : undefined,
     openGraph: title || description || canonical || siteName || ogImage
@@ -181,9 +185,9 @@ export async function createOrganizationJsonLd(locale: SiteLocale = DEFAULT_CONT
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    '@id': siteUrl ? `${siteUrl}/#organization` : undefined,
+    '@id': siteUrl ? buildAbsoluteUrl('/#organization', siteUrl) : undefined,
     name: siteName,
-    url: siteUrl ? `${siteUrl}/` : undefined,
+    url: siteUrl ? buildAbsoluteUrl('/', siteUrl) : undefined,
     email,
     description,
   }

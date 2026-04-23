@@ -13,7 +13,7 @@ export async function generateMetadata() {
     title: 'Noumi FAQ — Common Questions About Your AI Digital Twin',
     description:
       'Frequently asked questions about Noumi — the AI Digital Twin that remembers your context, learns your working style, and gets work done autonomously.',
-    pathname: '/faqs/',
+    pathname: '/faqs',
   })
 }
 

@@ -4,6 +4,8 @@ import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 
 import config from '@/payload.config'
+import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import { normalizeSiteHref } from '@/lib/site/url'
 import type {
   BlogPost,
   FaqItem,
@@ -440,7 +442,7 @@ function mapButton(label?: null | string, href?: null | string): OfficialButton 
 
   return {
     label: normalizedLabel,
-    href: normalizedHref,
+    href: normalizeSiteHref(normalizedHref, OFFICIAL_SITE_URL),
   }
 }
 

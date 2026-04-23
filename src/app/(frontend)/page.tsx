@@ -39,7 +39,7 @@ export default async function HomePage() {
             </p>
 
             <div className="hero__actions reveal is-visible">
-              <Link className="button button--dark button--large" href="/invite/">
+              <Link className="button button--dark button--large" href="/invite">
                 Try Free
                 <span aria-hidden="true">→</span>
               </Link>
@@ -240,7 +240,7 @@ export default async function HomePage() {
               </span>
             </h2>
             <p className="reveal d1">Free to start. No credit card required.</p>
-            <Link className="button button--light button--large reveal d2" href="/invite/">
+            <Link className="button button--light button--large reveal d2" href="/invite">
               Start building your AI today
               <span aria-hidden="true">→</span>
             </Link>

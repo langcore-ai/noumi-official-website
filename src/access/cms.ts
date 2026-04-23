@@ -1,4 +1,4 @@
-import type { Access } from 'payload'
+import type { Access, FieldAccess } from 'payload'
 
 import type { User } from '@/payload-types'
 
@@ -17,6 +17,8 @@ export const CMS_ADMIN_ROLES = ['admin'] as const
 export const CMS_CONTENT_CREATE_ROLES = ['content-editor'] as const
 /** 具备营销内容更新能力的角色 */
 export const CMS_CONTENT_UPDATE_ROLES = ['content-editor', 'translator'] as const
+/** 具备 HTML 模式编辑能力的角色；admin 会通过 hasAnyCmsRole 自动放行 */
+export const CMS_HTML_MODE_ROLES = ['content-editor'] as const
 /** 具备法律内容更新能力的角色 */
 export const CMS_LEGAL_UPDATE_ROLES = ['legal-editor', 'translator'] as const
 
@@ -58,6 +60,16 @@ export function createRoleAccess(roles: readonly CmsUserRole[]): Access {
   return ({ req: { user } }) => hasAnyCmsRole(user as CmsRequestUser, roles)
 }
 
+/**
+ * 生成基于角色的字段访问控制函数
+ * 字段级 access 只能返回 boolean，因此不能直接复用 Collection Access。
+ * @param roles 允许写入字段的角色列表
+ * @returns Payload FieldAccess 函数
+ */
+export function createRoleFieldAccess(roles: readonly CmsUserRole[]): FieldAccess {
+  return ({ req: { user } }) => hasAnyCmsRole(user as CmsRequestUser, roles)
+}
+
 /** 仅管理员可访问 */
 export const adminOnlyAccess = createRoleAccess(CMS_ADMIN_ROLES)
 
@@ -84,5 +96,7 @@ export const adminOrSelfAccess: Access = ({ req: { user } }) => {
 export const contentCreateAccess = createRoleAccess(CMS_CONTENT_CREATE_ROLES)
 /** 营销内容更新权限 */
 export const contentUpdateAccess = createRoleAccess(CMS_CONTENT_UPDATE_ROLES)
+/** HTML 模式字段写入权限 */
+export const htmlModeFieldAccess = createRoleFieldAccess(CMS_HTML_MODE_ROLES)
 /** 法律内容更新权限 */
 export const legalUpdateAccess = createRoleAccess(CMS_LEGAL_UPDATE_ROLES)

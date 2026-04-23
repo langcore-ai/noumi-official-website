@@ -1,6 +1,6 @@
 import type { CollectionConfig, Condition, Field, TextareaFieldValidation } from 'payload'
 
-import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import { contentCreateAccess, contentUpdateAccess, htmlModeFieldAccess } from '@/access/cms'
 import { MARKETING_HERO_FIELD, MARKETING_SECTIONS_FIELD } from '@/fields/marketingContent'
 import {
   buildPreviewURL,
@@ -28,6 +28,12 @@ const isTemplateRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingD
  */
 const isHtmlRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingData) =>
   siblingData.renderMode === 'html'
+
+/** HTML 模式字段仅允许管理员与内容编辑写入 */
+const htmlModeWriteAccess = {
+  create: htmlModeFieldAccess,
+  update: htmlModeFieldAccess,
+}
 
 /**
  * 给默认模板字段追加后台显示条件
@@ -100,6 +106,7 @@ export const UseCasePages: CollectionConfig = {
         },
       ],
       required: true,
+      access: htmlModeWriteAccess,
       admin: {
         description: '默认模板沿用当前 use case 结构；HTML 模式只需要 slug 与 HTML 内容。',
       },
@@ -120,6 +127,7 @@ export const UseCasePages: CollectionConfig = {
       localized: true,
       label: 'HTML 内容',
       validate: validateHtmlContent,
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: '仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。',

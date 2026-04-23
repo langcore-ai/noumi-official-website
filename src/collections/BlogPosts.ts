@@ -6,7 +6,7 @@ import type {
   TextFieldValidation,
 } from 'payload'
 
-import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import { contentCreateAccess, contentUpdateAccess, htmlModeFieldAccess } from '@/access/cms'
 import { MARKETING_SECTIONS_FIELD } from '@/fields/marketingContent'
 import {
   buildPreviewURL,
@@ -34,6 +34,12 @@ const isTemplateRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingD
  */
 const isHtmlRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingData) =>
   siblingData.renderMode === 'html'
+
+/** HTML 模式字段仅允许管理员与内容编辑写入 */
+const htmlModeWriteAccess = {
+  create: htmlModeFieldAccess,
+  update: htmlModeFieldAccess,
+}
 
 /**
  * 给默认模板字段追加后台显示条件
@@ -125,6 +131,7 @@ export const BlogPosts: CollectionConfig = {
         },
       ],
       required: true,
+      access: htmlModeWriteAccess,
       admin: {
         description: '默认模板沿用当前文章结构；HTML 模式只需要 slug 与 HTML 内容。',
       },
@@ -155,6 +162,7 @@ export const BlogPosts: CollectionConfig = {
       localized: true,
       label: 'HTML 内容',
       validate: validateHtmlContent,
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: '仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。',
@@ -166,6 +174,7 @@ export const BlogPosts: CollectionConfig = {
       relationTo: 'media',
       localized: true,
       label: 'HTML 卡片图片',
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: 'Blog 列表卡片顶部图片。',
@@ -176,6 +185,7 @@ export const BlogPosts: CollectionConfig = {
       type: 'text',
       localized: true,
       label: 'HTML 卡片 Tag',
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: 'Blog 列表卡片第一行左侧标签。',
@@ -186,6 +196,7 @@ export const BlogPosts: CollectionConfig = {
       type: 'text',
       localized: true,
       label: 'HTML 卡片标题',
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: 'Blog 列表卡片第二行标题；未填写时回退到 slug。',
@@ -196,6 +207,7 @@ export const BlogPosts: CollectionConfig = {
       type: 'textarea',
       localized: true,
       label: 'HTML 卡片描述',
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: 'Blog 列表卡片第三行描述。',
@@ -206,6 +218,7 @@ export const BlogPosts: CollectionConfig = {
       type: 'text',
       localized: true,
       label: 'HTML 卡片阅读时间',
+      access: htmlModeWriteAccess,
       admin: {
         condition: isHtmlRenderMode,
         description: 'Blog 列表卡片右下角阅读时间，例如 7 min read。',

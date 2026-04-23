@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 /**
  * HTML 模式中需要在浏览器端重新执行的脚本
@@ -10,6 +10,8 @@ type InlineScript = {
   attributes: string
   /** script 标签内容 */
   content: string
+  /** 可执行脚本类型 */
+  type?: string
 }
 
 /**
@@ -35,14 +37,44 @@ function extractTagContent(html: string, tagName: string): string | undefined {
 }
 
 /**
- * 判断 script 是否是可执行脚本
+ * 提取 script 类型
  * @param attributes script 标签属性
- * @returns 是否应在前台执行
+ * @returns script 类型；未声明时返回 undefined
  */
-function isExecutableScript(attributes: string): boolean {
-  const type = attributes.match(/\btype=(["'])(.*?)\1/i)?.[2]?.toLowerCase()
+function getScriptType(attributes: string): string | undefined {
+  const match = attributes.match(/\btype\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i)
+  const type = match?.[1] ?? match?.[2] ?? match?.[3]
 
-  return !type || type === 'text/javascript' || type === 'application/javascript' || type === 'module'
+  return type?.trim().toLowerCase()
+}
+
+/**
+ * 判断 script 是否引用外链脚本
+ * @param attributes script 标签属性
+ * @returns 是否包含 src 属性
+ */
+function hasExternalScriptSource(attributes: string): boolean {
+  return /\bsrc\s*=/i.test(attributes)
+}
+
+/**
+ * 判断 script 是否是可执行的内联脚本
+ * @param attributes script 标签属性
+ * @returns 可执行脚本类型；不可执行时返回 null
+ */
+function getExecutableInlineScriptType(attributes: string): null | string {
+  // HTML 模式只重新执行内联脚本，避免 CMS 内容额外拉取第三方脚本。
+  if (hasExternalScriptSource(attributes)) {
+    return null
+  }
+
+  const type = getScriptType(attributes)
+
+  if (!type || type === 'text/javascript' || type === 'application/javascript') {
+    return 'text/javascript'
+  }
+
+  return type === 'module' ? 'module' : null
 }
 
 /**
@@ -55,6 +87,15 @@ function removeEmbeddedChrome(markup: string): string {
     .replace(/<nav\b[\s\S]*?<\/nav>/gi, '')
     .replace(/<footer\b[\s\S]*?<\/footer>/gi, '')
     .replace(/<div\b[^>]*class=(["'])[^"']*\brole-tabs-wrap\b[^"']*\1[^>]*>\s*<\/div>/gi, '')
+}
+
+/**
+ * 移除已经提升到渲染片段顶部的 style 标签，避免 body 内样式重复注入。
+ * @param markup body 内部 HTML
+ * @returns 去掉 style 后的 HTML
+ */
+function removeInlineStyles(markup: string): string {
+  return markup.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
 }
 
 /**
@@ -89,14 +130,16 @@ function prepareOfficialRawHtml(html: string): PreparedRawHtml {
   const withoutScripts = bodyContent.replace(
     /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
     (_, attributes: string, content: string) => {
-      if (isExecutableScript(attributes)) {
-        scripts.push({ attributes, content })
+      const scriptType = getExecutableInlineScriptType(attributes)
+
+      if (scriptType) {
+        scripts.push({ attributes, content, type: scriptType })
       }
 
       return ''
     },
   )
-  const markup = unwrapPageBody(removeEmbeddedChrome(withoutScripts))
+  const markup = unwrapPageBody(removeEmbeddedChrome(removeInlineStyles(withoutScripts)))
 
   return {
     markup: [...styles, markup].join('\n'),
@@ -112,7 +155,7 @@ function prepareOfficialRawHtml(html: string): PreparedRawHtml {
 export function OfficialRawHtml(props: { html: string }) {
   const { html } = props
   const containerRef = useRef<HTMLElement>(null)
-  const prepared = prepareOfficialRawHtml(html)
+  const prepared = useMemo(() => prepareOfficialRawHtml(html), [html])
 
   useEffect(() => {
     const container = containerRef.current
@@ -121,13 +164,10 @@ export function OfficialRawHtml(props: { html: string }) {
       return undefined
     }
 
-    const scriptElements = prepareOfficialRawHtml(html).scripts.map((script) => {
+    const scriptElements = prepared.scripts.map((script) => {
       const scriptElement = document.createElement('script')
 
-      if (script.attributes.includes('type="module"') || script.attributes.includes("type='module'")) {
-        scriptElement.type = 'module'
-      }
-
+      scriptElement.type = script.type ?? 'text/javascript'
       scriptElement.text = script.content
       container.appendChild(scriptElement)
 
@@ -137,7 +177,7 @@ export function OfficialRawHtml(props: { html: string }) {
     return () => {
       scriptElements.forEach((scriptElement) => scriptElement.remove())
     }
-  }, [html])
+  }, [prepared.scripts])
 
   return <main dangerouslySetInnerHTML={{ __html: prepared.markup }} ref={containerRef} />
 }

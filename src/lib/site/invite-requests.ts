@@ -30,6 +30,33 @@ export type InviteRequestSyncItem = {
   updatedAt: string
 }
 
+/** 服务间同步允许写回的官网 invite 状态。 */
+export type InviteRequestSyncStatus = InviteRequest['status']
+
+/** waitlist 状态回写参数。 */
+export type UpdateInviteRequestStatusInput = {
+  /** 官网侧 invite request 主键 */
+  id: number | string
+  /** 要写回的官网状态 */
+  status: InviteRequestSyncStatus
+}
+
+/**
+ * 规范化 Payload 文档 ID。
+ * 官方站当前主键是数字，但这里仍兼容字符串，避免后续切换主键类型时影响服务联调。
+ *
+ * @param value 原始文档 ID
+ * @returns 传给 Payload Local API 的文档 ID
+ */
+function normalizeInviteRequestId(value: number | string): number | string {
+  const stringValue = String(value).trim()
+  if (/^\d+$/.test(stringValue)) {
+    return Number(stringValue)
+  }
+
+  return stringValue
+}
+
 /**
  * 记录 invite 申请。
  * 同一邮箱重复提交时刷新提交上下文，保留后台处理状态和备注。
@@ -109,4 +136,41 @@ export async function listInviteRequestsForSync(payload: Payload): Promise<Invit
     submittedAt: doc.submittedAt,
     updatedAt: doc.updatedAt,
   }))
+}
+
+/**
+ * 批量回写官网 invite request 状态。
+ * 该能力仅供 noumi-server 以共享 token 调用，用于把审批结果同步回官网后台。
+ *
+ * @param payload Payload 实例
+ * @param inputs 待更新的状态列表
+ * @returns 更新后的最小字段集合
+ */
+export async function updateInviteRequestsStatus(
+  payload: Payload,
+  inputs: UpdateInviteRequestStatusInput[],
+): Promise<InviteRequestSyncItem[]> {
+  const results: InviteRequestSyncItem[] = []
+
+  for (const input of inputs) {
+    const doc = await payload.update({
+      collection: 'invite-requests',
+      id: normalizeInviteRequestId(input.id),
+      data: {
+        status: input.status,
+      },
+      overrideAccess: true,
+    })
+
+    results.push({
+      id: doc.id,
+      email: doc.email,
+      sourcePath: doc.sourcePath || null,
+      status: doc.status,
+      submittedAt: doc.submittedAt,
+      updatedAt: doc.updatedAt,
+    })
+  }
+
+  return results
 }

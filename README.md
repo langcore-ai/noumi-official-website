@@ -166,13 +166,12 @@ src/app/(frontend)/invite/page.tsx
 
 ### Invite 申请数据
 
-invite 申请是正式功能，但当前实现仍沿用早期命名：D1 表名和部分文件名中保留了 `temporary`。这属于历史命名，不代表功能仍是临时方案。invite 数据直接写入 D1 表 `temporary_invite_requests`，不通过 Payload collection 管理。相关代码位于：
+invite 申请现在由 Payload collection `invite-requests` 管理，官网 `/api/invite-requests` 负责接收前台申请，并通过共享 token 向 `noumi-server` 暴露同步读取/状态回写能力。相关代码位于：
 
 ```text
-src/app/api/temporary-ui/invite-request/route.ts
-src/app/(payload)/admin/invite/page.tsx
-src/lib/site/temporary-invite-requests.ts
-src/components/admin/InviteAdminNavLink.tsx
+src/app/api/invite-requests/route.ts
+src/collections/InviteRequests.ts
+src/lib/site/invite-requests.ts
 src/components/site/official/OfficialInviteRequestForm.tsx
 ```
 

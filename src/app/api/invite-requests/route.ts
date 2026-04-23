@@ -3,7 +3,11 @@ import { NextResponse } from 'next/server'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getPayload } from 'payload'
 
-import { listInviteRequestsForSync, recordInviteRequest } from '@/lib/site/invite-requests'
+import {
+  listInviteRequestsForSync,
+  recordInviteRequest,
+  updateInviteRequestsStatus,
+} from '@/lib/site/invite-requests'
 
 /** 接口依赖 Payload/D1 运行时，避免构建期静态化。 */
 export const dynamic = 'force-dynamic'
@@ -47,6 +51,19 @@ function getBearerToken(request: Request): string {
   const match = authorization.match(/^Bearer\s+(.+)$/i)
 
   return match?.[1]?.trim() || ''
+}
+
+/**
+ * 统一校验服务间 Bearer token。
+ *
+ * @param request 当前请求
+ * @returns 当前请求是否通过校验
+ */
+async function isAuthorizedWaitlistSyncRequest(request: Request): Promise<boolean> {
+  const expectedToken = await getWaitlistSyncToken()
+  const receivedToken = getBearerToken(request)
+
+  return Boolean(expectedToken) && receivedToken === expectedToken
 }
 
 /**
@@ -113,10 +130,7 @@ export async function POST(request: Request) {
  * @returns waitlist 数据
  */
 export async function GET(request: Request) {
-  const expectedToken = await getWaitlistSyncToken()
-  const receivedToken = getBearerToken(request)
-
-  if (!expectedToken || receivedToken !== expectedToken) {
+  if (!(await isAuthorizedWaitlistSyncRequest(request))) {
     return NextResponse.json({ message: 'Unauthorized.', ok: false }, { status: 401 })
   }
 
@@ -128,6 +142,66 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     items,
+    ok: true,
+  })
+}
+
+/**
+ * 供 noumi-server 回写官网 waitlist 状态。
+ * 支持单条 `{ id, status }` 或批量 `{ items: [{ id, status }] }`。
+ *
+ * @param request 当前请求
+ * @returns 更新结果
+ */
+export async function PATCH(request: Request) {
+  if (!(await isAuthorizedWaitlistSyncRequest(request))) {
+    return NextResponse.json({ message: 'Unauthorized.', ok: false }, { status: 401 })
+  }
+
+  const body = (await request.json().catch((): null => null)) as
+    | null
+    | {
+        id?: number | string
+        items?: Array<{
+          id?: number | string
+          status?: string
+        }>
+        status?: string
+      }
+
+  const rawItems = Array.isArray(body?.items)
+    ? body.items
+    : body?.id !== undefined && typeof body?.status === 'string'
+      ? [{ id: body.id, status: body.status }]
+      : []
+
+  const items = rawItems.flatMap((item) => {
+    const id = typeof item?.id === 'number' || typeof item?.id === 'string' ? item.id : ''
+    const status = typeof item?.status === 'string' ? item.status.trim() : ''
+    if (!id || !['new', 'contacted', 'invited', 'archived'].includes(status)) {
+      return []
+    }
+
+    return [
+      {
+        id,
+        status: status as 'new' | 'contacted' | 'invited' | 'archived',
+      },
+    ]
+  })
+
+  if (items.length === 0) {
+    return NextResponse.json({ message: 'Invalid waitlist status payload.', ok: false }, { status: 400 })
+  }
+
+  const payload = await getPayload({
+    config: configPromise,
+  })
+
+  const updatedItems = await updateInviteRequestsStatus(payload, items)
+
+  return NextResponse.json({
+    items: updatedItems,
     ok: true,
   })
 }

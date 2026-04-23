@@ -1,14 +1,13 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { PageSections } from '@/components/site/PageSections'
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { getDateLocale, getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getBlogPostView } from '@/lib/site/cms'
-import { createArticleJsonLd, createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
+import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
+import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
+import { getOfficialBlogPost, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
+
+import styles from './blog-post.module.css'
 
 /**
  * 博客详情 props
@@ -23,22 +22,19 @@ type BlogPostPageProps = {
  * @param props 路由参数
  * @returns metadata
  */
-export async function generateMetadata(props: BlogPostPageProps): Promise<Metadata> {
-  const locale = await getRequestLocale()
+export async function generateMetadata(props: BlogPostPageProps) {
   const { slug } = await props.params
-  const post = await getBlogPostView(slug, locale)
+  const post = await getOfficialBlogPost(slug)
 
   if (!post) {
     return {}
   }
 
-  return createPageMetadata({
-    locale,
+  return createOfficialMetadata({
     title: post.metaTitle || post.title,
-    description: post.metaDescription || post.excerpt || '',
+    description: post.metaDescription || post.excerpt || post.lead || '',
     pathname: `/blog/${post.slug}/`,
     type: 'article',
-    image: post.ogImage,
   })
 }
 
@@ -48,65 +44,81 @@ export async function generateMetadata(props: BlogPostPageProps): Promise<Metada
  * @returns 页面内容
  */
 export default async function BlogPostPage(props: BlogPostPageProps) {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
   const { slug } = await props.params
-  const post = await getBlogPostView(slug, locale)
+  const [post, useCases] = await Promise.all([
+    getOfficialBlogPost(slug),
+    getOfficialUseCaseNavItems(),
+  ])
 
   if (!post) {
     notFound()
   }
 
-  const [breadcrumbJsonLd, articleJsonLd] = await Promise.all([
-    createBreadcrumbJsonLd([
-      { name: dictionary.common.brandName, pathname: '/' },
-      { name: dictionary.blog.breadcrumb, pathname: '/blog/' },
-      { name: post.title, pathname: `/blog/${post.slug}/` },
-    ], locale),
-    createArticleJsonLd({
-      locale,
-      title: post.title,
-      description: post.metaDescription || post.excerpt || '',
-      pathname: `/blog/${post.slug}/`,
-      publishedAt: post.publishedAt || new Date().toISOString(),
-      author: post.author,
-      image: post.ogImage,
-    }),
-  ])
+  if (post.renderMode === 'html') {
+    return (
+      <div className="page-body">
+        <OfficialHomeHeader useCases={useCases} />
+        <OfficialRawHtml html={post.htmlContent || ''} />
+        <OfficialHomeFooter useCases={useCases} />
+      </div>
+    )
+  }
 
   return (
-    <div className="page">
-      <StructuredData data={breadcrumbJsonLd} />
-      <StructuredData data={articleJsonLd} />
+    <div className={`${styles.blogPostPage} page-body`}>
+      <OfficialHomeHeader useCases={useCases} />
 
-      <section className="site-shell page__hero article">
-        <nav aria-label={dictionary.common.breadcrumb} className="breadcrumbs">
-          <Link href="/">{dictionary.common.brandName}</Link>
-          <span>/</span>
-          <Link href="/blog/">{dictionary.blog.breadcrumb}</Link>
-          <span>/</span>
-          <span aria-current="page">{post.title}</span>
-        </nav>
-        <div className="article__meta">
-          {post.publishedAt ? (
-            <span>{new Date(post.publishedAt).toLocaleDateString(getDateLocale(locale))}</span>
+      <main className={styles.postWrap}>
+        <Link className={`${styles.postBack} reveal`} href="/blog/">← Back to Blog</Link>
+
+        <article>
+          <header className={`${styles.postHeader} reveal d1`}>
+            <div className={styles.postTags}>
+              {post.tags[0] ? <span className={styles.postTag}>{post.tags[0]}</span> : null}
+              <span className={styles.postMetaRow}>
+                {[post.publishedAt, post.readingTime].filter(Boolean).join(' · ')}
+              </span>
+            </div>
+            <h1>{post.title}</h1>
+            {post.lead || post.excerpt ? <p className={styles.postLead}>{post.lead || post.excerpt}</p> : null}
+          </header>
+
+          {post.coverImage?.url ? (
+            <figure aria-hidden="true" className={`${styles.postCover} reveal d2`}>
+              <img alt="" src={post.coverImage.url} />
+            </figure>
           ) : null}
-          {post.author ? <span>{post.author}</span> : null}
-          {post.tags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
-        </div>
-        <TypesetText as="h1" locale={locale} text={post.title} variant="pageTitle">
-          {post.title}
-        </TypesetText>
-        {post.excerpt ? (
-          <TypesetText as="p" locale={locale} text={post.excerpt} variant="heroBody">
-            {post.excerpt}
-          </TypesetText>
-        ) : null}
-      </section>
+        </article>
+      </main>
 
-      <PageSections locale={locale} sections={post.sections} />
+      <OfficialContentSections article sections={post.sections} />
+
+      {post.relatedPosts[0] ? (
+        <section className={`${styles.postWrap} ${styles.moreSection}`}>
+          <div className={styles.moreTop}>
+            <h2>More from the blog</h2>
+            <Link className={styles.moreViewAll} href="/blog/">View all →</Link>
+          </div>
+          <Link className={styles.moreCard} href={`/blog/${post.relatedPosts[0].slug}/`}>
+            <div className={styles.moreThumb}>
+              {post.relatedPosts[0].coverImage?.url ? <img alt="" src={post.relatedPosts[0].coverImage.url} /> : null}
+            </div>
+            <div className={styles.moreBody}>
+              <div className={styles.moreTags}>
+                {post.relatedPosts[0].tags[0] ? <span className={styles.moreTag}>{post.relatedPosts[0].tags[0]}</span> : null}
+                <span className={styles.moreMetaText}>
+                  {[post.relatedPosts[0].readingTime, post.relatedPosts[0].publishedAt].filter(Boolean).join(' · ')}
+                </span>
+              </div>
+              <h3>{post.relatedPosts[0].title}</h3>
+              <p>{post.relatedPosts[0].excerpt || post.relatedPosts[0].lead || ''}</p>
+              <span className={styles.moreRead}>Read article →</span>
+            </div>
+          </Link>
+        </section>
+      ) : null}
+
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

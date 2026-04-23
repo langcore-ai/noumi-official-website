@@ -1,94 +1,88 @@
-import Link from 'next/link'
+import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
 
-import { PageSections } from '@/components/site/PageSections'
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { hasRenderableHeroContent } from '@/lib/site/hero'
-import { getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getAboutPageView } from '@/lib/site/cms'
-import { createBreadcrumbJsonLd, createOrganizationJsonLd, createPageMetadata } from '@/lib/site/seo'
+import styles from './about.module.css'
 
 /**
  * About 页面 metadata
  */
 export async function generateMetadata() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const page = await getAboutPageView(locale)
-
-  return createPageMetadata({
-    locale,
-    title: page.metaTitle || page.hero.title || dictionary.about.metadataTitle,
-    description: page.metaDescription || page.hero.description || dictionary.about.metadataDescription,
+  return createOfficialMetadata({
+    title: 'About Noumi — We Believe AI Should Know You Better Over Time',
+    description:
+      'We believe your AI should get smarter every time you use it — not reset. Learn why we built Noumi and what it means to have an AI that truly learns how you work.',
     pathname: '/about/',
-    image: page.ogImage,
   })
 }
 
 /**
  * About 页面
- * @returns About 内容
+ * @returns About 页面
  */
 export default async function AboutPage() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const page = await getAboutPageView(locale)
-  const hasHero = hasRenderableHeroContent(page.hero)
-  const [breadcrumbJsonLd, organizationJsonLd] = await Promise.all([
-    createBreadcrumbJsonLd([
-      { name: dictionary.common.brandName, pathname: '/' },
-      { name: dictionary.about.breadcrumb, pathname: '/about/' },
-    ], locale),
-    createOrganizationJsonLd(locale),
-  ])
+  const useCases = await getOfficialUseCaseNavItems()
 
   return (
-    <div className="page page--fullscreen">
-      <StructuredData data={breadcrumbJsonLd} />
-      {organizationJsonLd ? <StructuredData data={organizationJsonLd} /> : null}
+    <div className="page-body">
+      <OfficialHomeHeader useCases={useCases} />
 
-      {hasHero ? (
-        <section className="site-shell page__hero">
-          {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
-          {page.hero.title ? (
-            <TypesetText as="h1" locale={locale} text={page.hero.title} variant="heroTitle">
-              {page.hero.title}
-            </TypesetText>
-          ) : null}
-          {page.hero.description ? (
-            <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
-              {page.hero.description}
-            </TypesetText>
-          ) : null}
-          {page.hero.supportingText ? (
-            <TypesetText
-              as="p"
-              className="page__hero-support"
-              locale={locale}
-              text={page.hero.supportingText}
-              variant="heroBody"
-            >
-              {page.hero.supportingText}
-            </TypesetText>
-          ) : null}
-        </section>
-      ) : null}
+      <section aria-labelledby="belief-h1" className={styles.belief}>
+        <h1 className="reveal" id="belief-h1">
+          We believe your AI should get
+          <br />
+          <em>smarter</em> every time you use it.
+        </h1>
+        <p className="reveal d1">Not reset. Not forget. Not make you explain yourself again.</p>
+      </section>
 
-      <PageSections fullScreen locale={locale} sections={page.sections} />
+      <section aria-labelledby="origin-h2" className={`${styles.aboutSection} reveal`}>
+        <h2 id="origin-h2">Why we built Noumi</h2>
+        <h3 className={styles.screenReaderOnly}>The problem with AI today</h3>
+        <p>Most AI tools treat every conversation like the first one.</p>
+        <p>
+          You paste the same context. You correct the same mistakes. You explain the same
+          preferences. Again, and again, and again.
+        </p>
+        <p>
+          We built Noumi because the real problem isn&apos;t intelligence — it&apos;s memory. An AI
+          that can&apos;t remember who you are can&apos;t actually work for you.
+        </p>
+        <p>
+          Every interaction with Noumi is an investment. The longer you use it, the more it knows
+          your work, your rules, and your standards. That&apos;s not a feature. That&apos;s the point.
+        </p>
+      </section>
 
-      {!page.sections.some((section) => section.type === 'cta') ? (
-        <section className="site-shell section section--screen">
-          <div className="feature-detail__summary">
-            <span className="page__eyebrow">{dictionary.about.contactEyebrow}</span>
-            <div className="page__hero-actions">
-              <Link className="button button--ghost" href="/pricing/">
-                {dictionary.about.viewPricing}
-              </Link>
-            </div>
-          </div>
-        </section>
-      ) : null}
+      <hr className={styles.aboutDivider} />
+
+      <section aria-labelledby="team-h2" className={`${styles.aboutSection} reveal`}>
+        <h2 id="team-h2">Who we are</h2>
+        <h3 className={styles.screenReaderOnly}>The team behind Noumi</h3>
+        <p>
+          Noumi is built by a small startup. Our team is made up of engineers, researchers, and
+          builders who think deeply about how AI can actually fit into the way people work — not
+          just how it looks in a demo.
+        </p>
+        <p>
+          If you&apos;re the kind of person who&apos;d rather build the future than watch it happen,
+          reach out at <a href="mailto:hr@noumi.ai">hr@noumi.ai</a>.
+        </p>
+      </section>
+
+      <section aria-labelledby="about-cta" className={`${styles.aboutCta} cta-band`}>
+        <h2 className="reveal" id="about-cta">
+          The longer you use Noumi,
+          <br />
+          the <em>less you have to explain.</em>
+        </h2>
+        <p className="reveal d1">Free to start. No credit card required.</p>
+        <a className="btn-cream reveal d2" href="/invite/">
+          Start building your AI today →
+        </a>
+      </section>
+
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

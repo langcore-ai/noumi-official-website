@@ -1,14 +1,16 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { PageSections } from '@/components/site/PageSections'
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getUseCasePageView } from '@/lib/site/cms'
-import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
+import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
+import {
+  OfficialHomeFooter,
+  OfficialUseCaseHeader,
+} from '@/components/site/official/OfficialHomeChrome'
+import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
+import { OfficialUseCaseWorkflow } from '@/components/site/official/OfficialUseCaseWorkflow'
+import { getOfficialUseCaseNavItems, getOfficialUseCasePage } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
+
+import styles from './use-case.module.css'
 
 /**
  * Use case 路由参数
@@ -23,21 +25,18 @@ type UseCasePageProps = {
  * @param props 路由参数
  * @returns metadata
  */
-export async function generateMetadata(props: UseCasePageProps): Promise<Metadata> {
-  const locale = await getRequestLocale()
+export async function generateMetadata(props: UseCasePageProps) {
   const { slug } = await props.params
-  const page = await getUseCasePageView(slug, locale)
+  const page = await getOfficialUseCasePage(slug)
 
   if (!page) {
     return {}
   }
 
-  return createPageMetadata({
-    locale,
-    title: page.metaTitle || page.hero.title,
-    description: page.metaDescription || page.hero.description || '',
+  return createOfficialMetadata({
+    title: page.metaTitle || page.heroTitle || page.navigationLabel,
+    description: page.metaDescription || page.heroDescription || '',
     pathname: `/use-cases/${page.slug}/`,
-    image: page.ogImage,
   })
 }
 
@@ -47,100 +46,115 @@ export async function generateMetadata(props: UseCasePageProps): Promise<Metadat
  * @returns 页面内容
  */
 export default async function UseCaseDetailPage(props: UseCasePageProps) {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
   const { slug } = await props.params
-  const page = await getUseCasePageView(slug, locale)
+  const [page, useCases] = await Promise.all([
+    getOfficialUseCasePage(slug),
+    getOfficialUseCaseNavItems(),
+  ])
 
   if (!page) {
     notFound()
   }
 
-  const breadcrumbJsonLd = await createBreadcrumbJsonLd([
-    { name: dictionary.common.brandName, pathname: '/' },
-    { name: dictionary.useCases.breadcrumb, pathname: '/' },
-    { name: page.hero.title || page.slug, pathname: `/use-cases/${page.slug}/` },
-  ], locale)
+  if (page.renderMode === 'html') {
+    return (
+      <div className="page-body">
+        <OfficialUseCaseHeader activeSlug={page.slug} useCases={useCases} />
+        <OfficialRawHtml html={page.htmlContent || ''} />
+        <OfficialHomeFooter useCases={useCases} />
+      </div>
+    )
+  }
 
   return (
-    <div className="page page--hero page--fullscreen">
-      <StructuredData data={breadcrumbJsonLd} />
+    <div className={`${styles.useCasePage} page-body`}>
+      <OfficialUseCaseHeader activeSlug={page.slug} useCases={useCases} />
 
-      <section className="site-shell page__hero">
-        <nav aria-label={dictionary.common.breadcrumb} className="breadcrumbs">
-          <Link href="/">{dictionary.common.brandName}</Link>
-          <span>/</span>
-          <span>{dictionary.useCases.breadcrumb}</span>
-          <span>/</span>
-          <span aria-current="page">{page.hero.eyebrow || page.slug}</span>
-        </nav>
-        {page.hero.eyebrow ? <span className="page__eyebrow">{page.hero.eyebrow}</span> : null}
-        {page.hero.title ? (
-          <TypesetText as="h1" locale={locale} text={page.hero.title} variant="heroTitle">
-            {page.hero.title}
-          </TypesetText>
-        ) : null}
-        {page.hero.description ? (
-          <TypesetText as="p" locale={locale} text={page.hero.description} variant="heroBody">
-            {page.hero.description}
-          </TypesetText>
-        ) : null}
+      <section aria-labelledby={`${page.slug}-h1`} className={styles.roleHero}>
+        <div className={`${styles.roleHeroText} reveal`}>
+          {page.heroEyebrow ? <span className="sec-label">{page.heroEyebrow}</span> : null}
+          {page.heroTitle ? <h1 id={`${page.slug}-h1`}>{page.heroTitle}</h1> : null}
+          {page.heroDescription ? <p className={styles.roleAdvantage}>{page.heroDescription}</p> : null}
+          {page.painPoints.length > 0 ? (
+            <ul className={styles.painList}>
+              {page.painPoints.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          ) : null}
+          {page.heroPrimaryCta ? <a className="btn-fill" href={page.heroPrimaryCta.href}>{page.heroPrimaryCta.label}</a> : null}
+        </div>
+        <div aria-label={`${page.navigationLabel} preview`} className={`${styles.roleHeroVisual} reveal d2`} role="img">
+          <div className={`${styles.roleWindow} ${styles.windowBack}`}>
+            <div className={styles.windowLabel}>Captured context</div>
+            {page.painPoints.slice(0, 3).map((point) => (
+              <div className={styles.rawItem} key={point}>{point}</div>
+            ))}
+          </div>
+          <div className={`${styles.roleWindow} ${styles.windowFront}`}>
+            <div className={styles.windowLabel}>Noumi workspace</div>
+            <div className={styles.rawItem}>{page.heroLead || page.workflowDescription || page.heroDescription || ''}</div>
+            {page.workflowSteps.slice(0, 2).map((step) => (
+              <div className={styles.rawItem} key={step.title}>{step.title}</div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {page.painPointsSection ? (
-        <PageSections
-          fullScreen
-          locale={locale}
-          sections={[
-            {
-              ...page.painPointsSection,
-              label: page.painPointsSection.label || dictionary.useCases.painPointsEyebrow,
-              title: page.painPointsSection.title || dictionary.useCases.painPointsTitle,
-            },
-          ]}
-        />
-      ) : null}
-
-      <PageSections fullScreen locale={locale} sections={page.sections} />
-
-      {page.relatedFeatures.length > 0 ? (
-        <section className="site-shell section section--screen">
-          <div className="section__header">
-            <span className="page__eyebrow">{dictionary.useCases.relatedEyebrow}</span>
-            <TypesetText as="h2" locale={locale} text={dictionary.useCases.relatedTitle} variant="sectionTitle">
-              {dictionary.useCases.relatedTitle}
-            </TypesetText>
-          </div>
-          <div className="cards cards--3">
-            {page.relatedFeatures.map((feature) => (
-              <article key={feature.slug} className="card">
-                <TypesetText
-                  as="h3"
-                  locale={locale}
-                  text={`${feature.hero.title}${feature.hero.highlight ? ` ${feature.hero.highlight}` : ''}`}
-                  variant="cardTitle"
-                >
-                  {feature.hero.title}
-                  {feature.hero.highlight ? (
-                    <>
-                      {' '}
-                      <span className="hero-highlight">{feature.hero.highlight}</span>
-                    </>
-                  ) : null}
-                </TypesetText>
-                {feature.hero.description ? (
-                  <TypesetText as="p" locale={locale} text={feature.hero.description} variant="body">
-                    {feature.hero.description}
-                  </TypesetText>
-                ) : null}
-                <Link className="feature-grid__link" href={`/features/${feature.slug}/`}>
-                  {dictionary.useCases.exploreFeature}
-                </Link>
-              </article>
-            ))}
+      {page.workflowSteps.length > 0 ? (
+        <section aria-labelledby={`${page.slug}-workflow-h2`} className={styles.workflowSection}>
+          <div className={styles.workflowInner}>
+            <div className={`${styles.workflowTitle} reveal`}>
+              {page.workflowEyebrow ? <span className="sec-label">{page.workflowEyebrow}</span> : null}
+              {page.workflowTitle ? <h2 id={`${page.slug}-workflow-h2`}>{page.workflowTitle}</h2> : null}
+              {page.workflowDescription ? <p>{page.workflowDescription}</p> : null}
+            </div>
+            <OfficialUseCaseWorkflow steps={page.workflowSteps} />
           </div>
         </section>
       ) : null}
+
+      {page.testimonials.length > 0 ? (
+        <section aria-labelledby={`${page.slug}-testimonials-h`} className={styles.testimonials}>
+          <div className={styles.testimonialsInner}>
+            <div className={`${styles.testimonialsHead} reveal`}>
+              {page.testimonialsEyebrow ? <span className="sec-label">{page.testimonialsEyebrow}</span> : null}
+              {page.testimonialsTitle ? <h2 id={`${page.slug}-testimonials-h`}>{page.testimonialsTitle}</h2> : null}
+              {page.testimonialsDescription ? <p>{page.testimonialsDescription}</p> : null}
+            </div>
+            <div className={styles.testimonialsGrid}>
+              {page.testimonials.map((item) => (
+                <article className={styles.testimonialCard} key={`${item.name}-${item.role}`}>
+                  <div className={styles.stars}>★★★★★</div>
+                  <p className={styles.quote}>{item.quote}</p>
+                  <div className={styles.author}>
+                    <div className={styles.avatar}>
+                      {item.avatar?.url ? <img alt={item.name} src={item.avatar.url} /> : null}
+                    </div>
+                    <div>
+                      <div className={styles.name}>{item.name}</div>
+                      <div className={styles.role}>{item.role}</div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <OfficialContentSections sections={page.sections} />
+
+      {page.ctaButton && page.ctaTitle ? (
+        <section aria-labelledby={`${page.slug}-cta`} className="cta-band">
+          {page.ctaEyebrow ? <span className="sec-label reveal">{page.ctaEyebrow}</span> : null}
+          <h2 className="reveal" id={`${page.slug}-cta`}>{page.ctaTitle}</h2>
+          {page.ctaDescription ? <p className="reveal d1">{page.ctaDescription}</p> : null}
+          <a className="btn-cream reveal d2" href={page.ctaButton.href}>{page.ctaButton.label}</a>
+        </section>
+      ) : null}
+
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

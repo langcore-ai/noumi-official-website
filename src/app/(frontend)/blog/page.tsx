@@ -1,23 +1,19 @@
 import Link from 'next/link'
 
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { getDateLocale, getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getPublishedBlogPosts } from '@/lib/site/cms'
-import { createBreadcrumbJsonLd, createPageMetadata } from '@/lib/site/seo'
+import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { getOfficialBlogPosts, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
+
+import styles from './blog.module.css'
 
 /**
  * Blog 列表 metadata
  */
 export async function generateMetadata() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-
-  return createPageMetadata({
-    locale,
-    title: dictionary.blog.metadataTitle,
-    description: dictionary.blog.metadataDescription,
+  return createOfficialMetadata({
+    title: 'Blog — Noumi | AI Agents, Memory & the Future of Work',
+    description:
+      'Stories and insights about AI agents, persistent memory, and how knowledge work is changing — from the team building Noumi, for the professionals who use it.',
     pathname: '/blog/',
   })
 }
@@ -27,55 +23,57 @@ export async function generateMetadata() {
  * @returns 文章列表
  */
 export default async function BlogIndexPage() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const posts = await getPublishedBlogPosts(locale)
-  const breadcrumbJsonLd = await createBreadcrumbJsonLd([
-    { name: dictionary.common.brandName, pathname: '/' },
-    { name: dictionary.blog.breadcrumb, pathname: '/blog/' },
-  ], locale)
+  const [posts, useCases] = await Promise.all([
+    getOfficialBlogPosts(),
+    getOfficialUseCaseNavItems(),
+  ])
 
   return (
-    <div className="page">
-      <StructuredData data={breadcrumbJsonLd} />
+    <div className="page-body">
+      <OfficialHomeHeader useCases={useCases} />
 
-      <section className="site-shell page__hero">
-        <span className="page__eyebrow">{dictionary.blog.eyebrow}</span>
-        <TypesetText as="h1" locale={locale} text={dictionary.blog.title} variant="heroTitle">
-          {dictionary.blog.title}
-        </TypesetText>
-        <TypesetText as="p" locale={locale} text={dictionary.blog.intro} variant="heroBody">
-          {dictionary.blog.intro}
-        </TypesetText>
-      </section>
+      <header className="page-hero">
+        <span className="sec-label reveal">From the team</span>
+        <h1 className="reveal d1">Blog</h1>
+        <p className="reveal d2">
+          Stories and insights about AI agents, persistent memory, and how knowledge work is changing.
+        </p>
+      </header>
 
-      {posts.length > 0 ? (
-        <section className="site-shell section">
-          <div className="blog-list">
-            {posts.map((post) => (
-              <article key={post.slug} className="blog-card">
-                <div className="blog-card__meta">
-                  {post.publishedAt ? (
-                    <span>{new Date(post.publishedAt).toLocaleDateString(getDateLocale(locale))}</span>
-                  ) : null}
-                  {post.author ? <span>{post.author}</span> : null}
+      <main className={styles.blogWrap}>
+        <div className={`${styles.blogGrid} reveal`}>
+          {posts.map((post) => (
+            <Link className={styles.blogCard} href={`/blog/${post.slug}/`} key={post.slug}>
+              <div aria-hidden="true" className={styles.blogCardCover}>
+                {post.coverImage?.url ? <img alt="" src={post.coverImage.url} /> : null}
+              </div>
+              <div className={styles.blogCardBody}>
+                <div className={styles.blogCardTags}>
+                  {post.tags[0] ? <span className={styles.blogCardTag}>{post.tags[0]}</span> : null}
+                  {post.publishedAt ? <span className={styles.blogCardMeta}>{post.publishedAt}</span> : null}
                 </div>
-                <TypesetText as="h2" locale={locale} text={post.title} variant="sectionTitle">
-                  {post.title}
-                </TypesetText>
-                {post.excerpt ? (
-                  <TypesetText as="p" locale={locale} text={post.excerpt} variant="body">
-                    {post.excerpt}
-                  </TypesetText>
-                ) : null}
-                <Link className="feature-grid__link" href={`/blog/${post.slug}/`}>
-                  {dictionary.blog.readArticle}
-                </Link>
-              </article>
-            ))}
+                <h2 className={styles.blogCardTitle}>{post.title}</h2>
+                <p className={styles.blogCardExcerpt}>{post.excerpt || post.lead || ''}</p>
+                <div className={styles.blogCardFooter}>
+                  <span className={styles.blogCardRead}>Read article →</span>
+                  {post.readingTime ? <span className={styles.blogCardTime}>{post.readingTime}</span> : null}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className={`${styles.blogSubscribe} reveal`}>
+          <h3>Stay in the loop</h3>
+          <p>No spam. Just the best thinking on AI agents, memory, and how knowledge work is changing.</p>
+          <div className={styles.subscribeForm}>
+            <input className={styles.subscribeInput} placeholder="your@email.com" type="email" />
+            <button className={styles.subscribeBtn} type="button">Subscribe</button>
           </div>
-        </section>
-      ) : null}
+        </div>
+      </main>
+
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

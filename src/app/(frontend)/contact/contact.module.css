@@ -1,0 +1,91 @@
+/* Contact 页面专属样式。 */
+.contactWrap {
+  min-height: calc(100vh - 64px - 280px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 48px;
+}
+
+.contactInner {
+  max-width: 600px;
+  text-align: center;
+}
+
+.contactInner h1 {
+  font-family: var(--ff-display);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 28px;
+}
+
+.contactInner p {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin-bottom: 48px;
+}
+
+.contactEmail {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--cream-mid);
+  border: 1px solid var(--border-med);
+  border-radius: 10px;
+  padding: 16px 28px;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+.contactEmail:hover {
+  background: var(--cream-dark);
+  transform: translateY(-2px);
+}
+
+.contactEmail::before {
+  content: "\2709";
+  font-size: 18px;
+}
+
+.contactDivider {
+  margin: 72px 0 40px;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.contactAlt {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+}
+
+.contactAlt a {
+  color: var(--accent);
+}
+
+.screenReaderOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 600px) {
+  .contactWrap {
+    padding: 64px 24px;
+  }
+}

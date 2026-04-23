@@ -1,0 +1,314 @@
+/* Use case 详情页专属样式，并限定正文组件输出的全局 class 影响范围。 */
+.roleHero {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 72px 48px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.roleHeroText h1 {
+  font-family: var(--ff-display);
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.roleAdvantage {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin-bottom: 32px;
+}
+
+.painList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.painList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  font-weight: 300;
+  line-height: 1.55;
+}
+
+.painList li::before {
+  content: "\00b7";
+  font-size: 22px;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.roleHeroVisual {
+  position: relative;
+  overflow: visible;
+  padding-top: 24px;
+}
+
+.roleWindow {
+  background: #fdfaf4;
+  border: 1px solid rgba(28, 27, 46, 0.1);
+  border-radius: 14px;
+  padding: 20px 22px;
+  position: relative;
+}
+
+.windowBack {
+  z-index: 1;
+  transform: rotate(-2.5deg);
+  transform-origin: center top;
+  box-shadow: 0 6px 22px rgba(28, 27, 46, 0.07);
+  margin-bottom: -68px;
+  transition:
+    transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+.windowFront {
+  z-index: 2;
+  transform: rotate(1.2deg);
+  transform-origin: center top;
+  box-shadow: 0 20px 56px rgba(28, 27, 46, 0.13);
+  transition:
+    transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+.roleHeroVisual:hover .windowBack {
+  transform: rotate(-5.5deg) translate(-22px, -14px);
+  z-index: 3;
+}
+
+.roleHeroVisual:hover .windowFront {
+  transform: rotate(3deg) translate(16px, 14px);
+}
+
+.windowLabel {
+  font-size: 9.5px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.windowLabel::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.rawItem {
+  font-size: 11px;
+  color: var(--ink-muted);
+  padding: 7px 11px;
+  background: rgba(28, 27, 46, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  margin-bottom: 7px;
+  line-height: 1.5;
+}
+
+.workflowSection {
+  background: var(--cream-mid);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 0;
+}
+
+.workflowInner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.workflowTitle {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.workflowTitle h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.workflowTitle p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--ink-muted);
+}
+
+.testimonials {
+  padding: 80px 0 72px;
+  border-top: 1px solid var(--border);
+}
+
+.testimonialsInner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.testimonialsHead {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.testimonialsHead :global(.sec-label) {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.testimonialsHead h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.testimonialsHead p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--ink-muted);
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.testimonialCard {
+  background: var(--cream);
+  border: 1px solid var(--border-med);
+  border-radius: 16px;
+  padding: 26px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+  color: #f59e0b;
+  line-height: 1;
+}
+
+.quote {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.72;
+  flex: 1;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--cream-mid);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.role {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  line-height: 1.3;
+}
+
+.useCasePage :global(.official-workflow-markdown .markdown-content p),
+.useCasePage :global(.official-workflow-markdown .markdown-content li),
+.useCasePage :global(.official-workflow-markdown .markdown-content td) {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.useCasePage :global(.official-workflow-markdown .markdown-content h2),
+.useCasePage :global(.official-workflow-markdown .markdown-content h3) {
+  font-family: var(--ff-display);
+  font-size: 16px;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.useCasePage :global(.official-section-title) {
+  font-family: var(--ff-display);
+  color: var(--ink);
+}
+
+.useCasePage :global(.official-richtext-panel p),
+.useCasePage :global(.official-richtext-panel li),
+.useCasePage :global(.markdown-content p),
+.useCasePage :global(.markdown-content li),
+.useCasePage :global(.markdown-content td) {
+  font-size: 15.5px;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+@media (max-width: 960px) {
+  .roleHero {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 56px 24px 48px;
+  }
+
+  .workflowInner,
+  .testimonialsInner {
+    padding: 0 24px;
+  }
+
+  .testimonialsGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -110,7 +110,7 @@ function resolveImageUrl(
  * @returns Next metadata
  */
 export async function createPageMetadata(config: SeoConfig): Promise<Metadata> {
-  const siteSettings = await getSiteSettings(config.locale)
+  const siteSettings = await getSiteSettings()
   const siteUrl = normalizeText(siteSettings.siteUrl)
   const title = normalizeText(config.title)
   const description =
@@ -168,7 +168,7 @@ export async function createPageMetadata(config: SeoConfig): Promise<Metadata> {
  * @returns Organization JSON-LD
  */
 export async function createOrganizationJsonLd(locale: SiteLocale = DEFAULT_CONTENT_LOCALE) {
-  const siteSettings = await getSiteSettings(locale)
+  const siteSettings = await getSiteSettings()
   const siteUrl = normalizeText(siteSettings.siteUrl)
   const siteName = normalizeText(siteSettings.siteName)
   const email = normalizeText(siteSettings.contactEmail)
@@ -198,7 +198,7 @@ export async function createBreadcrumbJsonLd(
   items: BreadcrumbItem[],
   locale: SiteLocale = DEFAULT_CONTENT_LOCALE,
 ) {
-  const siteSettings = await getSiteSettings(locale)
+  const siteSettings = await getSiteSettings()
   const siteUrl = normalizeText(siteSettings.siteUrl)
 
   return {
@@ -239,7 +239,7 @@ export function createFaqJsonLd(items: Array<{ question: string; answer: string 
  * @returns Article JSON-LD
  */
 export async function createArticleJsonLd(config: ArticleConfig) {
-  const siteSettings = await getSiteSettings(config.locale)
+  const siteSettings = await getSiteSettings()
   const siteUrl = normalizeText(siteSettings.siteUrl)
   const siteName = normalizeText(siteSettings.siteName)
   const imageUrl =

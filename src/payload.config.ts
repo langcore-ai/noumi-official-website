@@ -8,7 +8,7 @@ import type { Field } from 'payload'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { GetPlatformProxyOptions } from 'wrangler'
+import type { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
 import { en as enTranslations } from '@payloadcms/translations/languages/en'
 import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
@@ -16,13 +16,9 @@ import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
-import { FeaturePages } from './collections/FeaturePages'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
-import { AboutPage } from './globals/AboutPage'
-import { HomePage } from './globals/HomePage'
 import { PrivacyPage } from './globals/PrivacyPage'
-import { PricingPage } from './globals/PricingPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
 import {
@@ -47,7 +43,7 @@ const isNextBuild =
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
 /** redirects 插件可引用的内部集合 */
-const redirectTargetCollections: string[] = [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug]
+const redirectTargetCollections: string[] = [BlogPosts.slug, UseCasePages.slug]
 
 /**
  * 创建结构化日志方法
@@ -127,8 +123,9 @@ function getRedirectFields(defaultFields: Field[]): Field[] {
  * @returns 可用于初始化 Payload 的密钥
  */
 function getPayloadSecret(cloudflare: CloudflareContext): string {
-  const cloudflarePayloadSecret = (cloudflare.env as CloudflareContext['env'] & { PAYLOAD_SECRET?: string })
-    .PAYLOAD_SECRET
+  const cloudflarePayloadSecret = (
+    cloudflare.env as CloudflareContext['env'] & { PAYLOAD_SECRET?: string }
+  ).PAYLOAD_SECRET
 
   if (process.env.PAYLOAD_SECRET) {
     return process.env.PAYLOAD_SECRET
@@ -150,9 +147,49 @@ function getPayloadSecret(cloudflare: CloudflareContext): string {
   throw new Error('Missing PAYLOAD_SECRET in production environment.')
 }
 
+/**
+ * 从 Wrangler 侧获取 Cloudflare 上下文。
+ * @returns Cloudflare 运行时上下文
+ */
+async function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
+  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
+    ({ getPlatformProxy }) =>
+      getPlatformProxy({
+        environment: process.env.CLOUDFLARE_ENV,
+        remoteBindings: isProduction,
+      } satisfies GetPlatformProxyOptions),
+  )
+}
+
+/**
+ * 为 Payload 选择合适的 Cloudflare 上下文来源
+ * @returns 可供 Payload 使用的 Cloudflare 上下文
+ */
+async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
+  // Next.js 构建阶段只需要能成功创建 Payload 配置；此时不应启动 Wrangler 远程代理
+  if (isNextBuild) {
+    return {
+      env: {
+        D1: {} as CloudflareContext['env']['D1'],
+        R2: {} as CloudflareContext['env']['R2'],
+      },
+    } as CloudflareContext
+  }
+
+  if (isCLI || !isProduction) {
+    return getCloudflareContextFromWrangler()
+  }
+
+  return getCloudflareContext({ async: true })
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      // 临时 invite 申请仍由独立只读页承载，这里只把入口挂进后台导航。
+      beforeNavLinks: ['/components/admin/InviteAdminNavLink'],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -170,8 +207,8 @@ export default buildConfig({
         }
       : undefined,
   },
-  collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems],
-  globals: [SiteSettings, HomePage, AboutPage, PricingPage, PrivacyPage, TermsPage],
+  collections: [Users, Media, BlogPosts, UseCasePages, FaqItems],
+  globals: [SiteSettings, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',
@@ -218,7 +255,7 @@ export default buildConfig({
     }),
     seoPlugin({
       globals: [SiteSettings.slug],
-      collections: [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug],
+      collections: [BlogPosts.slug, UseCasePages.slug],
       uploadsCollection: Media.slug,
       tabbedUI: true,
       generateTitle: ({ doc }) => {
@@ -239,40 +276,3 @@ export default buildConfig({
     }),
   ],
 })
-
-// Adapted from https://github.com/opennextjs/opennextjs-cloudflare/blob/d00b3a13e42e65aad76fba41774815726422cc39/packages/cloudflare/src/api/cloudflare-context.ts#L328C36-L328C46
-/**
- * 从 Wrangler 侧获取 Cloudflare 上下文
- * @returns Cloudflare 运行时上下文
- */
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
-      } satisfies GetPlatformProxyOptions),
-  )
-}
-
-/**
- * 为 Payload 选择合适的 Cloudflare 上下文来源
- * @returns 可供 Payload 使用的 Cloudflare 上下文
- */
-async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
-  // Next.js 构建阶段只需要能成功创建 Payload 配置；此时不应启动 Wrangler 远程代理
-  if (isNextBuild) {
-    return {
-      env: {
-        D1: {} as CloudflareContext['env']['D1'],
-        R2: {} as CloudflareContext['env']['R2'],
-      },
-    } as CloudflareContext
-  }
-
-  if (isCLI || !isProduction) {
-    return getCloudflareContextFromWrangler()
-  }
-
-  return getCloudflareContext({ async: true })
-}

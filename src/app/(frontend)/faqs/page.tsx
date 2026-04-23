@@ -1,23 +1,18 @@
-import Link from 'next/link'
+import { MarkdownContent } from '@/components/site/MarkdownContent'
+import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { getOfficialFaqCategories, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { createOfficialMetadata } from '@/lib/site/official-site'
 
-import { StructuredData } from '@/components/site/StructuredData'
-import { TypesetText } from '@/components/site/TypesetText'
-import { getSiteDictionary } from '@/lib/site/i18n'
-import { getRequestLocale } from '@/lib/site/i18n.server'
-import { getFaqItems } from '@/lib/site/cms'
-import { createBreadcrumbJsonLd, createFaqJsonLd, createPageMetadata } from '@/lib/site/seo'
+import styles from './faqs.module.css'
 
 /**
  * FAQ 页面 metadata
  */
 export async function generateMetadata() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-
-  return createPageMetadata({
-    locale,
-    title: dictionary.faq.metadataTitle,
-    description: dictionary.faq.metadataDescription,
+  return createOfficialMetadata({
+    title: 'Noumi FAQ — Common Questions About Your AI Digital Twin',
+    description:
+      'Frequently asked questions about Noumi — the AI Digital Twin that remembers your context, learns your working style, and gets work done autonomously.',
     pathname: '/faqs/',
   })
 }
@@ -27,57 +22,42 @@ export async function generateMetadata() {
  * @returns FAQ 页面内容
  */
 export default async function FaqPage() {
-  const locale = await getRequestLocale()
-  const dictionary = getSiteDictionary(locale)
-  const items = await getFaqItems(['faqs', 'home'], locale)
-  const breadcrumbJsonLd = await createBreadcrumbJsonLd([
-    { name: dictionary.common.brandName, pathname: '/' },
-    { name: dictionary.faq.breadcrumb, pathname: '/faqs/' },
-  ], locale)
+  const [categories, useCases] = await Promise.all([
+    getOfficialFaqCategories(),
+    getOfficialUseCaseNavItems(),
+  ])
 
   return (
-    <div className="page page--fullscreen">
-      <StructuredData data={breadcrumbJsonLd} />
-      {items.length > 0 ? <StructuredData data={createFaqJsonLd(items)} /> : null}
+    <div className="page-body">
+      <OfficialHomeHeader useCases={useCases} />
 
-      <section className="site-shell page__hero">
-        <span className="page__eyebrow">{dictionary.faq.eyebrow}</span>
-        <TypesetText as="h1" locale={locale} text={dictionary.faq.title} variant="heroTitle">
-          {dictionary.faq.title}
-        </TypesetText>
-      </section>
+      <header className="page-hero">
+        <span className="sec-label reveal">Questions, answered</span>
+        <h1 className="reveal d1">FAQ</h1>
+      </header>
 
-      {items.length > 0 ? (
-        <section className="site-shell section section--screen">
-          <div className="faq-list">
-            {items.map((item, index) => (
-              <details key={item.id} open={index === 0}>
-                <summary>{item.question}</summary>
-                <TypesetText as="p" locale={locale} text={item.answer} variant="body">
-                  {item.answer}
-                </TypesetText>
+      <main className={styles.faqWrap}>
+        {categories.map((category) => (
+          <div className={`${styles.faqCategory} reveal`} key={category.title}>
+            <h2 className={styles.categoryLabel}>{category.title}</h2>
+            {category.items.map((item, index) => (
+              <details className={styles.faqItem} key={item.id} open={index === category.items.length - 1}>
+                <summary className={styles.faqQuestion}>{item.question}</summary>
+                <div className={styles.faqAnswer}>
+                  <MarkdownContent markdown={item.answer} />
+                </div>
               </details>
             ))}
           </div>
-        </section>
-      ) : null}
+        ))}
 
-      <section className="site-shell section section--screen">
-        <div className="feature-detail__summary">
-          <span className="page__eyebrow">{dictionary.faq.moreEyebrow}</span>
-          <TypesetText as="h2" locale={locale} text={dictionary.faq.moreTitle} variant="sectionTitle">
-            {dictionary.faq.moreTitle}
-          </TypesetText>
-          <div className="page__hero-actions">
-            <Link className="button button--solid" href="/features/persistent-memory/">
-              {dictionary.faq.exploreFeatures}
-            </Link>
-            <Link className="button button--ghost" href="/blog/">
-              {dictionary.faq.readBlog}
-            </Link>
-          </div>
+        <div className={`${styles.faqFooter} reveal`}>
+          <p>Still have questions?</p>
+          <a href="mailto:official@noumi.ai">official@noumi.ai</a>
         </div>
-      </section>
+      </main>
+
+      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

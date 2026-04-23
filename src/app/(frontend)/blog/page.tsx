@@ -70,6 +70,12 @@ export default async function BlogIndexPage() {
             <input className={styles.subscribeInput} placeholder="your@email.com" type="email" />
             <button className={styles.subscribeBtn} type="button">Subscribe</button>
           </div>
+          <img
+            alt=""
+            aria-hidden="true"
+            className={styles.blogFooterCat}
+            src="/assets/materials/BLOG.png"
+          />
         </div>
       </main>
 

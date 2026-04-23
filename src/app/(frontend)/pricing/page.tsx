@@ -60,6 +60,12 @@ export default async function PricingPage() {
         </article>
 
         <article className={`${styles.planCard} ${styles.featured} reveal d1`}>
+          <img
+            alt=""
+            aria-hidden="true"
+            className={styles.proCat}
+            src="/assets/materials/PRICE 1.png"
+          />
           <span className={styles.planBadge}>Full power</span>
           <h2 className={styles.planName}>Pro</h2>
           <p className={styles.planDesc}>
@@ -154,15 +160,23 @@ export default async function PricingPage() {
       </section>
 
       <section className={`${styles.pricingCta} cta-band`} aria-labelledby="pricing-cta">
-        <h2 className="reveal" id="pricing-cta">
-          Every session makes
-          <br />
-          Noumi <em>more yours.</em>
-        </h2>
-        <p className="reveal d1">Start free. Your first session is already a head start.</p>
-        <Link className="btn-cream reveal d2" href="/invite">
-          Try Noumi Free →
-        </Link>
+        <div className={styles.pricingCtaInner}>
+          <img
+            alt=""
+            aria-hidden="true"
+            className={styles.pricingCtaCat}
+            src="/assets/materials/PRICE 2.png"
+          />
+          <h2 className="reveal" id="pricing-cta">
+            Every session makes
+            <br />
+            Noumi <em>more yours.</em>
+          </h2>
+          <p className="reveal d1">Start free. Your first session is already a head start.</p>
+          <Link className="btn-cream reveal d2" href="/invite">
+            Try Noumi Free →
+          </Link>
+        </div>
       </section>
 
       <OfficialHomeFooter useCases={useCases} />

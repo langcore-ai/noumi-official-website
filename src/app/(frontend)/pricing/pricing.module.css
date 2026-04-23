@@ -65,6 +65,17 @@
   border-color: transparent;
 }
 
+.proCat {
+  position: absolute;
+  top: -60px;
+  right: 20px;
+  width: 104px;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
 .teamCard {
   background: var(--cream);
   border-color: rgba(75, 75, 232, 0.28);
@@ -323,8 +334,35 @@
 }
 
 .pricingCta {
+  position: relative;
+  overflow: hidden;
+  padding: 0 48px;
+}
+
+.pricingCtaInner {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 420px;
+  padding: 132px 0 144px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding-bottom: 96px;
+}
+
+.pricingCtaCat {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  transform: translateX(-640px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .pricingCta h2 {
@@ -356,5 +394,42 @@
   .pricingCta {
     padding-left: 24px;
     padding-right: 24px;
+  }
+
+  .proCat {
+    top: -50px;
+    right: 18px;
+    width: 86px;
+  }
+
+  .pricingCtaInner {
+    min-height: 360px;
+    padding: 96px 0 108px;
+  }
+
+  .pricingCtaCat {
+    height: 88%;
+    transform: translateX(-360px);
+  }
+}
+
+@media (max-width: 560px) {
+  .pricingCtaInner {
+    min-height: auto;
+    padding: 84px 0 96px;
+  }
+
+  .pricingCtaCat {
+    width: min(56vw, 240px);
+    height: auto;
+    top: 28px;
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.92;
+  }
+
+  .pricingCta h2 {
+    margin-top: 88px;
   }
 }

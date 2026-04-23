@@ -78,7 +78,7 @@ button {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   color: var(--text-primary);
   text-decoration: none;
 }
@@ -211,7 +211,7 @@ button {
 }
 
 .hero {
-  padding-top: 180px;
+  padding-top: 140px;
 }
 
 .hero__inner {
@@ -288,12 +288,12 @@ button {
   flex-wrap: wrap;
   justify-content: center;
   gap: 14px;
-  margin-top: 44px;
+  margin-top: 15px;
 }
 
 .hero-visual {
   position: relative;
-  margin-top: 78px;
+  margin-top: 0px;
 }
 
 .hero-visual__wrap {

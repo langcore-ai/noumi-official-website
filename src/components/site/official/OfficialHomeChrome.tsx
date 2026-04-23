@@ -18,9 +18,9 @@ export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }
           <img
             alt=""
             className="brand__icon brand__icon--img"
-            src="/assets/materials/web-icon.png"
+            src="/assets/materials/WEB ICON.png"
           />
-          <img alt="Noumi" className="brand__title-img" src="/assets/materials/web-title.png" />
+          <img alt="Noumi" className="brand__title-img" src="/assets/materials/WEB TITLE.png" />
         </Link>
 
         <nav aria-label="Primary" className="site-nav">
@@ -56,9 +56,9 @@ export function OfficialUseCaseHeader(props: {
           <img
             alt=""
             className="brand__icon brand__icon--img"
-            src="/assets/materials/web-icon.png"
+            src="/assets/materials/WEB ICON.png"
           />
-          <img alt="Noumi" className="brand__title-img" src="/assets/materials/web-title.png" />
+          <img alt="Noumi" className="brand__title-img" src="/assets/materials/WEB TITLE.png" />
         </Link>
 
         <nav aria-label="Use case navigation" className="site-nav site-nav--use-case">
@@ -101,11 +101,11 @@ export function OfficialHomeFooter(props: { useCases: OfficialUseCaseNavItem[] }
       <div className="container footer-grid">
         <div>
           <Link aria-label="Noumi home" className="brand brand--footer" href="/">
-            <img alt="" className="brand__icon brand__icon--img" src="/assets/materials/web-icon.png" />
+            <img alt="" className="brand__icon brand__icon--img" src="/assets/materials/WEB ICON.png" />
             <img
               alt="Noumi"
               className="brand__title-img brand__title-img--footer"
-              src="/assets/materials/web-title.png"
+              src="/assets/materials/WEB TITLE.png"
             />
           </Link>
           <p className="footer-note">Don&apos;t teach your AI twice.</p>

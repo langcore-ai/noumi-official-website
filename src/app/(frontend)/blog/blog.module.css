@@ -1,0 +1,208 @@
+/* Blog 列表页专属样式，避免卡片与订阅区 class 泄漏到其它路由。 */
+.blogWrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 48px 120px;
+}
+
+.blogGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 72px;
+}
+
+.blogCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  border: 1px solid var(--border-med);
+  border-radius: 18px;
+  overflow: hidden;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    border-color 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blogCard:hover {
+  box-shadow: 0 16px 48px rgba(28, 27, 46, 0.1);
+  transform: translateY(-4px);
+  border-color: rgba(75, 75, 232, 0.22);
+}
+
+.blogCardCover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  line-height: 0;
+  flex-shrink: 0;
+  background: var(--cream-mid);
+}
+
+.blogCardCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blogCardBody {
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.blogCardTags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.blogCardTag {
+  background: rgba(75, 75, 232, 0.08);
+  border: 1px solid rgba(75, 75, 232, 0.14);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 16px;
+}
+
+.blogCardMeta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 300;
+}
+
+.blogCardTitle {
+  font-family: var(--ff-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.blogCard:hover .blogCardTitle {
+  color: var(--accent);
+}
+
+.blogCardExcerpt {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  flex: 1;
+}
+
+.blogCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.blogCardRead {
+  color: var(--accent);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s;
+}
+
+.blogCard:hover .blogCardRead {
+  gap: 8px;
+}
+
+.blogCardTime {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 300;
+}
+
+.blogSubscribe {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+}
+
+.blogSubscribe h3 {
+  font-family: var(--ff-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.blogSubscribe p {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.subscribeForm {
+  display: flex;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.subscribeInput {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-med);
+  background: var(--cream-mid);
+  font-family: var(--ff-body);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.subscribeBtn {
+  padding: 12px 20px;
+  background: var(--ink);
+  color: var(--cream);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--ff-body);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .blogWrap {
+    padding: 0 24px 80px;
+  }
+
+  .blogGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .blogGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .subscribeForm {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,102 @@
+/* FAQ 页面专属样式。 */
+.faqWrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 48px 96px;
+}
+
+.faqCategory {
+  margin-bottom: 64px;
+}
+
+.categoryLabel {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-muted);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--border);
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqQuestion {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none;
+}
+
+.faqQuestion:hover {
+  color: var(--accent);
+}
+
+.faqQuestion::after {
+  content: "+";
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+  transition: transform 0.25s;
+}
+
+.faqItem[open] .faqQuestion::after {
+  transform: rotate(45deg);
+  color: var(--accent);
+}
+
+.faqAnswer {
+  padding: 0 0 24px;
+  font-size: 15.5px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.8;
+}
+
+.faqAnswer :global(.markdown-content p) {
+  font-size: 15.5px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.faqFooter {
+  text-align: center;
+  padding: 64px 0 0;
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+}
+
+.faqFooter p {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+}
+
+.faqFooter a {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent);
+}

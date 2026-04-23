@@ -44,6 +44,98 @@ const isNextBuild =
 const isProduction = process.env.NODE_ENV === 'production'
 /** redirects 插件可引用的内部集合 */
 const redirectTargetCollections: string[] = [BlogPosts.slug, UseCasePages.slug]
+/** SEO 插件预览 URL 的兜底站点地址 */
+const defaultSeoSiteUrl = 'https://noumi.ai'
+
+/**
+ * 清洗 Payload 文档中的文本值
+ * @param value 原始字段值
+ * @returns 非空文本
+ */
+function normalizePayloadText(value: unknown): string | undefined {
+  const text = typeof value === 'string' ? value.trim() : ''
+
+  return text ? text : undefined
+}
+
+/**
+ * 从文档对象中读取嵌套文本
+ * @param doc Payload 文档
+ * @param path 字段路径
+ * @returns 非空文本
+ */
+function readPayloadText(doc: unknown, path: string[]): string | undefined {
+  let current: unknown = doc
+
+  for (const key of path) {
+    if (!current || typeof current !== 'object') {
+      return undefined
+    }
+
+    current = (current as Record<string, unknown>)[key]
+  }
+
+  return normalizePayloadText(current)
+}
+
+/**
+ * 为 SEO 插件生成更贴近页面内容的标题
+ * @param doc Payload 文档
+ * @param collectionSlug 当前集合 slug
+ * @returns SEO 标题
+ */
+function generateSeoTitle(doc: unknown, collectionSlug?: string): string {
+  const siteName = readPayloadText(doc, ['siteName'])
+  const title =
+    siteName ??
+    readPayloadText(doc, ['title']) ??
+    readPayloadText(doc, ['hero', 'title']) ??
+    readPayloadText(doc, ['navigationLabel']) ??
+    readPayloadText(doc, ['htmlCardTitle']) ??
+    readPayloadText(doc, ['slug'])
+
+  if (!title) {
+    return 'Noumi'
+  }
+
+  // 站点设置本身已经代表品牌名，集合页面则拼接品牌后缀。
+  return collectionSlug ? `${title} | Noumi` : title
+}
+
+/**
+ * 为 SEO 插件生成页面描述
+ * @param doc Payload 文档
+ * @returns SEO 描述
+ */
+function generateSeoDescription(doc: unknown): string {
+  return (
+    readPayloadText(doc, ['defaultDescription']) ??
+    readPayloadText(doc, ['hero', 'description']) ??
+    readPayloadText(doc, ['excerpt']) ??
+    readPayloadText(doc, ['lead']) ??
+    readPayloadText(doc, ['htmlCardDescription']) ??
+    ''
+  )
+}
+
+/**
+ * 为 SEO 插件预览生成页面 URL
+ * @param doc Payload 文档
+ * @param collectionSlug 当前集合 slug
+ * @returns 页面完整 URL
+ */
+function generateSeoURL(doc: unknown, collectionSlug?: string): string {
+  const siteUrl = readPayloadText(doc, ['siteUrl']) ?? defaultSeoSiteUrl
+  const slug = readPayloadText(doc, ['slug'])
+  const pathname =
+    collectionSlug === BlogPosts.slug && slug
+      ? `/blog/${slug}/`
+      : collectionSlug === UseCasePages.slug && slug
+        ? `/use-cases/${slug}/`
+        : '/'
+
+  return collectionSlug ? new URL(pathname, siteUrl).toString() : siteUrl
+}
 
 /**
  * 创建结构化日志方法
@@ -258,13 +350,9 @@ export default buildConfig({
       collections: [BlogPosts.slug, UseCasePages.slug],
       uploadsCollection: Media.slug,
       tabbedUI: true,
-      generateTitle: ({ doc }) => {
-        const siteName = typeof doc?.siteName === 'string' ? doc.siteName.trim() : ''
-        return siteName ? `${siteName} | Noumi` : 'Noumi'
-      },
-      generateDescription: ({ doc }) =>
-        typeof doc?.defaultDescription === 'string' ? doc.defaultDescription : '',
-      generateURL: ({ doc }) => (typeof doc?.siteUrl === 'string' ? doc.siteUrl : ''),
+      generateTitle: ({ collectionConfig, doc }) => generateSeoTitle(doc, collectionConfig?.slug),
+      generateDescription: ({ doc }) => generateSeoDescription(doc),
+      generateURL: ({ collectionConfig, doc }) => generateSeoURL(doc, collectionConfig?.slug),
     }),
     redirectsPlugin({
       // 当前仓库还没有页面内容集合，先降级为仅支持自定义 URL 的跳转管理

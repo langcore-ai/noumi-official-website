@@ -142,22 +142,6 @@ export const UseCasePages: CollectionConfig = {
         condition: isTemplateRenderMode,
       },
     },
-    {
-      name: 'metaTitle',
-      type: 'text',
-      localized: true,
-      admin: {
-        condition: isTemplateRenderMode,
-      },
-    },
-    {
-      name: 'metaDescription',
-      type: 'textarea',
-      localized: true,
-      admin: {
-        condition: isTemplateRenderMode,
-      },
-    },
     withTemplateCondition(MARKETING_HERO_FIELD),
     {
       name: 'heroLead',
@@ -364,14 +348,5 @@ export const UseCasePages: CollectionConfig = {
       },
     },
     withTemplateCondition(MARKETING_SECTIONS_FIELD),
-    {
-      name: 'ogImage',
-      type: 'upload',
-      relationTo: 'media',
-      localized: true,
-      admin: {
-        condition: isTemplateRenderMode,
-      },
-    },
   ],
 }

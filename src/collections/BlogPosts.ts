@@ -225,24 +225,6 @@ export const BlogPosts: CollectionConfig = {
       },
     },
     {
-      name: 'metaTitle',
-      type: 'text',
-      localized: true,
-      admin: {
-        description: '可选 SEO 标题；未填写时前台可回退到 title。',
-        condition: isTemplateRenderMode,
-      },
-    },
-    {
-      name: 'metaDescription',
-      type: 'textarea',
-      localized: true,
-      admin: {
-        description: '文章 meta description，建议控制在 160 字符以内。',
-        condition: isTemplateRenderMode,
-      },
-    },
-    {
       name: 'excerpt',
       type: 'textarea',
       localized: true,
@@ -257,16 +239,6 @@ export const BlogPosts: CollectionConfig = {
       localized: true,
       admin: {
         description: '文章页头部导语；未填写时前台可回退到 excerpt。',
-        condition: isTemplateRenderMode,
-      },
-    },
-    {
-      name: 'ogImage',
-      type: 'upload',
-      relationTo: 'media',
-      localized: true,
-      admin: {
-        description: '文章分享图；如未上传，前台可回退到站点默认 OG 图。',
         condition: isTemplateRenderMode,
       },
     },

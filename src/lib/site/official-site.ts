@@ -16,18 +16,30 @@ export const OFFICIAL_SITE_URL = 'https://noumi.ai'
 export const OFFICIAL_OG_IMAGE = '/assets/og-cover.png'
 
 /**
+ * 解析分享图地址
+ * @param image 页面级分享图
+ * @returns 绝对 URL
+ */
+function resolveOfficialImageUrl(image?: null | string): string {
+  const rawImage = image?.trim() || OFFICIAL_OG_IMAGE
+
+  return new URL(rawImage, OFFICIAL_SITE_URL).toString()
+}
+
+/**
  * 构建正式站点 metadata
  * @param options 标题与描述
  * @returns Next metadata
  */
 export function createOfficialMetadata(options: {
   description: string
+  image?: null | string
   pathname: string
   title: string
   type?: 'article' | 'website'
 }): Metadata {
   const canonical = new URL(options.pathname, OFFICIAL_SITE_URL).toString()
-  const imageUrl = new URL(OFFICIAL_OG_IMAGE, OFFICIAL_SITE_URL).toString()
+  const imageUrl = resolveOfficialImageUrl(options.image)
 
   return {
     title: options.title,

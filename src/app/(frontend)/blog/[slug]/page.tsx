@@ -33,6 +33,7 @@ export async function generateMetadata(props: BlogPostPageProps) {
   return createOfficialMetadata({
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt || post.lead || '',
+    image: post.ogImage?.url,
     pathname: `/blog/${post.slug}/`,
     type: 'article',
   })

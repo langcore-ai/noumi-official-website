@@ -14,6 +14,18 @@ import type {
 } from '@/payload-types'
 
 /**
+ * Payload SEO 插件写入的页面级 metadata。
+ */
+type CmsSeoMeta = {
+  /** SEO 标题 */
+  title?: null | string
+  /** SEO 描述 */
+  description?: null | string
+  /** 分享图 */
+  image?: Media | number | null
+}
+
+/**
  * 过滤空值
  * @param value 值
  * @returns 是否为有效值
@@ -370,6 +382,23 @@ function normalizeMedia(value?: Media | number | null): Media | null {
 }
 
 /**
+ * 规范化 Payload SEO 插件字段
+ * @param meta 插件写入的 meta 分组
+ * @returns 前台 metadata 视图
+ */
+function normalizeSeoMeta(meta?: CmsSeoMeta | null): {
+  metaDescription?: string
+  metaTitle?: string
+  ogImage: Media | null
+} {
+  return {
+    metaTitle: normalizeText(meta?.title),
+    metaDescription: normalizeText(meta?.description),
+    ogImage: normalizeMedia(meta?.image),
+  }
+}
+
+/**
  * 格式化 HTML 模式 blog 卡片日期
  * @param value ISO 日期或原始日期
  * @returns 卡片展示日期
@@ -603,9 +632,7 @@ export async function getOfficialUseCasePage(
       normalizeText(page.navigationLabel) ??
       normalizeText(page.hero?.title)?.replace(/^Noumi\s+for\s+/i, 'For ') ??
       page.slug,
-    metaTitle: normalizeText(page.metaTitle),
-    metaDescription: normalizeText(page.metaDescription),
-    ogImage: normalizeMedia(page.ogImage),
+    ...normalizeSeoMeta(page.meta),
     heroEyebrow: normalizeText(page.hero?.eyebrow),
     heroTitle: normalizeText(page.hero?.title),
     heroDescription: normalizeText(page.hero?.description),
@@ -762,9 +789,11 @@ export async function getOfficialBlogPost(slug: string): Promise<null | Official
     ...summary,
     renderMode: post.renderMode === 'html' ? 'html' : 'template',
     htmlContent: normalizeText(post.htmlContent),
-    metaTitle: normalizeText(post.metaTitle) ?? normalizeText(post.htmlCardTitle),
-    metaDescription: normalizeText(post.metaDescription) ?? normalizeText(post.htmlCardDescription),
-    ogImage: normalizeMedia(post.ogImage),
+    ...normalizeSeoMeta({
+      ...post.meta,
+      description: post.meta?.description ?? post.htmlCardDescription,
+      title: post.meta?.title ?? post.htmlCardTitle,
+    }),
     sections: mapSections(post.sections),
     relatedPosts: fallbackRelatedPosts,
   }

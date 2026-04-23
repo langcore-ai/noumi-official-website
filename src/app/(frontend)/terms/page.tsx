@@ -12,6 +12,7 @@ export async function generateMetadata() {
   return createOfficialMetadata({
     title: page.metaTitle || page.heroTitle || 'Terms of Service',
     description: page.metaDescription || page.heroDescription || 'Terms of Service',
+    image: page.ogImage?.url,
     pathname: '/terms/',
   })
 }

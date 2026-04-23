@@ -12,6 +12,7 @@ export async function generateMetadata() {
   return createOfficialMetadata({
     title: page.metaTitle || page.heroTitle || 'Privacy Policy',
     description: page.metaDescription || page.heroDescription || 'Privacy Policy',
+    image: page.ogImage?.url,
     pathname: '/privacy/',
   })
 }

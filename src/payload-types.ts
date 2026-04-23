@@ -230,14 +230,6 @@ export interface BlogPost {
    */
   htmlCardReadingTime?: string | null;
   /**
-   * 可选 SEO 标题；未填写时前台可回退到 title。
-   */
-  metaTitle?: string | null;
-  /**
-   * 文章 meta description，建议控制在 160 字符以内。
-   */
-  metaDescription?: string | null;
-  /**
    * 列表页摘要与分享描述。
    */
   excerpt?: string | null;
@@ -245,10 +237,6 @@ export interface BlogPost {
    * 文章页头部导语；未填写时前台可回退到 excerpt。
    */
   lead?: string | null;
-  /**
-   * 文章分享图；如未上传，前台可回退到站点默认 OG 图。
-   */
-  ogImage?: (number | null) | Media;
   /**
    * 文章卡片与详情页顶部封面图；支持上传 SVG。
    */
@@ -474,8 +462,6 @@ export interface UseCasePage {
    * 页签与页脚使用的短标题，例如 For Product Managers。
    */
   navigationLabel?: string | null;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
   hero?: {
     eyebrow?: string | null;
     title?: string | null;
@@ -693,7 +679,6 @@ export interface UseCasePage {
           }
       )[]
     | null;
-  ogImage?: (number | null) | Media;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -982,11 +967,8 @@ export interface BlogPostsSelect<T extends boolean = true> {
   htmlCardTitle?: T;
   htmlCardDescription?: T;
   htmlCardReadingTime?: T;
-  metaTitle?: T;
-  metaDescription?: T;
   excerpt?: T;
   lead?: T;
-  ogImage?: T;
   coverImage?: T;
   author?: T;
   readingTime?: T;
@@ -1150,8 +1132,6 @@ export interface UseCasePagesSelect<T extends boolean = true> {
   slug?: T;
   htmlContent?: T;
   navigationLabel?: T;
-  metaTitle?: T;
-  metaDescription?: T;
   hero?:
     | T
     | {
@@ -1335,7 +1315,6 @@ export interface UseCasePagesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
-  ogImage?: T;
   meta?:
     | T
     | {

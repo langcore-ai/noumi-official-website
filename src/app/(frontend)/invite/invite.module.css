@@ -125,7 +125,7 @@
 .inviteInner .inviteRegisterPrompt {
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--ink-muted);
   line-height: 1.5;
 }

@@ -64,7 +64,6 @@ export default async function InvitePage() {
 
             <OfficialInviteRequestForm />
 
-            <p className={`${styles.inviteNote} reveal d3`}>No spam. No credit card. Just your spot in line.</p>
             <p className={`${styles.inviteRegisterPrompt} reveal d3`}>
               Already have an invite code? <a href={productAuthUrl}>Register</a>
             </p>

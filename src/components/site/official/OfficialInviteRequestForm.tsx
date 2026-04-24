@@ -2,6 +2,15 @@
 
 import { useState } from 'react'
 
+type InviteLookupAction = 'idle' | 'login' | 'register' | 'duplicate' | 'request'
+
+type InviteLookupResult = {
+  action: Exclude<InviteLookupAction, 'idle'>
+  loginUrl?: string
+  registrationUrl?: string
+  status?: string
+}
+
 /**
  * 邀请申请表单
  * 提交到正式 invite 申请接口，由 Payload collection 统一写入 D1。
@@ -9,14 +18,116 @@ import { useState } from 'react'
  */
 export function OfficialInviteRequestForm() {
   const [email, setEmail] = useState('')
+  const [lookupResult, setLookupResult] = useState<InviteLookupResult | null>(null)
+  const [message, setMessage] = useState('')
+  const [isChecking, setIsChecking] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  const normalizedEmail = email.trim().toLowerCase()
+
+  /**
+   * 校验邮箱格式，避免空输入或明显错误输入触发请求。
+   * @param value 邮箱文本
+   * @returns 是否合法
+   */
+  function isValidEmail(value: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+  }
+
+  /**
+   * 根据反查结果生成按钮文案。
+   * @returns 当前按钮文案
+   */
+  function getButtonLabel(): string {
+    if (isChecking) {
+      return 'Checking…'
+    }
+
+    if (isSubmitting) {
+      return 'Requesting…'
+    }
+
+    switch (lookupResult?.action) {
+      case 'login':
+        return 'Go to Login →'
+      case 'register':
+        return 'Go to Register →'
+      case 'duplicate':
+        return 'Already Requested'
+      case 'request':
+      default:
+        return 'Request Invite →'
+    }
+  }
+
+  /**
+   * 反查当前邮箱在产品侧和官网 waitlist 中的状态。
+   * @returns 反查结果；失败或邮箱无效时返回 null
+   */
+  async function checkInviteStatus(): Promise<InviteLookupResult | null> {
+    if (!isValidEmail(normalizedEmail)) {
+      setLookupResult(null)
+      setMessage('')
+      return null
+    }
+
+    setIsChecking(true)
+
+    try {
+      const response = await fetch('/api/invite-requests/lookup', {
+        body: JSON.stringify({ email: normalizedEmail }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Invite lookup failed.')
+      }
+
+      const result = (await response.json()) as InviteLookupResult
+      setLookupResult(result)
+
+      if (result.action === 'duplicate') {
+        setMessage("You're already on the waitlist. We'll email you when your spot opens.")
+      } else {
+        setMessage('')
+      }
+
+      return result
+    } catch {
+      setLookupResult(null)
+      setMessage('')
+      return null
+    } finally {
+      setIsChecking(false)
+    }
+  }
 
   /**
    * 提交邀请申请
    */
   async function handleSubmit() {
-    if (!email.trim() || isSubmitting) {
+    if (!normalizedEmail || isSubmitting) {
+      return
+    }
+
+    const currentLookup = lookupResult ?? (await checkInviteStatus())
+
+    if (currentLookup?.action === 'login' && currentLookup.loginUrl) {
+      window.location.href = currentLookup.loginUrl
+      return
+    }
+
+    if (currentLookup?.action === 'register' && currentLookup.registrationUrl) {
+      window.location.href = currentLookup.registrationUrl
+      return
+    }
+
+    if (currentLookup?.action === 'duplicate') {
+      setMessage("You're already on the waitlist. We'll email you when your spot opens.")
       return
     }
 
@@ -29,7 +140,7 @@ export function OfficialInviteRequestForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
+          email: normalizedEmail,
           sourcePath: '/invite/',
         }),
       })
@@ -38,8 +149,27 @@ export function OfficialInviteRequestForm() {
         throw new Error('Invite request failed.')
       }
 
+      const result = (await response.json().catch((): null => null)) as InviteLookupResult | null
+      if (result?.action === 'login' && result.loginUrl) {
+        window.location.href = result.loginUrl
+        return
+      }
+
+      if (result?.action === 'register' && result.registrationUrl) {
+        window.location.href = result.registrationUrl
+        return
+      }
+
+      if (result?.action === 'duplicate') {
+        setLookupResult(result)
+        setMessage("You're already on the waitlist. We'll email you when your spot opens.")
+        return
+      }
+
       setSubmitted(true)
       setEmail('')
+      setLookupResult(null)
+      setMessage('')
     } finally {
       setIsSubmitting(false)
     }
@@ -59,7 +189,13 @@ export function OfficialInviteRequestForm() {
           autoComplete="email"
           className="invite-input"
           id="invite-email"
-          onChange={(event) => setEmail(event.target.value)}
+          onBlur={() => void checkInviteStatus()}
+          onChange={(event) => {
+            setEmail(event.target.value)
+            setSubmitted(false)
+            setLookupResult(null)
+            setMessage('')
+          }}
           placeholder="your@email.com"
           required
           type="email"
@@ -67,13 +203,20 @@ export function OfficialInviteRequestForm() {
         />
         <button
           className="invite-submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || lookupResult?.action === 'duplicate'}
           id="invite-btn"
           onClick={() => void handleSubmit()}
+          onMouseDown={(event) => {
+            // 点击按钮时避免输入框先触发 blur 反查，导致 click 被禁用状态吃掉。
+            event.preventDefault()
+          }}
           type="button"
         >
-          {isSubmitting ? 'Requesting…' : 'Request Invite →'}
+          {getButtonLabel()}
         </button>
+      </div>
+      <div className="invite-success" style={{ display: message ? 'block' : 'none' }}>
+        <p>{message}</p>
       </div>
     </>
   )

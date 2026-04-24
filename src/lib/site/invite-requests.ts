@@ -42,6 +42,33 @@ export type UpdateInviteRequestStatusInput = {
 }
 
 /**
+ * 读取单个邮箱对应的 invite request。
+ *
+ * @param payload Payload 实例
+ * @param email 已规范化的邮箱
+ * @returns 命中的 invite request；不存在时返回 null
+ */
+export async function findInviteRequestByEmail(
+  payload: Payload,
+  email: string,
+): Promise<InviteRequest | null> {
+  const response = await payload.find({
+    collection: 'invite-requests',
+    depth: 0,
+    limit: 1,
+    overrideAccess: true,
+    pagination: false,
+    where: {
+      email: {
+        equals: email,
+      },
+    },
+  })
+
+  return response.docs[0] ?? null
+}
+
+/**
  * 规范化 Payload 文档 ID。
  * 官方站当前主键是数字，但这里仍兼容字符串，避免后续切换主键类型时影响服务联调。
  *

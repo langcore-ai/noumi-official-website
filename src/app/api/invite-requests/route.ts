@@ -8,6 +8,7 @@ import {
   recordInviteRequest,
   updateInviteRequestsStatus,
 } from '@/lib/site/invite-requests'
+import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
 /** 接口依赖 Payload/D1 运行时，避免构建期静态化。 */
 export const dynamic = 'force-dynamic'
@@ -105,6 +106,31 @@ export async function POST(request: Request) {
 
   if (!isValidEmail(email)) {
     return NextResponse.json({ message: 'Invalid email address.', ok: false }, { status: 400 })
+  }
+
+  const productResult = await lookupProductInviteApplicant(email)
+  if (productResult?.state === 'registered') {
+    return NextResponse.json({
+      action: 'login',
+      loginUrl: productResult.loginUrl,
+      ok: true,
+    })
+  }
+
+  if (productResult?.state === 'approved') {
+    return NextResponse.json({
+      action: 'register',
+      ok: true,
+      registrationUrl: productResult.registrationUrl,
+    })
+  }
+
+  if (productResult?.state === 'waitlisted') {
+    return NextResponse.json({
+      action: 'duplicate',
+      ok: true,
+      status: productResult.status,
+    })
   }
 
   const headers = request.headers

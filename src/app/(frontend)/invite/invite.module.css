@@ -116,9 +116,28 @@
   transform: none;
 }
 
-.inviteNote {
+.inviteInner .inviteNote {
+  margin-bottom: 8px;
   font-size: 13px;
   color: var(--ink-muted);
+}
+
+.inviteInner .inviteRegisterPrompt {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.inviteInner .inviteRegisterPrompt a {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.inviteInner .inviteRegisterPrompt a:hover {
+  text-decoration: underline;
 }
 
 .inviteInner :global(.invite-success) {

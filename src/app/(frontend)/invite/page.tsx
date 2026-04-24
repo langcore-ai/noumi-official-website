@@ -6,6 +6,18 @@ import { createOfficialMetadata } from '@/lib/site/official-site'
 import styles from './invite.module.css'
 
 /**
+ * 构建产品注册入口地址。
+ * 官网 invite 页仅提供已有邀请码用户的直达入口，不参与邀请码校验。
+ *
+ * @returns 产品侧登录/注册页地址
+ */
+function getProductAuthUrl() {
+  const productUrl = process.env.NOUMI_PRODUCT_API_URL?.trim() || 'https://www.noumi.ai'
+
+  return new URL('/auth', productUrl).toString()
+}
+
+/**
  * Invite 页面 metadata
  */
 export async function generateMetadata() {
@@ -23,6 +35,7 @@ export async function generateMetadata() {
  */
 export default async function InvitePage() {
   const useCases = await getOfficialUseCaseNavItems()
+  const productAuthUrl = getProductAuthUrl()
 
   return (
     <div className="page-body">
@@ -52,6 +65,9 @@ export default async function InvitePage() {
             <OfficialInviteRequestForm />
 
             <p className={`${styles.inviteNote} reveal d3`}>No spam. No credit card. Just your spot in line.</p>
+            <p className={`${styles.inviteRegisterPrompt} reveal d3`}>
+              Already have an invite code? <a href={productAuthUrl}>Register</a>
+            </p>
           </div>
         </div>
       </main>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { CookieConsentBanner } from '@/components/site/CookieConsentBanner'
 import { OfficialGlobalEffects } from '@/components/site/official/OfficialGlobalEffects'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -37,6 +38,7 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
       <body>
         <OfficialGlobalEffects />
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   )

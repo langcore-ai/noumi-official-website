@@ -71,7 +71,7 @@
   right: 20px;
   width: 104px;
   aspect-ratio: 104 / 112;
-  background-image: url('/assets/materials/PRICE 1.png');
+  background-image: url('/assets/materials/PRICE 1.webp');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -364,7 +364,7 @@
   width: 920px;
   height: 100%;
   max-width: none;
-  background-image: url('/assets/materials/PRICE 2.png');
+  background-image: url('/assets/materials/PRICE 2.webp');
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: contain;

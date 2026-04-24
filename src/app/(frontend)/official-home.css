@@ -881,7 +881,7 @@ button {
   bottom: 0;
   width: min(38vw, 740px);
   aspect-ratio: 740 / 345;
-  background-image: url('/assets/materials/cat-bottom.png');
+  background-image: url('/assets/materials/cat-bottom.webp');
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: contain;

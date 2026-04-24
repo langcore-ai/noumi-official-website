@@ -196,7 +196,7 @@
   bottom: -150px;
   width: min(32vw, 380px);
   aspect-ratio: 380 / 350;
-  background-image: url('/assets/materials/BLOG.png');
+  background-image: url('/assets/materials/BLOG.webp');
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: contain;

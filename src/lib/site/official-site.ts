@@ -15,7 +15,7 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 /**
  * 默认分享图
  */
-export const OFFICIAL_OG_IMAGE = '/assets/og-cover.png'
+export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
 
 /**
  * 解析分享图地址

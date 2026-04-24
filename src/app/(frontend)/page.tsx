@@ -8,15 +8,15 @@ import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
  * 首页信任墙 Logo 配置。
  */
 const TRUSTED_LOGOS = [
-  ['microsoft.png', 'Microsoft'],
-  ['nvidia.png', 'NVIDIA'],
-  ['tencent.png', 'Tencent'],
-  ['siemens.png', 'Siemens'],
-  ['amd.png', 'AMD'],
-  ['dominos.png', "Domino's"],
-  ['alibaba-cloud.png', 'Alibaba Cloud'],
-  ['plug-and-play.png', 'Plug and Play'],
-  ['ascend.png', 'Ascend'],
+  ['microsoft.webp', 'Microsoft'],
+  ['nvidia.webp', 'NVIDIA'],
+  ['tencent.webp', 'Tencent'],
+  ['siemens.webp', 'Siemens'],
+  ['amd.webp', 'AMD'],
+  ['dominos.webp', "Domino's"],
+  ['alibaba-cloud.webp', 'Alibaba Cloud'],
+  ['plug-and-play.webp', 'Plug and Play'],
+  ['ascend.webp', 'Ascend'],
 ] as const
 
 /**
@@ -69,17 +69,17 @@ export default async function HomePage() {
               <img
                 alt="Pixel cat on the left side of the hero visual"
                 className="hero-stage__left"
-                src="/assets/materials/cat-left.png"
+                src="/assets/materials/cat-left.webp"
               />
               <img
                 alt="Main workspace window illustration"
                 className="hero-stage__window"
-                src="/assets/materials/main-window.png"
+                src="/assets/materials/main-window.webp"
               />
               <img
                 alt="Pixel cat on the right side of the hero visual"
                 className="hero-stage__right"
-                src="/assets/materials/cat-right.png"
+                src="/assets/materials/cat-right.webp"
               />
             </div>
           </div>

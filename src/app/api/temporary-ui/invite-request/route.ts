@@ -1,1 +1,1 @@
-export { dynamic, POST } from '../../invite-requests/route'
+export { dynamic, POST } from '../../site/invite-requests/route'

@@ -75,7 +75,7 @@ export function OfficialInviteRequestForm() {
     setIsChecking(true)
 
     try {
-      const response = await fetch('/api/invite-requests/lookup', {
+      const response = await fetch('/api/site/invite-requests/lookup', {
         body: JSON.stringify({ email: normalizedEmail }),
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export function OfficialInviteRequestForm() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/invite-requests', {
+      const response = await fetch('/api/site/invite-requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,9 @@
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
+import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialPrivacyPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -26,6 +30,16 @@ export default async function PrivacyPage() {
     getOfficialPrivacyPage(),
     getOfficialUseCaseNavItems(),
   ])
+
+  if (page.renderMode === 'html') {
+    return (
+      <div className="page-body">
+        <OfficialHomeHeader useCases={useCases} />
+        <OfficialRawHtml html={page.htmlContent || ''} />
+        <OfficialHomeFooter useCases={useCases} />
+      </div>
+    )
+  }
 
   return (
     <div className="page-body">

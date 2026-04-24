@@ -1,6 +1,12 @@
-import type { CollectionConfig, Condition, Field, TextareaFieldValidation } from 'payload'
+import type { CollectionConfig } from 'payload'
 
-import { contentCreateAccess, contentUpdateAccess, htmlModeFieldAccess } from '@/access/cms'
+import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import {
+  createHtmlContentField,
+  createRenderModeField,
+  isTemplateRenderMode,
+  withTemplateCondition,
+} from '@/fields/htmlRenderMode'
 import { MARKETING_HERO_FIELD, MARKETING_SECTIONS_FIELD } from '@/fields/marketingContent'
 import {
   buildPreviewURL,
@@ -8,60 +14,6 @@ import {
   getCollectionPreviewPath,
   PUBLIC_COLLECTION_VERSIONS,
 } from '@/lib/site/publishing'
-
-/**
- * 内容渲染模式字段数据
- */
-type RenderModeSiblingData = {
-  /** 前台渲染模式 */
-  renderMode?: 'html' | 'template' | null
-}
-
-/**
- * 判断字段是否应在默认模板模式下显示
- */
-const isTemplateRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingData) =>
-  siblingData.renderMode !== 'html'
-
-/**
- * 判断字段是否应在 HTML 模式下显示
- */
-const isHtmlRenderMode: Condition<any, RenderModeSiblingData> = (_, siblingData) =>
-  siblingData.renderMode === 'html'
-
-/** HTML 模式字段仅允许管理员与内容编辑写入 */
-const htmlModeWriteAccess = {
-  create: htmlModeFieldAccess,
-  update: htmlModeFieldAccess,
-}
-
-/**
- * 给默认模板字段追加后台显示条件
- * @param field Payload 字段配置
- * @returns 仅默认模板模式显示的字段配置
- */
-function withTemplateCondition(field: Field): Field {
-  return {
-    ...field,
-    admin: {
-      ...('admin' in field ? field.admin : undefined),
-      condition: isTemplateRenderMode,
-    },
-  } as Field
-}
-
-/**
- * 校验 HTML 模式必填源码
- */
-const validateHtmlContent: TextareaFieldValidation = (value, { siblingData }) => {
-  const renderMode = (siblingData as RenderModeSiblingData | undefined)?.renderMode
-
-  if (renderMode !== 'html' || value?.trim()) {
-    return true
-  }
-
-  return 'HTML 模式必须粘贴 HTML 内容。'
-}
 
 /**
  * Use Case 页面集合
@@ -90,27 +42,7 @@ export const UseCasePages: CollectionConfig = {
     delete: contentCreateAccess,
   },
   fields: [
-    {
-      name: 'renderMode',
-      type: 'select',
-      defaultValue: 'template',
-      label: '渲染模式',
-      options: [
-        {
-          label: '默认模板模式',
-          value: 'template',
-        },
-        {
-          label: 'HTML 模式',
-          value: 'html',
-        },
-      ],
-      required: true,
-      access: htmlModeWriteAccess,
-      admin: {
-        description: '默认模板沿用当前 use case 结构；HTML 模式只需要 slug 与 HTML 内容。',
-      },
-    },
+    createRenderModeField('默认模板沿用当前 use case 结构；HTML 模式只需要 slug 与 HTML 内容。'),
     {
       name: 'slug',
       type: 'text',
@@ -121,18 +53,7 @@ export const UseCasePages: CollectionConfig = {
         description: 'Use case 路由 slug；应与固定外部 URL 保持一致。',
       },
     },
-    {
-      name: 'htmlContent',
-      type: 'textarea',
-      localized: true,
-      label: 'HTML 内容',
-      validate: validateHtmlContent,
-      access: htmlModeWriteAccess,
-      admin: {
-        condition: isHtmlRenderMode,
-        description: '仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。',
-      },
-    },
+    createHtmlContentField(),
     {
       name: 'navigationLabel',
       type: 'text',

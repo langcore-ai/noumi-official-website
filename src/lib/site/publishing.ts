@@ -1,7 +1,17 @@
 import type { Access, CollectionConfig, GlobalConfig, PayloadRequest } from 'payload'
 
-import { CMS_CONTENT_UPDATE_ROLES, CMS_LEGAL_UPDATE_ROLES, hasAnyCmsRole, type CmsUserRole } from '@/access/cms'
-import { DEFAULT_CONTENT_LOCALE, normalizeSiteLocale, SITE_LOCALE_COOKIE, type SiteLocale } from '@/lib/site/i18n'
+import {
+  CMS_CONTENT_UPDATE_ROLES,
+  CMS_LEGAL_UPDATE_ROLES,
+  hasAnyCmsRole,
+  type CmsUserRole,
+} from '@/access/cms'
+import {
+  DEFAULT_CONTENT_LOCALE,
+  normalizeSiteLocale,
+  SITE_LOCALE_COOKIE,
+  type SiteLocale,
+} from '@/lib/site/i18n'
 import { normalizeSiteHref } from '@/lib/site/url'
 
 /** 是否为生产环境。 */
@@ -96,6 +106,7 @@ export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_U
 export const LIVE_PREVIEW_COLLECTIONS = ['blog-posts', 'use-case-pages'] as const
 /** 支持 Payload live preview 的全局配置 slug 列表 */
 export const LIVE_PREVIEW_GLOBALS = [
+  'faq-page',
   'privacy-page',
   'terms-page',
   'site-settings',
@@ -113,6 +124,7 @@ type PreviewDoc = {
 
 /** 全局页面预览路径映射 */
 const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
+  'faq-page': '/faqs/',
   'privacy-page': '/privacy/',
   'terms-page': '/terms/',
   'site-settings': '/',

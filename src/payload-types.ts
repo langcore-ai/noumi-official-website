@@ -101,11 +101,13 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
+    'faq-page': FaqPage;
     'privacy-page': PrivacyPage;
     'terms-page': TermsPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
     'terms-page': TermsPageSelect<false> | TermsPageSelect<true>;
   };
@@ -1570,6 +1572,24 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page".
+ */
+export interface FaqPage {
+  id: number;
+  /**
+   * 默认模板模式继续读取 FAQ 条目；HTML 模式只需要 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "privacy-page".
  */
 export interface PrivacyPage {
@@ -1577,6 +1597,14 @@ export interface PrivacyPage {
   metaTitle?: string | null;
   metaDescription?: string | null;
   ogImage?: (number | null) | Media;
+  /**
+   * 默认模板模式沿用当前法律页结构；HTML 模式只需要 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
   hero?: {
     eyebrow?: string | null;
     title?: string | null;
@@ -1769,6 +1797,14 @@ export interface TermsPage {
   metaTitle?: string | null;
   metaDescription?: string | null;
   ogImage?: (number | null) | Media;
+  /**
+   * 默认模板模式沿用当前法律页结构；HTML 模式只需要 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
   hero?: {
     eyebrow?: string | null;
     title?: string | null;
@@ -2007,12 +2043,26 @@ export interface SiteSettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page_select".
+ */
+export interface FaqPageSelect<T extends boolean = true> {
+  renderMode?: T;
+  htmlContent?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "privacy-page_select".
  */
 export interface PrivacyPageSelect<T extends boolean = true> {
   metaTitle?: T;
   metaDescription?: T;
   ogImage?: T;
+  renderMode?: T;
+  htmlContent?: T;
   hero?:
     | T
     | {
@@ -2171,6 +2221,8 @@ export interface TermsPageSelect<T extends boolean = true> {
   metaTitle?: T;
   metaDescription?: T;
   ogImage?: T;
+  renderMode?: T;
+  htmlContent?: T;
   hero?:
     | T
     | {
@@ -2348,7 +2400,7 @@ export interface TaskSchedulePublish {
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
-    global?: ('site-settings' | 'privacy-page' | 'terms-page') | null;
+    global?: ('site-settings' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
     user?: (number | null) | User;
   };
   output?: unknown;

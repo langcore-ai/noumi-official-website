@@ -1,5 +1,9 @@
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
+import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialTermsPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -22,10 +26,17 @@ export async function generateMetadata() {
  * @returns 法律文档页面
  */
 export default async function TermsPage() {
-  const [page, useCases] = await Promise.all([
-    getOfficialTermsPage(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const [page, useCases] = await Promise.all([getOfficialTermsPage(), getOfficialUseCaseNavItems()])
+
+  if (page.renderMode === 'html') {
+    return (
+      <div className="page-body">
+        <OfficialHomeHeader useCases={useCases} />
+        <OfficialRawHtml html={page.htmlContent || ''} />
+        <OfficialHomeFooter useCases={useCases} />
+      </div>
+    )
+  }
 
   return (
     <div className="page-body">

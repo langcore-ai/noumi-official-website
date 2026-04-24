@@ -1,6 +1,14 @@
 import { MarkdownContent } from '@/components/site/MarkdownContent'
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
-import { getOfficialFaqCategories, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
+import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
+import {
+  getOfficialFaqCategories,
+  getOfficialFaqPage,
+  getOfficialUseCaseNavItems,
+} from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './faqs.module.css'
@@ -22,10 +30,21 @@ export async function generateMetadata() {
  * @returns FAQ 页面内容
  */
 export default async function FaqPage() {
-  const [categories, useCases] = await Promise.all([
+  const [page, categories, useCases] = await Promise.all([
+    getOfficialFaqPage(),
     getOfficialFaqCategories(),
     getOfficialUseCaseNavItems(),
   ])
+
+  if (page.renderMode === 'html') {
+    return (
+      <div className="page-body">
+        <OfficialHomeHeader useCases={useCases} />
+        <OfficialRawHtml html={page.htmlContent || ''} />
+        <OfficialHomeFooter useCases={useCases} />
+      </div>
+    )
+  }
 
   return (
     <div className="page-body">
@@ -41,7 +60,11 @@ export default async function FaqPage() {
           <div className={`${styles.faqCategory} reveal`} key={category.title}>
             <h2 className={styles.categoryLabel}>{category.title}</h2>
             {category.items.map((item, index) => (
-              <details className={styles.faqItem} key={item.id} open={index === category.items.length - 1}>
+              <details
+                className={styles.faqItem}
+                key={item.id}
+                open={index === category.items.length - 1}
+              >
                 <summary className={styles.faqQuestion}>{item.question}</summary>
                 <div className={styles.faqAnswer}>
                   <MarkdownContent markdown={item.answer} />

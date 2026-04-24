@@ -8,6 +8,7 @@ import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type {
   BlogPost,
+  FaqPage,
   FaqItem,
   Media,
   PrivacyPage,
@@ -307,9 +308,23 @@ export type OfficialFaqCategoryView = {
 }
 
 /**
+ * FAQ 页面视图
+ */
+export type OfficialFaqPageView = {
+  /** 前台渲染模式 */
+  renderMode: 'html' | 'template'
+  /** HTML 模式源码 */
+  htmlContent?: string
+}
+
+/**
  * 法律页面视图
  */
 export type OfficialLegalPageView = {
+  /** 前台渲染模式 */
+  renderMode: 'html' | 'template'
+  /** HTML 模式源码 */
+  htmlContent?: string
   /** SEO 标题 */
   metaTitle?: string
   /** SEO 描述 */
@@ -452,27 +467,23 @@ function mapButton(label?: null | string, href?: null | string): OfficialButton 
  * @returns 分节视图
  */
 function mapSections(
-  sections?: Array<
-    | {
-        blockType?: null | string
-        label?: null | string
-        title?: null | string
-        description?: null | string
-        paragraphs?: Array<{ text?: null | string } | null> | null
-        bullets?: Array<{ text?: null | string } | null> | null
-        markdown?: null | string
-        style?: null | string
-        primaryCtaLabel?: null | string
-        primaryCtaHref?: null | string
-        secondaryCtaLabel?: null | string
-        secondaryCtaHref?: null | string
-        image?: Media | number | null
-        alt?: null | string
-        caption?: null | string
-      }
-    | null
-  >
-    | null,
+  sections?: Array<{
+    blockType?: null | string
+    label?: null | string
+    title?: null | string
+    description?: null | string
+    paragraphs?: Array<{ text?: null | string } | null> | null
+    bullets?: Array<{ text?: null | string } | null> | null
+    markdown?: null | string
+    style?: null | string
+    primaryCtaLabel?: null | string
+    primaryCtaHref?: null | string
+    secondaryCtaLabel?: null | string
+    secondaryCtaHref?: null | string
+    image?: Media | number | null
+    alt?: null | string
+    caption?: null | string
+  } | null> | null,
 ): OfficialContentSection[] {
   return (sections ?? [])
     .map((section) => {
@@ -496,9 +507,7 @@ function mapSections(
             paragraphs,
             bullets,
             style:
-              section.style === 'article' || section.style === 'plain'
-                ? section.style
-                : 'panel',
+              section.style === 'article' || section.style === 'plain' ? section.style : 'panel',
           } satisfies OfficialRichTextSection
         case 'markdown-document': {
           const markdown = normalizeText(section.markdown)
@@ -595,9 +604,7 @@ export async function getOfficialUseCaseNavItems(): Promise<OfficialUseCaseNavIt
     ...(await getPublicReadOptions()),
   })
 
-  return docs
-    .map((doc) => mapUseCaseNavItem(doc))
-    .filter(isPresent)
+  return docs.map((doc) => mapUseCaseNavItem(doc)).filter(isPresent)
 }
 
 /**
@@ -719,7 +726,9 @@ function mapBlogPostSummary(post: BlogPost): OfficialBlogPostSummary | null {
     publishedAt: isHtmlMode
       ? formatHtmlBlogCardDate(post.publishedAt || post.createdAt)
       : normalizeText(post.publishedAt),
-    readingTime: isHtmlMode ? normalizeText(post.htmlCardReadingTime) : normalizeText(post.readingTime),
+    readingTime: isHtmlMode
+      ? normalizeText(post.htmlCardReadingTime)
+      : normalizeText(post.readingTime),
     tags: isHtmlMode
       ? [normalizeText(post.htmlCardTag)].filter((tag): tag is string => Boolean(tag))
       : (post.tags ?? [])
@@ -802,6 +811,24 @@ export async function getOfficialBlogPost(slug: string): Promise<null | Official
 }
 
 /**
+ * 获取 FAQ 页面配置
+ * @returns FAQ 页面视图
+ */
+export async function getOfficialFaqPage(): Promise<OfficialFaqPageView> {
+  const payload = await getPayloadClient()
+  const page = await payload.findGlobal({
+    slug: 'faq-page',
+    depth: 0,
+    ...(await getPublicReadOptions()),
+  })
+
+  return {
+    renderMode: (page as FaqPage).renderMode === 'html' ? 'html' : 'template',
+    htmlContent: normalizeText((page as FaqPage).htmlContent),
+  }
+}
+
+/**
  * 获取 FAQ 分组
  * @returns FAQ 分组列表
  */
@@ -855,6 +882,8 @@ export async function getOfficialFaqCategories(): Promise<OfficialFaqCategoryVie
  */
 function mapLegalPage(page: PrivacyPage | TermsPage): OfficialLegalPageView {
   return {
+    renderMode: page.renderMode === 'html' ? 'html' : 'template',
+    htmlContent: normalizeText(page.htmlContent),
     metaTitle: normalizeText(page.metaTitle),
     metaDescription: normalizeText(page.metaDescription),
     ogImage: normalizeMedia(page.ogImage),

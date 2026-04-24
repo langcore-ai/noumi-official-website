@@ -19,6 +19,7 @@ import { BlogPosts } from './collections/BlogPosts'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { InviteRequests } from './collections/InviteRequests'
+import { FaqPage } from './globals/FaqPage'
 import { PrivacyPage } from './globals/PrivacyPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
@@ -34,12 +35,16 @@ const dirname = path.dirname(filename)
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
 
 /** 是否正在通过 Payload CLI 执行命令 */
-const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
+const isCLI = process.argv.some((value) =>
+  realpath(value)?.endsWith(path.join('payload', 'bin.js')),
+)
 /** 是否是 Next.js 生产构建阶段 */
 const isNextBuild =
   process.env.NEXT_PHASE === 'phase-production-build' ||
   process.env.npm_lifecycle_event === 'build' ||
-  (process.argv.some((value) => realpath(value)?.endsWith(path.join('next', 'dist', 'bin', 'next'))) &&
+  (process.argv.some((value) =>
+    realpath(value)?.endsWith(path.join('next', 'dist', 'bin', 'next')),
+  ) &&
     process.argv.includes('build'))
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
@@ -297,7 +302,7 @@ export default buildConfig({
       : undefined,
   },
   collections: [Users, Media, BlogPosts, UseCasePages, FaqItems, InviteRequests],
-  globals: [SiteSettings, PrivacyPage, TermsPage],
+  globals: [SiteSettings, FaqPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',

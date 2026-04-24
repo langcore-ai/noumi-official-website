@@ -60,12 +60,7 @@ export default async function PricingPage() {
         </article>
 
         <article className={`${styles.planCard} ${styles.featured} reveal d1`}>
-          <img
-            alt=""
-            aria-hidden="true"
-            className={styles.proCat}
-            src="/assets/materials/PRICE 1.png"
-          />
+          <span aria-hidden="true" className={styles.proCat} />
           <span className={styles.planBadge}>Full power</span>
           <h2 className={styles.planName}>Pro</h2>
           <p className={styles.planDesc}>
@@ -161,12 +156,7 @@ export default async function PricingPage() {
 
       <section className={`${styles.pricingCta} cta-band`} aria-labelledby="pricing-cta">
         <div className={styles.pricingCtaInner}>
-          <img
-            alt=""
-            aria-hidden="true"
-            className={styles.pricingCtaCat}
-            src="/assets/materials/PRICE 2.png"
-          />
+          <span aria-hidden="true" className={styles.pricingCtaCat} />
           <h2 className="reveal" id="pricing-cta">
             Every session makes
             <br />

@@ -70,7 +70,11 @@
   top: -60px;
   right: 20px;
   width: 104px;
-  height: auto;
+  aspect-ratio: 104 / 112;
+  background-image: url('/assets/materials/PRICE 1.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -357,9 +361,13 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: auto;
+  width: 920px;
   height: 100%;
   max-width: none;
+  background-image: url('/assets/materials/PRICE 2.png');
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: contain;
   transform: translateX(-640px);
   pointer-events: none;
   user-select: none;

@@ -5,6 +5,21 @@ import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffe
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 
 /**
+ * 首页信任墙 Logo 配置。
+ */
+const TRUSTED_LOGOS = [
+  ['microsoft.png', 'Microsoft'],
+  ['nvidia.png', 'NVIDIA'],
+  ['tencent.png', 'Tencent'],
+  ['siemens.png', 'Siemens'],
+  ['amd.png', 'AMD'],
+  ['dominos.png', "Domino's"],
+  ['alibaba-cloud.png', 'Alibaba Cloud'],
+  ['plug-and-play.png', 'Plug and Play'],
+  ['ascend.png', 'Ascend'],
+] as const
+
+/**
  * 官网首页
  * @returns 首页内容
  */
@@ -77,34 +92,21 @@ export default async function HomePage() {
             </h2>
             <div className="trusted__track-wrapper">
               <div className="trusted__track">
-                {[
-                  ['microsoft.png', 'Microsoft'],
-                  ['nvidia.png', 'NVIDIA'],
-                  ['tencent.png', 'Tencent'],
-                  ['siemens.png', 'Siemens'],
-                  ['amd.png', 'AMD'],
-                  ['dominos.png', "Domino's"],
-                  ['alibaba-cloud.png', 'Alibaba Cloud'],
-                  ['plug-and-play.png', 'Plug and Play'],
-                  ['ascend.png', 'Ascend'],
-                ].map(([logo, alt]) => (
+                {TRUSTED_LOGOS.map(([logo, alt]) => (
                   <div className="trusted__item" key={logo}>
                     <img alt={alt} src={`/assets/logos/${logo}`} />
                   </div>
                 ))}
-                {[
-                  'microsoft.png',
-                  'nvidia.png',
-                  'tencent.png',
-                  'siemens.png',
-                  'amd.png',
-                  'dominos.png',
-                  'alibaba-cloud.png',
-                  'plug-and-play.png',
-                  'ascend.png',
-                ].map((logo) => (
-                  <div aria-hidden="true" className="trusted__item" key={`dup-${logo}`}>
-                    <img alt="" src={`/assets/logos/${logo}`} />
+                {TRUSTED_LOGOS.map(([logo]) => (
+                  <div
+                    aria-hidden="true"
+                    className="trusted__item trusted__item--decorative"
+                    key={`dup-${logo}`}
+                  >
+                    <span
+                      className="trusted__logo-copy"
+                      style={{ backgroundImage: `url(/assets/logos/${logo})` }}
+                    />
                   </div>
                 ))}
               </div>
@@ -245,7 +247,7 @@ export default async function HomePage() {
               <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <img alt="" className="home-cta-band__cat" src="/assets/materials/cat-bottom.png" />
+          <span aria-hidden="true" className="home-cta-band__cat" />
         </section>
       </main>
 

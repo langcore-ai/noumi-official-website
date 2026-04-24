@@ -85,8 +85,8 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
           </header>
 
           {post.coverImage?.url ? (
-            <figure aria-hidden="true" className={`${styles.postCover} reveal d2`}>
-              <img alt="" src={post.coverImage.url} />
+            <figure className={`${styles.postCover} reveal d2`}>
+              <img alt={`${post.title} cover image`} src={post.coverImage.url} />
             </figure>
           ) : null}
         </article>
@@ -102,7 +102,12 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
           </div>
           <Link className={styles.moreCard} href={`/blog/${post.relatedPosts[0].slug}`}>
             <div className={styles.moreThumb}>
-              {post.relatedPosts[0].coverImage?.url ? <img alt="" src={post.relatedPosts[0].coverImage.url} /> : null}
+              {post.relatedPosts[0].coverImage?.url ? (
+                <img
+                  alt={`${post.relatedPosts[0].title} cover image`}
+                  src={post.relatedPosts[0].coverImage.url}
+                />
+              ) : null}
             </div>
             <div className={styles.moreBody}>
               <div className={styles.moreTags}>

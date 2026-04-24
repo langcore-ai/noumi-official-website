@@ -195,7 +195,11 @@
   left: calc(100% + 28px);
   bottom: -150px;
   width: min(32vw, 380px);
-  height: auto;
+  aspect-ratio: 380 / 350;
+  background-image: url('/assets/materials/BLOG.png');
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: contain;
   pointer-events: none;
   user-select: none;
   z-index: 2;

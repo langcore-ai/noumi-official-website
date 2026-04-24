@@ -16,7 +16,7 @@ export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
           <img
-            alt=""
+            alt="Noumi icon"
             className="brand__icon brand__icon--img"
             src="/assets/materials/WEB ICON.png"
           />
@@ -54,7 +54,7 @@ export function OfficialUseCaseHeader(props: {
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
           <img
-            alt=""
+            alt="Noumi icon"
             className="brand__icon brand__icon--img"
             src="/assets/materials/WEB ICON.png"
           />
@@ -101,7 +101,11 @@ export function OfficialHomeFooter(props: { useCases: OfficialUseCaseNavItem[] }
       <div className="container footer-grid">
         <div>
           <Link aria-label="Noumi home" className="brand brand--footer" href="/">
-            <img alt="" className="brand__icon brand__icon--img" src="/assets/materials/WEB ICON.png" />
+            <img
+              alt="Noumi icon"
+              className="brand__icon brand__icon--img"
+              src="/assets/materials/WEB ICON.png"
+            />
             <img
               alt="Noumi"
               className="brand__title-img brand__title-img--footer"

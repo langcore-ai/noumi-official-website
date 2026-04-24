@@ -44,8 +44,10 @@ export default async function BlogIndexPage() {
         <div className={`${styles.blogGrid} reveal`}>
           {posts.map((post) => (
             <Link className={styles.blogCard} href={`/blog/${post.slug}`} key={post.slug}>
-              <div aria-hidden="true" className={styles.blogCardCover}>
-                {post.coverImage?.url ? <img alt="" src={post.coverImage.url} /> : null}
+              <div className={styles.blogCardCover}>
+                {post.coverImage?.url ? (
+                  <img alt={`${post.title} cover image`} src={post.coverImage.url} />
+                ) : null}
               </div>
               <div className={styles.blogCardBody}>
                 <div className={styles.blogCardTags}>
@@ -70,12 +72,7 @@ export default async function BlogIndexPage() {
             <input className={styles.subscribeInput} placeholder="your@email.com" type="email" />
             <button className={styles.subscribeBtn} type="button">Subscribe</button>
           </div>
-          <img
-            alt=""
-            aria-hidden="true"
-            className={styles.blogFooterCat}
-            src="/assets/materials/BLOG.png"
-          />
+          <span aria-hidden="true" className={styles.blogFooterCat} />
         </div>
       </main>
 

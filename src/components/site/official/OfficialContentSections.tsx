@@ -27,7 +27,10 @@ export function OfficialContentSections(props: {
               {section.title ? <h2 className="official-section-title">{section.title}</h2> : null}
               <figure className="official-image-block">
                 {section.image?.url ? (
-                  <img alt={section.alt || section.title || ''} src={section.image.url} />
+                  <img
+                    alt={section.alt || section.title || section.caption || 'Content section image'}
+                    src={section.image.url}
+                  />
                 ) : null}
                 {section.caption ? <figcaption>{section.caption}</figcaption> : null}
               </figure>

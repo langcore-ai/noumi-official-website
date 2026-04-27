@@ -18,10 +18,14 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
 
 /**
- * 官网 favicon 路径
- * 站点统一引用 public 下的副本，避免直接依赖原始素材目录。
+ * 官网浅色模式 favicon
  */
-export const OFFICIAL_FAVICON = '/favicon.webp'
+export const OFFICIAL_LIGHT_FAVICON = '/noumi.svg'
+
+/**
+ * 官网深色模式 favicon
+ */
+export const OFFICIAL_DARK_FAVICON = '/noumi-white.svg'
 
 /**
  * 解析分享图地址
@@ -55,11 +59,17 @@ export function createOfficialMetadata(options: {
     icons: {
       icon: [
         {
-          url: OFFICIAL_FAVICON,
-          type: 'image/webp',
+          url: OFFICIAL_LIGHT_FAVICON,
+          type: 'image/svg+xml',
+          media: '(prefers-color-scheme: light)',
+        },
+        {
+          url: OFFICIAL_DARK_FAVICON,
+          type: 'image/svg+xml',
+          media: '(prefers-color-scheme: dark)',
         },
       ],
-      shortcut: [OFFICIAL_FAVICON],
+      shortcut: OFFICIAL_LIGHT_FAVICON,
     },
     alternates: {
       canonical,

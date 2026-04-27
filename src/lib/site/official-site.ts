@@ -18,6 +18,12 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
 
 /**
+ * 官网 favicon 路径
+ * 站点统一引用 public 下的副本，避免直接依赖原始素材目录。
+ */
+export const OFFICIAL_FAVICON = '/favicon.webp'
+
+/**
  * 解析分享图地址
  * @param image 页面级分享图
  * @returns 绝对 URL
@@ -46,6 +52,15 @@ export function createOfficialMetadata(options: {
   return {
     title: options.title,
     description: options.description,
+    icons: {
+      icon: [
+        {
+          url: OFFICIAL_FAVICON,
+          type: 'image/webp',
+        },
+      ],
+      shortcut: [OFFICIAL_FAVICON],
+    },
     alternates: {
       canonical,
       languages: {

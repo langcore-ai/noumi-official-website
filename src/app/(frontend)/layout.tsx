@@ -19,9 +19,9 @@ export const dynamic = 'force-dynamic'
  */
 export async function generateMetadata() {
   return createOfficialMetadata({
-    title: 'Noumi — Your AI Digital Twin That Gets Work Done',
+    title: 'AI Personal Assistant That Works Like a Colleague | Noumi',
     description:
-      'Noumi is an AI assistant that remembers your context and executes work autonomously. For PMs, journalists, and solution experts — and anyone done starting over.',
+      'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
     pathname: '/',
   })
 }

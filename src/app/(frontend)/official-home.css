@@ -255,8 +255,8 @@ button {
 .hero__title {
   margin-top: 34px;
   max-width: 1120px;
-  font-size: clamp(56px, 6.3vw, 92px);
-  line-height: 0.9;
+  font-size: clamp(40px, 4.5vw, 66px);
+  line-height: 0.98;
   font-weight: 700;
 }
 
@@ -279,7 +279,7 @@ button {
   margin: 34px 0 0;
   max-width: 900px;
   color: var(--text-secondary);
-  font-size: clamp(17px, 1.55vw, 20px);
+  font-size: clamp(15px, 1.35vw, 18px);
   line-height: 1.7;
 }
 
@@ -1061,11 +1061,11 @@ button {
   }
 
   .hero__title {
-    font-size: clamp(44px, 14vw, 66px);
+    font-size: clamp(30px, 9vw, 44px);
   }
 
   .hero__copy {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .hero__actions {

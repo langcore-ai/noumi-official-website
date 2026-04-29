@@ -40,17 +40,15 @@ export default async function HomePage() {
             </div>
 
             <h1 className="hero__title reveal is-visible">
-              A self-refining <span>Digital Twin</span>
+              Autonomous AI Personal Assistant
               <br />
-              that does the work for you.
+              Built to <span>Actually Do the Work</span>
             </h1>
 
             <p className="hero__copy reveal is-visible">
-              Noumi remembers everything and gets the work done.
+              Noumi is your AI personal assistant that works like a colleague — 
               <br />
-              For the heavy-context professionals — PMs, journalists, and solution experts.
-              <br />
-              And for anyone done starting over.
+              understanding context, managing tasks, and delivering results without constant prompting.
             </p>
 
             <div className="hero__actions reveal is-visible">

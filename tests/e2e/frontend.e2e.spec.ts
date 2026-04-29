@@ -11,10 +11,10 @@ test.describe('Frontend', () => {
   test('can go on homepage', async ({ page }) => {
     await page.goto('http://localhost:3000')
 
-    await expect(page).toHaveTitle(/Payload Blank Template/)
+    await expect(page).toHaveTitle(/Noumi — Your AI Digital Twin That Gets Work Done/)
 
     const heading = page.locator('h1').first()
 
-    await expect(heading).toHaveText('Welcome to your new project.')
+    await expect(heading).toContainText('A self-refining')
   })
 })

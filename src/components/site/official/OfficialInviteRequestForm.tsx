@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { useOfficialAnalytics } from '@/components/site/OfficialAnalyticsProvider'
+
 type InviteLookupAction = 'idle' | 'login' | 'register' | 'duplicate' | 'request'
 
 type InviteLookupResult = {
@@ -17,6 +19,7 @@ type InviteLookupResult = {
  * @returns 表单节点
  */
 export function OfficialInviteRequestForm() {
+  const { capture } = useOfficialAnalytics()
   const [email, setEmail] = useState('')
   const [lookupResult, setLookupResult] = useState<InviteLookupResult | null>(null)
   const [message, setMessage] = useState('')
@@ -90,6 +93,12 @@ export function OfficialInviteRequestForm() {
       const result = (await response.json()) as InviteLookupResult
       setLookupResult(result)
 
+      capture('official_invite_lookup_completed', {
+        action: result.action,
+        source_path: '/invite',
+        status: result.status ?? null,
+      })
+
       if (result.action === 'duplicate') {
         setMessage("You're already on the waitlist. We'll email you when your spot opens.")
       } else {
@@ -117,11 +126,21 @@ export function OfficialInviteRequestForm() {
     const currentLookup = lookupResult ?? (await checkInviteStatus())
 
     if (currentLookup?.action === 'login' && currentLookup.loginUrl) {
+      capture('official_product_auth_redirected', {
+        action: 'login',
+        source_path: '/invite',
+        target_path: '/auth',
+      })
       window.location.href = currentLookup.loginUrl
       return
     }
 
     if (currentLookup?.action === 'register' && currentLookup.registrationUrl) {
+      capture('official_product_auth_redirected', {
+        action: 'register',
+        source_path: '/invite',
+        target_path: '/auth',
+      })
       window.location.href = currentLookup.registrationUrl
       return
     }
@@ -151,11 +170,21 @@ export function OfficialInviteRequestForm() {
 
       const result = (await response.json().catch((): null => null)) as InviteLookupResult | null
       if (result?.action === 'login' && result.loginUrl) {
+        capture('official_product_auth_redirected', {
+          action: 'login',
+          source_path: '/invite',
+          target_path: '/auth',
+        })
         window.location.href = result.loginUrl
         return
       }
 
       if (result?.action === 'register' && result.registrationUrl) {
+        capture('official_product_auth_redirected', {
+          action: 'register',
+          source_path: '/invite',
+          target_path: '/auth',
+        })
         window.location.href = result.registrationUrl
         return
       }
@@ -166,6 +195,10 @@ export function OfficialInviteRequestForm() {
         return
       }
 
+      capture('official_invite_request_submitted', {
+        outcome: 'created',
+        source_path: '/invite',
+      })
       setSubmitted(true)
       setEmail('')
       setLookupResult(null)

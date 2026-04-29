@@ -65,7 +65,17 @@ export default async function InvitePage() {
             <OfficialInviteRequestForm />
 
             <p className={`${styles.inviteRegisterPrompt} reveal d3`}>
-              Already have an invite code? <a href={productAuthUrl}>Register</a>
+              Already have an invite code?{' '}
+              <a
+                data-analytics-action="register"
+                data-analytics-cta-id="invite_register_link"
+                data-analytics-event="official_product_auth_redirected"
+                data-analytics-placement="invite_secondary"
+                data-analytics-target-path="/auth"
+                href={productAuthUrl}
+              >
+                Register
+              </a>
             </p>
           </div>
         </div>

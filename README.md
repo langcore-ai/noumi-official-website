@@ -220,6 +220,10 @@ PAYLOAD_LOG_LEVEL=info
 PAYLOAD_ENABLE_DEV_AUTOSAVE=true
 PAYLOAD_ENABLE_DEV_LIVE_PREVIEW=true
 TEMPORARY_UI_ENABLED=true
+POSTHOG_ENABLED=false
+POSTHOG_PROJECT_KEY=phc_xxx
+POSTHOG_BROWSER_API_HOST=https://e.noumi.ai
+POSTHOG_UI_HOST=https://us.posthog.com
 ```
 
 说明：
@@ -228,6 +232,10 @@ TEMPORARY_UI_ENABLED=true
 - `PAYLOAD_PREVIEW_SECRET` 用于 draft preview，未配置时会回退到 `PAYLOAD_SECRET`。
 - 本地默认关闭高频 autosave 和 live preview，以减少 D1 / Miniflare 锁竞争。
 - `TEMPORARY_UI_ENABLED` 是早期命名遗留的开关，用于控制 invite UI 相关能力，具体生效点以代码为准。
+- `POSTHOG_ENABLED` 控制官网前台是否加载 PostHog。
+- `POSTHOG_PROJECT_KEY` 是 PostHog 的公开 project key。
+- `POSTHOG_BROWSER_API_HOST` 应指向反向代理域名，生产默认建议用 `https://e.noumi.ai`。
+- `POSTHOG_UI_HOST` 是 PostHog 控制台地址，默认 `https://us.posthog.com`。
 
 ### 启动开发服务器
 
@@ -332,6 +340,7 @@ Cloudflare 绑定配置在 `wrangler.jsonc`。
 - D1 database id 正确。
 - R2 bucket 名称正确。
 - Workers 环境变量中存在生产 `PAYLOAD_SECRET`。
+- 如启用官网分析，还需要在 Workers 环境中设置 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_BROWSER_API_HOST` 和 `POSTHOG_UI_HOST`。
 - 如使用 preview，确认 `PAYLOAD_PREVIEW_SECRET` 策略。
 
 ### 日志
@@ -412,6 +421,17 @@ bun test
 ```
 
 对于纯文案、纯 README、无运行时代码变更，可以不跑完整测试，但应人工确认文档中的脚本和路径仍与项目一致。
+
+### 官网埋点验证
+
+在本地或预发环境启用 `POSTHOG_ENABLED=true` 后，建议补一轮手工验证：
+
+- 接受 cookie banner 的 Analytics 选项后，`/`、`/invite`、`/pricing` 和 `/about` 的主要 CTA 会向 `POSTHOG_BROWSER_API_HOST` 发请求。
+- 每个 session 的首个官网入口页会发送 `landing_page_viewed`，不再只限首页；`official_page_viewed`、`official_cta_clicked`、`official_invite_lookup_completed` 和 `official_invite_request_submitted` 也会进入 PostHog。
+- 带埋点属性的 CTA 跳转产品侧时，会追加安全归因参数：`first_touch_source`、`first_touch_medium`、`first_touch_campaign`、`first_touch_referrer_origin`、`first_touch_landing_page`、`official_cta_id`、`source_surface=official`，以及仅用于主站注册后 PostHog alias 合并的 `posthog_anonymous_distinct_id`。
+- `app_active` 是 60 秒可见态心跳，带 `active_seconds=60`，用于主 dashboard 估算日均使用时长。
+- 浏览器请求与事件属性里不应出现邮箱、prompt、文件内容、URL query 或其他敏感值。
+- 拒绝 Analytics 时，官网不应再发 PostHog 请求。
 
 ## 内容维护指南
 

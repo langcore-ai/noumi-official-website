@@ -47,7 +47,14 @@ export function OfficialInnerHeader(props: { useCases: OfficialUseCaseNavItem[] 
           <Link href="/pricing">Pricing</Link>
         </li>
         <li>
-          <Link className="nav-cta" href="/invite">
+          <Link
+            className="nav-cta"
+            data-analytics-cta-id="inner_header_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="header"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
             Try Free →
           </Link>
         </li>

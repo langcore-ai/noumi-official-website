@@ -77,7 +77,14 @@ export default async function AboutPage() {
           the <em>less you have to explain.</em>
         </h2>
         <p className="reveal d1">Free to start. No credit card required.</p>
-        <a className="btn-cream reveal d2" href="/invite">
+        <a
+          className="btn-cream reveal d2"
+          data-analytics-cta-id="about_band_try_free"
+          data-analytics-event="official_cta_clicked"
+          data-analytics-placement="cta_band"
+          data-analytics-target-path="/invite"
+          href="/invite"
+        >
           Start building your AI today →
         </a>
       </section>

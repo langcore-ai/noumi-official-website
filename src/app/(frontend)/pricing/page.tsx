@@ -48,7 +48,16 @@ export default async function PricingPage() {
             </div>
             <div className={styles.trialBadge}>Free for 1 month</div>
           </div>
-          <Link className={styles.planCta} href="/invite">Start free →</Link>
+          <Link
+            className={styles.planCta}
+            data-analytics-cta-id="pricing_starter_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="pricing_card"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
+            Start free →
+          </Link>
           <ul className={styles.planFeatures}>
             <li>1,200 points / month</li>
             <li>Claude Sonnet model</li>
@@ -71,7 +80,16 @@ export default async function PricingPage() {
             <span className={styles.amount}>$100</span>
             <span className={styles.period}>/ month</span>
           </div>
-          <Link className={styles.planCta} href="/invite">Get started →</Link>
+          <Link
+            className={styles.planCta}
+            data-analytics-cta-id="pricing_pro_get_started"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="pricing_card"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
+            Get started →
+          </Link>
           <ul className={styles.planFeatures}>
             <li>6,000 points / month</li>
             <li>Claude Sonnet + Opus models</li>
@@ -163,7 +181,14 @@ export default async function PricingPage() {
             Noumi <em>more yours.</em>
           </h2>
           <p className="reveal d1">Start free. Your first session is already a head start.</p>
-          <Link className="btn-cream reveal d2" href="/invite">
+          <Link
+            className="btn-cream reveal d2"
+            data-analytics-cta-id="pricing_band_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="cta_band"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
             Try Noumi Free →
           </Link>
         </div>

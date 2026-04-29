@@ -27,7 +27,14 @@ export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }
           <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
           <Link href="/blog">Blog</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link className="button button--dark button--nav" href="/invite">
+          <Link
+            className="button button--dark button--nav"
+            data-analytics-cta-id="home_header_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="header"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
             Try Free
             <span aria-hidden="true">→</span>
           </Link>
@@ -78,7 +85,14 @@ export function OfficialUseCaseHeader(props: {
           <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
           <Link href="/blog">Blog</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link className="button button--dark button--nav" href="/invite">
+          <Link
+            className="button button--dark button--nav"
+            data-analytics-cta-id="use_case_header_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="header"
+            data-analytics-target-path="/invite"
+            href="/invite"
+          >
             Try Free
             <span aria-hidden="true">→</span>
           </Link>

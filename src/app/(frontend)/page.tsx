@@ -34,10 +34,7 @@ export default async function HomePage() {
       <main id="top">
         <section className="hero">
           <div className="container hero__inner">
-            <div className="hero__badge reveal is-visible">
-              <span className="hero__badge-dot"></span>
-              Don&apos;t teach your AI twice.
-            </div>
+            <span className="sec-label reveal is-visible">Don&apos;t teach your AI twice.</span>
 
             <h1 className="hero__title reveal is-visible">
               Autonomous AI Personal Assistant

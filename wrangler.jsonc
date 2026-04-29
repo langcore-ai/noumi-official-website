@@ -13,6 +13,9 @@
   ],
   "vars": {
     "NOUMI_PRODUCT_API_URL": "https://www.noumi.ai",
+    "POSTHOG_ENABLED": "true",
+    "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
+    "POSTHOG_UI_HOST": "https://us.posthog.com"
   },
   "assets": {
     "directory": ".open-next/assets",

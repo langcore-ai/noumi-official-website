@@ -101,12 +101,14 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
+    'use-cases-page': UseCasesPage;
     'faq-page': FaqPage;
     'privacy-page': PrivacyPage;
     'terms-page': TermsPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'use-cases-page': UseCasesPageSelect<false> | UseCasesPageSelect<true>;
     'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
     'terms-page': TermsPageSelect<false> | TermsPageSelect<true>;
@@ -1572,6 +1574,70 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "use-cases-page".
+ */
+export interface UseCasesPage {
+  id: number;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: (number | null) | Media;
+  /**
+   * 最多配置 3 张小卡片；未配置时前台不展示卡片。
+   */
+  cards?:
+    | {
+        /**
+         * 卡片点击后跳转到这里选择的 use case 详情页。
+         */
+        targetUseCase: number | UseCasePage;
+        tone: 'pm' | 'journalist' | 'solutions';
+        /**
+         * 未上传自定义头像时，前台使用这里选择的本地头像素材。
+         */
+        avatarPreset?: ('pm' | 'journalist' | 'solutions') | null;
+        /**
+         * 优先于头像预置；未上传时使用预置头像。
+         */
+        avatarImage?: (number | null) | Media;
+        title: string;
+        description: string;
+        ctaLabel: string;
+        id?: string | null;
+      }[]
+    | null;
+  moreTitle?: string | null;
+  /**
+   * 按钮会自动读取已发布 use case，coming soon 胶囊在下方配置。
+   */
+  moreDescription?: string | null;
+  /**
+   * 展示为不可点击的虚线胶囊。
+   */
+  comingSoonRoles?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  faqEyebrow?: string | null;
+  faqTitle?: string | null;
+  faqDescription?: string | null;
+  /**
+   * 回答支持少量 HTML，例如 <strong>、<a>，用于还原原型中的强调与链接。
+   */
+  faqItems?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-page".
  */
 export interface FaqPage {
@@ -2043,6 +2109,49 @@ export interface SiteSettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "use-cases-page_select".
+ */
+export interface UseCasesPageSelect<T extends boolean = true> {
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  cards?:
+    | T
+    | {
+        targetUseCase?: T;
+        tone?: T;
+        avatarPreset?: T;
+        avatarImage?: T;
+        title?: T;
+        description?: T;
+        ctaLabel?: T;
+        id?: T;
+      };
+  moreTitle?: T;
+  moreDescription?: T;
+  comingSoonRoles?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  faqEyebrow?: T;
+  faqTitle?: T;
+  faqDescription?: T;
+  faqItems?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-page_select".
  */
 export interface FaqPageSelect<T extends boolean = true> {
@@ -2400,7 +2509,7 @@ export interface TaskSchedulePublish {
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
-    global?: ('site-settings' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
+    global?: ('site-settings' | 'use-cases-page' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
     user?: (number | null) | User;
   };
   output?: unknown;

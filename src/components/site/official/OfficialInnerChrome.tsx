@@ -15,14 +15,33 @@ function renderUseCaseLinks(useCases: OfficialUseCaseNavItem[]) {
   ))
 }
 
+type OfficialInnerHeaderProps = {
+  /** 当前主导航激活项 */
+  activeItem?: 'blog' | 'pricing' | 'use-cases'
+  /** use case 列表 */
+  useCases: OfficialUseCaseNavItem[]
+}
+
+/**
+ * 判断主导航项是否激活
+ * @param activeItem 当前激活项
+ * @param item 导航项
+ * @returns 是否激活
+ */
+function getNavLinkClass(
+  activeItem: OfficialInnerHeaderProps['activeItem'],
+  item: NonNullable<OfficialInnerHeaderProps['activeItem']>,
+) {
+  return activeItem === item ? 'is-active' : undefined
+}
+
 /**
  * 正式内页导航
  * @param props 组件参数
  * @returns 导航栏
  */
-export function OfficialInnerHeader(props: { useCases: OfficialUseCaseNavItem[] }) {
-  const { useCases } = props
-  const primaryUseCase = useCases[0]
+export function OfficialInnerHeader(props: OfficialInnerHeaderProps) {
+  const { activeItem } = props
 
   return (
     <nav
@@ -38,13 +57,19 @@ export function OfficialInnerHeader(props: { useCases: OfficialUseCaseNavItem[] 
       </Link>
       <ul className="nav-links">
         <li>
-          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
+          <Link className={getNavLinkClass(activeItem, 'use-cases')} href="/use-cases">
+            Use Cases
+          </Link>
         </li>
         <li>
-          <Link href="/blog">Blog</Link>
+          <Link className={getNavLinkClass(activeItem, 'blog')} href="/blog">
+            Blog
+          </Link>
         </li>
         <li>
-          <Link href="/pricing">Pricing</Link>
+          <Link className={getNavLinkClass(activeItem, 'pricing')} href="/pricing">
+            Pricing
+          </Link>
         </li>
         <li>
           <Link

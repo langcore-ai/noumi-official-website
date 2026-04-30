@@ -42,6 +42,7 @@ img   { display: block; max-width: 100%; }
 .official-inner-nav .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
 .official-inner-nav .nav-links a { font-size: 14px; color: var(--ink-soft); transition: color 0.2s; }
 .official-inner-nav .nav-links a:hover { color: var(--ink); }
+.official-inner-nav .nav-links a.is-active { color: var(--ink); font-weight: 500; }
 .official-inner-nav .nav-cta {
   background: var(--ink) !important; color: var(--cream) !important;
   padding: 9px 22px; border-radius: 7px; font-weight: 500 !important;

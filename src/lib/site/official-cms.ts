@@ -14,6 +14,7 @@ import type {
   PrivacyPage,
   TermsPage,
   UseCasePage,
+  UseCasesPage,
 } from '@/payload-types'
 
 /**
@@ -149,6 +150,70 @@ export type OfficialUseCaseNavItem = {
   label: string
   /** 页面标题 */
   title: string
+}
+
+/** Use Cases 聚合页卡片视觉样式 */
+export type OfficialUseCasesCardTone = 'journalist' | 'pm' | 'solutions'
+
+/** Use Cases 聚合页卡片预置头像 */
+export type OfficialUseCasesCardAvatarPreset = 'journalist' | 'pm' | 'solutions'
+
+/**
+ * Use Cases 聚合页顶部卡片
+ */
+export type OfficialUseCasesCard = {
+  /** 指向的 use case slug */
+  slug: string
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  description: string
+  /** 跳转文案 */
+  ctaLabel: string
+  /** 视觉样式 */
+  tone: OfficialUseCasesCardTone
+  /** 卡片头像地址，上传优先，未上传时使用预置头像 */
+  avatarSrc: string
+}
+
+/**
+ * Use Cases 聚合页 FAQ 条目
+ */
+export type OfficialUseCasesFaqItem = {
+  /** FAQ 主键 */
+  id: string
+  /** 问题 */
+  question: string
+  /** 回答，允许后台配置少量 HTML */
+  answer: string
+}
+
+/**
+ * Use Cases 聚合页视图
+ */
+export type OfficialUseCasesPageView = {
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** 顶部卡片 */
+  cards: OfficialUseCasesCard[]
+  /** Not your role 卡片标题 */
+  moreTitle: string
+  /** Not your role 卡片描述 */
+  moreDescription: string
+  /** coming soon 胶囊 */
+  comingSoonRoles: string[]
+  /** FAQ 角标 */
+  faqEyebrow: string
+  /** FAQ 标题 */
+  faqTitle: string
+  /** FAQ 描述 */
+  faqDescription: string
+  /** FAQ 条目 */
+  faqItems: OfficialUseCasesFaqItem[]
 }
 
 /**
@@ -587,6 +652,162 @@ function mapUseCaseNavItem(page: UseCasePage): OfficialUseCaseNavItem | null {
     slug,
     label: navigationLabel,
     title,
+  }
+}
+
+/** Use Cases 聚合页卡片预置头像素材。 */
+const USE_CASES_CARD_AVATAR_SRC_BY_PRESET: Record<OfficialUseCasesCardAvatarPreset, string> = {
+  pm: '/assets/use-cases/avatar-pm.webp',
+  journalist: '/assets/use-cases/avatar-journalist.webp',
+  solutions: '/assets/use-cases/avatar-se.webp',
+}
+
+/**
+ * 规范化 Use Cases 聚合页卡片样式
+ * @param value CMS 原始样式
+ * @returns 有效样式
+ */
+function normalizeUseCasesCardTone(value?: null | string): OfficialUseCasesCardTone {
+  if (value === 'journalist' || value === 'pm' || value === 'solutions') {
+    return value
+  }
+
+  return 'pm'
+}
+
+/**
+ * 规范化 Use Cases 聚合页卡片预置头像
+ * @param value CMS 原始预置值
+ * @param fallbackTone 卡片视觉样式，用于头像未选择时兜底
+ * @returns 有效预置头像
+ */
+function normalizeUseCasesCardAvatarPreset(
+  value: null | string | undefined,
+  fallbackTone: OfficialUseCasesCardTone,
+): OfficialUseCasesCardAvatarPreset {
+  if (value === 'journalist' || value === 'pm' || value === 'solutions') {
+    return value
+  }
+
+  return fallbackTone
+}
+
+/**
+ * 解析 Use Cases 聚合页卡片头像地址
+ * @param card CMS 卡片
+ * @param tone 卡片视觉样式
+ * @returns 上传头像地址或预置头像地址
+ */
+function resolveUseCasesCardAvatarSrc(
+  card: NonNullable<UseCasesPage['cards']>[number],
+  tone: OfficialUseCasesCardTone,
+): string {
+  const uploadedAvatar = normalizeMedia(card.avatarImage)
+
+  if (uploadedAvatar?.url) {
+    return uploadedAvatar.url
+  }
+
+  const preset = normalizeUseCasesCardAvatarPreset(card.avatarPreset, tone)
+
+  return USE_CASES_CARD_AVATAR_SRC_BY_PRESET[preset]
+}
+
+/**
+ * 映射 Use Cases 聚合页卡片
+ * @param card CMS 卡片
+ * @returns 前台卡片
+ */
+function mapUseCasesCard(
+  card?: NonNullable<UseCasesPage['cards']>[number] | null,
+): OfficialUseCasesCard | null {
+  const target =
+    card?.targetUseCase && typeof card.targetUseCase === 'object'
+      ? mapUseCaseNavItem(card.targetUseCase)
+      : null
+
+  if (!target) {
+    return null
+  }
+
+  const title = normalizeText(card?.title)
+  const description = normalizeText(card?.description)
+  const ctaLabel = normalizeText(card?.ctaLabel)
+
+  if (!title || !description || !ctaLabel) {
+    return null
+  }
+
+  const tone = normalizeUseCasesCardTone(card?.tone)
+
+  return {
+    slug: target.slug,
+    title,
+    description,
+    ctaLabel,
+    tone,
+    avatarSrc: resolveUseCasesCardAvatarSrc(card, tone),
+  }
+}
+
+/**
+ * 映射 Use Cases 专属 FAQ
+ * @param item CMS FAQ 条目
+ * @param index 当前序号
+ * @returns 前台 FAQ
+ */
+function mapUseCasesFaqItem(
+  item: NonNullable<UseCasesPage['faqItems']>[number] | null | undefined,
+  index: number,
+): OfficialUseCasesFaqItem | null {
+  const question = normalizeText(item?.question)
+  const answer = normalizeText(item?.answer)
+
+  if (!question || !answer) {
+    return null
+  }
+
+  return {
+    id: item?.id ?? `faq-${index}`,
+    question,
+    answer,
+  }
+}
+
+/**
+ * 获取 Use Cases 聚合页配置
+ * @returns 聚合页视图
+ */
+export async function getOfficialUseCasesPage(): Promise<OfficialUseCasesPageView> {
+  const payload = await getPayloadClient()
+  const page = await payload.findGlobal({
+    slug: 'use-cases-page',
+    depth: 1,
+    ...(await getPublicReadOptions()),
+  })
+  const typedPage = page as UseCasesPage
+  const configuredCards = (typedPage.cards ?? [])
+    .map((card) => mapUseCasesCard(card))
+    .filter(isPresent)
+  const configuredFaqItems = (typedPage.faqItems ?? [])
+    .map((item, index) => mapUseCasesFaqItem(item, index))
+    .filter(isPresent)
+  const comingSoonRoles = (typedPage.comingSoonRoles ?? [])
+    .map((item) => normalizeText(item?.label))
+    .filter((label): label is string => Boolean(label))
+
+  return {
+    metaTitle: normalizeText(typedPage.metaTitle),
+    metaDescription: normalizeText(typedPage.metaDescription),
+    ogImage: normalizeMedia(typedPage.ogImage),
+    cards: configuredCards,
+    moreTitle: normalizeText(typedPage.moreTitle) ?? '',
+    moreDescription: normalizeText(typedPage.moreDescription) ?? '',
+    comingSoonRoles,
+    faqEyebrow: normalizeText(typedPage.faqEyebrow) ?? '',
+    faqTitle: normalizeText(typedPage.faqTitle) ?? '',
+    faqDescription: normalizeText(typedPage.faqDescription) ?? '',
+    faqItems: configuredFaqItems,
   }
 }
 

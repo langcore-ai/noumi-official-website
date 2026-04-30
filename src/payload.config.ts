@@ -23,6 +23,7 @@ import { FaqPage } from './globals/FaqPage'
 import { PrivacyPage } from './globals/PrivacyPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
+import { UseCasesPage } from './globals/UseCasesPage'
 import {
   buildLivePreviewURL,
   ENABLE_PAYLOAD_LIVE_PREVIEW,
@@ -302,7 +303,7 @@ export default buildConfig({
       : undefined,
   },
   collections: [Users, Media, BlogPosts, UseCasePages, FaqItems, InviteRequests],
-  globals: [SiteSettings, FaqPage, PrivacyPage, TermsPage],
+  globals: [SiteSettings, UseCasesPage, FaqPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',

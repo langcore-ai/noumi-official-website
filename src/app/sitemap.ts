@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/pricing',
     '/privacy',
     '/terms',
+    '/use-cases',
     ...blogPosts.map((post) => `/blog/${post.slug}`),
     ...useCases.map((useCase) => `/use-cases/${useCase.slug}`),
   ].map((pathname) => ({

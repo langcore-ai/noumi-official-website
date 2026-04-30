@@ -7,10 +7,7 @@ import type { OfficialUseCaseNavItem } from '@/lib/site/official-cms'
  * @param props use case 页签
  * @returns 首页头部
  */
-export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }) {
-  const { useCases } = props
-  const primaryUseCase = useCases[0]
-
+export function OfficialHomeHeader(_props: { useCases: OfficialUseCaseNavItem[] }) {
   return (
     <header className="site-header" data-official-nav id="nav">
       <div className="container nav-row">
@@ -24,7 +21,7 @@ export function OfficialHomeHeader(props: { useCases: OfficialUseCaseNavItem[] }
         </Link>
 
         <nav aria-label="Primary" className="site-nav">
-          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
+          <Link href="/use-cases">Use Cases</Link>
           <Link href="/blog">Blog</Link>
           <Link href="/pricing">Pricing</Link>
           <Link
@@ -54,7 +51,6 @@ export function OfficialUseCaseHeader(props: {
   useCases: OfficialUseCaseNavItem[]
 }) {
   const { activeSlug, useCases } = props
-  const primaryUseCase = useCases[0]
 
   return (
     <header className="site-header" data-official-nav id="nav">
@@ -82,7 +78,7 @@ export function OfficialUseCaseHeader(props: {
         </nav>
 
         <nav aria-label="Primary" className="site-nav">
-          <Link href={primaryUseCase ? `/use-cases/${primaryUseCase.slug}` : '/'}>Use Cases</Link>
+          <Link href="/use-cases">Use Cases</Link>
           <Link href="/blog">Blog</Link>
           <Link href="/pricing">Pricing</Link>
           <Link

@@ -1,0 +1,513 @@
+/* Use Cases 聚合页专属样式，尽量贴合 HTML 原型并避免影响详情页。 */
+
+.pageHero {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 60px 48px 56px;
+  text-align: center;
+}
+
+.pageHero h1 {
+  margin-bottom: 20px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.pageHero h1 em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.pageHero p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--ink-soft);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.heroCat {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.heroCat img {
+  width: auto;
+  height: 96px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+
+.ucWrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 28px 48px 96px;
+}
+
+.ucGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 96px;
+}
+
+.ucCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+  background: var(--cream);
+  border: 1px solid var(--border-med);
+  border-radius: 20px;
+  transition:
+    box-shadow 0.28s ease,
+    transform 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.ucCard:hover {
+  box-shadow: 0 20px 56px rgba(28, 27, 46, 0.11);
+  transform: translateY(-5px);
+}
+
+.ucCardPm:hover {
+  border-color: rgba(75, 75, 232, 0.3);
+}
+
+.ucCardJournalist:hover {
+  border-color: rgba(190, 122, 94, 0.4);
+}
+
+.ucCardSolutions:hover {
+  border-color: rgba(90, 154, 106, 0.4);
+}
+
+.ucCardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 22px 24px;
+}
+
+.ucCardText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.ucCardTitle {
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  transition: color 0.2s;
+}
+
+.ucCardPm:hover .ucCardTitle {
+  color: var(--accent);
+}
+
+.ucCardJournalist:hover .ucCardTitle {
+  color: #9c5a3a;
+}
+
+.ucCardSolutions:hover .ucCardTitle {
+  color: #3a7a4a;
+}
+
+.ucCardDesc {
+  flex: 1;
+  margin-bottom: 24px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.ucCardCta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-top: 1px solid var(--border);
+  transition: gap 0.2s;
+}
+
+.ucCardPm .ucCardCta {
+  color: var(--accent);
+}
+
+.ucCardJournalist .ucCardCta {
+  color: #9c5a3a;
+}
+
+.ucCardSolutions .ucCardCta {
+  color: #3a7a4a;
+}
+
+.ucCard:hover .ucCardCta {
+  gap: 10px;
+}
+
+.ucAvatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  margin-top: 2px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+}
+
+.ucAvatarPm {
+  background: rgba(75, 75, 232, 0.06);
+  border-color: rgba(75, 75, 232, 0.25);
+}
+
+.ucAvatarJournalist {
+  background: rgba(190, 122, 94, 0.08);
+  border-color: rgba(190, 122, 94, 0.3);
+}
+
+.ucAvatarSolutions {
+  background: rgba(90, 154, 106, 0.08);
+  border-color: rgba(90, 154, 106, 0.3);
+}
+
+.ucAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.ucMore {
+  display: flex;
+  gap: 56px;
+  align-items: center;
+  padding: 52px 56px;
+  margin-bottom: 96px;
+  background: var(--cream-mid);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+}
+
+.ucMoreCat {
+  flex-shrink: 0;
+}
+
+.ucMoreCat img {
+  width: auto;
+  height: 140px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  opacity: 0.88;
+}
+
+.ucMoreText {
+  flex: 1;
+}
+
+.ucMoreText h2 {
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.ucMoreText p {
+  max-width: 520px;
+  margin-bottom: 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.ucRolesPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ucPill {
+  padding: 7px 16px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 400;
+  background: var(--cream);
+  border: 1px solid var(--border-med);
+  border-radius: 100px;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.ucPill:hover {
+  color: var(--accent);
+  border-color: rgba(75, 75, 232, 0.3);
+}
+
+.ucPillSoon {
+  color: var(--ink-muted);
+  font-size: 12.5px;
+  background: transparent;
+  border-style: dashed;
+}
+
+.ucPillSoon::after {
+  font-size: 11px;
+  opacity: 0.55;
+  content: ' ·soon';
+}
+
+.ucFaqWrap {
+  max-width: 780px;
+  padding: 0 0 96px;
+  margin: 0 auto;
+}
+
+.ucFaqHead {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.ucFaqHead h2 {
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.028em;
+}
+
+.ucFaqHead p {
+  color: var(--ink-muted);
+  font-size: 15.5px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--border);
+}
+
+.faqItem:first-of-type {
+  border-top: 1px solid var(--border);
+}
+
+.faqQuestion {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 22px 4px;
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-size: 15.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.2s;
+}
+
+.faqQuestion:hover {
+  color: var(--accent);
+}
+
+.faqIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--ink-muted);
+  font-size: 16px;
+  border: 1px solid var(--border-med);
+  border-radius: 50%;
+  transition:
+    transform 0.25s,
+    background 0.2s;
+}
+
+.faqItemOpen .faqIcon {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.38s ease;
+}
+
+.faqAnswerInner {
+  padding: 0 4px 22px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.faqAnswerInner strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.faqItemOpen .faqAnswer {
+  max-height: 640px;
+}
+
+.ctaBand {
+  position: relative;
+  padding: 120px 48px;
+  overflow: hidden;
+  text-align: center;
+  background: var(--ink);
+}
+
+.ctaBandImg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 42.5%;
+  pointer-events: none;
+  user-select: none;
+  opacity: 1;
+}
+
+.ctaBand h2 {
+  max-width: 680px;
+  margin: 0 auto 16px;
+  color: var(--cream);
+  font-family: var(--ff-display);
+  font-size: clamp(30px, 4.5vw, 58px);
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  line-height: 1.12;
+}
+
+.ctaBand h2 em {
+  color: var(--accent-soft);
+  font-style: italic;
+}
+
+.ctaBand p {
+  margin-bottom: 44px;
+  color: rgba(245, 240, 232, 0.45);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.btnCream {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 34px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--cream);
+  border-radius: 8px;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+.btnCream:hover {
+  background: var(--cream-mid);
+  transform: translateY(-2px);
+}
+
+.ctaBandBtn {
+  padding: 18px 44px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+
+@media (max-width: 960px) {
+  .pageHero {
+    padding: 72px 24px 48px;
+  }
+
+  .ucWrap {
+    padding: 16px 24px 72px;
+  }
+
+  .ucGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ucMore {
+    flex-direction: column;
+    gap: 32px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+
+  .ucMoreCat {
+    display: none;
+  }
+
+  .ucRolesPills {
+    justify-content: center;
+  }
+
+  .ucFaqWrap {
+    padding: 0 24px 72px;
+  }
+
+  .ctaBand {
+    padding: 80px 24px;
+  }
+
+  .ctaBandImg {
+    height: 35%;
+  }
+}
+
+@media (max-width: 600px) {
+  .pageHero {
+    padding: 40px 24px 36px;
+  }
+
+  .ucGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ucCardBody {
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .ucAvatar {
+    width: 52px;
+    height: 52px;
+  }
+}

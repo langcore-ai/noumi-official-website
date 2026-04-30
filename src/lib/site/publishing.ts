@@ -110,6 +110,7 @@ export const LIVE_PREVIEW_GLOBALS = [
   'privacy-page',
   'terms-page',
   'site-settings',
+  'use-cases-page',
 ] as const
 
 /** 支持预览的集合 slug */
@@ -128,6 +129,7 @@ const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
   'privacy-page': '/privacy/',
   'terms-page': '/terms/',
   'site-settings': '/',
+  'use-cases-page': '/use-cases/',
 }
 
 /**

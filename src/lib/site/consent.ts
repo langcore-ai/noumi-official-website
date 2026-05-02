@@ -26,6 +26,23 @@ export type CookieConsentState = {
   updatedAt: string
 }
 
+/** 可被 cookie 面板直接写入的偏好字段。 */
+export type CookieConsentChoice = Pick<CookieConsentState, 'analytics' | 'locale' | 'productLogin'>
+
+/** 用户同意全部可选 cookie。 */
+export const COOKIE_CONSENT_ACCEPT_ALL: CookieConsentChoice = {
+  analytics: true,
+  locale: true,
+  productLogin: true,
+}
+
+/** 用户仅保留必要能力；关闭偏好 cookie 与匿名站点分析。 */
+export const COOKIE_CONSENT_NECESSARY_ONLY: CookieConsentChoice = {
+  analytics: false,
+  locale: false,
+  productLogin: true,
+}
+
 type StoredCookieConsentState = Partial<CookieConsentState> & {
   version?: number
 }

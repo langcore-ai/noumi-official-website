@@ -13,6 +13,7 @@ import {
 } from 'react'
 
 import {
+  buildOfficialGoogleTagConsentPayload,
   buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
@@ -34,8 +35,7 @@ const GOOGLE_TAG_SCRIPT_ID = 'noumi-official-google-tag'
 type GoogleTagCommand = [command: string, ...args: unknown[]]
 
 type GoogleTagWindow = Window &
-  typeof globalThis &
-  Record<`ga-disable-${string}`, boolean | undefined> & {
+  typeof globalThis & {
     dataLayer?: GoogleTagCommand[]
     gtag?: (...args: GoogleTagCommand) => void
   }
@@ -93,15 +93,6 @@ function sanitizeBrowserEvent(payload: CaptureResult | null): CaptureResult | nu
 }
 
 /**
- * 标记 GA4 是否允许采集。
- * @param hasAnalyticsConsent 当前用户是否同意 analytics cookie
- */
-function setOfficialGoogleTagDisabled(hasAnalyticsConsent: boolean) {
-  const googleWindow = window as GoogleTagWindow
-  googleWindow[`ga-disable-${OFFICIAL_GOOGLE_TAG_ID}`] = !hasAnalyticsConsent
-}
-
-/**
  * 按需插入官网 GA4 gtag 脚本。
  * @returns gtag 命令函数
  */
@@ -126,6 +117,18 @@ function ensureOfficialGoogleTag() {
 }
 
 /**
+ * 读取初始 analytics cookie 授权。
+ * @returns 是否已经同意 analytics cookie
+ */
+function readInitialAnalyticsConsent() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return readStoredConsent()?.analytics === true
+}
+
+/**
  * 提供官网分析上下文与 PostHog 生命周期管理。
  *
  * @param props.children 前台页面节点
@@ -135,10 +138,11 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   const { children } = props
   const pathname = usePathname()
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
-  const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(false)
+  const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(readInitialAnalyticsConsent)
   const sdkBootstrappedRef = useRef(false)
   const googleTagBootstrappedRef = useRef(false)
-  const hasAnalyticsConsentRef = useRef(false)
+  const googleTagPageViewKeyRef = useRef<string | null>(null)
+  const hasAnalyticsConsentRef = useRef(hasAnalyticsConsent)
 
   useEffect(() => {
     let canceled = false
@@ -215,29 +219,30 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   }, [analyticsConfig, hasAnalyticsConsent])
 
   useEffect(() => {
-    setOfficialGoogleTagDisabled(hasAnalyticsConsent)
-
-    if (!hasAnalyticsConsent) {
-      return
-    }
-
     const gtag = ensureOfficialGoogleTag()
+    const consentPayload = buildOfficialGoogleTagConsentPayload(hasAnalyticsConsent)
 
     if (!googleTagBootstrappedRef.current) {
+      gtag('consent', 'default', consentPayload)
       gtag('js', new Date())
       gtag('config', OFFICIAL_GOOGLE_TAG_ID, {
         send_page_view: false,
       })
       googleTagBootstrappedRef.current = true
+      return
     }
+
+    gtag('consent', 'update', consentPayload)
   }, [hasAnalyticsConsent])
 
   useEffect(() => {
-    if (!hasAnalyticsConsent) {
+    const pageViewKey = `${hasAnalyticsConsent ? 'granted' : 'denied'}:${pathname}`
+    if (googleTagPageViewKeyRef.current === pageViewKey) {
       return
     }
 
     const gtag = ensureOfficialGoogleTag()
+    googleTagPageViewKeyRef.current = pageViewKey
     gtag(
       'event',
       'page_view',

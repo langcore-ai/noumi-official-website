@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  buildOfficialGoogleTagConsentPayload,
   buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
@@ -103,6 +104,22 @@ describe('official analytics helpers', () => {
       page_location: 'https://www.noumi.ai/invite',
       page_path: '/invite',
       page_title: 'Invite Noumi',
+    })
+  })
+
+  it('builds GA4 consent mode payloads from cookie choices', () => {
+    expect(buildOfficialGoogleTagConsentPayload(false)).toEqual({
+      ad_personalization: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      analytics_storage: 'denied',
+    })
+
+    expect(buildOfficialGoogleTagConsentPayload(true)).toMatchObject({
+      ad_personalization: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      analytics_storage: 'granted',
     })
   })
 

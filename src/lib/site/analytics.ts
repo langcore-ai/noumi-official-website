@@ -28,6 +28,17 @@ export type OfficialGoogleTagPageViewPayload = {
   page_title?: string
 }
 
+/** GA4 consent mode 支持的授权值。 */
+export type OfficialGoogleTagConsentValue = 'denied' | 'granted'
+
+/** 官网 GA4 consent mode 参数。 */
+export type OfficialGoogleTagConsentPayload = {
+  ad_personalization: OfficialGoogleTagConsentValue
+  ad_storage: OfficialGoogleTagConsentValue
+  ad_user_data: OfficialGoogleTagConsentValue
+  analytics_storage: OfficialGoogleTagConsentValue
+}
+
 /** 可上报的官网埋点事件名。 */
 export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
   '$pageview',
@@ -463,6 +474,24 @@ export function buildOfficialGoogleTagPageViewPayload(input: {
   }
 
   return payload
+}
+
+/**
+ * 构建 GA4 consent mode 参数。
+ * 广告相关授权保持关闭；analytics_storage 由 cookie 面板控制。
+ *
+ * @param hasAnalyticsConsent 用户是否同意 analytics cookie
+ * @returns 可传给 gtag consent 命令的参数
+ */
+export function buildOfficialGoogleTagConsentPayload(
+  hasAnalyticsConsent: boolean,
+): OfficialGoogleTagConsentPayload {
+  return {
+    ad_personalization: 'denied',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    analytics_storage: hasAnalyticsConsent ? 'granted' : 'denied',
+  }
 }
 
 /**

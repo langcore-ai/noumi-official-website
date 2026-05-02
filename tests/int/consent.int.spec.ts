@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { COOKIE_CONSENT_STORAGE_KEY, readStoredConsent, writeStoredConsent } from '@/lib/site/consent'
+import {
+  COOKIE_CONSENT_ACCEPT_ALL,
+  COOKIE_CONSENT_NECESSARY_ONLY,
+  COOKIE_CONSENT_STORAGE_KEY,
+  readStoredConsent,
+  writeStoredConsent,
+} from '@/lib/site/consent'
 
 describe('cookie consent storage', () => {
   beforeEach(() => {
@@ -16,6 +22,20 @@ describe('cookie consent storage', () => {
       productLogin: false,
       updatedAt: expect.any(String),
       version: 3,
+    })
+  })
+
+  it('defines agree and necessary-only choices', () => {
+    expect(COOKIE_CONSENT_ACCEPT_ALL).toEqual({
+      analytics: true,
+      locale: true,
+      productLogin: true,
+    })
+
+    expect(COOKIE_CONSENT_NECESSARY_ONLY).toEqual({
+      analytics: false,
+      locale: false,
+      productLogin: true,
     })
   })
 

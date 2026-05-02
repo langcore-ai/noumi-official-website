@@ -4,6 +4,9 @@ export const OFFICIAL_ANALYTICS_DEFAULT_UI_HOST = 'https://us.posthog.com'
 /** 官网分析配置的默认代理采集地址。 */
 export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://e.noumi.ai'
 
+/** 官网 GA4 Measurement ID。 */
+export const OFFICIAL_GOOGLE_TAG_ID = 'G-TJBXDRBMVM'
+
 /** PostHog 浏览器可见配置。 */
 export type PublicOfficialAnalyticsConfig = {
   enabled: boolean
@@ -17,6 +20,13 @@ export type OfficialAnalyticsPrimitive = string | number | boolean | null
 
 /** 官网分析属性集合。 */
 export type OfficialAnalyticsProperties = Record<string, OfficialAnalyticsPrimitive>
+
+/** 官网 GA4 page_view 事件参数。 */
+export type OfficialGoogleTagPageViewPayload = {
+  page_location: string
+  page_path: string
+  page_title?: string
+}
 
 /** 可上报的官网埋点事件名。 */
 export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
@@ -49,7 +59,12 @@ const ANALYTICS_TEXT_KEYS = new Set([
   'utm_term',
 ])
 
-const ANALYTICS_PATH_KEYS = new Set(['first_touch_landing_page', 'page_path', 'source_path', 'target_path'])
+const ANALYTICS_PATH_KEYS = new Set([
+  'first_touch_landing_page',
+  'page_path',
+  'source_path',
+  'target_path',
+])
 
 const ANALYTICS_ORIGIN_KEYS = new Set(['first_touch_referrer_origin', 'referrer_origin'])
 
@@ -335,9 +350,17 @@ export function buildOfficialLandingSourceProperties(options: {
   search: string
 }): OfficialAnalyticsProperties {
   const properties: OfficialAnalyticsProperties = {}
-  const searchParams = new URLSearchParams(options.search.startsWith('?') ? options.search.slice(1) : options.search)
+  const searchParams = new URLSearchParams(
+    options.search.startsWith('?') ? options.search.slice(1) : options.search,
+  )
 
-  for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as const) {
+  for (const key of [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+  ] as const) {
     const value = searchParams.get(key)?.trim()
     if (value) {
       properties[key] = normalizeTextValue(value, TEXT_VALUE_MAX_LENGTH)
@@ -379,7 +402,12 @@ export function buildOfficialOutboundAttributionParams(options: {
     if (typeof value !== 'string' || !value) {
       continue
     }
-    if (key !== 'utm_source' && key !== 'utm_medium' && key !== 'utm_campaign' && key !== 'referrer_origin') {
+    if (
+      key !== 'utm_source' &&
+      key !== 'utm_medium' &&
+      key !== 'utm_campaign' &&
+      key !== 'referrer_origin'
+    ) {
       continue
     }
     if (key === 'referrer_origin') {
@@ -398,13 +426,43 @@ export function buildOfficialOutboundAttributionParams(options: {
   if (ctaId) {
     params.set('official_cta_id', ctaId)
   }
-  const anonymousDistinctId = normalizeTextValue(options.anonymousDistinctId, DISTINCT_ID_VALUE_MAX_LENGTH)
+  const anonymousDistinctId = normalizeTextValue(
+    options.anonymousDistinctId,
+    DISTINCT_ID_VALUE_MAX_LENGTH,
+  )
   if (anonymousDistinctId) {
     params.set('posthog_anonymous_distinct_id', anonymousDistinctId)
   }
   params.set('source_surface', 'official')
 
   return params
+}
+
+/**
+ * 构建 GA4 page_view 参数。
+ * 路径与地址会去掉 query/hash，保持与官网现有匿名分析的隐私边界一致。
+ *
+ * @param input 当前页面位置
+ * @returns 可直接传给 gtag page_view 的参数
+ */
+export function buildOfficialGoogleTagPageViewPayload(input: {
+  baseUrl: string
+  pathname: string
+  title?: string | null
+}): OfficialGoogleTagPageViewPayload {
+  const pagePath = normalizePathLike(input.pathname, input.baseUrl) || '/'
+  const pageLocation = new URL(pagePath, input.baseUrl).toString()
+  const pageTitle = normalizeTextValue(input.title, POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH)
+  const payload: OfficialGoogleTagPageViewPayload = {
+    page_location: pageLocation,
+    page_path: pagePath,
+  }
+
+  if (pageTitle) {
+    payload.page_title = pageTitle
+  }
+
+  return payload
 }
 
 /**

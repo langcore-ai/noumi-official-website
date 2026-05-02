@@ -1,14 +1,20 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   buildPublicOfficialAnalyticsConfig,
+  OFFICIAL_GOOGLE_TAG_ID,
   sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
 } from '@/lib/site/analytics'
 
 describe('official analytics helpers', () => {
+  it('uses the official GA4 measurement id', () => {
+    expect(OFFICIAL_GOOGLE_TAG_ID).toBe('G-TJBXDRBMVM')
+  })
+
   it('normalizes public config with bare hosts and defaults', () => {
     expect(
       buildPublicOfficialAnalyticsConfig({
@@ -86,12 +92,27 @@ describe('official analytics helpers', () => {
     })
   })
 
+  it('builds privacy-safe GA4 page view payloads', () => {
+    expect(
+      buildOfficialGoogleTagPageViewPayload({
+        baseUrl: 'https://www.noumi.ai',
+        pathname: '/invite/?email=user@example.com#top',
+        title: ' Invite Noumi ',
+      }),
+    ).toEqual({
+      page_location: 'https://www.noumi.ai/invite',
+      page_path: '/invite',
+      page_title: 'Invite Noumi',
+    })
+  })
+
   it('extracts only allowed landing source parameters', () => {
     expect(
       buildOfficialLandingSourceProperties({
         baseUrl: 'https://www.noumi.ai',
         referrer: 'https://google.com/search?q=noumi',
-        search: '?utm_source=newsletter&utm_medium=email&utm_campaign=spring&utm_term=ai&utm_content=hero&foo=bar',
+        search:
+          '?utm_source=newsletter&utm_medium=email&utm_campaign=spring&utm_term=ai&utm_content=hero&foo=bar',
       }),
     ).toEqual({
       referrer_origin: 'https://google.com',

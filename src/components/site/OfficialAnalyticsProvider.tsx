@@ -13,23 +13,32 @@ import {
 } from 'react'
 
 import {
+  buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   isOfficialAnalyticsEventName,
+  OFFICIAL_GOOGLE_TAG_ID,
   sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
   type OfficialAnalyticsEventName,
   type OfficialAnalyticsProperties,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
-import {
-  COOKIE_CONSENT_CHANGE_EVENT,
-  readStoredConsent,
-} from '@/lib/site/consent'
+import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 
 /** Landing page 视图仅在一个会话内记一次。 */
 const LANDING_PAGE_VIEWED_SESSION_KEY = 'noumi:official:landing_page_viewed'
 const ACTIVE_HEARTBEAT_SECONDS = 60
+const GOOGLE_TAG_SCRIPT_ID = 'noumi-official-google-tag'
+
+type GoogleTagCommand = [command: string, ...args: unknown[]]
+
+type GoogleTagWindow = Window &
+  typeof globalThis &
+  Record<`ga-disable-${string}`, boolean | undefined> & {
+    dataLayer?: GoogleTagCommand[]
+    gtag?: (...args: GoogleTagCommand) => void
+  }
 
 /** 官网埋点上下文。 */
 type OfficialAnalyticsContextValue = {
@@ -84,6 +93,39 @@ function sanitizeBrowserEvent(payload: CaptureResult | null): CaptureResult | nu
 }
 
 /**
+ * 标记 GA4 是否允许采集。
+ * @param hasAnalyticsConsent 当前用户是否同意 analytics cookie
+ */
+function setOfficialGoogleTagDisabled(hasAnalyticsConsent: boolean) {
+  const googleWindow = window as GoogleTagWindow
+  googleWindow[`ga-disable-${OFFICIAL_GOOGLE_TAG_ID}`] = !hasAnalyticsConsent
+}
+
+/**
+ * 按需插入官网 GA4 gtag 脚本。
+ * @returns gtag 命令函数
+ */
+function ensureOfficialGoogleTag() {
+  const googleWindow = window as GoogleTagWindow
+  googleWindow.dataLayer = googleWindow.dataLayer || []
+  googleWindow.gtag =
+    googleWindow.gtag ||
+    ((...args: GoogleTagCommand) => {
+      googleWindow.dataLayer?.push(args)
+    })
+
+  if (!document.getElementById(GOOGLE_TAG_SCRIPT_ID)) {
+    const script = document.createElement('script')
+    script.async = true
+    script.id = GOOGLE_TAG_SCRIPT_ID
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(OFFICIAL_GOOGLE_TAG_ID)}`
+    document.head.appendChild(script)
+  }
+
+  return googleWindow.gtag
+}
+
+/**
  * 提供官网分析上下文与 PostHog 生命周期管理。
  *
  * @param props.children 前台页面节点
@@ -95,6 +137,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
   const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(false)
   const sdkBootstrappedRef = useRef(false)
+  const googleTagBootstrappedRef = useRef(false)
   const hasAnalyticsConsentRef = useRef(false)
 
   useEffect(() => {
@@ -171,6 +214,41 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
     posthog.opt_in_capturing()
   }, [analyticsConfig, hasAnalyticsConsent])
 
+  useEffect(() => {
+    setOfficialGoogleTagDisabled(hasAnalyticsConsent)
+
+    if (!hasAnalyticsConsent) {
+      return
+    }
+
+    const gtag = ensureOfficialGoogleTag()
+
+    if (!googleTagBootstrappedRef.current) {
+      gtag('js', new Date())
+      gtag('config', OFFICIAL_GOOGLE_TAG_ID, {
+        send_page_view: false,
+      })
+      googleTagBootstrappedRef.current = true
+    }
+  }, [hasAnalyticsConsent])
+
+  useEffect(() => {
+    if (!hasAnalyticsConsent) {
+      return
+    }
+
+    const gtag = ensureOfficialGoogleTag()
+    gtag(
+      'event',
+      'page_view',
+      buildOfficialGoogleTagPageViewPayload({
+        baseUrl: window.location.origin,
+        pathname,
+        title: document.title,
+      }),
+    )
+  }, [hasAnalyticsConsent, pathname])
+
   const capture = useCallback(
     (eventName: OfficialAnalyticsEventName, properties: OfficialAnalyticsProperties = {}) => {
       if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
@@ -206,10 +284,10 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
       capture(
         'landing_page_viewed',
         buildOfficialLandingSourceProperties({
-            baseUrl: window.location.origin,
-            referrer: document.referrer,
-            search: window.location.search,
-          }),
+          baseUrl: window.location.origin,
+          referrer: document.referrer,
+          search: window.location.search,
+        }),
       )
     }
   }, [capture, pathname])
@@ -258,8 +336,18 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
         target_path: analyticsElement.dataset.analyticsTargetPath || undefined,
       })
 
-      const link = analyticsElement instanceof HTMLAnchorElement ? analyticsElement : analyticsElement.closest('a')
-      if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      const link =
+        analyticsElement instanceof HTMLAnchorElement
+          ? analyticsElement
+          : analyticsElement.closest('a')
+      if (
+        !link ||
+        event.defaultPrevented ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
         return
       }
 
@@ -294,7 +382,11 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
     capture,
   }
 
-  return <OfficialAnalyticsContext.Provider value={contextValue}>{children}</OfficialAnalyticsContext.Provider>
+  return (
+    <OfficialAnalyticsContext.Provider value={contextValue}>
+      {children}
+    </OfficialAnalyticsContext.Provider>
+  )
 }
 
 /**

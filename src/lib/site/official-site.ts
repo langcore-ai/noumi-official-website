@@ -18,14 +18,19 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
 
 /**
- * 官网浅色模式 favicon
+ * Google Search 使用的稳定 favicon。
  */
-export const OFFICIAL_LIGHT_FAVICON = '/noumi.svg'
+export const OFFICIAL_FAVICON = '/favicon-96x96.png'
 
 /**
- * 官网深色模式 favicon
+ * 传统浏览器默认请求的 favicon。
  */
-export const OFFICIAL_DARK_FAVICON = '/noumi-white.svg'
+export const OFFICIAL_SHORTCUT_ICON = '/favicon.ico'
+
+/**
+ * iOS 主屏幕使用的触控图标。
+ */
+export const OFFICIAL_APPLE_TOUCH_ICON = '/apple-touch-icon.png'
 
 /**
  * 解析分享图地址
@@ -59,17 +64,19 @@ export function createOfficialMetadata(options: {
     icons: {
       icon: [
         {
-          url: OFFICIAL_LIGHT_FAVICON,
-          type: 'image/svg+xml',
-          media: '(prefers-color-scheme: light)',
-        },
-        {
-          url: OFFICIAL_DARK_FAVICON,
-          type: 'image/svg+xml',
-          media: '(prefers-color-scheme: dark)',
+          url: OFFICIAL_FAVICON,
+          sizes: '96x96',
+          type: 'image/png',
         },
       ],
-      shortcut: OFFICIAL_LIGHT_FAVICON,
+      shortcut: OFFICIAL_SHORTCUT_ICON,
+      apple: [
+        {
+          url: OFFICIAL_APPLE_TOUCH_ICON,
+          sizes: '180x180',
+          type: 'image/png',
+        },
+      ],
     },
     alternates: {
       canonical,

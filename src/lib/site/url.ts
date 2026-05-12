@@ -5,7 +5,13 @@ export const PREFERRED_SITE_URL = 'https://noumi.ai'
 const REDIRECT_EXCLUDED_PREFIXES = ['/api', '/admin', '/_next', '/assets']
 
 /** 不应参与前台 URL 规范化重定向的独立文件路径 */
-const REDIRECT_EXCLUDED_PATHS = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/Noumi-Logo.svg']
+const REDIRECT_EXCLUDED_PATHS = [
+  '/favicon.ico',
+  '/robots.txt',
+  '/sitemap.xml',
+  '/noumi.svg',
+  '/noumi-white.svg',
+]
 
 /** 带文件扩展名的路径通常是静态资源，不按页面 URL 处理 */
 const FILE_EXTENSION_PATTERN = /\/[^/?#]+\.[^/?#]+$/

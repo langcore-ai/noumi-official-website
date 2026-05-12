@@ -5,6 +5,7 @@ import {
   type OfficialFeatureNavItem,
   type OfficialUseCaseNavItem,
 } from '@/lib/site/official-cms'
+import { OFFICIAL_LOGO } from '@/lib/site/official-site'
 
 /**
  * 首页头部
@@ -19,9 +20,9 @@ export function OfficialHomeHeader(_props: { useCases: OfficialUseCaseNavItem[] 
           <img
             alt="Noumi icon"
             className="brand__icon brand__icon--img"
-            src="/assets/materials/WEB ICON.webp"
+            src={OFFICIAL_LOGO}
           />
-          <img alt="Noumi" className="brand__title-img" src="/assets/materials/WEB TITLE.webp" />
+          <span className="brand__wordmark">Noumi</span>
         </Link>
 
         <nav aria-label="Primary" className="site-nav">
@@ -64,9 +65,9 @@ export function OfficialUseCaseHeader(props: {
           <img
             alt="Noumi icon"
             className="brand__icon brand__icon--img"
-            src="/assets/materials/WEB ICON.webp"
+            src={OFFICIAL_LOGO}
           />
-          <img alt="Noumi" className="brand__title-img" src="/assets/materials/WEB TITLE.webp" />
+          <span className="brand__wordmark">Noumi</span>
         </Link>
 
         <nav aria-label="Use case navigation" className="site-nav site-nav--use-case">
@@ -124,13 +125,9 @@ export async function OfficialHomeFooter(props: {
             <img
               alt="Noumi icon"
               className="brand__icon brand__icon--img"
-              src="/assets/materials/WEB ICON.webp"
+              src={OFFICIAL_LOGO}
             />
-            <img
-              alt="Noumi"
-              className="brand__title-img brand__title-img--footer"
-              src="/assets/materials/WEB TITLE.webp"
-            />
+            <span className="brand__wordmark brand__wordmark--footer">Noumi</span>
           </Link>
           <p className="footer-note">Don&apos;t teach your AI twice.</p>
         </div>

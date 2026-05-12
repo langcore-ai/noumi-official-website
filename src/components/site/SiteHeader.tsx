@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { SiteLanguageSwitcher } from '@/components/site/SiteLanguageSwitcher'
 import type { SiteNavigationItem } from '@/lib/site/cms'
 import type { SiteLocale } from '@/lib/site/i18n'
+import { OFFICIAL_LOGO } from '@/lib/site/official-site'
 
 /**
  * 官网头部导航
@@ -49,7 +50,7 @@ export function SiteHeader(props: {
             alt={siteLogoAlt}
             className="site-brand__logo"
             height="40"
-            src="/Noumi-Logo.svg"
+            src={OFFICIAL_LOGO}
             width="40"
           />
           {siteNameText ? <span className="site-brand__wordmark">{siteNameText}</span> : null}

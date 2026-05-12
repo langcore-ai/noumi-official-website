@@ -78,7 +78,7 @@ button {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: 10px;
   color: var(--text-primary);
   text-decoration: none;
 }
@@ -90,19 +90,20 @@ button {
 }
 
 .brand__icon--img {
-  width: 44px;
-  height: 44px;
-  filter: contrast(1.02) saturate(0.92);
-}
-
-.brand__title-img {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-}
-
-.brand__title-img--footer {
+  width: 34px;
   height: 34px;
+}
+
+.brand__wordmark {
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.brand__wordmark--footer {
+  font-size: 23px;
 }
 
 .site-nav {
@@ -1030,12 +1031,12 @@ button {
   }
 
   .brand__icon--img {
-    width: 38px;
-    height: 38px;
+    width: 30px;
+    height: 30px;
   }
 
-  .brand__title-img {
-    height: 30px;
+  .brand__wordmark {
+    font-size: 22px;
   }
 
   .hero__title {

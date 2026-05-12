@@ -15,7 +15,7 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 /**
  * 默认分享图
  */
-export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
+export const OFFICIAL_OG_IMAGE = '/assets/social/og-cover.webp'
 
 /**
  * 标准品牌标识，适合浅色背景。

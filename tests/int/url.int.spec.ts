@@ -12,7 +12,9 @@ describe('site URL normalization', () => {
     expect(normalizePreferredPathname('/blog/')).toBe('/blog')
     expect(normalizeSiteHref('/blog/?tag=ai#top')).toBe('/blog?tag=ai#top')
     expect(normalizeSiteHref('/blog/post-1/')).toBe('/blog/post-1')
-    expect(normalizeSiteHref('/assets/og-cover.png')).toBe('/assets/og-cover.png')
+    expect(normalizeSiteHref('/assets/social/og-cover.webp')).toBe(
+      '/assets/social/og-cover.webp',
+    )
     expect(normalizeSiteHref('#features')).toBe('#features')
     expect(normalizeSiteHref('mailto:official@noumi.ai')).toBe('mailto:official@noumi.ai')
   })

@@ -72,17 +72,17 @@ export default async function HomePage() {
               <img
                 alt="Pixel cat on the left side of the hero visual"
                 className="hero-stage__left"
-                src="/assets/materials/cat-left.webp"
+                src="/assets/home/hero-cat-left.webp"
               />
               <img
                 alt="Main workspace window illustration"
                 className="hero-stage__window"
-                src="/assets/materials/main-window.webp"
+                src="/assets/home/hero-main-window.webp"
               />
               <img
                 alt="Pixel cat on the right side of the hero visual"
                 className="hero-stage__right"
-                src="/assets/materials/cat-right.webp"
+                src="/assets/home/hero-cat-right.webp"
               />
             </div>
           </div>

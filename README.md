@@ -90,7 +90,7 @@ AGENTS.md                    # 工程协作与实现约束
 - `src/app/(frontend)/official-home.css`：首页和部分官网共享样式。
 - 各前台路由目录下的 `*.module.css`：页面专属 CSS Module，例如 About、Blog、Pricing、FAQ、Invite、Use Case 等页面样式。
 - `src/app/(frontend)/styles.css`：旧版前台样式，当前未作为主样式入口使用，后续可确认后清理。
-- `public/assets/style.css`：静态 HTML 迁移遗留样式，主要作为历史资产存在，后续可确认后清理。
+- `public/assets/legacy/static-html-style.css`：静态 HTML 迁移遗留样式，主要作为历史资产存在，后续可确认后清理。
 
 新增样式建议：
 
@@ -98,6 +98,22 @@ AGENTS.md                    # 工程协作与实现约束
 - 新页面或较大改动应优先建立页面级 CSS Module，避免继续扩大 `official-home.css`。
 - 不要在没有验证影响范围时重命名全局 class。
 - 不要为了统一风格把多个页面的 CSS 一次性合并。
+
+### Public 资产组织
+
+`public` 根目录只保留浏览器、搜索引擎或部署平台约定会直接读取的文件，例如 `_headers`、`favicon.ico`、`favicon-*.png`、`apple-touch-icon.png`、`noumi.svg`、`noumi-white.svg`。
+
+业务图片统一放在 `public/assets` 下，并使用小写 kebab-case 文件名：
+
+- `assets/home/`：首页主视觉与通用 CTA 装饰。
+- `assets/pricing/`：Pricing 页面相关装饰。
+- `assets/blog/`：Blog 页面相关装饰。
+- `assets/features/`：Features 页面相关装饰。
+- `assets/use-cases/`：Use Cases 页面相关装饰和头像。
+- `assets/logos/`：信任墙公司 Logo。
+- `assets/product/`：产品截图、技能页截图等产品素材。
+- `assets/social/`：OG、社交分享图等外部平台素材。
+- `assets/legacy/`：迁移遗留且当前不作为主链路使用的历史资产。
 
 ## CMS 管理范围
 

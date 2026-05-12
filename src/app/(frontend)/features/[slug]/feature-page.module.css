@@ -68,7 +68,7 @@
   right: 36px;
   width: 120px;
   height: 100px;
-  background: url('/assets/materials/PRICE 1.webp') no-repeat center bottom / contain;
+  background: url('/assets/pricing/plan-cat.webp') no-repeat center bottom / contain;
   content: '';
   filter: drop-shadow(0 10px 18px rgba(28, 27, 46, 0.14));
   pointer-events: none;

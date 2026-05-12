@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     'blog-posts': BlogPost;
+    'feature-pages': FeaturePage;
     'use-case-pages': UseCasePage;
     'faq-items': FaqItem;
     'invite-requests': InviteRequest;
@@ -85,6 +86,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    'feature-pages': FeaturePagesSelect<false> | FeaturePagesSelect<true>;
     'use-case-pages': UseCasePagesSelect<false> | UseCasePagesSelect<true>;
     'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
     'invite-requests': InviteRequestsSelect<false> | InviteRequestsSelect<true>;
@@ -101,6 +103,7 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
+    'features-page': FeaturesPage;
     'use-cases-page': UseCasesPage;
     'faq-page': FaqPage;
     'privacy-page': PrivacyPage;
@@ -108,6 +111,7 @@ export interface Config {
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'features-page': FeaturesPageSelect<false> | FeaturesPageSelect<true>;
     'use-cases-page': UseCasesPageSelect<false> | UseCasesPageSelect<true>;
     'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
@@ -434,6 +438,69 @@ export interface BlogPost {
           }
       )[]
     | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feature-pages".
+ */
+export interface FeaturePage {
+  id: number;
+  /**
+   * 默认模板用于结构化 Feature 子页；HTML 模式只需要 slug 与 HTML 内容。
+   */
+  renderMode: 'template' | 'html';
+  /**
+   * Feature 子页路由 slug，例如 persistent-memory。
+   */
+  slug: string;
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
+  /**
+   * Footer Features 栏与后台列表可使用的短标题；未填时回退到 Hero 标题或 slug。
+   */
+  navigationLabel?: string | null;
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    primaryCtaLabel?: string | null;
+    primaryCtaHref?: string | null;
+  };
+  /**
+   * 用于默认模板 Hero 下方或 SEO 描述兜底。
+   */
+  summary?: string | null;
+  sections?:
+    | {
+        label?: string | null;
+        title: string;
+        description?: string | null;
+        bullets?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  ctaTitle?: string | null;
+  ctaDescription?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -904,6 +971,10 @@ export interface PayloadLockedDocument {
         value: number | BlogPost;
       } | null)
     | ({
+        relationTo: 'feature-pages';
+        value: number | FeaturePage;
+      } | null)
+    | ({
         relationTo: 'use-case-pages';
         value: number | UseCasePage;
       } | null)
@@ -1155,6 +1226,54 @@ export interface BlogPostsSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feature-pages_select".
+ */
+export interface FeaturePagesSelect<T extends boolean = true> {
+  renderMode?: T;
+  slug?: T;
+  htmlContent?: T;
+  navigationLabel?: T;
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+      };
+  summary?: T;
+  sections?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        description?: T;
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
   meta?:
     | T
     | {
@@ -1568,6 +1687,88 @@ export interface SiteSetting {
      */
     image?: (number | null) | Media;
   };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features-page".
+ */
+export interface FeaturesPage {
+  id: number;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: (number | null) | Media;
+  /**
+   * 控制 Features 首屏三张功能卡片，同时作为统一页脚 Features 栏目的来源。
+   */
+  featureCards?:
+    | {
+        tone: 'memory' | 'skills' | 'execution';
+        title: string;
+        description: string;
+        supportedFeatures?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        ctaLabel: string;
+        ctaHref: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 对应 From raw inputs to finished work. 分屏。
+   */
+  abilityCards?:
+    | {
+        title: string;
+        description: string;
+        tags?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 复用 Find Your Use Case 页的卡片结构，控制第四屏三张角色卡片。
+   */
+  roleCards?:
+    | {
+        /**
+         * 卡片点击后跳转到这里选择的 use case 详情页。
+         */
+        targetUseCase: number | UseCasePage;
+        tone: 'pm' | 'journalist' | 'solutions';
+        /**
+         * 未上传自定义头像时，前台使用这里选择的本地头像素材。
+         */
+        avatarPreset?: ('pm' | 'journalist' | 'solutions') | null;
+        /**
+         * 优先于头像预置；未上传时使用预置头像。
+         */
+        avatarImage?: (number | null) | Media;
+        title: string;
+        description: string;
+        ctaLabel: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 回答支持少量 HTML，例如 <strong>，用于还原 Features 原型中的强调。
+   */
+  faqItems?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2109,6 +2310,67 @@ export interface SiteSettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features-page_select".
+ */
+export interface FeaturesPageSelect<T extends boolean = true> {
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  featureCards?:
+    | T
+    | {
+        tone?: T;
+        title?: T;
+        description?: T;
+        supportedFeatures?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        ctaHref?: T;
+        id?: T;
+      };
+  abilityCards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        tags?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  roleCards?:
+    | T
+    | {
+        targetUseCase?: T;
+        tone?: T;
+        avatarPreset?: T;
+        avatarImage?: T;
+        title?: T;
+        description?: T;
+        ctaLabel?: T;
+        id?: T;
+      };
+  faqItems?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "use-cases-page_select".
  */
 export interface UseCasesPageSelect<T extends boolean = true> {
@@ -2506,10 +2768,14 @@ export interface TaskSchedulePublish {
           value: number | BlogPost;
         } | null)
       | ({
+          relationTo: 'feature-pages';
+          value: number | FeaturePage;
+        } | null)
+      | ({
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
-    global?: ('site-settings' | 'use-cases-page' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
+    global?: ('site-settings' | 'features-page' | 'use-cases-page' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
     user?: (number | null) | User;
   };
   output?: unknown;

@@ -1,6 +1,10 @@
 import type { MetadataRoute } from 'next'
 
-import { getOfficialBlogPosts, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import {
+  getOfficialBlogPosts,
+  getOfficialFeatureNavItems,
+  getOfficialUseCaseNavItems,
+} from '@/lib/site/official-cms'
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 import { buildPreferredAbsoluteUrl } from '@/lib/site/url'
 
@@ -12,8 +16,9 @@ export const dynamic = 'force-dynamic'
  * @returns sitemap 条目
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [blogPosts, useCases] = await Promise.all([
+  const [blogPosts, features, useCases] = await Promise.all([
     getOfficialBlogPosts(),
+    getOfficialFeatureNavItems({ includeFallback: false }),
     getOfficialUseCaseNavItems(),
   ])
 
@@ -23,12 +28,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/blog',
     '/contact',
     '/faqs',
+    '/features',
     '/invite',
     '/pricing',
     '/privacy',
     '/terms',
     '/use-cases',
     ...blogPosts.map((post) => `/blog/${post.slug}`),
+    ...features.map((feature) => feature.href),
     ...useCases.map((useCase) => `/use-cases/${useCase.slug}`),
   ].map((pathname) => ({
     url: buildPreferredAbsoluteUrl(pathname || '/', OFFICIAL_SITE_URL),

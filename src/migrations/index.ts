@@ -5,6 +5,8 @@ import * as migration_20260423_020800_add_autosave_to_version_tables from './202
 import * as migration_20260423_091500_add_invite_requests_collection from './20260423_091500_add_invite_requests_collection'
 import * as migration_20260424_142500_add_faq_legal_html_mode from './20260424_142500_add_faq_legal_html_mode'
 import * as migration_20260430_095800_add_use_cases_page from './20260430_095800_add_use_cases_page'
+import * as migration_20260511_142500_add_features_page from './20260511_142500_add_features_page'
+import * as migration_20260511_151800_add_feature_pages_collection from './20260511_151800_add_feature_pages_collection'
 
 export const migrations = [
   {
@@ -41,5 +43,15 @@ export const migrations = [
     up: migration_20260430_095800_add_use_cases_page.up,
     down: migration_20260430_095800_add_use_cases_page.down,
     name: '20260430_095800_add_use_cases_page',
+  },
+  {
+    up: migration_20260511_142500_add_features_page.up,
+    down: migration_20260511_142500_add_features_page.down,
+    name: '20260511_142500_add_features_page',
+  },
+  {
+    up: migration_20260511_151800_add_feature_pages_collection.up,
+    down: migration_20260511_151800_add_feature_pages_collection.down,
+    name: '20260511_151800_add_feature_pages_collection',
   },
 ]

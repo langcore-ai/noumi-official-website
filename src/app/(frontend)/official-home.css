@@ -896,7 +896,7 @@ button {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.3fr repeat(4, 1fr);
+  grid-template-columns: 1.3fr repeat(5, 1fr);
   gap: 36px;
 }
 

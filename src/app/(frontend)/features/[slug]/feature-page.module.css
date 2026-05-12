@@ -1,0 +1,213 @@
+.featurePage {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.hero {
+  display: grid;
+  width: min(calc(100% - 96px), var(--max-w));
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+  align-items: center;
+  gap: 72px;
+  margin: 0 auto;
+  padding: 92px 0 84px;
+}
+
+.heroCopy {
+  min-width: 0;
+}
+
+.backLink {
+  display: inline-flex;
+  margin-bottom: 28px;
+  color: var(--ink-muted);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--ink);
+}
+
+.hero h1 {
+  max-width: 760px;
+  margin: 0 0 22px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+.heroDescription {
+  max-width: 620px;
+  margin: 0 0 20px;
+  color: var(--ink-soft);
+  font-size: clamp(17px, 1.5vw, 20px);
+  font-weight: 300;
+  line-height: 1.78;
+}
+
+.summary {
+  max-width: 620px;
+  margin: 0 0 32px;
+  color: var(--ink-muted);
+  font-size: 15.5px;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.heroVisual {
+  position: relative;
+}
+
+.heroVisual::before {
+  position: absolute;
+  top: -52px;
+  right: 36px;
+  width: 120px;
+  height: 100px;
+  background: url('/assets/materials/PRICE 1.webp') no-repeat center bottom / contain;
+  content: '';
+  filter: drop-shadow(0 10px 18px rgba(28, 27, 46, 0.14));
+  pointer-events: none;
+}
+
+.visualCard {
+  position: relative;
+  min-height: 360px;
+  padding: 34px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: linear-gradient(to bottom, rgba(75, 75, 232, 0.24) 0 4px, #faf7f1 4px);
+  box-shadow: 0 24px 70px rgba(28, 27, 46, 0.1);
+}
+
+.visualLabel {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.visualCard h2 {
+  margin: 0 0 26px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+.visualLines {
+  display: grid;
+  gap: 12px;
+}
+
+.visualLines span {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid rgba(75, 75, 232, 0.12);
+  border-radius: 12px;
+  background: rgba(75, 75, 232, 0.045);
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.sections {
+  display: grid;
+  width: min(calc(100% - 96px), var(--max-w));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0 auto;
+  padding: 28px 0 112px;
+}
+
+.sectionCard {
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #faf7f1;
+}
+
+.sectionCard h2 {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+}
+
+.sectionCard p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.72;
+}
+
+.sectionCard ul {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sectionCard li {
+  display: flex;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.sectionCard li::before {
+  flex-shrink: 0;
+  color: #3d7a5f;
+  content: '✓';
+  font-weight: 600;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    width: min(calc(100% - 48px), var(--max-w));
+    grid-template-columns: 1fr;
+    gap: 56px;
+    padding: 72px 0;
+  }
+
+  .sections {
+    width: min(calc(100% - 48px), var(--max-w));
+    grid-template-columns: 1fr;
+    padding-bottom: 84px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero,
+  .sections {
+    width: min(calc(100% - 32px), var(--max-w));
+  }
+
+  .hero {
+    padding: 56px 0 64px;
+  }
+
+  .visualCard {
+    min-height: 300px;
+    padding: 26px;
+  }
+
+  .heroVisual::before {
+    right: 24px;
+  }
+}

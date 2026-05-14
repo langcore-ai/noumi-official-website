@@ -8,16 +8,12 @@ import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
  * 首页信任墙 Logo 配置。
  */
 const TRUSTED_LOGOS = [
-  ['cosco.webp', 'COSCO'],
-  ['plug-and-play.webp', 'Plug and Play'],
   ['dominos.webp', "Domino's"],
-  ['lenovo.webp', 'Lenovo'],
+  ['aws.webp',"AWS"],
   ['nvidia.webp', 'NVIDIA'],
   ['siemens.webp', 'Siemens'],
-  ['alibaba-cloud.webp', 'Alibaba Cloud'],
   ['amd.webp', 'AMD'],
   ['microsoft.webp', 'Microsoft'],
-  ['tencent.webp', 'Tencent'],
 ] as const
 
 /**

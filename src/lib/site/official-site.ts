@@ -15,12 +15,32 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
 /**
  * 默认分享图
  */
-export const OFFICIAL_OG_IMAGE = '/assets/og-cover.webp'
+export const OFFICIAL_OG_IMAGE = '/assets/social/og-cover.webp'
 
 /**
- * Google Search 使用的稳定 favicon。
+ * 标准品牌标识，适合浅色背景。
+ */
+export const OFFICIAL_LOGO = '/noumi.svg'
+
+/**
+ * 标准反白品牌标识，适合深色背景。
+ */
+export const OFFICIAL_LOGO_INVERTED = '/noumi-white.svg'
+
+/**
+ * Google Search 优先使用的稳定 favicon。
  */
 export const OFFICIAL_FAVICON = '/favicon-96x96.png'
+
+/**
+ * 低分辨率场景使用的稳定 favicon。
+ */
+export const OFFICIAL_FAVICON_SMALL = '/favicon-48x48.png'
+
+/**
+ * 高分辨率场景使用的稳定 favicon。
+ */
+export const OFFICIAL_FAVICON_LARGE = '/favicon-192x192.png'
 
 /**
  * 传统浏览器默认请求的 favicon。
@@ -59,6 +79,7 @@ export function createOfficialMetadata(options: {
   const imageUrl = resolveOfficialImageUrl(options.image)
 
   return {
+    metadataBase: new URL(OFFICIAL_SITE_URL),
     title: options.title,
     description: options.description,
     icons: {
@@ -66,6 +87,16 @@ export function createOfficialMetadata(options: {
         {
           url: OFFICIAL_FAVICON,
           sizes: '96x96',
+          type: 'image/png',
+        },
+        {
+          url: OFFICIAL_FAVICON_SMALL,
+          sizes: '48x48',
+          type: 'image/png',
+        },
+        {
+          url: OFFICIAL_FAVICON_LARGE,
+          sizes: '192x192',
           type: 'image/png',
         },
       ],

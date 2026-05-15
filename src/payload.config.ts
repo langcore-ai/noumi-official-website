@@ -16,10 +16,12 @@ import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
+import { FeaturePages } from './collections/FeaturePages'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { InviteRequests } from './collections/InviteRequests'
 import { FaqPage } from './globals/FaqPage'
+import { FeaturesPage } from './globals/FeaturesPage'
 import { PrivacyPage } from './globals/PrivacyPage'
 import { SiteSettings } from './globals/SiteSettings'
 import { TermsPage } from './globals/TermsPage'
@@ -118,6 +120,7 @@ function generateSeoDescription(doc: unknown): string {
   return (
     readPayloadText(doc, ['defaultDescription']) ??
     readPayloadText(doc, ['hero', 'description']) ??
+    readPayloadText(doc, ['summary']) ??
     readPayloadText(doc, ['excerpt']) ??
     readPayloadText(doc, ['lead']) ??
     readPayloadText(doc, ['htmlCardDescription']) ??
@@ -137,9 +140,11 @@ function generateSeoURL(doc: unknown, collectionSlug?: string): string {
   const pathname =
     collectionSlug === BlogPosts.slug && slug
       ? `/blog/${slug}`
-      : collectionSlug === UseCasePages.slug && slug
-        ? `/use-cases/${slug}`
-        : '/'
+      : collectionSlug === FeaturePages.slug && slug
+        ? `/features/${slug}`
+        : collectionSlug === UseCasePages.slug && slug
+          ? `/use-cases/${slug}`
+          : '/'
 
   return collectionSlug ? new URL(pathname, siteUrl).toString() : siteUrl
 }
@@ -302,8 +307,8 @@ export default buildConfig({
         }
       : undefined,
   },
-  collections: [Users, Media, BlogPosts, UseCasePages, FaqItems, InviteRequests],
-  globals: [SiteSettings, UseCasesPage, FaqPage, PrivacyPage, TermsPage],
+  collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems, InviteRequests],
+  globals: [SiteSettings, FeaturesPage, UseCasesPage, FaqPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',
@@ -350,7 +355,7 @@ export default buildConfig({
     }),
     seoPlugin({
       globals: [SiteSettings.slug],
-      collections: [BlogPosts.slug, UseCasePages.slug],
+      collections: [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug],
       uploadsCollection: Media.slug,
       tabbedUI: true,
       generateTitle: ({ collectionConfig, doc }) => generateSeoTitle(doc, collectionConfig?.slug),

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import type { SiteFooterColumn } from '@/lib/site/cms'
+import { OFFICIAL_LOGO_INVERTED } from '@/lib/site/official-site'
 
 /**
  * 官网页脚
@@ -28,7 +29,7 @@ export function SiteFooter(props: {
               alt={siteLogoAlt}
               className="site-brand__logo"
               height="40"
-              src="/Noumi-Logo.svg"
+              src={OFFICIAL_LOGO_INVERTED}
               width="40"
             />
             {siteNameText ? <span className="site-brand__wordmark">{siteNameText}</span> : null}

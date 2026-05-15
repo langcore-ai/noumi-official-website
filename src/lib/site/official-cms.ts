@@ -8,6 +8,8 @@ import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type {
   BlogPost,
+  FeaturePage,
+  FeaturesPage,
   FaqPage,
   FaqItem,
   Media,
@@ -59,6 +61,157 @@ export type OfficialButton = {
   label: string
   /** 跳转链接 */
   href: string
+}
+
+/** Features 首屏功能卡视觉样式 */
+export type OfficialFeatureCardTone = 'execution' | 'memory' | 'skills'
+
+/**
+ * Features 首屏功能卡
+ */
+export type OfficialFeatureCard = {
+  /** 稳定主键 */
+  id: string
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  description: string
+  /** 支持特性列表 */
+  supportedFeatures: string[]
+  /** 跳转按钮 */
+  cta: OfficialButton
+  /** 视觉样式 */
+  tone: OfficialFeatureCardTone
+}
+
+/**
+ * Features footer 导航项
+ */
+export type OfficialFeatureNavItem = {
+  /** 功能标题 */
+  label: string
+  /** 功能链接 */
+  href: string
+}
+
+/**
+ * Features 能力卡片
+ */
+export type OfficialAbilityCard = {
+  /** 稳定主键 */
+  id: string
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  description: string
+  /** 搜索与能力标签 */
+  tags: string[]
+}
+
+/**
+ * Features Use Case 卡片
+ */
+export type OfficialFeaturesRoleCard = {
+  /** 稳定主键 */
+  id: string
+  /** 跳转链接 */
+  href: string
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  description: string
+  /** 跳转文案 */
+  ctaLabel: string
+  /** 视觉样式 */
+  tone: OfficialUseCasesCardTone
+  /** 头像地址，上传优先，未上传时使用预置头像 */
+  avatarSrc: string
+}
+
+/**
+ * Features FAQ 条目
+ */
+export type OfficialFeaturesFaqItem = {
+  /** FAQ 主键 */
+  id: string
+  /** 问题 */
+  question: string
+  /** 回答，允许后台配置少量 HTML */
+  answer: string
+}
+
+/**
+ * Features 页面视图
+ */
+export type OfficialFeaturesPageView = {
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** 首屏功能卡片 */
+  featureCards: OfficialFeatureCard[]
+  /** 第二屏能力卡片 */
+  abilityCards: OfficialAbilityCard[]
+  /** 第四屏 Use Case 卡片 */
+  roleCards: OfficialFeaturesRoleCard[]
+  /** FAQ 条目 */
+  faqItems: OfficialFeaturesFaqItem[]
+}
+
+/**
+ * Feature 子页内容分节
+ */
+export type OfficialFeaturePageSection = {
+  /** 稳定主键 */
+  id: string
+  /** 分节角标 */
+  label?: string
+  /** 分节标题 */
+  title: string
+  /** 分节描述 */
+  description?: string
+  /** 分节列表 */
+  bullets: string[]
+}
+
+/**
+ * Feature 子页视图
+ */
+export type OfficialFeaturePageView = {
+  /** 页面 slug */
+  slug: string
+  /** 前台渲染模式 */
+  renderMode: 'html' | 'template'
+  /** HTML 模式源码 */
+  htmlContent?: string
+  /** 导航短标题 */
+  navigationLabel: string
+  /** SEO 标题 */
+  metaTitle?: string
+  /** SEO 描述 */
+  metaDescription?: string
+  /** 分享图 */
+  ogImage: Media | null
+  /** Hero 角标 */
+  heroEyebrow?: string
+  /** Hero 标题 */
+  heroTitle?: string
+  /** Hero 描述 */
+  heroDescription?: string
+  /** Hero 主按钮 */
+  heroPrimaryCta?: OfficialButton
+  /** 摘要 */
+  summary?: string
+  /** 内容分节 */
+  sections: OfficialFeaturePageSection[]
+  /** CTA 标题 */
+  ctaTitle?: string
+  /** CTA 描述 */
+  ctaDescription?: string
+  /** CTA 按钮 */
+  ctaButton?: OfficialButton
 }
 
 /**
@@ -417,8 +570,14 @@ const getPayloadClient = cache(async () => getPayload({ config: await config }))
  * @returns 是否启用草稿模式
  */
 async function isDraftPreviewEnabled(): Promise<boolean> {
-  const preview = await draftMode()
-  return preview.isEnabled
+  try {
+    const preview = await draftMode()
+
+    return preview.isEnabled
+  } catch {
+    // sitemap、脚本验证等非请求上下文没有 draftMode store，此时应读取公开发布内容。
+    return false
+  }
 }
 
 /**
@@ -455,6 +614,17 @@ function extractTextArray(items?: Array<{ text?: null | string } | null> | null)
 }
 
 /**
+ * 提取数组中的 label 字段
+ * @param items 原始数组
+ * @returns 文本列表
+ */
+function extractLabelArray(items?: Array<{ label?: null | string } | null> | null): string[] {
+  return (items ?? [])
+    .map((item) => normalizeText(item?.label))
+    .filter((item): item is string => Boolean(item))
+}
+
+/**
  * 规范化媒体对象
  * @param value 原始媒体值
  * @returns 媒体对象或 null
@@ -479,6 +649,199 @@ function normalizeSeoMeta(meta?: CmsSeoMeta | null): {
     ogImage: normalizeMedia(meta?.image),
   }
 }
+
+/** Features 页面默认 SEO，用于 CMS 尚未发布配置时保持迁移页面完整可见。 */
+const DEFAULT_FEATURES_META = {
+  title: 'Noumi Features | Persistent Memory, Autonomous Execution & Self-Evolving Skills',
+  description:
+    "Explore Noumi's full capabilities: AI persistent memory across projects, autonomous multi-step task execution, and self-evolving skills that learn your workflow. From audio transcription to custom AI workflows.",
+}
+
+/** Features 首屏默认功能卡片。 */
+const DEFAULT_FEATURE_CARDS: OfficialFeatureCard[] = [
+  {
+    id: 'persistent-memory',
+    title: 'Persistent Memory',
+    description:
+      'Projects, preferences, and working rules load automatically across sessions. Start every task with context already in place.',
+    supportedFeatures: [
+      'Three-tier memory',
+      'File version history & rollback',
+      'Rule & preference accumulation',
+      'Evolution Report',
+    ],
+    cta: {
+      label: 'Explore Persistent Memory →',
+      href: '/features/persistent-memory',
+    },
+    tone: 'memory',
+  },
+  {
+    id: 'self-evolving-skills',
+    title: 'Self-Evolving Skills',
+    description:
+      'Start with pre-built professional skills, then teach Noumi your own. Every correction and template becomes a reusable rule.',
+    supportedFeatures: [
+      'Global Skills Library',
+      'Agent Training Ground',
+      'Continuous accumulation',
+      'Reusable and editable at any time',
+    ],
+    cta: {
+      label: 'Explore Self-Evolving Skills →',
+      href: '/features/self-evolving-skills',
+    },
+    tone: 'skills',
+  },
+  {
+    id: 'autonomous-execution',
+    title: 'Autonomous Execution',
+    description:
+      'Describe the task and step back. Noumi plans, researches, generates, and delivers — you stay focused on decisions, not logistics.',
+    supportedFeatures: [
+      'Multi-step task planning',
+      'Multi-source research & synthesis',
+      'Document processing',
+      'Human-in-the-loop or fully autonomous',
+    ],
+    cta: {
+      label: 'Explore Autonomous Execution →',
+      href: '/features/autonomous-execution',
+    },
+    tone: 'execution',
+  },
+]
+
+/** Features 第二屏默认能力卡片。 */
+const DEFAULT_ABILITY_CARDS: OfficialAbilityCard[] = [
+  {
+    id: 'audio-notes',
+    title: 'Transcribe Audio & Generate Meeting Notes',
+    description:
+      'Upload a recording. Noumi transcribes it, identifies speakers, extracts key decisions, and produces a structured summary.',
+    tags: ['AI audio transcription', 'automated meeting notes', 'AI meeting summarization'],
+  },
+  {
+    id: 'document-conversion',
+    title: 'Convert Documents Between Formats',
+    description:
+      'Noumi converts between formats — PDF to Word, text to HTML, spreadsheet to report — while preserving content and layout.',
+    tags: ['AI file format conversion', 'PDF to Word', 'text to HTML'],
+  },
+  {
+    id: 'multi-source-research',
+    title: 'Research & Synthesize From Multiple Sources',
+    description:
+      'Point Noumi at any topic. It searches the web, reads your files, and delivers a structured synthesis with sources.',
+    tags: ['AI web research', 'multi-source synthesis', 'AI content extraction'],
+  },
+  {
+    id: 'business-documents',
+    title: 'Write Reports, Articles & Business Documents',
+    description:
+      'Generate reports, articles, and proposals in your established tone, following your templates and style rules.',
+    tags: ['AI report generation', 'AI document generation', 'market analysis report'],
+  },
+  {
+    id: 'tracking-systems',
+    title: 'Build Lightweight Tracking Systems',
+    description:
+      'Describe what you need to track — bugs, candidates, sprint tasks — and Noumi builds it. No code, no configuration.',
+    tags: ['AI work organization system', 'lightweight project management', 'no-code tracker'],
+  },
+  {
+    id: 'workspace-restructure',
+    title: 'Organize & Restructure Your Workspace',
+    description:
+      'Noumi proposes a directory structure matched to your project and reorganizes everything in one step after confirmation.',
+    tags: ['AI workspace restructuring', 'automated file organization', 'AI directory management'],
+  },
+  {
+    id: 'spreadsheets-data',
+    title: 'Process Spreadsheets & Extract Structured Data',
+    description:
+      'Upload data files. Noumi reads the structure and produces summaries, answers questions, or reformatted outputs.',
+    tags: ['AI spreadsheet handling', 'structured data extraction', 'AI content extraction'],
+  },
+  {
+    id: 'reusable-workflows',
+    title: 'Train Reusable Workflows From Your Own Standards',
+    description:
+      'Upload your templates and rules once. Noumi converts them into skills applied automatically to every future task.',
+    tags: ['custom AI workflow', 'AI agent training', 'AI workflow capture'],
+  },
+]
+
+/** Features 第四屏默认 Use Case 卡片。 */
+const DEFAULT_FEATURES_ROLE_CARDS: OfficialFeaturesRoleCard[] = [
+  {
+    id: 'product-manager',
+    href: '/use-cases/product-manager',
+    title: 'Product Manager',
+    description: 'The roadmap memory you never had to keep.',
+    ctaLabel: 'Explore for PMs →',
+    tone: 'pm',
+    avatarSrc: '/assets/use-cases/avatar-pm.webp',
+  },
+  {
+    id: 'journalist',
+    href: '/use-cases/journalist',
+    title: 'Journalist',
+    description: 'Your beat, your voice — never rebuilt from scratch.',
+    ctaLabel: 'Explore for Journalists →',
+    tone: 'journalist',
+    avatarSrc: '/assets/use-cases/avatar-journalist.webp',
+  },
+  {
+    id: 'solutions-engineer',
+    href: '/use-cases/solutions-engineer',
+    title: 'Solutions Engineer',
+    description: 'What was promised always matches what gets built.',
+    ctaLabel: 'Explore for SEs →',
+    tone: 'solutions',
+    avatarSrc: '/assets/use-cases/avatar-se.webp',
+  },
+]
+
+/** Features 默认 FAQ。 */
+const DEFAULT_FEATURES_FAQ_ITEMS: OfficialFeaturesFaqItem[] = [
+  {
+    id: 'different-from-chatgpt',
+    question: 'How is Noumi different from ChatGPT or other AI assistants?',
+    answer:
+      'Most AI assistants start fresh with every new conversation. Noumi maintains <strong>persistent memory across sessions</strong> — it knows your projects, preferences, and working rules without you re-explaining them. It also executes multi-step tasks autonomously and accumulates your work patterns into reusable skills over time, so it gets meaningfully better the more you use it.',
+  },
+  {
+    id: 'file-types',
+    question: 'What file types can Noumi work with?',
+    answer:
+      'Noumi handles documents (Word, PDF), spreadsheets (Excel, CSV), images (PNG, JPG), and audio files (MP3, WAV, M4A). Files can be uploaded directly to a project workspace, and Noumi processes them as part of any task — no separate import step required.',
+  },
+  {
+    id: 'memory-workflow',
+    question: 'How does persistent memory actually work?',
+    answer:
+      'When you correct an output, set a rule, or describe a preference, Noumi saves it as a memory entry tied to your project or your global profile. On future tasks, those entries are loaded automatically and shape how Noumi works. You can review, edit, or delete any entry at any time through the <strong>Evolution Report</strong>.',
+  },
+  {
+    id: 'team-workspace',
+    question: 'Can my team use the same workspace?',
+    answer:
+      "Yes. Workspace owners can invite collaborators on a per-project basis. Collaborators can access files, open new work threads, and contribute to the project — but cannot see each other's private conversations. File changes sync in real time across everyone in the project.",
+  },
+  {
+    id: 'agent-training-ground',
+    question: 'What is the Agent Training Ground?',
+    answer:
+      'The <strong>Agent Training Ground</strong> is where you proactively build project-level skills. Upload style guides, report templates, evaluation criteria, or any reference material — Noumi reads them and converts them into structured skill entries it applies automatically to every relevant task in that project.',
+  },
+  {
+    id: 'setup',
+    question: 'Do I need to set anything up before using Noumi?',
+    answer:
+      'No manual configuration required. After registration, Noumi guides you through a short onboarding: upload your résumé or LinkedIn profile, and it recommends a matched set of professional skills to install. You can be up and running in under five minutes.',
+  },
+]
 
 /**
  * 格式化 HTML 模式 blog 卡片日期
@@ -699,7 +1062,10 @@ function normalizeUseCasesCardAvatarPreset(
  * @returns 上传头像地址或预置头像地址
  */
 function resolveUseCasesCardAvatarSrc(
-  card: NonNullable<UseCasesPage['cards']>[number],
+  card: {
+    avatarImage?: Media | number | null
+    avatarPreset?: null | string
+  },
   tone: OfficialUseCasesCardTone,
 ): string {
   const uploadedAvatar = normalizeMedia(card.avatarImage)
@@ -711,6 +1077,178 @@ function resolveUseCasesCardAvatarSrc(
   const preset = normalizeUseCasesCardAvatarPreset(card.avatarPreset, tone)
 
   return USE_CASES_CARD_AVATAR_SRC_BY_PRESET[preset]
+}
+
+/**
+ * 规范化 Features 首屏卡片样式
+ * @param value CMS 原始样式
+ * @returns 有效样式
+ */
+function normalizeFeatureCardTone(value?: null | string): OfficialFeatureCardTone {
+  if (value === 'execution' || value === 'memory' || value === 'skills') {
+    return value
+  }
+
+  return 'memory'
+}
+
+/**
+ * 映射 Features 首屏卡片
+ * @param card CMS 卡片
+ * @param index 当前序号
+ * @returns 前台卡片
+ */
+function mapFeatureCard(
+  card: NonNullable<FeaturesPage['featureCards']>[number] | null | undefined,
+  index: number,
+): OfficialFeatureCard | null {
+  const title = normalizeText(card?.title)
+  const description = normalizeText(card?.description)
+  const cta = mapButton(card?.ctaLabel, card?.ctaHref)
+
+  if (!title || !description || !cta) {
+    return null
+  }
+
+  return {
+    id: card?.id ?? `feature-${index}`,
+    title,
+    description,
+    supportedFeatures: extractLabelArray(card?.supportedFeatures),
+    cta,
+    tone: normalizeFeatureCardTone(card?.tone),
+  }
+}
+
+/**
+ * 映射 Feature 子页导航项
+ * @param page 原始文档
+ * @returns Feature 导航项
+ */
+function mapFeaturePageNavItem(page: FeaturePage): OfficialFeatureNavItem | null {
+  const slug = normalizeText(page.slug)
+  const label =
+    normalizeText(page.navigationLabel) ??
+    normalizeText(page.hero?.title) ??
+    (slug ? humanizeSlug(slug) : undefined)
+
+  if (!slug || !label) {
+    return null
+  }
+
+  return {
+    label,
+    href: `/features/${slug}`,
+  }
+}
+
+/**
+ * 映射 Feature 子页内容分节
+ * @param section CMS 分节
+ * @param index 当前序号
+ * @returns 前台分节
+ */
+function mapFeaturePageSection(
+  section: NonNullable<FeaturePage['sections']>[number] | null | undefined,
+  index: number,
+): OfficialFeaturePageSection | null {
+  const title = normalizeText(section?.title)
+
+  if (!title) {
+    return null
+  }
+
+  return {
+    id: section?.id ?? `section-${index}`,
+    label: normalizeText(section?.label),
+    title,
+    description: normalizeText(section?.description),
+    bullets: extractTextArray(section?.bullets),
+  }
+}
+
+/**
+ * 映射 Features 能力卡片
+ * @param card CMS 卡片
+ * @param index 当前序号
+ * @returns 前台卡片
+ */
+function mapAbilityCard(
+  card: NonNullable<FeaturesPage['abilityCards']>[number] | null | undefined,
+  index: number,
+): OfficialAbilityCard | null {
+  const title = normalizeText(card?.title)
+  const description = normalizeText(card?.description)
+
+  if (!title || !description) {
+    return null
+  }
+
+  return {
+    id: card?.id ?? `ability-${index}`,
+    title,
+    description,
+    tags: extractLabelArray(card?.tags),
+  }
+}
+
+/**
+ * 映射 Features Use Case 卡片
+ * @param card CMS 卡片
+ * @param index 当前序号
+ * @returns 前台卡片
+ */
+function mapFeaturesRoleCard(
+  card: NonNullable<FeaturesPage['roleCards']>[number] | null | undefined,
+  index: number,
+): OfficialFeaturesRoleCard | null {
+  const target =
+    card?.targetUseCase && typeof card.targetUseCase === 'object'
+      ? mapUseCaseNavItem(card.targetUseCase)
+      : null
+  const title = normalizeText(card?.title)
+  const description = normalizeText(card?.description)
+  const ctaLabel = normalizeText(card?.ctaLabel)
+
+  if (!target || !title || !description || !ctaLabel) {
+    return null
+  }
+
+  const tone = normalizeUseCasesCardTone(card?.tone)
+
+  return {
+    id: card?.id ?? `role-${index}`,
+    href: `/use-cases/${target.slug}`,
+    title,
+    description,
+    ctaLabel,
+    tone,
+    avatarSrc: resolveUseCasesCardAvatarSrc(card, tone),
+  }
+}
+
+/**
+ * 映射 Features FAQ
+ * @param item CMS FAQ 条目
+ * @param index 当前序号
+ * @returns 前台 FAQ
+ */
+function mapFeaturesFaqItem(
+  item: NonNullable<FeaturesPage['faqItems']>[number] | null | undefined,
+  index: number,
+): OfficialFeaturesFaqItem | null {
+  const question = normalizeText(item?.question)
+  const answer = normalizeText(item?.answer)
+
+  if (!question || !answer) {
+    return null
+  }
+
+  return {
+    id: item?.id ?? `features-faq-${index}`,
+    question,
+    answer,
+  }
 }
 
 /**
@@ -771,6 +1309,125 @@ function mapUseCasesFaqItem(
     id: item?.id ?? `faq-${index}`,
     question,
     answer,
+  }
+}
+
+/**
+ * 获取 Features 页面配置
+ * @returns Features 页面视图
+ */
+export async function getOfficialFeaturesPage(): Promise<OfficialFeaturesPageView> {
+  const payload = await getPayloadClient()
+  const page = await payload.findGlobal({
+    slug: 'features-page',
+    depth: 1,
+    ...(await getPublicReadOptions()),
+  })
+  const typedPage = page as FeaturesPage
+  const configuredFeatureCards = (typedPage.featureCards ?? [])
+    .map((card, index) => mapFeatureCard(card, index))
+    .filter(isPresent)
+  const configuredAbilityCards = (typedPage.abilityCards ?? [])
+    .map((card, index) => mapAbilityCard(card, index))
+    .filter(isPresent)
+  const configuredRoleCards = (typedPage.roleCards ?? [])
+    .map((card, index) => mapFeaturesRoleCard(card, index))
+    .filter(isPresent)
+  const configuredFaqItems = (typedPage.faqItems ?? [])
+    .map((item, index) => mapFeaturesFaqItem(item, index))
+    .filter(isPresent)
+
+  return {
+    metaTitle: normalizeText(typedPage.metaTitle) ?? DEFAULT_FEATURES_META.title,
+    metaDescription: normalizeText(typedPage.metaDescription) ?? DEFAULT_FEATURES_META.description,
+    ogImage: normalizeMedia(typedPage.ogImage),
+    featureCards:
+      configuredFeatureCards.length > 0 ? configuredFeatureCards : DEFAULT_FEATURE_CARDS,
+    abilityCards:
+      configuredAbilityCards.length > 0 ? configuredAbilityCards : DEFAULT_ABILITY_CARDS,
+    roleCards: configuredRoleCards.length > 0 ? configuredRoleCards : DEFAULT_FEATURES_ROLE_CARDS,
+    faqItems: configuredFaqItems.length > 0 ? configuredFaqItems : DEFAULT_FEATURES_FAQ_ITEMS,
+  }
+}
+
+/**
+ * 获取 Features 页脚导航项
+ * @param options.includeFallback 是否在没有 Feature 子页时回退到 Features 首屏卡片
+ * @returns 首屏功能卡片对应的页脚链接
+ */
+export async function getOfficialFeatureNavItems(
+  options: { includeFallback?: boolean } = {},
+): Promise<OfficialFeatureNavItem[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'feature-pages',
+    depth: 0,
+    limit: 100,
+    sort: 'slug',
+    ...(await getPublicReadOptions()),
+  })
+  const featurePages = docs.map((doc) => mapFeaturePageNavItem(doc)).filter(isPresent)
+
+  if (featurePages.length > 0 || options.includeFallback === false) {
+    return featurePages
+  }
+
+  const page = await getOfficialFeaturesPage()
+
+  return page.featureCards.map((card) => ({
+    label: card.title,
+    href: card.cta.href,
+  }))
+}
+
+/**
+ * 获取单个 Feature 子页
+ * @param slug 页面 slug
+ * @returns Feature 子页视图
+ */
+export async function getOfficialFeaturePage(
+  slug: string,
+): Promise<null | OfficialFeaturePageView> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'feature-pages',
+    depth: 1,
+    limit: 1,
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    ...(await getPublicReadOptions()),
+  })
+  const page = docs[0]
+
+  if (!page) {
+    return null
+  }
+
+  const navigationLabel =
+    normalizeText(page.navigationLabel) ??
+    normalizeText(page.hero?.title) ??
+    humanizeSlug(page.slug)
+
+  return {
+    slug: page.slug,
+    renderMode: page.renderMode === 'html' ? 'html' : 'template',
+    htmlContent: normalizeText(page.htmlContent),
+    navigationLabel,
+    ...normalizeSeoMeta(page.meta),
+    heroEyebrow: normalizeText(page.hero?.eyebrow),
+    heroTitle: normalizeText(page.hero?.title),
+    heroDescription: normalizeText(page.hero?.description),
+    heroPrimaryCta: mapButton(page.hero?.primaryCtaLabel, page.hero?.primaryCtaHref),
+    summary: normalizeText(page.summary),
+    sections: (page.sections ?? [])
+      .map((section, index) => mapFeaturePageSection(section, index))
+      .filter(isPresent),
+    ctaTitle: normalizeText(page.ctaTitle),
+    ctaDescription: normalizeText(page.ctaDescription),
+    ctaButton: mapButton(page.ctaLabel, page.ctaHref),
   }
 }
 

@@ -1,0 +1,811 @@
+.featuresPage {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--ff-body);
+}
+
+.sec {
+  padding: 96px 48px;
+}
+
+.secInner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.secHead {
+  margin-bottom: 56px;
+  text-align: center;
+}
+
+.secHead h1,
+.secHead h2 {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  line-height: 1.15;
+}
+
+.secHead h1 em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.secHead p {
+  max-width: 580px;
+  margin: 0 auto;
+  color: var(--ink-soft);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.heroCat {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.heroCat img {
+  width: auto;
+  height: 96px;
+  object-fit: contain;
+}
+
+.secFeatures {
+  padding-top: 72px;
+  background: var(--cream);
+}
+
+.secHeadHero {
+  margin-bottom: 64px;
+}
+
+.secHeadHero h1 {
+  margin-bottom: 22px;
+  font-size: clamp(40px, 5vw, 68px);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+.secHeadHero p {
+  max-width: 620px;
+  margin-bottom: 40px;
+  font-size: 18px;
+}
+
+.featGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.featCard {
+  --feat-card-strip: rgba(75, 75, 232, 0.32);
+
+  position: relative;
+  display: flex;
+  overflow: visible;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(to bottom, var(--feat-card-strip) 0 4px, #faf7f1 4px);
+  transition:
+    box-shadow 0.28s ease,
+    transform 0.28s ease;
+}
+
+.featCard::before {
+  position: absolute;
+  z-index: 3;
+  top: -66px;
+  right: 24px;
+  width: 122px;
+  height: 104px;
+  background: url('/assets/pricing/plan-cat.webp') no-repeat center bottom / contain;
+  content: '';
+  filter: drop-shadow(0 10px 18px rgba(28, 27, 46, 0.16));
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) rotate(-3deg) scale(0.96);
+  transform-origin: center bottom;
+  transition:
+    opacity 0.22s ease,
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.featCard:hover {
+  box-shadow: 0 20px 56px rgba(28, 27, 46, 0.1);
+  transform: translateY(-4px);
+}
+
+.featCard:hover::before,
+.featCard:focus-within::before {
+  opacity: 1;
+  transform: translateY(0) rotate(0deg) scale(1);
+}
+
+.featCardTop {
+  height: 4px;
+  flex-shrink: 0;
+}
+
+.featCardMemory {
+  --feat-card-strip: rgba(75, 75, 232, 0.32);
+}
+
+.featCardExecution {
+  --feat-card-strip: rgba(90, 154, 106, 0.34);
+}
+
+.featCardSkills {
+  --feat-card-strip: rgba(190, 122, 94, 0.34);
+}
+
+.featCardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 28px 28px 24px;
+}
+
+.featCard h3 {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.featCardDesc {
+  margin: 0 0 22px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.68;
+}
+
+.featCardList {
+  flex: 1;
+  margin: 0 0 26px;
+  list-style: none;
+}
+
+.featCardList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.featCardList li:last-child {
+  border-bottom: none;
+}
+
+.featCardList li::before {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #3d7a5f;
+  content: '✓';
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.featCardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: gap 0.2s;
+}
+
+.featCardMemory .featCardCta {
+  color: #4b4be8;
+}
+
+.featCardExecution .featCardCta {
+  color: #3a7a4a;
+}
+
+.featCardSkills .featCardCta {
+  color: #9c5a3a;
+}
+
+.featCard:hover .featCardCta {
+  gap: 10px;
+}
+
+.secAbilities,
+.secHow,
+.secRoles,
+.secFaq {
+  background: var(--cream);
+}
+
+.abilityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 18px;
+  row-gap: 21px;
+}
+
+.abilityCard {
+  position: relative;
+  overflow: visible;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #faf7f1;
+  cursor: default;
+  transition:
+    box-shadow 0.32s ease,
+    transform 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.abilityCard::before {
+  position: absolute;
+  z-index: 3;
+  top: -54px;
+  left: 14px;
+  width: 94px;
+  height: 56px;
+  background: url('/assets/home/cta-cat-bottom.webp') no-repeat center / contain;
+  content: '';
+  filter: drop-shadow(0 5px 10px rgba(28, 27, 46, 0.12));
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-6px, 10px) scale(0.92) rotate(-2deg);
+  transform-origin: bottom left;
+  transition:
+    opacity 0.18s ease,
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1.12);
+}
+
+.abilityCard:hover {
+  border-color: rgba(114, 102, 166, 0.45);
+  background: #faf7f1;
+  box-shadow:
+    0 0 0 2px rgba(114, 102, 166, 0.12),
+    0 0 18px rgba(114, 102, 166, 0.18),
+    0 6px 20px rgba(28, 27, 46, 0.07);
+  transform: translateY(-3px);
+}
+
+.abilityCard:hover::before {
+  opacity: 1;
+  transform: translate(0, 0) scale(1) rotate(0deg);
+}
+
+.abilityCard h3 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.abilityCard p {
+  margin: 0 0 14px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.abilityTags {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.abilityTag {
+  padding: 3px 10px;
+  border: 1px solid rgba(75, 75, 232, 0.16);
+  border-radius: 100px;
+  background: rgba(75, 75, 232, 0.06);
+  color: rgba(75, 75, 232, 0.72);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+.howSteps {
+  display: flex;
+  max-width: 720px;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.howStep {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0 28px;
+  padding-bottom: 52px;
+}
+
+.howStep:last-child {
+  padding-bottom: 0;
+}
+
+.howStep:not(:last-child)::before {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 33px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(75, 75, 232, 0.22), rgba(75, 75, 232, 0.03));
+  content: '';
+}
+
+.howNum {
+  color: rgba(75, 75, 232, 0.58);
+  font-family: var(--ff-display);
+  font-size: 48px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.howStep h3 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.howStep p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.howStepExample,
+.howStepBox {
+  display: block;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-left: 2px solid rgba(75, 75, 232, 0.28);
+  border-radius: 0 8px 8px 0;
+  background: rgba(28, 27, 46, 0.04);
+}
+
+.howStepExample {
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.howStepBox {
+  font-style: normal;
+}
+
+.howBoxLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(75, 75, 232, 0.65);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.howBoxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 3px 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.howBoxNumber {
+  min-width: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: rgba(75, 75, 232, 0.65);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.howBoxCheck {
+  flex-shrink: 0;
+  color: #3d7a5f;
+  font-weight: 600;
+}
+
+.ucGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.ucCard {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid var(--border-med);
+  border-radius: 20px;
+  background: #faf7f1;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    box-shadow 0.28s ease,
+    transform 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.ucCard:hover {
+  box-shadow: 0 20px 56px rgba(28, 27, 46, 0.11);
+  transform: translateY(-5px);
+}
+
+.ucCardPm:hover {
+  border-color: rgba(75, 75, 232, 0.3);
+}
+
+.ucCardJournalist:hover {
+  border-color: rgba(190, 122, 94, 0.4);
+}
+
+.ucCardSolutions:hover {
+  border-color: rgba(90, 154, 106, 0.4);
+}
+
+.ucCardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 22px 24px;
+}
+
+.ucCardText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.ucCardTitle {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  transition: color 0.2s;
+}
+
+.ucCardPm:hover .ucCardTitle {
+  color: var(--accent);
+}
+
+.ucCardJournalist:hover .ucCardTitle {
+  color: #9c5a3a;
+}
+
+.ucCardSolutions:hover .ucCardTitle {
+  color: #3a7a4a;
+}
+
+.ucCardDesc {
+  flex: 1;
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.ucCardCta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+  transition: gap 0.2s;
+}
+
+.ucCardPm .ucCardCta {
+  color: var(--accent);
+}
+
+.ucCardJournalist .ucCardCta {
+  color: #9c5a3a;
+}
+
+.ucCardSolutions .ucCardCta {
+  color: #3a7a4a;
+}
+
+.ucCard:hover .ucCardCta {
+  gap: 10px;
+}
+
+.ucAvatar {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  overflow: hidden;
+  margin-top: 2px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+}
+
+.ucAvatarPm {
+  border-color: rgba(75, 75, 232, 0.25);
+  background: rgba(75, 75, 232, 0.06);
+}
+
+.ucAvatarJournalist {
+  border-color: rgba(190, 122, 94, 0.3);
+  background: rgba(190, 122, 94, 0.08);
+}
+
+.ucAvatarSolutions {
+  border-color: rgba(90, 154, 106, 0.3);
+  background: rgba(90, 154, 106, 0.08);
+}
+
+.ucAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.ucAllLink {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.ucAllLink a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.ucAllLink a:hover {
+  color: var(--ink);
+}
+
+.faqList {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--border);
+}
+
+.faqItem:first-of-type {
+  border-top: 1px solid var(--border);
+}
+
+.faqQuestion {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 4px;
+  border: none;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--ff-body);
+  font-size: 15.5px;
+  font-weight: 500;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.faqQuestion:hover {
+  color: var(--accent);
+}
+
+.faqIcon {
+  display: flex;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-med);
+  border-radius: 50%;
+  color: var(--ink-muted);
+  font-size: 16px;
+  transition:
+    transform 0.25s,
+    background 0.2s;
+}
+
+.faqItemOpen .faqIcon {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+.faqAnswer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.38s ease;
+}
+
+.faqAnswerInner {
+  padding: 0 4px 22px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.faqAnswerInner strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.faqItemOpen .faqAnswer {
+  max-height: 320px;
+}
+
+.ctaBand {
+  position: relative;
+  overflow: hidden;
+  padding: 120px 48px;
+  background: var(--ink);
+  text-align: center;
+}
+
+.ctaBandImg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 85%;
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ctaBand h2 {
+  max-width: 680px;
+  margin: 0 auto 16px;
+  color: var(--cream);
+  font-family: var(--ff-display);
+  font-size: clamp(30px, 4.5vw, 58px);
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  line-height: 1.12;
+}
+
+.ctaBand h2 em {
+  color: var(--accent-soft);
+  font-style: italic;
+}
+
+.ctaBand p {
+  margin: 0 0 44px;
+  color: rgba(245, 240, 232, 0.45);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.ctaBandBtn {
+  position: relative;
+  z-index: 1;
+  padding: 18px 44px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+@media (max-width: 960px) {
+  .sec {
+    padding: 72px 24px;
+  }
+
+  .secFeatures {
+    padding-top: 52px;
+  }
+
+  .featGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .abilityGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .howSteps {
+    max-width: 100%;
+  }
+
+  .howStep {
+    grid-template-columns: 56px 1fr;
+    gap: 0 20px;
+  }
+
+  .howNum {
+    font-size: 38px;
+  }
+
+  .ucGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .heroCat img {
+    height: 76px;
+  }
+
+  .ctaBand {
+    padding: 80px 24px;
+  }
+
+  .ctaBandImg {
+    height: 70%;
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 600px) {
+  .sec {
+    padding: 56px 16px;
+  }
+
+  .abilityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .howStep {
+    grid-template-columns: 44px 1fr;
+    gap: 0 14px;
+  }
+
+  .howNum {
+    font-size: 30px;
+  }
+
+  .ucCardBody {
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .ucAvatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .heroCat img {
+    height: 60px;
+  }
+}

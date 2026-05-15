@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import type { OfficialUseCaseNavItem } from '@/lib/site/official-cms'
+import { OFFICIAL_LOGO } from '@/lib/site/official-site'
 
 /**
  * 渲染站内 use case 链接列表
@@ -52,7 +53,7 @@ export function OfficialInnerHeader(props: OfficialInnerHeaderProps) {
       role="navigation"
     >
       <Link className="nav-logo" href="/">
-        <img alt="Noumi" src="/Noumi-Logo.svg" />
+        <img alt="Noumi" src={OFFICIAL_LOGO} />
         <span>Noumi</span>
       </Link>
       <ul className="nav-links">

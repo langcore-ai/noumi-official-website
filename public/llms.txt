@@ -1,0 +1,98 @@
+# Noumi - AI Personal Assistant
+
+> Autonomous AI Personal Assistant: Built to Actually Do the Work.
+
+## About
+
+Noumi is an AI personal assistant that works like a colleague — understanding context, managing tasks, and delivering results without constant prompting.
+
+**Website:** https://noumi.ai
+**Product Type:** AI Personal Assistant
+**Target Users:** Product Managers, Solutions Engineers, Journalists, Content Creators, Knowledge Workers
+
+## Core Features
+
+### Persistent Memory
+Noumi remembers your work context, preferences, and project history across sessions. It builds a continuous understanding of your goals and working style.
+
+**URL:** https://noumi.ai/features/persistent-memory
+
+### Autonomous Execution
+Noumi takes initiative to complete tasks end-to-end without constant prompting. It breaks down complex requests, executes steps, and delivers finished results.
+
+**URL:** https://noumi.ai/features/autonomous-execution
+
+### Self-Evolving Skills
+Noumi learns from your corrections and feedback, continuously improving its performance on your specific workflows and tasks.
+
+**URL:** https://noumi.ai/features/self-evolving-skills
+
+## Use Cases
+
+### Product Manager
+PRD writing, feature planning, user research synthesis, roadmap documentation, stakeholder communication.
+
+**URL:** https://noumi.ai/use-cases/product-manager
+
+### Solutions Engineer
+Technical documentation, demo preparation, customer onboarding, proof-of-concept development, integration guides.
+
+**URL:** https://noumi.ai/use-cases/solutions-engineer
+
+### Journalist
+Interview transcription, article drafting, fact-checking, source management, editorial workflow automation.
+
+**URL:** https://noumi.ai/use-cases/journalist
+
+## Key Pages
+
+- **Homepage:** https://noumi.ai/
+- **Features:** https://noumi.ai/features
+- **Pricing:** https://noumi.ai/pricing
+- **About:** https://noumi.ai/about
+- **FAQ:** https://noumi.ai/faqs
+- **Blog:** https://noumi.ai/blog
+- **Contact:** https://noumi.ai/contact
+- **Privacy Policy:** https://noumi.ai/privacy
+- **Terms of Service:** https://noumi.ai/terms
+
+## Recent Blog Posts
+
+- **How to Use AI Proposal Generator** (2026-05-16) - https://noumi.ai/blog/how-to-use-ai-proposal-generator
+- **How to Work with AI Employee** (2026-05-15) - https://noumi.ai/blog/how-to-work-with-ai-employee
+- **How to Organize Files with AI** (2026-05-15) - https://noumi.ai/blog/how-to-organize-files-with-ai
+- **Best Long Term Memory AI Tools** (2026-05-15) - https://noumi.ai/blog/best-long-term-memory-ai-tools
+- **How to Use AI Writing Assistant** (2026-05-14) - https://noumi.ai/blog/how-to-use-ai-writing-assistant
+- **OpenAI Codex Alternatives** (2026-05-14) - https://noumi.ai/blog/openai-codex-alternatives
+- **How to Create AI Skills** (2026-05-13) - https://noumi.ai/blog/how-to-create-ai-skills
+- **Best AI Marketing Tools** (2026-05-13) - https://noumi.ai/blog/best-ai-marketing-tools
+
+## Company Information
+
+**Founded:** 2024
+**Headquarters:** China
+**Product Status:** Currently in beta/early access
+**Contact:** Available via website contact form
+
+## Privacy & Legal
+
+- **Privacy Policy:** https://noumi.ai/legal/privacy.html
+- **Terms of Service:** https://noumi.ai/legal/terms.html
+
+## Key Differentiators
+
+Unlike traditional AI assistants that require detailed prompting for every task, Noumi:
+- Works autonomously with minimal supervision
+- Maintains long-term memory of your projects and preferences
+- Learns and adapts to your specific workflows
+- Delivers complete, production-ready outputs rather than suggestions
+
+## Target Keywords
+
+AI personal assistant, autonomous AI assistant, AI with memory, AI colleague, AI task automation, AI workflow assistant, persistent memory AI, self-improving AI
+
+---
+
+**Last Updated:** 2026-05-18
+**Format:** llm.txt v1.0
+**For AI Search Engines:** This file provides structured information about Noumi for LLM-based search engines and AI assistants.

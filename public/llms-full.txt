@@ -1,0 +1,218 @@
+# Noumi - AI Personal Assistant (Full Documentation)
+
+> Autonomous AI Personal Assistant: Built to Actually Do the Work.
+
+## About
+
+Noumi is an AI personal assistant that works like a colleague — understanding context, managing tasks, and delivering results without constant prompting.
+
+**Website:** https://noumi.ai
+**Product Type:** AI Personal Assistant
+**Target Users:** Product Managers, Solutions Engineers, Journalists, Content Creators, Knowledge Workers
+
+## Core Features
+
+### Persistent Memory
+Noumi remembers your work context, preferences, and project history across sessions. It builds a continuous understanding of your goals and working style. Unlike traditional AI assistants that reset between conversations, Noumi maintains complete context across all your projects through a structured workspace system.
+
+**URL:** https://noumi.ai/features/persistent-memory
+
+**Key Capabilities:**
+- Remembers full project context across weeks and months
+- Maintains conversation history and decision records
+- Understands relationships between different projects
+- Automatically surfaces relevant past work when needed
+
+### Autonomous Execution
+Noumi takes initiative to complete tasks end-to-end without constant prompting. It breaks down complex requests, executes steps, and delivers finished results. The AI works independently with minimal supervision, completing multi-step workflows without requiring detailed instructions for each action.
+
+**URL:** https://noumi.ai/features/autonomous-execution
+
+**Key Capabilities:**
+- Completes multi-step tasks independently
+- Breaks down complex requests into actionable steps
+- Delivers production-ready outputs, not just suggestions
+- Works with minimal supervision once given clear goals
+
+### Self-Evolving Skills
+Noumi learns from your corrections and feedback, continuously improving its performance on your specific workflows and tasks. The system recognizes patterns in how you work and automatically applies those patterns to future tasks without being reminded.
+
+**URL:** https://noumi.ai/features/self-evolving-skills
+
+**Key Capabilities:**
+- Learns from user corrections and feedback
+- Recognizes workflow patterns over time
+- Builds custom capabilities for recurring tasks
+- Improves performance the longer you use it
+
+## Use Cases
+
+### Product Manager
+Noumi helps product managers with PRD writing, feature planning, user research synthesis, roadmap documentation, and stakeholder communication. The AI maintains context across product cycles and remembers past decisions.
+
+**URL:** https://noumi.ai/use-cases/product-manager
+
+**Common Tasks:**
+- Writing and updating PRDs
+- Synthesizing user research findings
+- Planning feature roadmaps
+- Drafting stakeholder updates
+- Managing product documentation
+
+### Solutions Engineer
+Noumi assists solutions engineers with technical documentation, demo preparation, customer onboarding, proof-of-concept development, and integration guides. The AI remembers customer-specific requirements and technical constraints.
+
+**URL:** https://noumi.ai/use-cases/solutions-engineer
+
+**Common Tasks:**
+- Creating technical documentation
+- Preparing customer demos
+- Writing integration guides
+- Building proof-of-concept materials
+- Documenting customer requirements
+
+### Journalist
+Noumi supports journalists with interview transcription, article drafting, fact-checking, source management, and editorial workflow automation. The AI maintains context across ongoing stories and remembers source relationships.
+
+**URL:** https://noumi.ai/use-cases/journalist
+
+**Common Tasks:**
+- Transcribing and summarizing interviews
+- Drafting article outlines and first drafts
+- Fact-checking and source verification
+- Managing source contacts and notes
+- Organizing research materials
+
+## All Site Pages
+
+### Main Navigation
+- **Homepage:** https://noumi.ai/
+- **Features:** https://noumi.ai/features
+- **Pricing:** https://noumi.ai/pricing
+- **About:** https://noumi.ai/about
+- **Contact:** https://noumi.ai/contact
+- **Blog:** https://noumi.ai/blog
+- **FAQ:** https://noumi.ai/faqs
+
+### Feature Pages
+- **Persistent Memory:** https://noumi.ai/features/persistent-memory
+- **Autonomous Execution:** https://noumi.ai/features/autonomous-execution
+- **Self-Evolving Skills:** https://noumi.ai/features/self-evolving-skills
+
+### Use Case Pages
+- **Product Manager:** https://noumi.ai/use-cases/product-manager
+- **Solutions Engineer:** https://noumi.ai/use-cases/solutions-engineer
+- **Journalist:** https://noumi.ai/use-cases/journalist
+
+### Legal Pages
+- **Privacy Policy:** https://noumi.ai/privacy
+- **Terms of Service:** https://noumi.ai/terms
+
+## Complete Blog Archive
+
+### AI Tools & Comparisons
+- **Best Long Term Memory AI Tools** - https://noumi.ai/blog/best-long-term-memory-ai-tools
+  Compare 7 AI assistants with true long-term memory for knowledge workers managing projects over weeks or months.
+
+- **Best AI Personal Assistant Tools** - https://noumi.ai/blog/best-ai-personal-assistant-tools
+  Comprehensive comparison of AI personal assistants for professional work.
+
+- **Best AI Marketing Tools** - https://noumi.ai/blog/best-ai-marketing-tools
+  Top AI tools for marketing professionals and content creators.
+
+- **Best Project Management Software** - https://noumi.ai/blog/best-project-management-software
+  AI-powered project management tools for teams and individuals.
+
+- **ChatGPT Alternative with Memory** - https://noumi.ai/blog/chatgpt-alternative-with-memory
+  AI assistants that remember your projects and context across sessions.
+
+- **Gemini Alternatives** - https://noumi.ai/blog/gemini-alternatives
+  Alternative AI assistants to Google Gemini with different strengths.
+
+- **OpenAI Codex Alternatives** - https://noumi.ai/blog/openai-codex-alternatives
+  AI coding assistants and alternatives to OpenAI Codex.
+
+- **Notion Alternatives** - https://noumi.ai/blog/notion-alternatives
+  Workspace and knowledge management alternatives to Notion.
+
+- **Noumi vs Claude Cowork** - https://noumi.ai/blog/noumi-vs-claude-cowork
+  Detailed comparison between Noumi and Claude for professional work.
+
+### How-To Guides
+- **How to Use AI Proposal Generator** - https://noumi.ai/blog/how-to-use-ai-proposal-generator
+  Step-by-step guide to generating professional proposals with AI.
+
+- **How to Work with AI Employee** - https://noumi.ai/blog/how-to-work-with-ai-employee
+  Best practices for collaborating with AI assistants as team members.
+
+- **How to Organize Files with AI** - https://noumi.ai/blog/how-to-organize-files-with-ai
+  Automatically categorize, rename, and structure your workspace with AI.
+
+- **How to Use AI to Take Meeting Notes** - https://noumi.ai/blog/how-to-use-ai-to-take-meeting-notes
+  Automate meeting documentation and action item extraction.
+
+- **How to Use AI Writing Assistant** - https://noumi.ai/blog/how-to-use-ai-writing-assistant
+  Improve writing workflows with AI-powered assistance.
+
+- **How to Create AI Skills** - https://noumi.ai/blog/how-to-create-ai-skills
+  Build custom AI capabilities for your specific workflows.
+
+- **How to Build an AI Task Scheduler** - https://noumi.ai/blog/how-to-build-an-ai-task-scheduler
+  Create automated task scheduling systems with AI.
+
+- **How to Convert Text to HTML with AI** - https://noumi.ai/blog/how-to-convert-text-to-html-with-ai
+  Automate content formatting and HTML generation.
+
+- **How to Delegate Weekly Work to AI Agent** - https://noumi.ai/blog/how-to-delegate-weekly-work-to-ai-agent
+  Set up recurring workflows and delegate routine tasks to AI.
+
+### Industry & Role-Specific Content
+- **What is an AI Executive Assistant** - https://noumi.ai/blog/what-is-an-ai-executive-assistant
+  How AI assistants support executive-level work and decision-making.
+
+- **What is an AI Sales Assistant** - https://noumi.ai/blog/what-is-an-ai-sales-assistant
+  AI tools for sales professionals and customer relationship management.
+
+- **AI for Consultants** - https://noumi.ai/blog/ai-for-consultants
+  How consultants use AI to scale expertise and client work.
+
+- **Project Management AI** - https://noumi.ai/blog/project-management-ai
+  AI applications in project management and team coordination.
+
+### Product Philosophy
+- **Why Your AI Should Know You Better Every Week** - https://noumi.ai/blog/why-your-ai-should-know-you-better-every-week
+  The importance of continuous learning and memory in AI assistants.
+
+## Key Differentiators
+
+Unlike traditional AI assistants that require detailed prompting for every task, Noumi:
+- **Works autonomously** with minimal supervision
+- **Maintains long-term memory** of your projects and preferences across weeks and months
+- **Learns and adapts** to your specific workflows over time
+- **Delivers complete outputs** rather than suggestions or drafts
+- **Understands context** without requiring constant re-explanation
+
+## Target Keywords
+
+AI personal assistant, autonomous AI assistant, AI with memory, AI colleague, AI task automation, AI workflow assistant, persistent memory AI, self-improving AI, AI for product managers, AI for solutions engineers, AI for journalists, long-term memory AI, AI that learns, AI project management
+
+## Pricing
+
+Visit https://noumi.ai/pricing for current pricing plans for individuals and teams.
+
+## Company Information
+
+**Founded:** 2024
+**Product Status:** Currently available
+**Contact:** https://noumi.ai/contact
+
+## Privacy & Legal
+
+- **Privacy Policy:** https://noumi.ai/privacy
+- **Terms of Service:** https://noumi.ai/terms
+
+---
+
+**Last Updated:** 2026-05-18
+**Format:** llm-full.txt v1.0
+**For AI Search Engines:** This file provides comprehensive information about Noumi for LLM-based search engines and AI assistants. For a concise overview, see llm.txt.

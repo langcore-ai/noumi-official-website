@@ -1,5 +1,10 @@
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { CONTACT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './contact.module.css'
@@ -8,11 +13,12 @@ import styles from './contact.module.css'
  * Contact 页面 metadata
  */
 export async function generateMetadata() {
+  const meta = OFFICIAL_JSON_LD_PAGE_META.contact
+
   return createOfficialMetadata({
-    title: "Contact Noumi — We'd Love to Hear from You",
-    description:
-      "Questions, feedback, or just want to say hi — reach us at official@noumi.ai. We read every message. For hiring inquiries or legal questions, we're here too.",
-    pathname: '/contact',
+    title: meta.title,
+    description: meta.description,
+    pathname: meta.pathname,
   })
 }
 
@@ -25,6 +31,7 @@ export default async function ContactPage() {
 
   return (
     <div className="page-body">
+      <StructuredData data={CONTACT_PAGE_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <main>

@@ -1,7 +1,12 @@
 import Link from 'next/link'
 
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
+import { HOME_JSON_LD } from '@/lib/site/json-ld'
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 
 /**
@@ -25,6 +30,7 @@ export default async function HomePage() {
 
   return (
     <div className="page-shell">
+      <StructuredData data={HOME_JSON_LD} />
       <OfficialHomeEffects />
       <OfficialHomeHeader useCases={useCases} />
 
@@ -40,7 +46,7 @@ export default async function HomePage() {
             </h1>
 
             <p className="hero__copy reveal is-visible">
-              Noumi is your AI personal assistant that works like a colleague — 
+              Noumi is your AI personal assistant that works like a colleague —
               <br />
               understanding context, managing tasks, and delivering results without constant prompting.
             </p>

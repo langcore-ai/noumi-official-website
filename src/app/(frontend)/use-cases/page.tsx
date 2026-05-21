@@ -4,11 +4,17 @@ import {
   OfficialHomeFooter,
   OfficialHomeHeader,
 } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
 import {
   getOfficialUseCaseNavItems,
   getOfficialUseCasesPage,
   type OfficialUseCasesCardTone,
 } from '@/lib/site/official-cms'
+import {
+  OFFICIAL_JSON_LD_PAGE_META,
+  USE_CASES_FAQ_JSON_LD,
+  USE_CASES_PAGE_JSON_LD,
+} from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import { UseCasesFaq } from './UseCasesFaq'
@@ -64,12 +70,13 @@ const CARD_STYLE_BY_TONE: Record<
  */
 export async function generateMetadata() {
   const page = await getOfficialUseCasesPage()
+  const meta = OFFICIAL_JSON_LD_PAGE_META.useCases
 
   return createOfficialMetadata({
-    title: page.metaTitle ?? '',
-    description: page.metaDescription ?? '',
+    title: meta.title,
+    description: meta.description,
     image: page.ogImage?.url,
-    pathname: '/use-cases',
+    pathname: meta.pathname,
   })
 }
 
@@ -93,6 +100,8 @@ export default async function UseCasesIndexPage() {
 
   return (
     <div className="page-body">
+      <StructuredData data={USE_CASES_PAGE_JSON_LD} />
+      <StructuredData data={USE_CASES_FAQ_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <header className={styles.pageHero}>

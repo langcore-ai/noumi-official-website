@@ -11,7 +11,12 @@ import {
   type OfficialFeatureCardTone,
   type OfficialUseCasesCardTone,
 } from '@/lib/site/official-cms'
-import { createOfficialMetadata, OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import {
+  FEATURES_FAQ_JSON_LD,
+  FEATURES_PAGE_JSON_LD,
+  OFFICIAL_JSON_LD_PAGE_META,
+} from '@/lib/site/json-ld'
+import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import { FeaturesFaq } from './FeaturesFaq'
 import styles from './features.module.css'
@@ -79,12 +84,13 @@ const ROLE_AVATAR_CLASS_BY_TONE: Record<OfficialUseCasesCardTone, string> = {
  */
 export async function generateMetadata() {
   const page = await getOfficialFeaturesPage()
+  const meta = OFFICIAL_JSON_LD_PAGE_META.features
 
   return createOfficialMetadata({
-    title: page.metaTitle ?? '',
-    description: page.metaDescription ?? '',
+    title: meta.title,
+    description: meta.description,
     image: page.ogImage?.url,
-    pathname: '/features',
+    pathname: meta.pathname,
   })
 }
 
@@ -97,49 +103,11 @@ export default async function FeaturesPage() {
     getOfficialFeaturesPage(),
     getOfficialUseCaseNavItems(),
   ])
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebPage',
-        '@id': `${OFFICIAL_SITE_URL}/features#webpage`,
-        url: `${OFFICIAL_SITE_URL}/features`,
-        name: page.metaTitle,
-        description: page.metaDescription,
-        isPartOf: { '@id': `${OFFICIAL_SITE_URL}/#website` },
-        inLanguage: 'en-US',
-        breadcrumb: { '@id': `${OFFICIAL_SITE_URL}/features#breadcrumb` },
-      },
-      {
-        '@type': 'BreadcrumbList',
-        '@id': `${OFFICIAL_SITE_URL}/features#breadcrumb`,
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${OFFICIAL_SITE_URL}/` },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Features',
-            item: `${OFFICIAL_SITE_URL}/features`,
-          },
-        ],
-      },
-      {
-        '@type': 'SoftwareApplication',
-        name: 'Noumi',
-        applicationCategory: 'BusinessApplication',
-        operatingSystem: 'Web',
-        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        featureList: [
-          ...page.featureCards.flatMap((card) => card.supportedFeatures),
-          ...page.abilityCards.map((card) => card.title),
-        ],
-      },
-    ],
-  }
 
   return (
     <div className="page-body">
-      <StructuredData data={structuredData} />
+      <StructuredData data={FEATURES_PAGE_JSON_LD} />
+      <StructuredData data={FEATURES_FAQ_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <main className={styles.featuresPage}>

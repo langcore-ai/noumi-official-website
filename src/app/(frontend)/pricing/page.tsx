@@ -1,7 +1,16 @@
 import Link from 'next/link'
 
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import {
+  OFFICIAL_JSON_LD_PAGE_META,
+  PRICING_PAGE_JSON_LD,
+  PRICING_SOFTWARE_APPLICATION_JSON_LD,
+} from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './pricing.module.css'
@@ -10,11 +19,12 @@ import styles from './pricing.module.css'
  * Pricing 页面 metadata
  */
 export async function generateMetadata() {
+  const meta = OFFICIAL_JSON_LD_PAGE_META.pricing
+
   return createOfficialMetadata({
-    title: 'Noumi Pricing — Start Free, Upgrade When Ready',
-    description:
-      'Simple, transparent pricing for Noumi. Try the Starter plan free for a month — no credit card required. Upgrade to Pro when Noumi earns it.',
-    pathname: '/pricing',
+    title: meta.title,
+    description: meta.description,
+    pathname: meta.pathname,
   })
 }
 
@@ -27,6 +37,8 @@ export default async function PricingPage() {
 
   return (
     <div className="page-body">
+      <StructuredData data={PRICING_PAGE_JSON_LD} />
+      <StructuredData data={PRICING_SOFTWARE_APPLICATION_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <section className={styles.pricingHero}>

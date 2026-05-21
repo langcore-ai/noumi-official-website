@@ -652,9 +652,9 @@ function normalizeSeoMeta(meta?: CmsSeoMeta | null): {
 
 /** Features 页面默认 SEO，用于 CMS 尚未发布配置时保持迁移页面完整可见。 */
 const DEFAULT_FEATURES_META = {
-  title: 'Noumi Features | Persistent Memory, Autonomous Execution & Self-Evolving Skills',
+  title: 'AI That Remembers, Evolves, and Executes for You | Noumi',
   description:
-    "Explore Noumi's full capabilities: AI persistent memory across projects, autonomous multi-step task execution, and self-evolving skills that learn your workflow. From audio transcription to custom AI workflows.",
+    "Stop re-explaining yourself. Noumi's persistent memory, self-evolving skills, and autonomous execution get more capable every single session.",
 }
 
 /** Features 首屏默认功能卡片。 */

@@ -1,5 +1,10 @@
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { ABOUT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './about.module.css'
@@ -8,11 +13,12 @@ import styles from './about.module.css'
  * About 页面 metadata
  */
 export async function generateMetadata() {
+  const meta = OFFICIAL_JSON_LD_PAGE_META.about
+
   return createOfficialMetadata({
-    title: 'About Noumi — We Believe AI Should Know You Better Over Time',
-    description:
-      'We believe your AI should get smarter every time you use it — not reset. Learn why we built Noumi and what it means to have an AI that truly learns how you work.',
-    pathname: '/about',
+    title: meta.title,
+    description: meta.description,
+    pathname: meta.pathname,
   })
 }
 
@@ -25,6 +31,7 @@ export default async function AboutPage() {
 
   return (
     <div className="page-body">
+      <StructuredData data={ABOUT_PAGE_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <section aria-labelledby="belief-h1" className={styles.belief}>

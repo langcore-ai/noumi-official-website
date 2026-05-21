@@ -1,7 +1,12 @@
 import Link from 'next/link'
 
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
+import { StructuredData } from '@/components/site/StructuredData'
+import {
+  OfficialHomeFooter,
+  OfficialHomeHeader,
+} from '@/components/site/official/OfficialHomeChrome'
 import { getOfficialBlogPosts, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { BLOG_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './blog.module.css'
@@ -10,11 +15,12 @@ import styles from './blog.module.css'
  * Blog 列表 metadata
  */
 export async function generateMetadata() {
+  const meta = OFFICIAL_JSON_LD_PAGE_META.blog
+
   return createOfficialMetadata({
-    title: 'Blog — Noumi | AI Agents, Memory & the Future of Work',
-    description:
-      'Stories and insights about AI agents, persistent memory, and how knowledge work is changing — from the team building Noumi, for the professionals who use it.',
-    pathname: '/blog',
+    title: meta.title,
+    description: meta.description,
+    pathname: meta.pathname,
   })
 }
 
@@ -30,6 +36,7 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="page-body">
+      <StructuredData data={BLOG_PAGE_JSON_LD} />
       <OfficialHomeHeader useCases={useCases} />
 
       <header className="page-hero">

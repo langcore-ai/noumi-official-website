@@ -76,8 +76,8 @@ Interview transcription, article drafting, fact-checking, source management, edi
 
 ## Privacy & Legal
 
-- **Privacy Policy:** https://noumi.ai/legal/privacy.html
-- **Terms of Service:** https://noumi.ai/legal/terms.html
+- **Privacy Policy:** https://noumi.ai/privacy
+- **Terms of Service:** https://noumi.ai/terms
 
 ## Key Differentiators
 
@@ -94,5 +94,5 @@ AI personal assistant, autonomous AI assistant, AI with memory, AI colleague, AI
 ---
 
 **Last Updated:** 2026-05-18
-**Format:** llm.txt v1.0
+**Format:** llms.txt v1.0
 **For AI Search Engines:** This file provides structured information about Noumi for LLM-based search engines and AI assistants.

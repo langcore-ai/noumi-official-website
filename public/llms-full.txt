@@ -214,5 +214,5 @@ Visit https://noumi.ai/pricing for current pricing plans for individuals and tea
 ---
 
 **Last Updated:** 2026-05-18
-**Format:** llm-full.txt v1.0
-**For AI Search Engines:** This file provides comprehensive information about Noumi for LLM-based search engines and AI assistants. For a concise overview, see llm.txt.
+**Format:** llms-full.txt v1.0
+**For AI Search Engines:** This file provides comprehensive information about Noumi for LLM-based search engines and AI assistants. For a concise overview, see llms.txt.

@@ -4,6 +4,7 @@ import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { OverviewField } from '@payloadcms/plugin-seo/fields'
 import type { Field } from 'payload'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -55,6 +56,11 @@ const isProduction = process.env.NODE_ENV === 'production'
 const redirectTargetCollections: string[] = [BlogPosts.slug, UseCasePages.slug]
 /** SEO 插件预览 URL 的兜底站点地址 */
 const defaultSeoSiteUrl = 'https://noumi.ai'
+/** SEO 插件 Meta Description 的推荐字符范围。 */
+const seoMetaDescriptionLength = {
+  minLength: 140,
+  maxLength: 160,
+} as const
 
 /**
  * 清洗 Payload 文档中的文本值
@@ -147,6 +153,29 @@ function generateSeoURL(doc: unknown, collectionSlug?: string): string {
           : '/'
 
   return collectionSlug ? new URL(pathname, siteUrl).toString() : siteUrl
+}
+
+/**
+ * 覆盖 SEO 插件默认字段配置
+ * @param defaultFields 插件默认提供的 SEO 字段
+ * @returns 调整后的 SEO 字段
+ */
+function getSeoFields(defaultFields: Field[]): Field[] {
+  return defaultFields.map((field) => {
+    if ('name' in field && field.name === 'description' && field.type === 'textarea') {
+      return {
+        ...field,
+        minLength: seoMetaDescriptionLength.minLength,
+        maxLength: seoMetaDescriptionLength.maxLength,
+      }
+    }
+
+    if ('name' in field && field.name === 'overview' && field.type === 'ui') {
+      return OverviewField({ descriptionOverrides: seoMetaDescriptionLength })
+    }
+
+    return field
+  })
 }
 
 /**
@@ -361,6 +390,7 @@ export default buildConfig({
       generateTitle: ({ collectionConfig, doc }) => generateSeoTitle(doc, collectionConfig?.slug),
       generateDescription: ({ doc }) => generateSeoDescription(doc),
       generateURL: ({ collectionConfig, doc }) => generateSeoURL(doc, collectionConfig?.slug),
+      fields: ({ defaultFields }) => getSeoFields(defaultFields),
     }),
     redirectsPlugin({
       // 当前仓库还没有页面内容集合，先降级为仅支持自定义 URL 的跳转管理

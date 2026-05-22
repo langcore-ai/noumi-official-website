@@ -28,6 +28,16 @@ export const OFFICIAL_LOGO = '/noumi.svg'
 export const OFFICIAL_LOGO_INVERTED = '/noumi-white.svg'
 
 /**
+ * 浏览器浅色模式使用的 favicon。
+ */
+export const OFFICIAL_FAVICON_LIGHT = `${OFFICIAL_LOGO}?v=light`
+
+/**
+ * 浏览器深色模式使用的 favicon。
+ */
+export const OFFICIAL_FAVICON_DARK = `${OFFICIAL_LOGO_INVERTED}?v=dark`
+
+/**
  * Google Search 优先使用的稳定 favicon。
  */
 export const OFFICIAL_FAVICON = '/favicon-96x96.png'
@@ -85,22 +95,18 @@ export function createOfficialMetadata(options: {
     icons: {
       icon: [
         {
-          url: OFFICIAL_FAVICON,
-          sizes: '96x96',
-          type: 'image/png',
+          url: OFFICIAL_FAVICON_LIGHT,
+          sizes: 'any',
+          type: 'image/svg+xml',
+          media: '(prefers-color-scheme: light)',
         },
         {
-          url: OFFICIAL_FAVICON_SMALL,
-          sizes: '48x48',
-          type: 'image/png',
-        },
-        {
-          url: OFFICIAL_FAVICON_LARGE,
-          sizes: '192x192',
-          type: 'image/png',
+          url: OFFICIAL_FAVICON_DARK,
+          sizes: 'any',
+          type: 'image/svg+xml',
+          media: '(prefers-color-scheme: dark)',
         },
       ],
-      shortcut: OFFICIAL_SHORTCUT_ICON,
       apple: [
         {
           url: OFFICIAL_APPLE_TOUCH_ICON,

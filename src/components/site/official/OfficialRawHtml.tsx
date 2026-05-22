@@ -17,14 +17,27 @@ type InlineScript = {
 }
 
 /**
+ * CMS HTML 中允许作为结构化数据输出的脚本
+ */
+type StructuredDataScript = {
+  /** JSON-LD 原始内容 */
+  content: string
+}
+
+/**
  * 清理后的 HTML 渲染结果
  */
 type PreparedRawHtml = {
   /** 可直接注入的 HTML */
   markup: string
+  /** 需要随 SSR HTML 保留的 JSON-LD 脚本 */
+  structuredDataScripts: StructuredDataScript[]
   /** 需要 hydration 后执行的普通脚本 */
   scripts: InlineScript[]
 }
+
+/** JSON-LD 脚本 MIME 类型 */
+const JSON_LD_SCRIPT_TYPE = 'application/ld+json'
 
 /**
  * 提取指定标签的第一个内容片段
@@ -48,6 +61,17 @@ function getScriptType(attributes: string): string | undefined {
   const type = match?.[1] ?? match?.[2] ?? match?.[3]
 
   return type?.trim().toLowerCase()
+}
+
+/**
+ * 判断 script 是否是 JSON-LD 结构化数据
+ * @param attributes script 标签属性
+ * @returns 是否为 JSON-LD 内联脚本
+ */
+function isStructuredDataScript(attributes: string): boolean {
+  const type = getScriptType(attributes)?.split(';')[0]?.trim()
+
+  return type === JSON_LD_SCRIPT_TYPE
 }
 
 /**
@@ -77,6 +101,28 @@ function getExecutableInlineScriptType(attributes: string): null | string {
   }
 
   return type === 'module' ? 'module' : null
+}
+
+/**
+ * 提取 HTML 中允许保留给搜索引擎识别的 JSON-LD 脚本
+ * @param html 原始 HTML
+ * @returns JSON-LD 结构化数据脚本
+ */
+function extractStructuredDataScripts(html: string): StructuredDataScript[] {
+  const scripts: StructuredDataScript[] = []
+
+  for (const [, attributes, content] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    // JSON-LD 只保留内联内容，继续避免 CMS HTML 额外加载外链脚本。
+    if (
+      !hasExternalScriptSource(attributes) &&
+      isStructuredDataScript(attributes) &&
+      content.trim()
+    ) {
+      scripts.push({ content })
+    }
+  }
+
+  return scripts
 }
 
 /**
@@ -139,10 +185,11 @@ function normalizeHtmlHrefs(markup: string): string {
  * @param html 原始 HTML
  * @returns 清理后的 HTML 与脚本
  */
-function prepareOfficialRawHtml(html: string): PreparedRawHtml {
+export function prepareOfficialRawHtml(html: string): PreparedRawHtml {
   const styles = Array.from(html.matchAll(/<style\b[^>]*>[\s\S]*?<\/style>/gi)).map(
     ([style]) => style,
   )
+  const structuredDataScripts = extractStructuredDataScripts(html)
   const bodyContent = extractTagContent(html, 'body') ?? html
   const scripts: InlineScript[] = []
   const withoutScripts = bodyContent.replace(
@@ -163,6 +210,7 @@ function prepareOfficialRawHtml(html: string): PreparedRawHtml {
 
   return {
     markup: [...styles, markup].join('\n'),
+    structuredDataScripts,
     scripts,
   }
 }
@@ -199,5 +247,16 @@ export function OfficialRawHtml(props: { html: string }) {
     }
   }, [prepared.scripts])
 
-  return <main dangerouslySetInnerHTML={{ __html: prepared.markup }} ref={containerRef} />
+  return (
+    <>
+      {prepared.structuredDataScripts.map((script, index) => (
+        <script
+          dangerouslySetInnerHTML={{ __html: script.content }}
+          key={index}
+          type={JSON_LD_SCRIPT_TYPE}
+        />
+      ))}
+      <main dangerouslySetInnerHTML={{ __html: prepared.markup }} ref={containerRef} />
+    </>
+  )
 }

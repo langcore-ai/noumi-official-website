@@ -79,6 +79,21 @@ const ROLE_AVATAR_CLASS_BY_TONE: Record<OfficialUseCasesCardTone, string> = {
   solutions: styles.ucAvatarSolutions,
 }
 
+/** Features 首屏猫咪插画替代文本。 */
+const FEATURES_HERO_IMAGE_ALT = 'Cat illustration for Noumi features'
+
+/** Features 页底 CTA 插画替代文本。 */
+const FEATURES_CTA_IMAGE_ALT = 'Cat illustration for Noumi use cases'
+
+/**
+ * 生成 Features Use Case 头像替代文本
+ * @param title Use Case 卡片标题
+ * @returns 头像替代文本
+ */
+function getRoleAvatarAlt(title: string): string {
+  return `${title} use case avatar`
+}
+
 /**
  * Features 页面 metadata
  */
@@ -115,7 +130,7 @@ export default async function FeaturesPage() {
           <div className={styles.secInner}>
             <div className={`${styles.secHead} ${styles.secHeadHero} reveal`}>
               <div className={styles.heroCat}>
-                <img alt="" aria-hidden="true" src="/assets/features/title-cat.webp" />
+                <img alt={FEATURES_HERO_IMAGE_ALT} src="/assets/features/title-cat.webp" />
               </div>
               <span className="sec-label">Everything Noumi Can Do</span>
               <h1>
@@ -244,11 +259,8 @@ export default async function FeaturesPage() {
                   key={card.id}
                 >
                   <div className={styles.ucCardBody}>
-                    <div
-                      aria-hidden="true"
-                      className={`${styles.ucAvatar} ${ROLE_AVATAR_CLASS_BY_TONE[card.tone]}`}
-                    >
-                      <img alt="" src={card.avatarSrc} />
+                    <div className={`${styles.ucAvatar} ${ROLE_AVATAR_CLASS_BY_TONE[card.tone]}`}>
+                      <img alt={getRoleAvatarAlt(card.title)} src={card.avatarSrc} />
                     </div>
                     <div className={styles.ucCardText}>
                       <h2 className={styles.ucCardTitle}>{card.title}</h2>
@@ -281,8 +293,7 @@ export default async function FeaturesPage() {
 
       <section aria-label="Call to action" className={styles.ctaBand}>
         <img
-          alt=""
-          aria-hidden="true"
+          alt={FEATURES_CTA_IMAGE_ALT}
           className={styles.ctaBandImg}
           src="/assets/use-cases/use-cases.webp"
         />

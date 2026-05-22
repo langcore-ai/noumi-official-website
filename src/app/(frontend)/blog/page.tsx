@@ -40,15 +40,15 @@ export default async function BlogIndexPage() {
       <OfficialHomeHeader useCases={useCases} />
 
       <header className="page-hero">
-        <span className="sec-label reveal">From the team</span>
-        <h1 className="reveal d1">Blog</h1>
-        <p className="reveal d2">
+        <span className="sec-label">From the team</span>
+        <h1>Blog</h1>
+        <p>
           Stories and insights about AI agents, persistent memory, and how knowledge work is changing.
         </p>
       </header>
 
       <main className={styles.blogWrap}>
-        <div className={`${styles.blogGrid} reveal`}>
+        <div className={styles.blogGrid}>
           {posts.map((post) => (
             <Link className={styles.blogCard} href={`/blog/${post.slug}`} key={post.slug}>
               <div className={styles.blogCardCover}>
@@ -72,7 +72,7 @@ export default async function BlogIndexPage() {
           ))}
         </div>
 
-        <div className={`${styles.blogSubscribe} reveal`}>
+        <div className={styles.blogSubscribe}>
           <h3>Stay in the loop</h3>
           <p>No spam. Just the best thinking on AI agents, memory, and how knowledge work is changing.</p>
           <div className={styles.subscribeForm}>

@@ -7,6 +7,7 @@ import config from '@/payload.config'
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type {
+  AboutPage,
   BlogPost,
   FeaturePage,
   FeaturesPage,
@@ -159,6 +160,50 @@ export type OfficialFeaturesPageView = {
   roleCards: OfficialFeaturesRoleCard[]
   /** FAQ 条目 */
   faqItems: OfficialFeaturesFaqItem[]
+}
+
+/**
+ * About 页面团队成员。
+ */
+export type OfficialAboutTeamMember = {
+  /** 稳定主键 */
+  id: string
+  /** 头像资源 */
+  avatar: Media | null
+  /** 成员名字 */
+  name?: string
+  /** 成员职位 */
+  role?: string
+  /** 成员描述 */
+  description?: string
+}
+
+/**
+ * About 页面 FAQ 条目。
+ */
+export type OfficialAboutFaqItem = {
+  /** 稳定主键 */
+  id: string
+  /** 问题 */
+  question?: string
+  /** 回答，允许后台配置少量 HTML */
+  answer?: string
+}
+
+/**
+ * About 页面视图。
+ */
+export type OfficialAboutPageView = {
+  /** 团队成员卡片 */
+  teamMembers: OfficialAboutTeamMember[]
+  /** FAQ 角标 */
+  faqEyebrow?: string
+  /** FAQ 标题 */
+  faqTitle?: string
+  /** FAQ 描述 */
+  faqDescription?: string
+  /** FAQ 条目 */
+  faqItems: OfficialAboutFaqItem[]
 }
 
 /**
@@ -1343,6 +1388,60 @@ function mapFeaturesFaqItem(
 }
 
 /**
+ * 映射 About 团队成员卡片。
+ * @param member CMS 团队成员
+ * @param index 当前序号
+ * @returns 前台团队成员卡片
+ */
+function mapAboutTeamMember(
+  member: NonNullable<AboutPage['teamMembers']>[number] | null | undefined,
+  index: number,
+): OfficialAboutTeamMember | null {
+  const avatar = normalizeMedia(member?.avatar)
+  const name = normalizeText(member?.name)
+  const role = normalizeText(member?.role)
+  const description = normalizeText(member?.description)
+
+  // 完全空白的数组行不进入前台，避免后台误留空行导致空卡片。
+  if (!avatar && !name && !role && !description) {
+    return null
+  }
+
+  return {
+    id: member?.id ?? `team-member-${index}`,
+    avatar,
+    name,
+    role,
+    description,
+  }
+}
+
+/**
+ * 映射 About FAQ 条目。
+ * @param item CMS FAQ 条目
+ * @param index 当前序号
+ * @returns 前台 FAQ 条目
+ */
+function mapAboutFaqItem(
+  item: NonNullable<AboutPage['faqItems']>[number] | null | undefined,
+  index: number,
+): OfficialAboutFaqItem | null {
+  const question = normalizeText(item?.question)
+  const answer = normalizeText(item?.answer)
+
+  // 完全空白的数组行不进入前台；单侧填写时保留另一侧为空。
+  if (!question && !answer) {
+    return null
+  }
+
+  return {
+    id: item?.id ?? `about-faq-${index}`,
+    question,
+    answer,
+  }
+}
+
+/**
  * 映射 Use Cases 聚合页卡片
  * @param card CMS 卡片
  * @returns 前台卡片
@@ -1400,6 +1499,32 @@ function mapUseCasesFaqItem(
     id: item?.id ?? `faq-${index}`,
     question,
     answer,
+  }
+}
+
+/**
+ * 获取 About 页面配置。
+ * @returns About 页面视图
+ */
+export async function getOfficialAboutPage(): Promise<OfficialAboutPageView> {
+  const payload = await getPayloadClient()
+  const page = await payload.findGlobal({
+    slug: 'about-page',
+    depth: 1,
+    ...(await getPublicReadOptions()),
+  })
+  const typedPage = page as AboutPage
+
+  return {
+    teamMembers: (typedPage.teamMembers ?? [])
+      .map((member, index) => mapAboutTeamMember(member, index))
+      .filter(isPresent),
+    faqEyebrow: normalizeText(typedPage.faqEyebrow),
+    faqTitle: normalizeText(typedPage.faqTitle),
+    faqDescription: normalizeText(typedPage.faqDescription),
+    faqItems: (typedPage.faqItems ?? [])
+      .map((item, index) => mapAboutFaqItem(item, index))
+      .filter(isPresent),
   }
 }
 

@@ -22,6 +22,7 @@ import { FriendlyLinks } from './collections/FriendlyLinks'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { InviteRequests } from './collections/InviteRequests'
+import { AboutPage } from './globals/AboutPage'
 import { FaqPage } from './globals/FaqPage'
 import { FeaturesPage } from './globals/FeaturesPage'
 import { PrivacyPage } from './globals/PrivacyPage'
@@ -347,7 +348,7 @@ export default buildConfig({
     FriendlyLinks,
     InviteRequests,
   ],
-  globals: [SiteSettings, FeaturesPage, UseCasesPage, FaqPage, PrivacyPage, TermsPage],
+  globals: [SiteSettings, FeaturesPage, UseCasesPage, AboutPage, FaqPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',

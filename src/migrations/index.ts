@@ -8,6 +8,7 @@ import * as migration_20260430_095800_add_use_cases_page from './20260430_095800
 import * as migration_20260511_142500_add_features_page from './20260511_142500_add_features_page'
 import * as migration_20260511_151800_add_feature_pages_collection from './20260511_151800_add_feature_pages_collection'
 import * as migration_20260525_132000_add_friendly_links from './20260525_132000_add_friendly_links'
+import * as migration_20260525_160000_add_about_page from './20260525_160000_add_about_page'
 
 export const migrations = [
   {
@@ -59,5 +60,10 @@ export const migrations = [
     up: migration_20260525_132000_add_friendly_links.up,
     down: migration_20260525_132000_add_friendly_links.down,
     name: '20260525_132000_add_friendly_links',
+  },
+  {
+    up: migration_20260525_160000_add_about_page.up,
+    down: migration_20260525_160000_add_about_page.down,
+    name: '20260525_160000_add_about_page',
   },
 ]

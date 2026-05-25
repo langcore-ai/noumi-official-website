@@ -106,6 +106,7 @@ export const legalGlobalReadAccess = createPublishedGlobalReadAccess(CMS_LEGAL_U
 export const LIVE_PREVIEW_COLLECTIONS = ['blog-posts', 'feature-pages', 'use-case-pages'] as const
 /** 支持 Payload live preview 的全局配置 slug 列表 */
 export const LIVE_PREVIEW_GLOBALS = [
+  'about-page',
   'features-page',
   'faq-page',
   'privacy-page',
@@ -126,6 +127,7 @@ type PreviewDoc = {
 
 /** 全局页面预览路径映射 */
 const GLOBAL_PREVIEW_PATHS: Record<PreviewGlobalSlug, string> = {
+  'about-page': '/about/',
   'features-page': '/features/',
   'faq-page': '/faqs/',
   'privacy-page': '/privacy/',

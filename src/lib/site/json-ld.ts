@@ -78,9 +78,9 @@ export const OFFICIAL_JSON_LD_PAGE_META = {
     pathname: '/pricing',
   },
   about: {
-    title: 'The Company Making AI Work Like a Real Colleague | Noumi',
+    title: 'About Noumi — We Believe AI Should Know You Better Over Time',
     description:
-      'We believe AI should know you — not just answer you. Noumi is built by a team obsessed with making AI work like a real colleague in your workflow.',
+      'We believe your AI should get smarter every time you use it — not reset. Learn why we built Noumi and what it means to have an AI that truly learns how you work.',
     pathname: '/about',
   },
   contact: {

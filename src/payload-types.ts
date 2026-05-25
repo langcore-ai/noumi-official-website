@@ -107,6 +107,7 @@ export interface Config {
     'site-settings': SiteSetting;
     'features-page': FeaturesPage;
     'use-cases-page': UseCasesPage;
+    'about-page': AboutPage;
     'faq-page': FaqPage;
     'privacy-page': PrivacyPage;
     'terms-page': TermsPage;
@@ -115,6 +116,7 @@ export interface Config {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'features-page': FeaturesPageSelect<false> | FeaturesPageSelect<true>;
     'use-cases-page': UseCasesPageSelect<false> | UseCasesPageSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
     'terms-page': TermsPageSelect<false> | TermsPageSelect<true>;
@@ -1889,6 +1891,41 @@ export interface UseCasesPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  /**
+   * 控制 About 页面人物介绍卡片；未填写的字段前台保持为空。
+   */
+  teamMembers?:
+    | {
+        avatar?: (number | null) | Media;
+        name?: string | null;
+        role?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  faqEyebrow?: string | null;
+  faqTitle?: string | null;
+  faqDescription?: string | null;
+  /**
+   * 回答支持少量 HTML，例如 <a> 链接；未填写的问题或回答前台保持为空。
+   */
+  faqItems?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-page".
  */
 export interface FaqPage {
@@ -2464,6 +2501,35 @@ export interface UseCasesPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  teamMembers?:
+    | T
+    | {
+        avatar?: T;
+        name?: T;
+        role?: T;
+        description?: T;
+        id?: T;
+      };
+  faqEyebrow?: T;
+  faqTitle?: T;
+  faqDescription?: T;
+  faqItems?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-page_select".
  */
 export interface FaqPageSelect<T extends boolean = true> {
@@ -2825,7 +2891,17 @@ export interface TaskSchedulePublish {
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
-    global?: ('site-settings' | 'features-page' | 'use-cases-page' | 'faq-page' | 'privacy-page' | 'terms-page') | null;
+    global?:
+      | (
+          | 'site-settings'
+          | 'features-page'
+          | 'use-cases-page'
+          | 'about-page'
+          | 'faq-page'
+          | 'privacy-page'
+          | 'terms-page'
+        )
+      | null;
     user?: (number | null) | User;
   };
   output?: unknown;

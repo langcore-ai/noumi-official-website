@@ -159,6 +159,7 @@ export async function OfficialHomeFooter(props: {
           <p className="footer-heading">RESOURCES</p>
           <Link href="/blog">Blog</Link>
           <Link href="/faqs">FAQ</Link>
+          <Link href="/links">Links</Link>
         </div>
         <div>
           <p className="footer-heading">LEGAL</p>

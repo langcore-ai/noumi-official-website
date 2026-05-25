@@ -12,6 +12,7 @@ import type {
   FeaturesPage,
   FaqPage,
   FaqItem,
+  FriendlyLink,
   Media,
   PrivacyPage,
   TermsPage,
@@ -536,6 +537,22 @@ export type OfficialFaqPageView = {
 }
 
 /**
+ * 友情链接视图。
+ */
+export type OfficialFriendlyLinkView = {
+  /** 稳定主键 */
+  id: string
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  description: string
+  /** 外链地址 */
+  href: string
+  /** 上传头像 */
+  avatar: Media | null
+}
+
+/**
  * 法律页面视图
  */
 export type OfficialLegalPageView = {
@@ -603,6 +620,27 @@ function normalizeText(value?: null | string): string | undefined {
 }
 
 /**
+ * 规范化外链地址。
+ * @param value 原始链接
+ * @returns 只允许 http/https 的标准 URL
+ */
+function normalizeExternalHref(value?: null | string): string | undefined {
+  const href = normalizeText(value)
+
+  if (!href) {
+    return undefined
+  }
+
+  try {
+    const url = new URL(href)
+
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.toString() : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * 提取数组中的文本字段
  * @param items 原始数组
  * @returns 文本列表
@@ -631,6 +669,29 @@ function extractLabelArray(items?: Array<{ label?: null | string } | null> | nul
  */
 function normalizeMedia(value?: Media | number | null): Media | null {
   return value && typeof value === 'object' ? value : null
+}
+
+/**
+ * 映射友情链接条目。
+ * @param link Payload 友链文档
+ * @returns 前台友链视图
+ */
+function mapFriendlyLink(link: FriendlyLink): OfficialFriendlyLinkView | null {
+  const title = normalizeText(link.title)
+  const description = normalizeText(link.description)
+  const href = normalizeExternalHref(link.href)
+
+  if (!link.isActive || !title || !description || !href) {
+    return null
+  }
+
+  return {
+    id: String(link.id),
+    title,
+    description,
+    href,
+    avatar: normalizeMedia(link.avatar),
+  }
 }
 
 /**
@@ -1686,6 +1747,28 @@ export async function getOfficialBlogPost(slug: string): Promise<null | Official
     sections: mapSections(post.sections),
     relatedPosts: fallbackRelatedPosts,
   }
+}
+
+/**
+ * 获取前台友情链接列表。
+ * @returns 已启用且链接安全的友情链接
+ */
+export async function getOfficialFriendlyLinks(): Promise<OfficialFriendlyLinkView[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'friendly-links',
+    depth: 1,
+    limit: 100,
+    sort: 'sortOrder',
+    where: {
+      isActive: {
+        equals: true,
+      },
+    },
+    ...(await getPublicReadOptions()),
+  })
+
+  return docs.map((doc) => mapFriendlyLink(doc)).filter(isPresent)
 }
 
 /**

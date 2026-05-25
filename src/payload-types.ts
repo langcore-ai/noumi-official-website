@@ -73,6 +73,7 @@ export interface Config {
     'feature-pages': FeaturePage;
     'use-case-pages': UseCasePage;
     'faq-items': FaqItem;
+    'friendly-links': FriendlyLink;
     'invite-requests': InviteRequest;
     redirects: Redirect;
     'payload-kv': PayloadKv;
@@ -89,6 +90,7 @@ export interface Config {
     'feature-pages': FeaturePagesSelect<false> | FeaturePagesSelect<true>;
     'use-case-pages': UseCasePagesSelect<false> | UseCasePagesSelect<true>;
     'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
+    'friendly-links': FriendlyLinksSelect<false> | FriendlyLinksSelect<true>;
     'invite-requests': InviteRequestsSelect<false> | InviteRequestsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -783,6 +785,36 @@ export interface FaqItem {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "friendly-links".
+ */
+export interface FriendlyLink {
+  id: number;
+  /**
+   * 卡片主标题，通常填写站点域名，例如 twelve.tools。
+   */
+  title: string;
+  /**
+   * 卡片副标题或一句简短说明。
+   */
+  description: string;
+  /**
+   * 完整外链地址，前台仅展示 http/https 链接。
+   */
+  href: string;
+  /**
+   * 可选头像图片；未上传时前台不展示头像。
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * 数字越小越靠前。
+   */
+  sortOrder?: number | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "invite-requests".
  */
 export interface InviteRequest {
@@ -981,6 +1013,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faq-items';
         value: number | FaqItem;
+      } | null)
+    | ({
+        relationTo: 'friendly-links';
+        value: number | FriendlyLink;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1496,6 +1532,20 @@ export interface FaqItemsSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
   category?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "friendly-links_select".
+ */
+export interface FriendlyLinksSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  href?: T;
+  avatar?: T;
   sortOrder?: T;
   isActive?: T;
   updatedAt?: T;

@@ -18,6 +18,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
 import { FeaturePages } from './collections/FeaturePages'
+import { FriendlyLinks } from './collections/FriendlyLinks'
 import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { InviteRequests } from './collections/InviteRequests'
@@ -336,7 +337,16 @@ export default buildConfig({
         }
       : undefined,
   },
-  collections: [Users, Media, BlogPosts, FeaturePages, UseCasePages, FaqItems, InviteRequests],
+  collections: [
+    Users,
+    Media,
+    BlogPosts,
+    FeaturePages,
+    UseCasePages,
+    FaqItems,
+    FriendlyLinks,
+    InviteRequests,
+  ],
   globals: [SiteSettings, FeaturesPage, UseCasesPage, FaqPage, PrivacyPage, TermsPage],
   editor: lexicalEditor(),
   i18n: {

@@ -134,6 +134,9 @@ export function OfficialInnerFooter(props: { useCases: OfficialUseCaseNavItem[] 
               <li>
                 <Link href="/faqs">FAQ</Link>
               </li>
+              <li>
+                <Link href="/links">Links</Link>
+              </li>
             </ul>
           </div>
           <div className="footer-col">

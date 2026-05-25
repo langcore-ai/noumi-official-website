@@ -798,7 +798,7 @@ export interface FriendlyLink {
    */
   description: string;
   /**
-   * 完整外链地址，前台仅展示 http/https 链接。
+   * 外链地址；未填写协议时前台会按 https:// 处理。
    */
   href: string;
   /**

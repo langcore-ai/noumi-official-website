@@ -622,14 +622,16 @@ function normalizeText(value?: null | string): string | undefined {
 /**
  * 规范化外链地址。
  * @param value 原始链接
- * @returns 只允许 http/https 的标准 URL
+ * @returns 自动补齐协议后的 http/https URL
  */
 function normalizeExternalHref(value?: null | string): string | undefined {
-  const href = normalizeText(value)
+  const rawHref = normalizeText(value)
 
-  if (!href) {
+  if (!rawHref) {
     return undefined
   }
+
+  const href = /^[a-z][a-z\d+\-.]*:/i.test(rawHref) ? rawHref : `https://${rawHref}`
 
   try {
     const url = new URL(href)

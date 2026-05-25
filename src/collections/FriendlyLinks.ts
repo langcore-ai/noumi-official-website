@@ -69,7 +69,7 @@ export const FriendlyLinks: CollectionConfig = {
       label: '链接',
       required: true,
       admin: {
-        description: '完整外链地址，前台仅展示 http/https 链接。',
+        description: '外链地址；未填写协议时前台会按 https:// 处理。',
       },
     },
     {

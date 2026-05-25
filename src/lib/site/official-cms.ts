@@ -550,6 +550,8 @@ export type OfficialFriendlyLinkView = {
   href: string
   /** 上传头像 */
   avatar: Media | null
+  /** 未上传头像时显示的标题首字母 */
+  avatarLabel: string
 }
 
 /**
@@ -674,6 +676,31 @@ function normalizeMedia(value?: Media | number | null): Media | null {
 }
 
 /**
+ * 根据友链标题生成头像占位字母。
+ * @param title 友链标题
+ * @returns 最多两个字符的占位字母
+ */
+function createFriendlyLinkAvatarLabel(title: string): string {
+  const normalizedTitle = title.replace(/^https?:\/\//i, '')
+  const segments = normalizedTitle.split(/[^a-z0-9]+/i).filter(Boolean)
+
+  if (segments.length >= 2) {
+    return segments
+      .slice(0, 2)
+      .map((segment) => segment[0])
+      .join('')
+      .toUpperCase()
+  }
+
+  return (
+    normalizedTitle
+      .replace(/[^a-z0-9]/gi, '')
+      .slice(0, 2)
+      .toUpperCase() || 'L'
+  )
+}
+
+/**
  * 映射友情链接条目。
  * @param link Payload 友链文档
  * @returns 前台友链视图
@@ -693,6 +720,7 @@ function mapFriendlyLink(link: FriendlyLink): OfficialFriendlyLinkView | null {
     description,
     href,
     avatar: normalizeMedia(link.avatar),
+    avatarLabel: createFriendlyLinkAvatarLabel(title),
   }
 }
 

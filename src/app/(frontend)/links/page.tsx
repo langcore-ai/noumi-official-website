@@ -118,7 +118,11 @@ function FriendlyLinkAvatar(props: { link: OfficialFriendlyLinkView }) {
   const { link } = props
 
   if (!link.avatar?.url) {
-    return null
+    return (
+      <span aria-hidden="true" className={styles.cardAvatarText}>
+        {link.avatarLabel}
+      </span>
+    )
   }
 
   return <img alt="" aria-hidden="true" className={styles.cardAvatarImage} src={link.avatar.url} />

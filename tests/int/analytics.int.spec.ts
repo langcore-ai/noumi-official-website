@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  buildOfficialGoogleTagBootstrapScript,
   buildOfficialGoogleTagConsentPayload,
   buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   buildPublicOfficialAnalyticsConfig,
+  OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
   sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
@@ -14,6 +16,17 @@ import {
 describe('official analytics helpers', () => {
   it('uses the official GA4 measurement id', () => {
     expect(OFFICIAL_GOOGLE_TAG_ID).toBe('G-TJBXDRBMVM')
+  })
+
+  it('builds the GA4 bootstrap script with initialization commands', () => {
+    const script = buildOfficialGoogleTagBootstrapScript()
+
+    expect(script).toContain('window.dataLayer = window.dataLayer || []')
+    expect(script).toContain('window.gtag = window.gtag || function gtag()')
+    expect(script).toContain("window.gtag('js', new Date())")
+    expect(script).toContain(`window.gtag('config', "${OFFICIAL_GOOGLE_TAG_ID}"`)
+    expect(script).toContain('send_page_view: false')
+    expect(script).toContain(OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG)
   })
 
   it('normalizes public config with bare hosts and defaults', () => {

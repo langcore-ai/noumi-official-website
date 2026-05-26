@@ -1,3 +1,5 @@
+import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
+
 /** 官网分析配置的默认 PostHog UI 地址。 */
 export const OFFICIAL_ANALYTICS_DEFAULT_UI_HOST = 'https://us.posthog.com'
 
@@ -6,6 +8,9 @@ export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://e.noumi.ai'
 
 /** 官网 GA4 Measurement ID。 */
 export const OFFICIAL_GOOGLE_TAG_ID = 'G-TJBXDRBMVM'
+
+/** window 上标记 GA4 初始化是否已完成的字段名。 */
+export const OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG = 'noumiOfficialGoogleTagBootstrapped'
 
 /** PostHog 浏览器可见配置。 */
 export type PublicOfficialAnalyticsConfig = {
@@ -492,6 +497,44 @@ export function buildOfficialGoogleTagConsentPayload(
     ad_user_data: 'denied',
     analytics_storage: hasAnalyticsConsent ? 'granted' : 'denied',
   }
+}
+
+/**
+ * 构建官网 GA4 初始化脚本。
+ * 初始化必须早于外链 gtag.js 稳定存在，自动 page_view 继续关闭，由客户端 Provider 发送去敏后的页面事件。
+ *
+ * @returns 可安全注入前台 layout 的 inline script 内容
+ */
+export function buildOfficialGoogleTagBootstrapScript(): string {
+  const consentStorageKey = JSON.stringify(COOKIE_CONSENT_STORAGE_KEY)
+  const consentVersion = JSON.stringify(COOKIE_CONSENT_VERSION)
+  const googleTagId = JSON.stringify(OFFICIAL_GOOGLE_TAG_ID)
+  const bootstrapFlag = JSON.stringify(OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG)
+
+  return `
+window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
+(function(){
+  var hasAnalyticsConsent = false;
+  try {
+    var rawConsent = window.localStorage.getItem(${consentStorageKey});
+    var parsedConsent = rawConsent ? JSON.parse(rawConsent) : null;
+    hasAnalyticsConsent =
+      parsedConsent &&
+      parsedConsent.version === ${consentVersion} &&
+      parsedConsent.analytics === true;
+  } catch (error) {}
+  window.gtag('consent', 'default', {
+    ad_personalization: 'denied',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    analytics_storage: hasAnalyticsConsent ? 'granted' : 'denied'
+  });
+  window.gtag('js', new Date());
+  window.gtag('config', ${googleTagId}, { send_page_view: false });
+  window[${bootstrapFlag}] = true;
+})();
+`.trim()
 }
 
 /**

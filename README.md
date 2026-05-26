@@ -442,6 +442,7 @@ bun test
 
 在本地或预发环境启用 `POSTHOG_ENABLED=true` 后，建议补一轮手工验证：
 
+- 前台 layout 会先注入 GA4 `dataLayer/gtag/js/config` 初始化脚本，并加载 `https://www.googletagmanager.com/gtag/js?id=G-TJBXDRBMVM`；`config` 禁用自动 `page_view`，页面浏览由官网 Provider 发送去除 query/hash 的事件。
 - 接受 cookie banner 的 Analytics 选项后，`/`、`/invite`、`/pricing` 和 `/about` 的主要 CTA 会向 `POSTHOG_BROWSER_API_HOST` 发请求。
 - 每个 session 的首个官网入口页会发送 `landing_page_viewed`，不再只限首页；`official_page_viewed`、`official_cta_clicked`、`official_invite_lookup_completed` 和 `official_invite_request_submitted` 也会进入 PostHog。
 - 带埋点属性的 CTA 跳转产品侧时，会追加安全归因参数：`first_touch_source`、`first_touch_medium`、`first_touch_campaign`、`first_touch_referrer_origin`、`first_touch_landing_page`、`official_cta_id`、`source_surface=official`，以及仅用于主站注册后 PostHog alias 合并的 `posthog_anonymous_distinct_id`。

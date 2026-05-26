@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
+import Script from 'next/script'
 
 import { OfficialAnalyticsProvider } from '@/components/site/OfficialAnalyticsProvider'
 import { CookieConsentBanner } from '@/components/site/CookieConsentBanner'
 import { OfficialGlobalEffects } from '@/components/site/official/OfficialGlobalEffects'
+import { buildOfficialGoogleTagBootstrapScript, OFFICIAL_GOOGLE_TAG_ID } from '@/lib/site/analytics'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import './official-base.css'
@@ -37,6 +39,21 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <Script
+          id="noumi-official-google-tag-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: buildOfficialGoogleTagBootstrapScript(),
+          }}
+        />
+        <Script
+          async
+          id="noumi-official-google-tag"
+          src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
+            OFFICIAL_GOOGLE_TAG_ID,
+          )}`}
+          strategy="afterInteractive"
+        />
         <OfficialAnalyticsProvider>
           <OfficialGlobalEffects />
           {children}

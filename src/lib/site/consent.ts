@@ -1,10 +1,8 @@
 'use client'
 
-/** 官网 cookie 偏好本地存储键。 */
-export const COOKIE_CONSENT_STORAGE_KEY = 'noumi-cookie-consent'
+import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
 
-/** 当前 cookie 偏好存储版本。 */
-export const COOKIE_CONSENT_VERSION = 3
+export { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
 
 /** cookie 偏好变更事件名。 */
 export const COOKIE_CONSENT_CHANGE_EVENT = 'noumi-cookie-consent-changed'

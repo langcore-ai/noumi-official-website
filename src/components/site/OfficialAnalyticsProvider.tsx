@@ -18,6 +18,7 @@ import {
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   isOfficialAnalyticsEventName,
+  OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
   sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
@@ -38,6 +39,7 @@ type GoogleTagWindow = Window &
   typeof globalThis & {
     dataLayer?: GoogleTagCommand[]
     gtag?: (...args: GoogleTagCommand) => void
+    [OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG]?: boolean
   }
 
 /** 官网埋点上下文。 */
@@ -221,6 +223,11 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   useEffect(() => {
     const gtag = ensureOfficialGoogleTag()
     const consentPayload = buildOfficialGoogleTagConsentPayload(hasAnalyticsConsent)
+    const googleWindow = window as GoogleTagWindow
+
+    if (googleWindow[OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG] === true) {
+      googleTagBootstrappedRef.current = true
+    }
 
     if (!googleTagBootstrappedRef.current) {
       gtag('consent', 'default', consentPayload)
@@ -229,6 +236,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
         send_page_view: false,
       })
       googleTagBootstrappedRef.current = true
+      googleWindow[OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG] = true
       return
     }
 

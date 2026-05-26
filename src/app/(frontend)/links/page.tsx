@@ -116,8 +116,9 @@ function getCardRevealClass(index: number): string {
  */
 function FriendlyLinkAvatar(props: { link: OfficialFriendlyLinkView }) {
   const { link } = props
+  const avatarUrl = link.avatar?.url ?? link.avatarUrl
 
-  if (!link.avatar?.url) {
+  if (!avatarUrl) {
     return (
       <span aria-hidden="true" className={styles.cardAvatarText}>
         {link.avatarLabel}
@@ -125,7 +126,7 @@ function FriendlyLinkAvatar(props: { link: OfficialFriendlyLinkView }) {
     )
   }
 
-  return <img alt="" aria-hidden="true" className={styles.cardAvatarImage} src={link.avatar.url} />
+  return <img alt="" aria-hidden="true" className={styles.cardAvatarImage} src={avatarUrl} />
 }
 
 /**

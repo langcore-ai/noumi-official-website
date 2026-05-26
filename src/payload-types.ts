@@ -792,21 +792,33 @@ export interface FaqItem {
 export interface FriendlyLink {
   id: number;
   /**
+   * 选择粘贴外部站点提供的 HTML，或手动填写每个字段。
+   */
+  inputMode: 'manual' | 'html';
+  /**
+   * 粘贴形如 <a href="..."><img src="..." alt="..." /></a> 的 badge 代码，保存前会自动提取链接、标题、描述和图片地址。
+   */
+  htmlSnippet?: string | null;
+  /**
    * 卡片主标题，通常填写站点域名，例如 twelve.tools。
    */
-  title: string;
+  title?: string | null;
   /**
    * 卡片副标题或一句简短说明。
    */
-  description: string;
+  description?: string | null;
   /**
    * 外链地址；未填写协议时前台会按 https:// 处理。
    */
-  href: string;
+  href?: string | null;
   /**
-   * 可选头像图片；未上传时前台不展示头像。
+   * 可选头像图片；未上传时前台显示标题首字母。
    */
   avatar?: (number | null) | Media;
+  /**
+   * 可选远程图片地址；上传 Avatar 优先于远程头像地址。
+   */
+  avatarUrl?: string | null;
   /**
    * 数字越小越靠前。
    */
@@ -1544,10 +1556,13 @@ export interface FaqItemsSelect<T extends boolean = true> {
  * via the `definition` "friendly-links_select".
  */
 export interface FriendlyLinksSelect<T extends boolean = true> {
+  inputMode?: T;
+  htmlSnippet?: T;
   title?: T;
   description?: T;
   href?: T;
   avatar?: T;
+  avatarUrl?: T;
   sortOrder?: T;
   isActive?: T;
   updatedAt?: T;

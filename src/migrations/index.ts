@@ -9,6 +9,7 @@ import * as migration_20260511_142500_add_features_page from './20260511_142500_
 import * as migration_20260511_151800_add_feature_pages_collection from './20260511_151800_add_feature_pages_collection'
 import * as migration_20260525_132000_add_friendly_links from './20260525_132000_add_friendly_links'
 import * as migration_20260525_160000_add_about_page from './20260525_160000_add_about_page'
+import * as migration_20260526_104000_add_friendly_link_html_mode from './20260526_104000_add_friendly_link_html_mode'
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20260525_160000_add_about_page.up,
     down: migration_20260525_160000_add_about_page.down,
     name: '20260525_160000_add_about_page',
+  },
+  {
+    up: migration_20260526_104000_add_friendly_link_html_mode.up,
+    down: migration_20260526_104000_add_friendly_link_html_mode.down,
+    name: '20260526_104000_add_friendly_link_html_mode',
   },
 ]

@@ -595,6 +595,8 @@ export type OfficialFriendlyLinkView = {
   href: string
   /** 上传头像 */
   avatar: Media | null
+  /** 远程头像 URL */
+  avatarUrl?: string
   /** 未上传头像时显示的标题首字母 */
   avatarLabel: string
 }
@@ -765,6 +767,7 @@ function mapFriendlyLink(link: FriendlyLink): OfficialFriendlyLinkView | null {
     description,
     href,
     avatar: normalizeMedia(link.avatar),
+    avatarUrl: normalizeExternalHref(link.avatarUrl),
     avatarLabel: createFriendlyLinkAvatarLabel(title),
   }
 }

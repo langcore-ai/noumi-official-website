@@ -293,3 +293,61 @@
   color: var(--ink-muted);
   background: var(--cream-mid);
 }
+
+@media (max-width: 640px) {
+  .postWrap {
+    padding: 0 18px 88px;
+  }
+
+  .postBack {
+    padding-top: 22px;
+  }
+
+  .postHeader {
+    padding-top: 24px;
+  }
+
+  .postLead {
+    padding-bottom: 24px;
+    font-size: 16px;
+  }
+
+  .postCover,
+  .blogPostPage :global(.official-image-block) {
+    margin: 28px 0 34px;
+    border-radius: 12px;
+  }
+
+  .moreSection {
+    margin-top: 48px;
+    padding-top: 30px;
+  }
+
+  .moreTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .moreCard {
+    flex-direction: column;
+  }
+
+  .moreThumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .moreBody {
+    padding: 22px;
+  }
+
+  .blogPostPage :global(.official-section-description),
+  .blogPostPage :global(.official-richtext-panel p),
+  .blogPostPage :global(.official-richtext-panel li),
+  .blogPostPage :global(.markdown-content p),
+  .blogPostPage :global(.markdown-content li),
+  .blogPostPage :global(.markdown-content td) {
+    font-size: 15.5px;
+  }
+}

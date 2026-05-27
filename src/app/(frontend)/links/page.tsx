@@ -194,7 +194,7 @@ export default async function LinksPage() {
           </div>
         </section>
 
-        <section aria-labelledby="links-cta" className={styles.ctaBand}>
+        <section aria-labelledby="links-cta" className={`${styles.ctaBand} official-cta-band`}>
           <h2 className={getRevealClass()} id="links-cta">
             Across the web.
             <br />
@@ -202,7 +202,7 @@ export default async function LinksPage() {
           </h2>
           <p className={getRevealClass(styles.d1)}>Free to start. No credit card required.</p>
           <Link
-            className={`${styles.creamButton} ${getRevealClass(styles.d2)}`}
+            className={`${styles.creamButton} official-cta-button ${getRevealClass(styles.d2)}`}
             data-analytics-cta-id="links_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"

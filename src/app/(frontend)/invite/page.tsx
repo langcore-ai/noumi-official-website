@@ -39,7 +39,7 @@ export default async function InvitePage() {
 
   return (
     <div className="page-body">
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/invite" useCases={useCases} />
 
       <main>
         <div className={styles.inviteWrap}>

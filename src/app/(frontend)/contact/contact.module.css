@@ -86,6 +86,23 @@
 
 @media (max-width: 600px) {
   .contactWrap {
+    min-height: auto;
     padding: 64px 24px;
+  }
+
+  .contactInner p {
+    margin-bottom: 36px;
+    font-size: 16px;
+  }
+
+  .contactEmail {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 18px;
+    overflow-wrap: anywhere;
+  }
+
+  .contactDivider {
+    margin: 56px 0 32px;
   }
 }

@@ -226,14 +226,18 @@
 
 .creamButton {
   display: inline-flex;
+  min-height: 58px;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 16px 34px;
-  border-radius: 8px;
+  padding: 0 34px;
+  border-radius: 14px;
   background: var(--cream);
   color: var(--ink);
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
   transition:
     background 0.2s,
     transform 0.15s;
@@ -259,6 +263,10 @@
 }
 
 @media (max-width: 580px) {
+  .hero {
+    padding: 48px 20px;
+  }
+
   .heroTitle {
     font-size: 36px;
   }
@@ -269,5 +277,14 @@
 
   .directoryGrid {
     grid-template-columns: 1fr;
+  }
+
+  .directoryCard {
+    padding: 20px;
+  }
+
+  .creamButton {
+    width: 100%;
+    justify-content: center;
   }
 }

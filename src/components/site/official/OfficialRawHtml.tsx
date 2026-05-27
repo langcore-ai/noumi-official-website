@@ -39,6 +39,79 @@ type PreparedRawHtml = {
 /** JSON-LD 脚本 MIME 类型 */
 const JSON_LD_SCRIPT_TYPE = 'application/ld+json'
 
+/** CMS HTML 渲染容器 class，用于限制移动端兜底样式作用域。 */
+const RAW_HTML_CONTAINER_CLASS = 'official-raw-html'
+
+/** 管理员粘贴整页 HTML 时的移动端兜底样式。 */
+const RAW_HTML_RESPONSIVE_STYLE = `<style data-noumi-raw-html-mobile>
+.${RAW_HTML_CONTAINER_CLASS} {
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.${RAW_HTML_CONTAINER_CLASS},
+.${RAW_HTML_CONTAINER_CLASS} * {
+  box-sizing: border-box;
+}
+
+.${RAW_HTML_CONTAINER_CLASS} :where(img, video, canvas, svg, iframe) {
+  max-width: 100%;
+  height: auto;
+}
+
+.${RAW_HTML_CONTAINER_CLASS} :where(pre, table) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 760px) {
+  .${RAW_HTML_CONTAINER_CLASS} {
+    overflow-wrap: anywhere;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where(section, article, main, aside, header, footer, div) {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where([style*="width" i]) {
+    max-width: 100% !important;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where([style*="min-width" i]) {
+    min-width: 0 !important;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where(table) {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    border-collapse: collapse;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where(th, td) {
+    word-break: normal;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where(h1) {
+    font-size: clamp(2.2rem, 11vw, 3.8rem);
+    line-height: 1.08;
+  }
+
+  .${RAW_HTML_CONTAINER_CLASS} :where(h2) {
+    font-size: clamp(1.8rem, 9vw, 3rem);
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 520px) {
+  .${RAW_HTML_CONTAINER_CLASS} :where([class*="grid" i], [class*="cards" i], [class*="columns" i]) {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>`
+
 /**
  * 提取指定标签的第一个内容片段
  * @param html 原始 HTML
@@ -209,7 +282,7 @@ export function prepareOfficialRawHtml(html: string): PreparedRawHtml {
   )
 
   return {
-    markup: [...styles, markup].join('\n'),
+    markup: [...styles, RAW_HTML_RESPONSIVE_STYLE, markup].join('\n'),
     structuredDataScripts,
     scripts,
   }
@@ -256,7 +329,11 @@ export function OfficialRawHtml(props: { html: string }) {
           type={JSON_LD_SCRIPT_TYPE}
         />
       ))}
-      <main dangerouslySetInnerHTML={{ __html: prepared.markup }} ref={containerRef} />
+      <main
+        className={RAW_HTML_CONTAINER_CLASS}
+        dangerouslySetInnerHTML={{ __html: prepared.markup }}
+        ref={containerRef}
+      />
     </>
   )
 }

@@ -236,7 +236,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="home-cta-band">
+        <section className="home-cta-band official-cta-band">
           <div className="home-cta-band__inner container reveal">
             <h2>
               <span className="home-cta-band__line home-cta-band__line--first">
@@ -248,7 +248,7 @@ export default async function HomePage() {
             </h2>
             <p className="reveal d1">Free to start. No credit card required.</p>
             <Link
-              className="button button--light button--large reveal d2"
+              className="button button--light button--large official-cta-button reveal d2"
               data-analytics-cta-id="home_band_try_free"
               data-analytics-event="official_cta_clicked"
               data-analytics-placement="cta_band"
@@ -259,7 +259,7 @@ export default async function HomePage() {
               <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <span aria-hidden="true" className="home-cta-band__cat" />
+          <span aria-hidden="true" className="home-cta-band__cat official-cta-art" />
         </section>
       </main>
 

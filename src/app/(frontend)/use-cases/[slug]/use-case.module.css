@@ -312,3 +312,41 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 600px) {
+  .roleHero {
+    gap: 34px;
+    padding: 42px 20px 44px;
+  }
+
+  .roleAdvantage {
+    margin-bottom: 28px;
+    font-size: 16px;
+  }
+
+  .roleHeroVisual {
+    padding-top: 8px;
+  }
+
+  .roleWindow {
+    padding: 18px;
+  }
+
+  .windowBack {
+    margin-bottom: -52px;
+  }
+
+  .workflowSection,
+  .testimonials {
+    padding: 56px 0;
+  }
+
+  .workflowInner,
+  .testimonialsInner {
+    padding: 0 20px;
+  }
+
+  .author {
+    align-items: flex-start;
+  }
+}

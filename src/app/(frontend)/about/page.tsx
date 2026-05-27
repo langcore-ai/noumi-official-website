@@ -165,7 +165,7 @@ export default async function AboutPage() {
           </>
         ) : null}
 
-        <section aria-labelledby="about-cta" className={`${styles.aboutCta} cta-band`}>
+        <section aria-labelledby="about-cta" className={`${styles.aboutCta} cta-band official-cta-band`}>
           <h2 className="reveal" id="about-cta">
             The longer you use Noumi,
             <br />
@@ -173,7 +173,7 @@ export default async function AboutPage() {
           </h2>
           <p className="reveal d1">Free to start. No credit card required.</p>
           <a
-            className="btn-cream reveal d2"
+            className="btn-cream official-cta-button reveal d2"
             data-analytics-cta-id="about_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"

@@ -64,7 +64,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
   if (page.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader useCases={useCases} />
+        <OfficialHomeHeader activeItem="/features" useCases={useCases} />
         <OfficialRawHtml html={page.htmlContent || ''} />
         <OfficialHomeFooter features={features} useCases={useCases} />
       </div>
@@ -73,7 +73,7 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
 
   return (
     <div className={`${styles.featurePage} page-body`}>
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/features" useCases={useCases} />
 
       <main>
         <section aria-labelledby={`${page.slug}-h1`} className={styles.hero}>
@@ -135,12 +135,12 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
         ) : null}
 
         {page.ctaButton && page.ctaTitle ? (
-          <section aria-labelledby={`${page.slug}-cta`} className="cta-band">
+          <section aria-labelledby={`${page.slug}-cta`} className="cta-band official-cta-band">
             <h2 className="reveal" id={`${page.slug}-cta`}>
               {page.ctaTitle}
             </h2>
             {page.ctaDescription ? <p className="reveal d1">{page.ctaDescription}</p> : null}
-            <Link className="btn-cream reveal d2" href={page.ctaButton.href}>
+            <Link className="btn-cream official-cta-button reveal d2" href={page.ctaButton.href}>
               {page.ctaButton.label}
             </Link>
           </section>

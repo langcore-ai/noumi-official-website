@@ -123,7 +123,7 @@ export default async function FeaturesPage() {
     <div className="page-body">
       <StructuredData data={FEATURES_PAGE_JSON_LD} />
       <StructuredData data={FEATURES_FAQ_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/features" useCases={useCases} />
 
       <main className={styles.featuresPage}>
         <section aria-label="Core features" className={`${styles.sec} ${styles.secFeatures}`}>
@@ -291,10 +291,10 @@ export default async function FeaturesPage() {
         </section>
       </main>
 
-      <section aria-label="Call to action" className={styles.ctaBand}>
+      <section aria-label="Call to action" className={`${styles.ctaBand} official-cta-band`}>
         <img
           alt={FEATURES_CTA_IMAGE_ALT}
-          className={styles.ctaBandImg}
+          className={`${styles.ctaBandImg} official-cta-art`}
           src="/assets/use-cases/use-cases.webp"
         />
         <h2>
@@ -303,7 +303,7 @@ export default async function FeaturesPage() {
           <em>Start building it today.</em>
         </h2>
         <p>Free to start. No credit card required.</p>
-        <Link className={`btn-cream ${styles.ctaBandBtn}`} href="/invite">
+        <Link className={`btn-cream ${styles.ctaBandBtn} official-cta-button`} href="/invite">
           Start building your AI today →
         </Link>
       </section>

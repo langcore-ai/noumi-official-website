@@ -724,9 +724,13 @@
 .ctaBandBtn {
   position: relative;
   z-index: 1;
-  padding: 18px 44px;
+  min-height: 58px;
+  padding: 0 34px;
   border-radius: 14px;
   font-size: 16px;
+  justify-content: center;
+  line-height: 1.2;
+  text-align: center;
 }
 
 @media (max-width: 960px) {
@@ -781,6 +785,23 @@
 @media (max-width: 600px) {
   .sec {
     padding: 56px 16px;
+  }
+
+  .secHead {
+    margin-bottom: 36px;
+  }
+
+  .secHeadHero {
+    margin-bottom: 44px;
+  }
+
+  .featCard::before,
+  .abilityCard::before {
+    display: none;
+  }
+
+  .featCardBody {
+    padding: 22px;
   }
 
   .abilityGrid {

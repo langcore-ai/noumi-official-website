@@ -29,6 +29,7 @@ describe('OfficialRawHtml', () => {
     expect(prepared.structuredDataScripts).toHaveLength(1)
     expect(prepared.structuredDataScripts[0]?.content).toContain('"@type":"BlogPosting"')
     expect(prepared.markup).toContain('<style>.hero { color: red; }</style>')
+    expect(prepared.markup).toContain('data-noumi-raw-html-mobile')
     expect(prepared.markup).toContain('<h1>Article</h1>')
     expect(prepared.markup).not.toContain('application/ld+json')
     expect(prepared.markup).not.toContain('<nav>')
@@ -80,7 +81,7 @@ describe('OfficialRawHtml', () => {
     expect(markup).toContain(
       '<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage"}</script>',
     )
-    expect(markup).toContain('<main>')
+    expect(markup).toContain('<main class="official-raw-html">')
     expect(markup).toContain('<section>FAQ content</section>')
   })
 })

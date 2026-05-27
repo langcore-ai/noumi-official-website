@@ -199,15 +199,26 @@
   }
 
   .hero {
-    padding: 56px 0 64px;
+    gap: 40px;
+    padding: 48px 0 60px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 12vw, 52px);
   }
 
   .visualCard {
     min-height: 300px;
-    padding: 26px;
+    padding: 24px;
+  }
+
+  .visualCard h2 {
+    font-size: 28px;
   }
 
   .heroVisual::before {
-    right: 24px;
+    top: -44px;
+    right: 20px;
+    width: 96px;
   }
 }

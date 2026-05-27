@@ -102,7 +102,7 @@ export default async function UseCasesIndexPage() {
     <div className="page-body">
       <StructuredData data={USE_CASES_PAGE_JSON_LD} />
       <StructuredData data={USE_CASES_FAQ_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/use-cases" useCases={useCases} />
 
       <header className={styles.pageHero}>
         <div className={`${styles.heroCat} reveal`}>
@@ -190,11 +190,11 @@ export default async function UseCasesIndexPage() {
         </main>
       ) : null}
 
-      <section aria-label="Call to action" className={styles.ctaBand}>
+      <section aria-label="Call to action" className={`${styles.ctaBand} official-cta-band`}>
         <img
           alt=""
           aria-hidden="true"
-          className={styles.ctaBandImg}
+          className={`${styles.ctaBandImg} official-cta-art`}
           src="/assets/use-cases/use-cases.webp"
         />
         <h2>
@@ -203,7 +203,7 @@ export default async function UseCasesIndexPage() {
           <em>{CTA.accent}</em>
         </h2>
         <p>{CTA.description}</p>
-        <Link className={`${styles.btnCream} ${styles.ctaBandBtn}`} href={CTA.href}>
+        <Link className={`${styles.btnCream} ${styles.ctaBandBtn} official-cta-button`} href={CTA.href}>
           {CTA.label}
         </Link>
       </section>

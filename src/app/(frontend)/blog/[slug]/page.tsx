@@ -58,7 +58,7 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
   if (post.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader useCases={useCases} />
+        <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
         <OfficialRawHtml html={post.htmlContent || ''} />
         <OfficialHomeFooter useCases={useCases} />
       </div>
@@ -67,7 +67,7 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
 
   return (
     <div className={`${styles.blogPostPage} page-body`}>
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
 
       <main className={styles.postWrap}>
         <Link className={`${styles.postBack} reveal`} href="/blog">← Back to Blog</Link>

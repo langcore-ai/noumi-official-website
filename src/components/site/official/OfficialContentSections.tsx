@@ -53,7 +53,11 @@ export function OfficialContentSections(props: {
 
         if (section.type === 'cta') {
           return (
-            <section key={`cta-${index}`} aria-labelledby={`cta-${index}`} className="cta-band">
+            <section
+              key={`cta-${index}`}
+              aria-labelledby={`cta-${index}`}
+              className="cta-band official-cta-band"
+            >
               {section.label ? <span className="sec-label reveal">{section.label}</span> : null}
               {section.title ? (
                 <h2 className="reveal" id={`cta-${index}`}>
@@ -62,7 +66,7 @@ export function OfficialContentSections(props: {
               ) : null}
               {section.description ? <p className="reveal d1">{section.description}</p> : null}
               {section.primaryCta ? (
-                <Link className="btn-cream reveal d2" href={section.primaryCta.href}>
+                <Link className="btn-cream official-cta-button reveal d2" href={section.primaryCta.href}>
                   {section.primaryCta.label}
                 </Link>
               ) : null}

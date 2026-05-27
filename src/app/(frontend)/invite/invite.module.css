@@ -175,10 +175,21 @@
 
 @media (max-width: 600px) {
   .inviteWrap {
+    min-height: auto;
     padding: 56px 20px;
   }
 
   .inviteInner :global(.invite-form) {
     flex-direction: column;
+  }
+
+  .inviteInner p {
+    margin-bottom: 34px;
+    font-size: 16px;
+  }
+
+  .inviteInner :global(.invite-input),
+  .inviteInner :global(.invite-submit) {
+    width: 100%;
   }
 }

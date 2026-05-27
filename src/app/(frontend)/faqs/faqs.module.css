@@ -100,3 +100,33 @@
   font-weight: 500;
   color: var(--accent);
 }
+
+@media (max-width: 600px) {
+  .faqWrap {
+    padding: 0 20px 72px;
+  }
+
+  .faqCategory {
+    margin-bottom: 48px;
+  }
+
+  .categoryLabel {
+    margin-bottom: 18px;
+  }
+
+  .faqQuestion {
+    gap: 14px;
+    padding: 20px 0;
+    font-size: 15.5px;
+  }
+
+  .faqAnswer,
+  .faqAnswer :global(.markdown-content p) {
+    font-size: 15px;
+  }
+
+  .faqFooter {
+    margin-top: 36px;
+    padding-top: 48px;
+  }
+}

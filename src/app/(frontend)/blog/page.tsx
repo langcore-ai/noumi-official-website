@@ -37,7 +37,7 @@ export default async function BlogIndexPage() {
   return (
     <div className="page-body">
       <StructuredData data={BLOG_PAGE_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
 
       <header className="page-hero">
         <span className="sec-label">From the team</span>

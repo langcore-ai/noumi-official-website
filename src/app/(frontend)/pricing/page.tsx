@@ -39,7 +39,7 @@ export default async function PricingPage() {
     <div className="page-body">
       <StructuredData data={PRICING_PAGE_JSON_LD} />
       <StructuredData data={PRICING_SOFTWARE_APPLICATION_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
+      <OfficialHomeHeader activeItem="/pricing" useCases={useCases} />
 
       <section className={styles.pricingHero}>
         <h1 className="reveal">Simple, transparent pricing.</h1>
@@ -184,9 +184,9 @@ export default async function PricingPage() {
         </div>
       </section>
 
-      <section className={`${styles.pricingCta} cta-band`} aria-labelledby="pricing-cta">
+      <section className={`${styles.pricingCta} cta-band official-cta-band`} aria-labelledby="pricing-cta">
         <div className={styles.pricingCtaInner}>
-          <span aria-hidden="true" className={styles.pricingCtaCat} />
+          <span aria-hidden="true" className={`${styles.pricingCtaCat} official-cta-art`} />
           <h2 className="reveal" id="pricing-cta">
             Every session makes
             <br />
@@ -194,7 +194,7 @@ export default async function PricingPage() {
           </h2>
           <p className="reveal d1">Start free. Your first session is already a head start.</p>
           <Link
-            className="btn-cream reveal d2"
+            className="btn-cream official-cta-button reveal d2"
             data-analytics-cta-id="pricing_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"

@@ -147,11 +147,11 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
       <OfficialContentSections sections={page.sections} />
 
       {page.ctaButton && page.ctaTitle ? (
-        <section aria-labelledby={`${page.slug}-cta`} className="cta-band">
+        <section aria-labelledby={`${page.slug}-cta`} className="cta-band official-cta-band">
           {page.ctaEyebrow ? <span className="sec-label reveal">{page.ctaEyebrow}</span> : null}
           <h2 className="reveal" id={`${page.slug}-cta`}>{page.ctaTitle}</h2>
           {page.ctaDescription ? <p className="reveal d1">{page.ctaDescription}</p> : null}
-          <a className="btn-cream reveal d2" href={page.ctaButton.href}>{page.ctaButton.label}</a>
+          <a className="btn-cream official-cta-button reveal d2" href={page.ctaButton.href}>{page.ctaButton.label}</a>
         </section>
       ) : null}
 

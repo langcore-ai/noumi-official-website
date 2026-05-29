@@ -11,6 +11,8 @@ import {
   OFFICIAL_PRODUCT_AUTH_URL,
 } from '@/lib/site/official-site'
 
+import { OfficialBetaBanner } from './OfficialBetaBanner'
+
 /** 官网主导航固定链接。 */
 const PRIMARY_NAV_ITEMS = [
   { href: '/features', label: 'Features' },
@@ -56,6 +58,7 @@ export function OfficialHomeHeader(props: {
 
   return (
     <header className="site-header site-header--home" data-official-nav id="nav">
+      <OfficialBetaBanner />
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
           <img
@@ -137,6 +140,7 @@ export function OfficialUseCaseHeader(props: {
 
   return (
     <header className="site-header site-header--use-case" data-official-nav id="nav">
+      <OfficialBetaBanner />
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
           <img

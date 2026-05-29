@@ -71,10 +71,12 @@ export function OfficialBetaBanner() {
         <div className="container official-beta-banner__inner">
           <div className="official-beta-banner__copy">
             <p className="official-beta-banner__title">
-              Join the Beta — Shape Noumi, Get 1 Month of Pro Free
-            </p>
-            <p className="official-beta-banner__subtitle">
-              8,000 credits. Early feature access. A 1-on-1 with our team. Fill in 1 minute.
+              Join the Beta — Shape Noumi, Get{' '}
+              <span className="official-beta-banner__highlight">1 Month of Pro Free</span>
+              <span className="official-beta-banner__details">
+                {' '}
+                · 8,000 credits. Early feature access. A 1-on-1 with our team. Fill in 1 minute.
+              </span>
             </p>
           </div>
 
@@ -89,7 +91,7 @@ export function OfficialBetaBanner() {
               rel="noopener noreferrer"
               target="_blank"
             >
-              Apply Now -&gt;
+              Apply Now →
             </a>
             <button
               aria-label="Close beta application banner"

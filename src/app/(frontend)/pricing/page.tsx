@@ -11,7 +11,11 @@ import {
   PRICING_PAGE_JSON_LD,
   PRICING_SOFTWARE_APPLICATION_JSON_LD,
 } from '@/lib/site/json-ld'
-import { createOfficialMetadata } from '@/lib/site/official-site'
+import {
+  createOfficialMetadata,
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 import styles from './pricing.module.css'
 
@@ -65,8 +69,8 @@ export default async function PricingPage() {
             data-analytics-cta-id="pricing_starter_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="pricing_card"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Start free →
           </Link>
@@ -97,8 +101,8 @@ export default async function PricingPage() {
             data-analytics-cta-id="pricing_pro_get_started"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="pricing_card"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Get started →
           </Link>
@@ -198,8 +202,8 @@ export default async function PricingPage() {
             data-analytics-cta-id="pricing_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Try Noumi Free →
           </Link>

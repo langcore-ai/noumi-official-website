@@ -160,17 +160,18 @@ HTML 模式主要用于承接旧 HTML 页面或外部 HTML 内容。它是迁移
 
 ### 静态营销页面文案
 
-首页、About、Pricing、Contact、Invite 等页面的大部分文案仍直接写在对应页面组件中，例如：
+首页、About、Pricing、Contact 等页面的大部分文案仍直接写在对应页面组件中，例如：
 
 ```text
 src/app/(frontend)/page.tsx
 src/app/(frontend)/about/page.tsx
 src/app/(frontend)/pricing/page.tsx
 src/app/(frontend)/contact/page.tsx
-src/app/(frontend)/invite/page.tsx
 ```
 
 这些页面来自早期 HTML 迁移阶段。除非有明确 CMS 化需求，否则应按普通前端页面维护。
+
+`src/app/(frontend)/invite/page.tsx` 目前仅保留路由占位，并临时重定向到产品登录/注册页 `https://www.noumi.ai/auth`；不要把它作为可进入的营销页维护。
 
 ### 页面专属 CSS
 
@@ -182,10 +183,12 @@ src/app/(frontend)/invite/page.tsx
 
 ### Invite 申请数据
 
-invite 申请现在由 Payload collection `invite-requests` 管理，官网 `/api/invite-requests` 负责接收前台申请，并通过共享 token 向 `noumi-server` 暴露同步读取/状态回写能力。相关代码位于：
+invite 申请数据仍由 Payload collection `invite-requests` 管理。当前官网 waitlist 前台已暂停开放：`/invite` 会跳转到产品登录/注册页，公开提交/查询接口只返回产品 auth 入口，不再写入新 waitlist；携带共享 token 的服务间同步读取/状态回写能力仍保留给 `noumi-server` 使用。相关代码位于：
 
 ```text
-src/app/api/invite-requests/route.ts
+src/app/(frontend)/invite/page.tsx
+src/app/api/site/invite-requests/route.ts
+src/app/api/site/invite-requests/lookup/route.ts
 src/collections/InviteRequests.ts
 src/lib/site/invite-requests.ts
 src/components/site/official/OfficialInviteRequestForm.tsx
@@ -443,8 +446,8 @@ bun test
 在本地或预发环境启用 `POSTHOG_ENABLED=true` 后，建议补一轮手工验证：
 
 - 前台 layout 会先注入 GA4 `dataLayer/gtag/js/config` 初始化脚本，并加载 `https://www.googletagmanager.com/gtag/js?id=G-TJBXDRBMVM`；`config` 禁用自动 `page_view`，页面浏览由官网 Provider 发送去除 query/hash 的事件。
-- 接受 cookie banner 的 Analytics 选项后，`/`、`/invite`、`/pricing` 和 `/about` 的主要 CTA 会向 `POSTHOG_BROWSER_API_HOST` 发请求。
-- 每个 session 的首个官网入口页会发送 `landing_page_viewed`，不再只限首页；`official_page_viewed`、`official_cta_clicked`、`official_invite_lookup_completed` 和 `official_invite_request_submitted` 也会进入 PostHog。
+- 接受 cookie banner 的 Analytics 选项后，`/`、`/pricing`、`/about` 等主要 CTA 会向 `POSTHOG_BROWSER_API_HOST` 发请求；原先进入 waitlist 的 CTA 当前统一指向产品登录/注册页。
+- 每个 session 的首个官网入口页会发送 `landing_page_viewed`，不再只限首页；`official_page_viewed` 和 `official_cta_clicked` 会进入 PostHog。`official_invite_lookup_completed` 和 `official_invite_request_submitted` 属于保留的 waitlist 表单事件，当前 waitlist 下线时不应在常规路径触发。
 - 带埋点属性的 CTA 跳转产品侧时，会追加安全归因参数：`first_touch_source`、`first_touch_medium`、`first_touch_campaign`、`first_touch_referrer_origin`、`first_touch_landing_page`、`official_cta_id`、`source_surface=official`，以及仅用于主站注册后 PostHog alias 合并的 `posthog_anonymous_distinct_id`。
 - `app_active` 是 60 秒可见态心跳，带 `active_seconds=60`，用于主 dashboard 估算日均使用时长。
 - 浏览器请求与事件属性里不应出现邮箱、prompt、文件内容、URL query 或其他敏感值。

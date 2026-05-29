@@ -5,7 +5,11 @@ import {
 } from '@/components/site/official/OfficialHomeChrome'
 import { getOfficialAboutPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import { ABOUT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
-import { createOfficialMetadata } from '@/lib/site/official-site'
+import {
+  createOfficialMetadata,
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 import { AboutFaq, AboutTeamCarousel } from './AboutInteractiveSections'
 import styles from './about.module.css'
@@ -177,8 +181,8 @@ export default async function AboutPage() {
             data-analytics-cta-id="about_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Start building your AI today →
           </a>

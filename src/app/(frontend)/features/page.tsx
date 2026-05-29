@@ -16,7 +16,10 @@ import {
   FEATURES_PAGE_JSON_LD,
   OFFICIAL_JSON_LD_PAGE_META,
 } from '@/lib/site/json-ld'
-import { createOfficialMetadata } from '@/lib/site/official-site'
+import {
+  createOfficialMetadata,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 import { FeaturesFaq } from './FeaturesFaq'
 import styles from './features.module.css'
@@ -303,7 +306,10 @@ export default async function FeaturesPage() {
           <em>Start building it today.</em>
         </h2>
         <p>Free to start. No credit card required.</p>
-        <Link className={`btn-cream ${styles.ctaBandBtn} official-cta-button`} href="/invite">
+        <Link
+          className={`btn-cream ${styles.ctaBandBtn} official-cta-button`}
+          href={OFFICIAL_PRODUCT_AUTH_URL}
+        >
           Start building your AI today →
         </Link>
       </section>

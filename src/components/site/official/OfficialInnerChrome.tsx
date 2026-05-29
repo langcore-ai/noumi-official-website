@@ -1,7 +1,11 @@
 import Link from 'next/link'
 
 import type { OfficialUseCaseNavItem } from '@/lib/site/official-cms'
-import { OFFICIAL_LOGO } from '@/lib/site/official-site'
+import {
+  OFFICIAL_LOGO,
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 /**
  * 渲染站内 use case 链接列表
@@ -78,8 +82,8 @@ export function OfficialInnerHeader(props: OfficialInnerHeaderProps) {
             data-analytics-cta-id="inner_header_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="header"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Try Free →
           </Link>

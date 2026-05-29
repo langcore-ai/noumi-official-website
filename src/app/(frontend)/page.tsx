@@ -8,6 +8,10 @@ import {
 import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
 import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import {
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 /**
  * 首页信任墙 Logo 配置。
@@ -57,8 +61,8 @@ export default async function HomePage() {
                 data-analytics-cta-id="home_hero_try_free"
                 data-analytics-event="official_cta_clicked"
                 data-analytics-placement="hero"
-                data-analytics-target-path="/invite"
-                href="/invite"
+                data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+                href={OFFICIAL_PRODUCT_AUTH_URL}
               >
                 Try Free
                 <span aria-hidden="true">→</span>
@@ -252,8 +256,8 @@ export default async function HomePage() {
               data-analytics-cta-id="home_band_try_free"
               data-analytics-event="official_cta_clicked"
               data-analytics-placement="cta_band"
-              data-analytics-target-path="/invite"
-              href="/invite"
+              data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+              href={OFFICIAL_PRODUCT_AUTH_URL}
             >
               Start building your AI today
               <span aria-hidden="true">→</span>

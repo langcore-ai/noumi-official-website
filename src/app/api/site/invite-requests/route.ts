@@ -8,12 +8,37 @@ import {
   recordInviteRequest,
   updateInviteRequestsStatus,
 } from '@/lib/site/invite-requests'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
 /** 接口依赖 Payload/D1 运行时，避免构建期静态化。 */
 export const dynamic = 'force-dynamic'
 
 const WAITLIST_SYNC_AUTH_HEADER = 'authorization'
+
+/**
+ * 判断官网 waitlist 前台入口是否启用。
+ * 当前 waitlist 暂停开放，但保留原提交逻辑，便于后续恢复。
+ *
+ * @returns 是否允许公开提交 invite 申请
+ */
+function isOfficialWaitlistEnabled(): boolean {
+  return false
+}
+
+/**
+ * 返回产品登录/注册入口。
+ * 旧版页面或缓存客户端命中接口时会收到可直接跳转的结构，避免继续写入 waitlist。
+ *
+ * @returns 产品登录/注册跳转响应
+ */
+function createProductAuthRedirectResponse() {
+  return NextResponse.json({
+    action: 'login',
+    loginUrl: OFFICIAL_PRODUCT_AUTH_URL,
+    ok: true,
+  })
+}
 
 /**
  * 读取服务间 waitlist 同步 token。
@@ -97,6 +122,10 @@ function getRequestIpAddress(headers: Headers): string {
  * @returns 写入结果
  */
 export async function POST(request: Request) {
+  if (!isOfficialWaitlistEnabled()) {
+    return createProductAuthRedirectResponse()
+  }
+
   const body = (await request.json().catch((): null => null)) as null | {
     email?: string
     sourcePath?: string
@@ -231,4 +260,3 @@ export async function PATCH(request: Request) {
     ok: true,
   })
 }
-

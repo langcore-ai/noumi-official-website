@@ -5,7 +5,11 @@ import {
   type OfficialFeatureNavItem,
   type OfficialUseCaseNavItem,
 } from '@/lib/site/official-cms'
-import { OFFICIAL_LOGO } from '@/lib/site/official-site'
+import {
+  OFFICIAL_LOGO,
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 /** 官网主导航固定链接。 */
 const PRIMARY_NAV_ITEMS = [
@@ -19,7 +23,7 @@ const PRIMARY_NAV_ITEMS = [
 type PrimaryNavItem = (typeof PRIMARY_NAV_ITEMS)[number]['href']
 
 /** 官网导航可高亮项。 */
-type ActiveNavItem = PrimaryNavItem | '/invite'
+type ActiveNavItem = PrimaryNavItem
 
 /**
  * 渲染移动端折叠菜单的主导航链接。
@@ -74,13 +78,12 @@ export function OfficialHomeHeader(props: {
             </Link>
           ))}
           <Link
-            aria-current={activeItem === '/invite' ? 'page' : undefined}
             className="button button--dark button--nav"
             data-analytics-cta-id="home_header_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="header"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Try Free
             <span aria-hidden="true">→</span>
@@ -102,13 +105,12 @@ export function OfficialHomeHeader(props: {
               <nav aria-label="Mobile primary navigation" className="mobile-nav__group">
                 {renderMobilePrimaryLinks(activeItem)}
                 <Link
-                  aria-current={activeItem === '/invite' ? 'page' : undefined}
                   className="mobile-nav__cta"
                   data-analytics-cta-id="home_header_try_free"
                   data-analytics-event="official_cta_clicked"
                   data-analytics-placement="header"
-                  data-analytics-target-path="/invite"
-                  href="/invite"
+                  data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+                  href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
                   Try Free
                   <span aria-hidden="true">→</span>
@@ -174,8 +176,8 @@ export function OfficialUseCaseHeader(props: {
             data-analytics-cta-id="use_case_header_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="header"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Try Free
             <span aria-hidden="true">→</span>
@@ -201,8 +203,8 @@ export function OfficialUseCaseHeader(props: {
                   data-analytics-cta-id="use_case_header_try_free"
                   data-analytics-event="official_cta_clicked"
                   data-analytics-placement="header"
-                  data-analytics-target-path="/invite"
-                  href="/invite"
+                  data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+                  href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
                   Try Free
                   <span aria-hidden="true">→</span>

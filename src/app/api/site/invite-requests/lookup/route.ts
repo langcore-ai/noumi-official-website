@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 
 import { findInviteRequestByEmail } from '@/lib/site/invite-requests'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
 /** 接口依赖 Payload/D1 与产品服务，避免构建期静态化。 */
@@ -10,6 +11,30 @@ export const dynamic = 'force-dynamic'
 
 /** 官网 invite 页可执行的下一步动作。 */
 type InviteLookupAction = 'login' | 'register' | 'duplicate' | 'request'
+
+/**
+ * 判断官网 waitlist 查询入口是否启用。
+ * 当前 waitlist 暂停开放，但保留原查询逻辑，便于后续恢复。
+ *
+ * @returns 是否允许公开查询 invite 状态
+ */
+function isOfficialWaitlistLookupEnabled(): boolean {
+  return false
+}
+
+/**
+ * 返回产品登录/注册入口。
+ * 旧版页面或缓存客户端命中接口时会收到可直接跳转的结构，避免继续进入 waitlist 流程。
+ *
+ * @returns 产品登录/注册跳转响应
+ */
+function createProductAuthRedirectResponse() {
+  return NextResponse.json({
+    action: 'login' satisfies InviteLookupAction,
+    loginUrl: OFFICIAL_PRODUCT_AUTH_URL,
+    ok: true,
+  })
+}
 
 /**
  * 校验邮箱格式，避免明显错误输入触发服务间请求。
@@ -55,6 +80,10 @@ function logInviteLookupRoute(event: string, context: Record<string, unknown>) {
  * @returns 页面按钮状态与必要跳转链接
  */
 export async function POST(request: Request) {
+  if (!isOfficialWaitlistLookupEnabled()) {
+    return createProductAuthRedirectResponse()
+  }
+
   const body = (await request.json().catch((): null => null)) as null | {
     email?: string
   }
@@ -144,4 +173,3 @@ export async function POST(request: Request) {
     ok: true,
   })
 }
-

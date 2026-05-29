@@ -10,7 +10,12 @@ import {
   getOfficialUseCaseNavItems,
   type OfficialFriendlyLinkView,
 } from '@/lib/site/official-cms'
-import { createOfficialMetadata, OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import {
+  createOfficialMetadata,
+  OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
+  OFFICIAL_PRODUCT_AUTH_URL,
+  OFFICIAL_SITE_URL,
+} from '@/lib/site/official-site'
 
 import styles from './links.module.css'
 
@@ -206,8 +211,8 @@ export default async function LinksPage() {
             data-analytics-cta-id="links_band_try_free"
             data-analytics-event="official_cta_clicked"
             data-analytics-placement="cta_band"
-            data-analytics-target-path="/invite"
-            href="/invite"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+            href={OFFICIAL_PRODUCT_AUTH_URL}
           >
             Try Noumi free <span aria-hidden="true">→</span>
           </Link>

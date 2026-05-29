@@ -15,7 +15,10 @@ import {
   USE_CASES_FAQ_JSON_LD,
   USE_CASES_PAGE_JSON_LD,
 } from '@/lib/site/json-ld'
-import { createOfficialMetadata } from '@/lib/site/official-site'
+import {
+  createOfficialMetadata,
+  OFFICIAL_PRODUCT_AUTH_URL,
+} from '@/lib/site/official-site'
 
 import { UseCasesFaq } from './UseCasesFaq'
 import styles from './use-cases.module.css'
@@ -40,7 +43,7 @@ const CTA = {
   accent: 'Start compounding.',
   description: 'Your first month is free.',
   label: 'Start building your AI →',
-  href: '/invite',
+  href: OFFICIAL_PRODUCT_AUTH_URL,
 }
 
 /** 卡片头像与视觉样式映射。 */

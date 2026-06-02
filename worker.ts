@@ -1,4 +1,4 @@
-// @ts-expect-error OpenNext 在构建后生成该入口，源码阶段不会存在类型声明。
+// @ts-ignore OpenNext 在构建后生成该入口，本地可能存在也可能不存在。
 import openNextWorker from './.open-next/worker.js'
 
 /** 快照刷新 Worker 环境变量。 */
@@ -33,6 +33,10 @@ const HTML_SNAPSHOT_EXCLUDED_PATHS = [
 ]
 /** 带扩展名路径通常是静态资源，不写 HTML 快照。 */
 const HTML_SNAPSHOT_FILE_PATTERN = /\/[^/?#]+\.[^/?#]+$/
+/** HTML 快照中需要校验是否仍属于当前部署资产的 Next 静态资源。 */
+const NEXT_STATIC_ASSET_PATTERN = /["'](\/_next\/static\/[^"']+\.(?:css|js)(?:\?[^"']*)?)["']/g
+/** 单次命中最多校验的静态资源数量，避免快照读取路径产生过多额外请求。 */
+const MAX_HTML_SNAPSHOT_ASSET_CHECKS = 4
 
 /**
  * 读取快照刷新 token。
@@ -167,6 +171,76 @@ function canWriteOfficialHtmlSnapshot(response: Response): boolean {
 }
 
 /**
+ * 从 HTML 中提取 Next 静态资源路径。
+ * @param html 页面 HTML 快照
+ * @returns 去重后的静态资源路径
+ */
+function extractNextStaticAssetPaths(html: string): string[] {
+  const paths = new Set<string>()
+
+  for (const match of html.matchAll(NEXT_STATIC_ASSET_PATTERN)) {
+    const path = match[1]
+
+    if (path) {
+      paths.add(path)
+    }
+
+    if (paths.size >= MAX_HTML_SNAPSHOT_ASSET_CHECKS) {
+      break
+    }
+  }
+
+  return Array.from(paths)
+}
+
+/**
+ * 判断 HTML 快照引用的静态资源是否仍存在于当前部署。
+ * @param request 当前请求
+ * @param env Worker 环境变量
+ * @param html HTML 快照内容
+ * @returns 是否可以安全返回该 HTML 快照
+ */
+async function isOfficialHtmlSnapshotAssetCompatible(
+  request: Request,
+  env: SnapshotWorkerEnv,
+  html: string,
+): Promise<boolean> {
+  const assetPaths = extractNextStaticAssetPaths(html)
+
+  if (assetPaths.length === 0) {
+    return true
+  }
+
+  for (const assetPath of assetPaths) {
+    try {
+      const response = await env.ASSETS.fetch(
+        new Request(new URL(assetPath, request.url), {
+          method: 'HEAD',
+        }),
+      )
+
+      if (!response.ok) {
+        console.warn('[official-snapshot] skipped stale HTML snapshot because asset is missing', {
+          assetPath,
+          status: response.status,
+        })
+
+        return false
+      }
+    } catch (error) {
+      console.warn('[official-snapshot] skipped asset compatibility check', {
+        assetPath,
+        error,
+      })
+
+      return true
+    }
+  }
+
+  return true
+}
+
+/**
  * 读取快照脏标记是否存在。
  * @param env Worker 环境变量
  * @returns 是否存在 dirty marker
@@ -197,13 +271,19 @@ async function readOfficialHtmlSnapshot(
     return null
   }
 
+  const html = await object.text()
+
+  if (!(await isOfficialHtmlSnapshotAssetCompatible(request, env, html))) {
+    return null
+  }
+
   const headers = new Headers({
     'cache-control': 'public, max-age=0, s-maxage=3600',
     'content-type': object.httpMetadata?.contentType || 'text/html; charset=utf-8',
     [OFFICIAL_HTML_SNAPSHOT_HEADER]: 'hit',
   })
 
-  return new Response(request.method === 'HEAD' ? null : object.body, {
+  return new Response(request.method === 'HEAD' ? null : html, {
     headers,
     status: 200,
   })

@@ -11,7 +11,7 @@ import './official-base.css'
 import './official-home.css'
 
 /**
- * 前台页面统一走动态数据，确保 CMS 内容可立即反映。
+ * 前台页面保留运行时渲染以支持 Payload 草稿预览；发布态 CMS 读取在读取层走 R2 增量缓存。
  */
 export const dynamic = 'force-dynamic'
 

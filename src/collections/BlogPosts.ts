@@ -1,4 +1,4 @@
-import type { CollectionConfig, Field, TextFieldValidation } from 'payload'
+import type { CollectionConfig, TextFieldValidation } from 'payload'
 
 import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
 import {

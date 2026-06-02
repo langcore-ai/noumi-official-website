@@ -13,9 +13,11 @@
   ],
   "vars": {
     "NOUMI_PRODUCT_API_URL": "https://www.noumi.ai",
+    "NEXT_INC_CACHE_R2_PREFIX": "next-incremental-cache",
+    "OFFICIAL_CMS_REVALIDATE_SECONDS": "300",
     "POSTHOG_ENABLED": "true",
     "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
-    "POSTHOG_UI_HOST": "https://us.posthog.com"
+    "POSTHOG_UI_HOST": "https://us.posthog.com",
   },
   "assets": {
     "directory": ".open-next/assets",
@@ -42,11 +44,11 @@
       "bucket_name": "official-website-bucket",
       "preview_bucket_name": "official-website-bucket",
     },
-    // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
-    // {
-    //   "binding": "NEXT_INC_CACHE_R2_BUCKET",
-    //   "bucket_name": "<BUCKET_NAME>",
-    // },
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "official-website-bucket",
+      "preview_bucket_name": "official-website-bucket",
+    },
   ],
 
   // Here's how to configure an additional environment

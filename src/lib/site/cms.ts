@@ -1,8 +1,6 @@
 import { cache } from 'react'
 
-import { getPayload } from 'payload'
-
-import config from '@/payload.config'
+import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type { Media, SiteSetting } from '@/payload-types'
 
@@ -85,7 +83,7 @@ export type CmsCardView = {
  * 读取 Payload 客户端
  * @returns Payload 实例
  */
-const getPayloadClient = cache(async () => getPayload({ config: await config }))
+const getPayloadClient = cache(getSitePayloadClient)
 
 /**
  * 获取站点设置

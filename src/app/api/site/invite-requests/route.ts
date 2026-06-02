@@ -1,7 +1,5 @@
-import configPromise from '@payload-config'
 import { NextResponse } from 'next/server'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { getPayload } from 'payload'
 
 import {
   listInviteRequestsForSync,
@@ -9,6 +7,7 @@ import {
   updateInviteRequestsStatus,
 } from '@/lib/site/invite-requests'
 import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
 /** 接口依赖 Payload/D1 运行时，避免构建期静态化。 */
@@ -163,9 +162,7 @@ export async function POST(request: Request) {
   }
 
   const headers = request.headers
-  const payload = await getPayload({
-    config: configPromise,
-  })
+  const payload = await getSitePayloadClient()
 
   await recordInviteRequest(payload, {
     email,
@@ -189,9 +186,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: 'Unauthorized.', ok: false }, { status: 401 })
   }
 
-  const payload = await getPayload({
-    config: configPromise,
-  })
+  const payload = await getSitePayloadClient()
 
   const items = await listInviteRequestsForSync(payload)
 
@@ -213,16 +208,14 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: 'Unauthorized.', ok: false }, { status: 401 })
   }
 
-  const body = (await request.json().catch((): null => null)) as
-    | null
-    | {
-        id?: number | string
-        items?: Array<{
-          id?: number | string
-          status?: string
-        }>
-        status?: string
-      }
+  const body = (await request.json().catch((): null => null)) as null | {
+    id?: number | string
+    items?: Array<{
+      id?: number | string
+      status?: string
+    }>
+    status?: string
+  }
 
   const rawItems = Array.isArray(body?.items)
     ? body.items
@@ -246,12 +239,13 @@ export async function PATCH(request: Request) {
   })
 
   if (items.length === 0) {
-    return NextResponse.json({ message: 'Invalid waitlist status payload.', ok: false }, { status: 400 })
+    return NextResponse.json(
+      { message: 'Invalid waitlist status payload.', ok: false },
+      { status: 400 },
+    )
   }
 
-  const payload = await getPayload({
-    config: configPromise,
-  })
+  const payload = await getSitePayloadClient()
 
   const updatedItems = await updateInviteRequestsStatus(payload, items)
 

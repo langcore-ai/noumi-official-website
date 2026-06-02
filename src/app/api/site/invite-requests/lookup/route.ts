@@ -1,9 +1,8 @@
-import configPromise from '@payload-config'
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
 
 import { findInviteRequestByEmail } from '@/lib/site/invite-requests'
 import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
 /** 接口依赖 Payload/D1 与产品服务，避免构建期静态化。 */
@@ -146,9 +145,7 @@ export async function POST(request: Request) {
     })
   }
 
-  const payload = await getPayload({
-    config: configPromise,
-  })
+  const payload = await getSitePayloadClient()
   const existingRequest = await findInviteRequestByEmail(payload, email)
 
   if (existingRequest) {

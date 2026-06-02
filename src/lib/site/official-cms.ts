@@ -1,10 +1,10 @@
 import { cache } from 'react'
 
+import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
 
-import config from '@/payload.config'
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type {
   AboutPage,
@@ -12,7 +12,6 @@ import type {
   FeaturePage,
   FeaturesPage,
   FaqPage,
-  FaqItem,
   FriendlyLink,
   Media,
   PrivacyPage,
@@ -601,6 +600,43 @@ export type OfficialFriendlyLinkView = {
   avatarLabel: string
 }
 
+/** Feature 导航查询实际需要的最小字段。 */
+type FeaturePageNavSource = Pick<FeaturePage, 'slug'> &
+  Partial<Pick<FeaturePage, 'hero' | 'navigationLabel'>>
+
+/** Use Case 导航查询实际需要的最小字段。 */
+type UseCaseNavSource = Pick<UseCasePage, 'slug'> &
+  Partial<Pick<UseCasePage, 'hero' | 'navigationLabel'>>
+
+/** Blog 列表卡片查询实际需要的最小字段。 */
+type BlogPostSummarySource = Pick<BlogPost, 'createdAt' | 'renderMode' | 'slug'> &
+  Partial<
+    Pick<
+      BlogPost,
+      | 'author'
+      | 'coverImage'
+      | 'excerpt'
+      | 'htmlCardDescription'
+      | 'htmlCardImage'
+      | 'htmlCardReadingTime'
+      | 'htmlCardTag'
+      | 'htmlCardTitle'
+      | 'lead'
+      | 'publishedAt'
+      | 'readingTime'
+      | 'tags'
+      | 'title'
+    >
+  >
+
+/** 友链卡片查询实际需要的最小字段。 */
+type FriendlyLinkCardSource = Partial<
+  Pick<
+    FriendlyLink,
+    'avatar' | 'avatarUrl' | 'description' | 'href' | 'isActive' | 'sortOrder' | 'title'
+  >
+> & { id: FriendlyLink['id'] }
+
 /**
  * 法律页面视图
  */
@@ -629,7 +665,49 @@ export type OfficialLegalPageView = {
  * 读取 Payload 客户端
  * @returns Payload 实例
  */
-const getPayloadClient = cache(async () => getPayload({ config: await config }))
+const getPayloadClient = cache(getSitePayloadClient)
+
+/** 公开站点 CMS 数据缓存标签前缀。 */
+const OFFICIAL_CMS_CACHE_TAG = 'official-cms'
+/** 公开站点 CMS 数据默认缓存 5 分钟，避免每次访问都打到 D1。 */
+const DEFAULT_OFFICIAL_CMS_REVALIDATE_SECONDS = 300
+
+/**
+ * 解析公开 CMS 缓存时间。
+ * @returns Next 增量缓存 revalidate 秒数
+ */
+function getOfficialCmsRevalidateSeconds(): number {
+  const rawValue = process.env.OFFICIAL_CMS_REVALIDATE_SECONDS
+  const seconds = rawValue ? Number.parseInt(rawValue, 10) : DEFAULT_OFFICIAL_CMS_REVALIDATE_SECONDS
+
+  return Number.isFinite(seconds) && seconds > 0 ? seconds : DEFAULT_OFFICIAL_CMS_REVALIDATE_SECONDS
+}
+
+/**
+ * 缓存发布态 CMS 读取。
+ * @param key 缓存键
+ * @param loader 发布态读取函数
+ * @returns 带 Next 增量缓存的读取函数
+ */
+function cachePublishedCmsRead<Args extends unknown[], Result>(
+  key: string,
+  loader: (...args: Args) => Promise<Result>,
+): (...args: Args) => Promise<Result> {
+  return unstable_cache(loader, [OFFICIAL_CMS_CACHE_TAG, key], {
+    revalidate: getOfficialCmsRevalidateSeconds(),
+    tags: [OFFICIAL_CMS_CACHE_TAG, `${OFFICIAL_CMS_CACHE_TAG}:${key}`],
+  })
+}
+
+/** CMS 公开读取参数。 */
+type OfficialCmsReadOptions = { draft?: true; overrideAccess?: false }
+
+/** 发布态读取必须走访问控制，避免 Local API 默认越权读取草稿。 */
+const PUBLISHED_CMS_READ_OPTIONS = {
+  overrideAccess: false,
+} as const satisfies OfficialCmsReadOptions
+/** 草稿预览读取只在密钥校验后的 draft mode 中使用。 */
+const DRAFT_CMS_READ_OPTIONS = { draft: true } as const satisfies OfficialCmsReadOptions
 
 /**
  * 判断当前是否为草稿预览
@@ -647,15 +725,20 @@ async function isDraftPreviewEnabled(): Promise<boolean> {
 }
 
 /**
- * 获取公开查询参数
- * @returns 公开查询参数
+ * 根据预览状态选择读取发布缓存或草稿实时数据。
+ * @param draftReader 草稿实时读取函数
+ * @param publishedReader 发布态缓存读取函数
+ * @returns CMS 视图数据
  */
-async function getPublicReadOptions(): Promise<{ draft?: boolean; overrideAccess?: false }> {
+async function readDraftOrPublished<Result>(
+  draftReader: () => Promise<Result>,
+  publishedReader: () => Promise<Result>,
+): Promise<Result> {
   if (await isDraftPreviewEnabled()) {
-    return { draft: true }
+    return draftReader()
   }
 
-  return { overrideAccess: false }
+  return publishedReader()
 }
 
 /**
@@ -752,7 +835,7 @@ function createFriendlyLinkAvatarLabel(title: string): string {
  * @param link Payload 友链文档
  * @returns 前台友链视图
  */
-function mapFriendlyLink(link: FriendlyLink): OfficialFriendlyLinkView | null {
+function mapFriendlyLink(link: FriendlyLinkCardSource): OfficialFriendlyLinkView | null {
   const title = normalizeText(link.title)
   const description = normalizeText(link.description)
   const href = normalizeExternalHref(link.href)
@@ -1135,7 +1218,7 @@ function mapSections(
  * @param page 原始文档
  * @returns 页签视图
  */
-function mapUseCaseNavItem(page: UseCasePage): OfficialUseCaseNavItem | null {
+function mapUseCaseNavItem(page: UseCaseNavSource): OfficialUseCaseNavItem | null {
   const slug = normalizeText(page.slug)
   const navigationLabel =
     normalizeText(page.navigationLabel) ??
@@ -1264,7 +1347,7 @@ function mapFeatureCard(
  * @param page 原始文档
  * @returns Feature 导航项
  */
-function mapFeaturePageNavItem(page: FeaturePage): OfficialFeatureNavItem | null {
+function mapFeaturePageNavItem(page: FeaturePageNavSource): OfficialFeatureNavItem | null {
   const slug = normalizeText(page.slug)
   const label =
     normalizeText(page.navigationLabel) ??
@@ -1507,14 +1590,17 @@ function mapUseCasesFaqItem(
 
 /**
  * 获取 About 页面配置。
+ * @param readOptions Payload 读取参数
  * @returns About 页面视图
  */
-export async function getOfficialAboutPage(): Promise<OfficialAboutPageView> {
+async function readOfficialAboutPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialAboutPageView> {
   const payload = await getPayloadClient()
   const page = await payload.findGlobal({
     slug: 'about-page',
     depth: 1,
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const typedPage = page as AboutPage
 
@@ -1531,16 +1617,34 @@ export async function getOfficialAboutPage(): Promise<OfficialAboutPageView> {
   }
 }
 
+const readPublishedOfficialAboutPage = cachePublishedCmsRead('about-page', () =>
+  readOfficialAboutPage(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 About 页面配置。
+ * @returns About 页面视图
+ */
+export async function getOfficialAboutPage(): Promise<OfficialAboutPageView> {
+  return readDraftOrPublished(
+    () => readOfficialAboutPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialAboutPage,
+  )
+}
+
 /**
  * 获取 Features 页面配置
+ * @param readOptions Payload 读取参数
  * @returns Features 页面视图
  */
-export async function getOfficialFeaturesPage(): Promise<OfficialFeaturesPageView> {
+async function readOfficialFeaturesPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialFeaturesPageView> {
   const payload = await getPayloadClient()
   const page = await payload.findGlobal({
     slug: 'features-page',
     depth: 1,
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const typedPage = page as FeaturesPage
   const configuredFeatureCards = (typedPage.featureCards ?? [])
@@ -1569,21 +1673,45 @@ export async function getOfficialFeaturesPage(): Promise<OfficialFeaturesPageVie
   }
 }
 
+const readPublishedOfficialFeaturesPage = cachePublishedCmsRead('features-page', () =>
+  readOfficialFeaturesPage(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 Features 页面配置
+ * @returns Features 页面视图
+ */
+export async function getOfficialFeaturesPage(): Promise<OfficialFeaturesPageView> {
+  return readDraftOrPublished(
+    () => readOfficialFeaturesPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialFeaturesPage,
+  )
+}
+
 /**
  * 获取 Features 页脚导航项
  * @param options.includeFallback 是否在没有 Feature 子页时回退到 Features 首屏卡片
+ * @param readOptions Payload 读取参数
  * @returns 首屏功能卡片对应的页脚链接
  */
-export async function getOfficialFeatureNavItems(
+async function readOfficialFeatureNavItems(
   options: { includeFallback?: boolean } = {},
+  readOptions: OfficialCmsReadOptions,
 ): Promise<OfficialFeatureNavItem[]> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'feature-pages',
     depth: 0,
     limit: 100,
+    pagination: false,
+    // 导航只需要 slug、短标题与 Hero 标题，避免读取 HTML 大字段和正文分节。
+    select: {
+      hero: true,
+      navigationLabel: true,
+      slug: true,
+    },
     sort: 'slug',
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const featurePages = docs.map((doc) => mapFeaturePageNavItem(doc)).filter(isPresent)
 
@@ -1599,25 +1727,50 @@ export async function getOfficialFeatureNavItems(
   }))
 }
 
+const readPublishedOfficialFeatureNavItems = cachePublishedCmsRead(
+  'feature-nav-items',
+  (includeFallback: boolean) =>
+    readOfficialFeatureNavItems({ includeFallback }, PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 Features 页脚导航项
+ * @param options.includeFallback 是否在没有 Feature 子页时回退到 Features 首屏卡片
+ * @returns 首屏功能卡片对应的页脚链接
+ */
+export async function getOfficialFeatureNavItems(
+  options: { includeFallback?: boolean } = {},
+): Promise<OfficialFeatureNavItem[]> {
+  const includeFallback = options.includeFallback !== false
+
+  return readDraftOrPublished(
+    () => readOfficialFeatureNavItems({ includeFallback }, DRAFT_CMS_READ_OPTIONS),
+    () => readPublishedOfficialFeatureNavItems(includeFallback),
+  )
+}
+
 /**
  * 获取单个 Feature 子页
  * @param slug 页面 slug
+ * @param readOptions Payload 读取参数
  * @returns Feature 子页视图
  */
-export async function getOfficialFeaturePage(
+async function readOfficialFeaturePage(
   slug: string,
+  readOptions: OfficialCmsReadOptions,
 ): Promise<null | OfficialFeaturePageView> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'feature-pages',
     depth: 1,
     limit: 1,
+    pagination: false,
     where: {
       slug: {
         equals: slug,
       },
     },
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const page = docs[0]
 
@@ -1650,16 +1803,37 @@ export async function getOfficialFeaturePage(
   }
 }
 
+const readPublishedOfficialFeaturePage = cachePublishedCmsRead('feature-page', (slug: string) =>
+  readOfficialFeaturePage(slug, PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取单个 Feature 子页
+ * @param slug 页面 slug
+ * @returns Feature 子页视图
+ */
+export async function getOfficialFeaturePage(
+  slug: string,
+): Promise<null | OfficialFeaturePageView> {
+  return readDraftOrPublished(
+    () => readOfficialFeaturePage(slug, DRAFT_CMS_READ_OPTIONS),
+    () => readPublishedOfficialFeaturePage(slug),
+  )
+}
+
 /**
  * 获取 Use Cases 聚合页配置
+ * @param readOptions Payload 读取参数
  * @returns 聚合页视图
  */
-export async function getOfficialUseCasesPage(): Promise<OfficialUseCasesPageView> {
+async function readOfficialUseCasesPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialUseCasesPageView> {
   const payload = await getPayloadClient()
   const page = await payload.findGlobal({
     slug: 'use-cases-page',
     depth: 1,
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const typedPage = page as UseCasesPage
   const configuredCards = (typedPage.cards ?? [])
@@ -1687,42 +1861,85 @@ export async function getOfficialUseCasesPage(): Promise<OfficialUseCasesPageVie
   }
 }
 
+const readPublishedOfficialUseCasesPage = cachePublishedCmsRead('use-cases-page', () =>
+  readOfficialUseCasesPage(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 Use Cases 聚合页配置
+ * @returns 聚合页视图
+ */
+export async function getOfficialUseCasesPage(): Promise<OfficialUseCasesPageView> {
+  return readDraftOrPublished(
+    () => readOfficialUseCasesPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialUseCasesPage,
+  )
+}
+
 /**
  * 获取全部已发布 use case 页签
+ * @param readOptions Payload 读取参数
  * @returns use case 页签列表
  */
-export async function getOfficialUseCaseNavItems(): Promise<OfficialUseCaseNavItem[]> {
+async function readOfficialUseCaseNavItems(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialUseCaseNavItem[]> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'use-case-pages',
-    depth: 1,
+    depth: 0,
     limit: 100,
+    pagination: false,
+    // Header/footer 只需要页签展示字段，避免把正文、HTML、workflow 和 testimonials 一起读出。
+    select: {
+      hero: true,
+      navigationLabel: true,
+      slug: true,
+    },
     sort: 'slug',
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   return docs.map((doc) => mapUseCaseNavItem(doc)).filter(isPresent)
 }
 
+const readPublishedOfficialUseCaseNavItems = cachePublishedCmsRead('use-case-nav-items', () =>
+  readOfficialUseCaseNavItems(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取全部已发布 use case 页签
+ * @returns use case 页签列表
+ */
+export async function getOfficialUseCaseNavItems(): Promise<OfficialUseCaseNavItem[]> {
+  return readDraftOrPublished(
+    () => readOfficialUseCaseNavItems(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialUseCaseNavItems,
+  )
+}
+
 /**
  * 获取单个 use case 页面
  * @param slug 页面 slug
+ * @param readOptions Payload 读取参数
  * @returns use case 视图
  */
-export async function getOfficialUseCasePage(
+async function readOfficialUseCasePage(
   slug: string,
+  readOptions: OfficialCmsReadOptions,
 ): Promise<null | OfficialUseCasePageView> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'use-case-pages',
     depth: 1,
     limit: 1,
+    pagination: false,
     where: {
       slug: {
         equals: slug,
       },
     },
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const page = docs[0]
 
@@ -1797,12 +2014,30 @@ export async function getOfficialUseCasePage(
   }
 }
 
+const readPublishedOfficialUseCasePage = cachePublishedCmsRead('use-case-page', (slug: string) =>
+  readOfficialUseCasePage(slug, PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取单个 use case 页面
+ * @param slug 页面 slug
+ * @returns use case 视图
+ */
+export async function getOfficialUseCasePage(
+  slug: string,
+): Promise<null | OfficialUseCasePageView> {
+  return readDraftOrPublished(
+    () => readOfficialUseCasePage(slug, DRAFT_CMS_READ_OPTIONS),
+    () => readPublishedOfficialUseCasePage(slug),
+  )
+}
+
 /**
  * 映射 blog 摘要
  * @param post 原始文档
  * @returns blog 摘要
  */
-function mapBlogPostSummary(post: BlogPost): OfficialBlogPostSummary | null {
+function mapBlogPostSummary(post: BlogPostSummarySource): OfficialBlogPostSummary | null {
   const slug = normalizeText(post.slug)
   const isHtmlMode = post.renderMode === 'html'
   const title =
@@ -1837,16 +2072,39 @@ function mapBlogPostSummary(post: BlogPost): OfficialBlogPostSummary | null {
 
 /**
  * 获取 blog 列表
+ * @param readOptions Payload 读取参数
  * @returns blog 列表项
  */
-export async function getOfficialBlogPosts(): Promise<OfficialBlogPostSummary[]> {
+async function readOfficialBlogPosts(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialBlogPostSummary[]> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'blog-posts',
     depth: 1,
     limit: 100,
+    pagination: false,
+    // 列表卡片不需要 htmlContent 和正文 blocks，字段裁剪可显著降低 HTML 模式文章的 D1 读取体积。
+    select: {
+      author: true,
+      coverImage: true,
+      createdAt: true,
+      excerpt: true,
+      htmlCardDescription: true,
+      htmlCardImage: true,
+      htmlCardReadingTime: true,
+      htmlCardTag: true,
+      htmlCardTitle: true,
+      lead: true,
+      publishedAt: true,
+      readingTime: true,
+      renderMode: true,
+      slug: true,
+      tags: true,
+      title: true,
+    },
     sort: '-publishedAt',
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   return docs
@@ -1854,23 +2112,43 @@ export async function getOfficialBlogPosts(): Promise<OfficialBlogPostSummary[]>
     .filter((item): item is OfficialBlogPostSummary => Boolean(item))
 }
 
+const readPublishedOfficialBlogPosts = cachePublishedCmsRead('blog-posts', () =>
+  readOfficialBlogPosts(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 blog 列表
+ * @returns blog 列表项
+ */
+export async function getOfficialBlogPosts(): Promise<OfficialBlogPostSummary[]> {
+  return readDraftOrPublished(
+    () => readOfficialBlogPosts(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialBlogPosts,
+  )
+}
+
 /**
  * 获取 blog 详情
  * @param slug 文章 slug
+ * @param readOptions Payload 读取参数
  * @returns 文章详情
  */
-export async function getOfficialBlogPost(slug: string): Promise<null | OfficialBlogPostView> {
+async function readOfficialBlogPost(
+  slug: string,
+  readOptions: OfficialCmsReadOptions,
+): Promise<null | OfficialBlogPostView> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'blog-posts',
     depth: 1,
     limit: 1,
+    pagination: false,
     where: {
       slug: {
         equals: slug,
       },
     },
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
   const post = docs[0]
 
@@ -1891,7 +2169,13 @@ export async function getOfficialBlogPost(slug: string): Promise<null | Official
   const fallbackRelatedPosts =
     relatedPosts.length > 0
       ? relatedPosts
-      : (await getOfficialBlogPosts()).filter((item) => item.slug !== slug).slice(0, 1)
+      : (
+          await (readOptions === PUBLISHED_CMS_READ_OPTIONS
+            ? readPublishedOfficialBlogPosts()
+            : readOfficialBlogPosts(readOptions))
+        )
+          .filter((item) => item.slug !== slug)
+          .slice(0, 1)
 
   return {
     ...summary,
@@ -1907,38 +2191,86 @@ export async function getOfficialBlogPost(slug: string): Promise<null | Official
   }
 }
 
+const readPublishedOfficialBlogPost = cachePublishedCmsRead('blog-post', (slug: string) =>
+  readOfficialBlogPost(slug, PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 blog 详情
+ * @param slug 文章 slug
+ * @returns 文章详情
+ */
+export async function getOfficialBlogPost(slug: string): Promise<null | OfficialBlogPostView> {
+  return readDraftOrPublished(
+    () => readOfficialBlogPost(slug, DRAFT_CMS_READ_OPTIONS),
+    () => readPublishedOfficialBlogPost(slug),
+  )
+}
+
 /**
  * 获取前台友情链接列表。
+ * @param readOptions Payload 读取参数
  * @returns 已启用且链接安全的友情链接
  */
-export async function getOfficialFriendlyLinks(): Promise<OfficialFriendlyLinkView[]> {
+async function readOfficialFriendlyLinks(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialFriendlyLinkView[]> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'friendly-links',
     depth: 1,
     limit: 100,
+    pagination: false,
+    // 前台卡片不需要录入 HTML 原文，只读取展示所需字段。
+    select: {
+      avatar: true,
+      avatarUrl: true,
+      description: true,
+      href: true,
+      isActive: true,
+      sortOrder: true,
+      title: true,
+    },
     sort: 'sortOrder',
     where: {
       isActive: {
         equals: true,
       },
     },
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   return docs.map((doc) => mapFriendlyLink(doc)).filter(isPresent)
 }
 
+const readPublishedOfficialFriendlyLinks = cachePublishedCmsRead('friendly-links', () =>
+  readOfficialFriendlyLinks(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取前台友情链接列表。
+ * @returns 已启用且链接安全的友情链接
+ */
+export async function getOfficialFriendlyLinks(): Promise<OfficialFriendlyLinkView[]> {
+  return readDraftOrPublished(
+    () => readOfficialFriendlyLinks(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialFriendlyLinks,
+  )
+}
+
 /**
  * 获取 FAQ 页面配置
+ * @param readOptions Payload 读取参数
  * @returns FAQ 页面视图
  */
-export async function getOfficialFaqPage(): Promise<OfficialFaqPageView> {
+async function readOfficialFaqPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialFaqPageView> {
   const payload = await getPayloadClient()
   const page = await payload.findGlobal({
     slug: 'faq-page',
     depth: 0,
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   return {
@@ -1947,28 +2279,54 @@ export async function getOfficialFaqPage(): Promise<OfficialFaqPageView> {
   }
 }
 
+const readPublishedOfficialFaqPage = cachePublishedCmsRead('faq-page', () =>
+  readOfficialFaqPage(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 FAQ 页面配置
+ * @returns FAQ 页面视图
+ */
+export async function getOfficialFaqPage(): Promise<OfficialFaqPageView> {
+  return readDraftOrPublished(
+    () => readOfficialFaqPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialFaqPage,
+  )
+}
+
 /**
  * 获取 FAQ 分组
+ * @param readOptions Payload 读取参数
  * @returns FAQ 分组列表
  */
-export async function getOfficialFaqCategories(): Promise<OfficialFaqCategoryView[]> {
+async function readOfficialFaqCategories(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialFaqCategoryView[]> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'faq-items',
     depth: 0,
     limit: 200,
+    pagination: false,
+    select: {
+      answer: true,
+      category: true,
+      isActive: true,
+      question: true,
+      sortOrder: true,
+    },
     sort: 'sortOrder',
     where: {
       isActive: {
         equals: true,
       },
     },
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   const groupedItems = new Map<string, OfficialFaqCategoryView>()
 
-  docs.forEach((item: FaqItem) => {
+  docs.forEach((item) => {
     const categoryTitle = normalizeText(item.category)
     const question = normalizeText(item.question)
     const answer = normalizeText(item.answer)
@@ -1994,6 +2352,21 @@ export async function getOfficialFaqCategories(): Promise<OfficialFaqCategoryVie
   return Array.from(groupedItems.values())
 }
 
+const readPublishedOfficialFaqCategories = cachePublishedCmsRead('faq-categories', () =>
+  readOfficialFaqCategories(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取 FAQ 分组
+ * @returns FAQ 分组列表
+ */
+export async function getOfficialFaqCategories(): Promise<OfficialFaqCategoryView[]> {
+  return readDraftOrPublished(
+    () => readOfficialFaqCategories(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialFaqCategories,
+  )
+}
+
 /**
  * 映射法律页面
  * @param page 原始文档
@@ -2015,30 +2388,66 @@ function mapLegalPage(page: PrivacyPage | TermsPage): OfficialLegalPageView {
 
 /**
  * 获取隐私政策页
+ * @param readOptions Payload 读取参数
  * @returns 页面视图
  */
-export async function getOfficialPrivacyPage(): Promise<OfficialLegalPageView> {
+async function readOfficialPrivacyPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialLegalPageView> {
   const payload = await getPayloadClient()
   const page = await payload.findGlobal({
     slug: 'privacy-page',
     depth: 1,
-    ...(await getPublicReadOptions()),
+    ...readOptions,
   })
 
   return mapLegalPage(page)
 }
+
+const readPublishedOfficialPrivacyPage = cachePublishedCmsRead('privacy-page', () =>
+  readOfficialPrivacyPage(PUBLISHED_CMS_READ_OPTIONS),
+)
+
+/**
+ * 获取隐私政策页
+ * @returns 页面视图
+ */
+export async function getOfficialPrivacyPage(): Promise<OfficialLegalPageView> {
+  return readDraftOrPublished(
+    () => readOfficialPrivacyPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialPrivacyPage,
+  )
+}
+
+/**
+ * 获取服务条款页
+ * @param readOptions Payload 读取参数
+ * @returns 页面视图
+ */
+async function readOfficialTermsPage(
+  readOptions: OfficialCmsReadOptions,
+): Promise<OfficialLegalPageView> {
+  const payload = await getPayloadClient()
+  const page = await payload.findGlobal({
+    slug: 'terms-page',
+    depth: 1,
+    ...readOptions,
+  })
+
+  return mapLegalPage(page)
+}
+
+const readPublishedOfficialTermsPage = cachePublishedCmsRead('terms-page', () =>
+  readOfficialTermsPage(PUBLISHED_CMS_READ_OPTIONS),
+)
 
 /**
  * 获取服务条款页
  * @returns 页面视图
  */
 export async function getOfficialTermsPage(): Promise<OfficialLegalPageView> {
-  const payload = await getPayloadClient()
-  const page = await payload.findGlobal({
-    slug: 'terms-page',
-    depth: 1,
-    ...(await getPublicReadOptions()),
-  })
-
-  return mapLegalPage(page)
+  return readDraftOrPublished(
+    () => readOfficialTermsPage(DRAFT_CMS_READ_OPTIONS),
+    readPublishedOfficialTermsPage,
+  )
 }

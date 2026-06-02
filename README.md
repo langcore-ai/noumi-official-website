@@ -146,13 +146,17 @@ HTML 模式主要用于承接旧 HTML 页面或外部 HTML 内容。它是迁移
 
 前台读取 CMS 的主要入口在 `src/lib/site/official-cms.ts`。该文件负责：
 
-- 获取 Payload client。
+- 通过 `src/lib/site/payload-client.ts` 复用 Payload client 初始化结果。
 - 判断是否处于 draft preview。
 - 查询 Blog、Use Case、FAQ、法律页面。
 - 将 Payload 文档映射为前台使用的 view model。
 - 过滤空字段，避免前台渲染无效内容。
+- 对发布态 CMS 读取使用 Next `unstable_cache`，缓存时间由 `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制，默认 300 秒。
+- 对导航、列表和 FAQ 查询使用 `select` 与 `pagination: false`，避免把 HTML 大字段、正文 blocks 和不需要的分页统计读入前台请求。
 
 站点设置和旧 SEO 工具链相关读取位于 `src/lib/site/cms.ts` 和 `src/lib/site/seo.ts`。
+
+前台 layout 仍保留 `force-dynamic`，因为 Payload draft preview 需要运行时读取草稿内容；公开发布内容的伪静态能力落在 CMS 读取层和 OpenNext R2 incremental cache，而不是构建期预渲染整页。直接把前台页面改成 ISR 会在构建期尝试读取 D1，并因构建阶段没有真实 D1 binding 而失败。
 
 ## 不在 CMS 中管理的内容
 
@@ -243,6 +247,7 @@ POSTHOG_ENABLED=false
 POSTHOG_PROJECT_KEY=phc_xxx
 POSTHOG_BROWSER_API_HOST=https://e.noumi.ai
 POSTHOG_UI_HOST=https://us.posthog.com
+OFFICIAL_CMS_REVALIDATE_SECONDS=300
 ```
 
 说明：
@@ -255,6 +260,7 @@ POSTHOG_UI_HOST=https://us.posthog.com
 - `POSTHOG_PROJECT_KEY` 是 PostHog 的公开 project key。
 - `POSTHOG_BROWSER_API_HOST` 应指向反向代理域名，生产默认建议用 `https://e.noumi.ai`。
 - `POSTHOG_UI_HOST` 是 PostHog 控制台地址，默认 `https://us.posthog.com`。
+- `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制发布态 CMS 读取缓存时间，默认 300 秒；草稿预览不使用该缓存。
 
 ### 启动开发服务器
 
@@ -351,6 +357,7 @@ Cloudflare 绑定配置在 `wrangler.jsonc`。
 
 - `D1`：Payload 数据库和 invite 申请表。
 - `R2`：Payload media 文件存储。
+- `NEXT_INC_CACHE_R2_BUCKET`：OpenNext incremental cache，用于持久化发布态 CMS 数据缓存和 Next 增量缓存条目；当前与 `R2` 复用同一 bucket，并通过 `NEXT_INC_CACHE_R2_PREFIX` 隔离缓存路径。
 - `ASSETS`：OpenNext 静态资源。
 
 部署前需要确认：
@@ -358,6 +365,7 @@ Cloudflare 绑定配置在 `wrangler.jsonc`。
 - Cloudflare 账号已登录。
 - D1 database id 正确。
 - R2 bucket 名称正确。
+- `NEXT_INC_CACHE_R2_BUCKET` binding 存在，且 `NEXT_INC_CACHE_R2_PREFIX` 不与媒体文件路径冲突。
 - Workers 环境变量中存在生产 `PAYLOAD_SECRET`。
 - 如启用官网分析，还需要在 Workers 环境中设置 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_BROWSER_API_HOST` 和 `POSTHOG_UI_HOST`。
 - 如使用 preview，确认 `PAYLOAD_PREVIEW_SECRET` 策略。

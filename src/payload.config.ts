@@ -35,6 +35,10 @@ import {
   LIVE_PREVIEW_COLLECTIONS,
   LIVE_PREVIEW_GLOBALS,
 } from './lib/site/publishing'
+import {
+  withOfficialSnapshotCollectionHooks,
+  withOfficialSnapshotGlobalHooks,
+} from './lib/site/official-snapshot-hooks'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -340,15 +344,23 @@ export default buildConfig({
   },
   collections: [
     Users,
-    Media,
-    BlogPosts,
-    FeaturePages,
-    UseCasePages,
-    FaqItems,
-    FriendlyLinks,
+    withOfficialSnapshotCollectionHooks(Media),
+    withOfficialSnapshotCollectionHooks(BlogPosts),
+    withOfficialSnapshotCollectionHooks(FeaturePages),
+    withOfficialSnapshotCollectionHooks(UseCasePages),
+    withOfficialSnapshotCollectionHooks(FaqItems),
+    withOfficialSnapshotCollectionHooks(FriendlyLinks),
     InviteRequests,
   ],
-  globals: [SiteSettings, FeaturesPage, UseCasesPage, AboutPage, FaqPage, PrivacyPage, TermsPage],
+  globals: [
+    withOfficialSnapshotGlobalHooks(SiteSettings),
+    withOfficialSnapshotGlobalHooks(FeaturesPage),
+    withOfficialSnapshotGlobalHooks(UseCasesPage),
+    withOfficialSnapshotGlobalHooks(AboutPage),
+    withOfficialSnapshotGlobalHooks(FaqPage),
+    withOfficialSnapshotGlobalHooks(PrivacyPage),
+    withOfficialSnapshotGlobalHooks(TermsPage),
+  ],
   editor: lexicalEditor(),
   i18n: {
     fallbackLanguage: 'zh',

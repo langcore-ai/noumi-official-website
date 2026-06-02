@@ -124,8 +124,10 @@ Payload CMS 负责管理以下内容。
 - `users`：后台用户和角色权限。
 - `media`：图片和上传文件，实际文件存储在 R2。
 - `blog-posts`：Blog 文章。
+- `feature-pages`：Feature 子页。
 - `use-case-pages`：Use Case 页面。
 - `faq-items`：FAQ 条目。
+- `friendly-links`：友情链接目录。
 
 ### Globals
 
@@ -151,8 +153,21 @@ HTML 模式主要用于承接旧 HTML 页面或外部 HTML 内容。它是迁移
 - 查询 Blog、Use Case、FAQ、法律页面。
 - 将 Payload 文档映射为前台使用的 view model。
 - 过滤空字段，避免前台渲染无效内容。
+- 对公开发布态内容优先读取 R2 JSON 快照；只有快照缺失或本地 R2 runtime 不可用时才回源 Payload。
+- 通过 `refreshOfficialSiteSnapshots` 批量生成全站 JSON 快照，并写入 manifest、dirty marker 和过期 key 清理结果。
 - 对发布态 CMS 读取使用 Next `unstable_cache`，缓存时间由 `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制，默认 300 秒。
 - 对导航、列表和 FAQ 查询使用 `select` 与 `pagination: false`，避免把 HTML 大字段、正文 blocks 和不需要的分页统计读入前台请求。
+
+R2 快照相关代码位于：
+
+```text
+src/lib/site/official-snapshot-store.ts      # R2 JSON 快照读写、manifest、dirty marker、刷新锁
+src/lib/site/official-snapshot-hooks.ts      # Payload 发布后标脏并后台请求刷新
+src/app/api/site/snapshots/refresh/route.ts  # 手动刷新和状态查询 API
+worker.ts                                    # Cloudflare Cron 与页面 HTML 快照层
+```
+
+公开页面的 HTML 快照由 `worker.ts` 在 Cloudflare Worker 层处理：页面 GET/HEAD 请求会先读取 R2 HTML 快照，命中时不进入 OpenNext；快照缺失时走 OpenNext 渲染并后台回填。`/api`、`/admin`、`/_next`、`/assets`、静态文件、带 trailing slash 的规范化重定向路径，以及 draft preview cookie 请求不会使用 HTML 快照。
 
 站点设置和旧 SEO 工具链相关读取位于 `src/lib/site/cms.ts` 和 `src/lib/site/seo.ts`。
 
@@ -248,6 +263,10 @@ POSTHOG_PROJECT_KEY=phc_xxx
 POSTHOG_BROWSER_API_HOST=https://e.noumi.ai
 POSTHOG_UI_HOST=https://us.posthog.com
 OFFICIAL_CMS_REVALIDATE_SECONDS=300
+OFFICIAL_SNAPSHOT_REFRESH_SECONDS=7200
+OFFICIAL_SNAPSHOT_R2_PREFIX=official-site-snapshots
+OFFICIAL_SNAPSHOT_REFRESH_ORIGIN=https://noumi.ai
+OFFICIAL_SNAPSHOT_REFRESH_TOKEN=your-refresh-token
 ```
 
 说明：
@@ -261,6 +280,10 @@ OFFICIAL_CMS_REVALIDATE_SECONDS=300
 - `POSTHOG_BROWSER_API_HOST` 应指向反向代理域名，生产默认建议用 `https://e.noumi.ai`。
 - `POSTHOG_UI_HOST` 是 PostHog 控制台地址，默认 `https://us.posthog.com`。
 - `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制发布态 CMS 读取缓存时间，默认 300 秒；草稿预览不使用该缓存。
+- `OFFICIAL_SNAPSHOT_REFRESH_SECONDS` 控制公开内容 JSON 快照的 stale refresh 间隔，默认 3600 秒，设置为 `0` 可关闭按间隔自动刷新。
+- `OFFICIAL_SNAPSHOT_R2_PREFIX` 控制官网快照在 R2 中的目录前缀，默认 `official-site-snapshots`。
+- `OFFICIAL_SNAPSHOT_REFRESH_ORIGIN` 是发布后后台请求刷新 API、Cron 渲染 HTML 快照时使用的站点 origin。
+- `OFFICIAL_SNAPSHOT_REFRESH_TOKEN` 是手动/定时刷新 API 的 Bearer token；生产建议通过 Wrangler secret 配置。未配置时刷新 API 会回退使用 `PAYLOAD_SECRET`。
 
 ### 启动开发服务器
 
@@ -358,6 +381,7 @@ Cloudflare 绑定配置在 `wrangler.jsonc`。
 - `D1`：Payload 数据库和 invite 申请表。
 - `R2`：Payload media 文件存储。
 - `NEXT_INC_CACHE_R2_BUCKET`：OpenNext incremental cache，用于持久化发布态 CMS 数据缓存和 Next 增量缓存条目；当前与 `R2` 复用同一 bucket，并通过 `NEXT_INC_CACHE_R2_PREFIX` 隔离缓存路径。
+- `R2` 同时存储官网公开内容快照：`official-site-snapshots/data/*.json` 为 view model JSON，`official-site-snapshots/html/**/index.html` 为页面 HTML，`manifest.json`、`dirty.json` 和 `refresh-lock.json` 为快照管理对象。
 - `ASSETS`：OpenNext 静态资源。
 
 部署前需要确认：
@@ -366,9 +390,39 @@ Cloudflare 绑定配置在 `wrangler.jsonc`。
 - D1 database id 正确。
 - R2 bucket 名称正确。
 - `NEXT_INC_CACHE_R2_BUCKET` binding 存在，且 `NEXT_INC_CACHE_R2_PREFIX` 不与媒体文件路径冲突。
+- `OFFICIAL_SNAPSHOT_R2_PREFIX` 不与媒体文件和 OpenNext incremental cache 前缀冲突。
 - Workers 环境变量中存在生产 `PAYLOAD_SECRET`。
+- 如使用独立刷新密钥，Workers secret 中存在 `OFFICIAL_SNAPSHOT_REFRESH_TOKEN`。
 - 如启用官网分析，还需要在 Workers 环境中设置 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_BROWSER_API_HOST` 和 `POSTHOG_UI_HOST`。
 - 如使用 preview，确认 `PAYLOAD_PREVIEW_SECRET` 策略。
+
+### 官网快照刷新
+
+公开前台的目标是发布态请求不读 Payload/D1。当前刷新链路如下：
+
+1. Payload 公开内容集合、媒体集合和前台相关 globals 在保存/删除后会写入 R2 dirty marker，并通过后台 `waitUntil` 请求刷新 API。
+2. `POST /api/site/snapshots/refresh?reason=manual` 会读取 Payload 发布态内容，生成全站 JSON 快照、manifest 和公开 routes。
+3. `worker.ts` 在刷新 API 成功后，会按 manifest routes 重新渲染并写入 R2 HTML 快照。
+4. `wrangler.jsonc` 配置了每小时一次的 Cloudflare Cron，同样调用刷新 API。
+5. 公开页面请求优先命中 R2 HTML；未命中时，页面组件优先读取 R2 JSON 快照，避免访问 Payload/D1。
+
+手动刷新示例：
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer $OFFICIAL_SNAPSHOT_REFRESH_TOKEN" \
+  "https://noumi.ai/api/site/snapshots/refresh?reason=manual"
+```
+
+查询当前快照状态：
+
+```bash
+curl \
+  -H "Authorization: Bearer $OFFICIAL_SNAPSHOT_REFRESH_TOKEN" \
+  "https://noumi.ai/api/site/snapshots/refresh"
+```
+
+如果刷新 API 返回 `409`，表示已有刷新任务持有锁；等待当前任务结束或 5 分钟锁过期后再重试。
 
 ### 日志
 

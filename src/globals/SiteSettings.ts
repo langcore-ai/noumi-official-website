@@ -50,6 +50,16 @@ export const SiteSettings: GlobalConfig = {
       },
     },
     {
+      name: 'snapshotControls',
+      type: 'ui',
+      label: '官网快照',
+      admin: {
+        components: {
+          Field: '/components/admin/OfficialSnapshotControls#OfficialSnapshotControls',
+        },
+      },
+    },
+    {
       name: 'defaultDescription',
       type: 'textarea',
       label: '默认描述',

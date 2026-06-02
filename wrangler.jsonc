@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
+  "main": "worker.ts",
   "name": "noumi-official-website",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [
@@ -15,6 +15,9 @@
     "NOUMI_PRODUCT_API_URL": "https://www.noumi.ai",
     "NEXT_INC_CACHE_R2_PREFIX": "next-incremental-cache",
     "OFFICIAL_CMS_REVALIDATE_SECONDS": "300",
+    "OFFICIAL_SNAPSHOT_R2_PREFIX": "official-site-snapshots",
+    "OFFICIAL_SNAPSHOT_REFRESH_SECONDS": "7200",
+    "OFFICIAL_SNAPSHOT_REFRESH_ORIGIN": "https://noumi.ai",
     "POSTHOG_ENABLED": "true",
     "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
     "POSTHOG_UI_HOST": "https://us.posthog.com",
@@ -22,6 +25,9 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
+  },
+  "triggers": {
+    "crons": ["*/5 * * * *"],
   },
   "d1_databases": [
     {

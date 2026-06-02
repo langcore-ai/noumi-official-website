@@ -4,6 +4,20 @@ import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import {
+  acquireOfficialSnapshotRefreshLock,
+  clearOfficialSnapshotDirty,
+  createOfficialSnapshotKey,
+  deleteOfficialSnapshot,
+  getOfficialSnapshotRefreshState,
+  readOfficialSnapshot,
+  readOfficialSnapshotManifest,
+  releaseOfficialSnapshotRefreshLock,
+  runOfficialSnapshotTaskInBackground,
+  tryWriteOfficialSnapshot,
+  writeOfficialSnapshot,
+  writeOfficialSnapshotManifest,
+} from '@/lib/site/official-snapshot-store'
 import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { normalizeSiteHref } from '@/lib/site/url'
 import type {
@@ -19,6 +33,7 @@ import type {
   UseCasePage,
   UseCasesPage,
 } from '@/payload-types'
+import type { OfficialSnapshotManifest } from '@/lib/site/official-snapshot-store'
 
 /**
  * Payload SEO 插件写入的页面级 metadata。
@@ -709,6 +724,25 @@ const PUBLISHED_CMS_READ_OPTIONS = {
 /** 草稿预览读取只在密钥校验后的 draft mode 中使用。 */
 const DRAFT_CMS_READ_OPTIONS = { draft: true } as const satisfies OfficialCmsReadOptions
 
+/** 官网公开内容快照 key。 */
+const OFFICIAL_SNAPSHOT_KEYS = {
+  aboutPage: createOfficialSnapshotKey('about-page'),
+  blogPost: (slug: string) => createOfficialSnapshotKey('blog-post', slug),
+  blogPosts: createOfficialSnapshotKey('blog-posts'),
+  faqCategories: createOfficialSnapshotKey('faq-categories'),
+  faqPage: createOfficialSnapshotKey('faq-page'),
+  featureNavItems: (includeFallback: boolean) =>
+    createOfficialSnapshotKey('feature-nav-items', includeFallback ? 'with-fallback' : 'strict'),
+  featurePage: (slug: string) => createOfficialSnapshotKey('feature-page', slug),
+  featuresPage: createOfficialSnapshotKey('features-page'),
+  friendlyLinks: createOfficialSnapshotKey('friendly-links'),
+  privacyPage: createOfficialSnapshotKey('privacy-page'),
+  termsPage: createOfficialSnapshotKey('terms-page'),
+  caseNavItems: createOfficialSnapshotKey('use-case-nav-items'),
+  casePage: (slug: string) => createOfficialSnapshotKey('use-case-page', slug),
+  casesPage: createOfficialSnapshotKey('use-cases-page'),
+} as const
+
 /**
  * 判断当前是否为草稿预览
  * @returns 是否启用草稿模式
@@ -725,9 +759,9 @@ async function isDraftPreviewEnabled(): Promise<boolean> {
 }
 
 /**
- * 根据预览状态选择读取发布缓存或草稿实时数据。
+ * 根据预览状态选择读取发布快照或草稿实时数据。
  * @param draftReader 草稿实时读取函数
- * @param publishedReader 发布态缓存读取函数
+ * @param publishedReader 发布态读取函数
  * @returns CMS 视图数据
  */
 async function readDraftOrPublished<Result>(
@@ -739,6 +773,57 @@ async function readDraftOrPublished<Result>(
   }
 
   return publishedReader()
+}
+
+/**
+ * 后台按需触发全站快照刷新。
+ */
+const scheduleOfficialSnapshotRefreshIfNeeded = cache(async () => {
+  const state = await getOfficialSnapshotRefreshState()
+
+  if (!state.shouldRefresh || !state.reason) {
+    return
+  }
+
+  if (!(await acquireOfficialSnapshotRefreshLock(state.reason))) {
+    return
+  }
+
+  await runOfficialSnapshotTaskInBackground(
+    refreshOfficialSiteSnapshots({ reason: state.reason }).finally(() =>
+      releaseOfficialSnapshotRefreshLock(),
+    ),
+  )
+})
+
+/**
+ * 读取发布态快照，缺失时回源 Payload 并异步回填单项快照。
+ * @param key 快照 key
+ * @param sourceReader Payload 源读取函数
+ * @returns 发布态内容
+ */
+async function readPublishedSnapshotOrSource<Result>(
+  key: string,
+  sourceReader: () => Promise<Result>,
+): Promise<Result> {
+  const snapshot = await readOfficialSnapshot<Result>(key)
+
+  if (snapshot != null) {
+    await scheduleOfficialSnapshotRefreshIfNeeded()
+
+    return snapshot
+  }
+
+  const source = await sourceReader()
+
+  await runOfficialSnapshotTaskInBackground(
+    tryWriteOfficialSnapshot(key, source).catch((error) => {
+      console.error('[official-snapshot] failed to backfill snapshot', { error, key })
+    }),
+  )
+  await scheduleOfficialSnapshotRefreshIfNeeded()
+
+  return source
 }
 
 /**
@@ -1628,7 +1713,11 @@ const readPublishedOfficialAboutPage = cachePublishedCmsRead('about-page', () =>
 export async function getOfficialAboutPage(): Promise<OfficialAboutPageView> {
   return readDraftOrPublished(
     () => readOfficialAboutPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialAboutPage,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.aboutPage,
+        readPublishedOfficialAboutPage,
+      ),
   )
 }
 
@@ -1684,7 +1773,11 @@ const readPublishedOfficialFeaturesPage = cachePublishedCmsRead('features-page',
 export async function getOfficialFeaturesPage(): Promise<OfficialFeaturesPageView> {
   return readDraftOrPublished(
     () => readOfficialFeaturesPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialFeaturesPage,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.featuresPage,
+        readPublishedOfficialFeaturesPage,
+      ),
   )
 }
 
@@ -1719,7 +1812,7 @@ async function readOfficialFeatureNavItems(
     return featurePages
   }
 
-  const page = await getOfficialFeaturesPage()
+  const page = await readOfficialFeaturesPage(readOptions)
 
   return page.featureCards.map((card) => ({
     label: card.title,
@@ -1745,7 +1838,10 @@ export async function getOfficialFeatureNavItems(
 
   return readDraftOrPublished(
     () => readOfficialFeatureNavItems({ includeFallback }, DRAFT_CMS_READ_OPTIONS),
-    () => readPublishedOfficialFeatureNavItems(includeFallback),
+    () =>
+      readPublishedSnapshotOrSource(OFFICIAL_SNAPSHOT_KEYS.featureNavItems(includeFallback), () =>
+        readPublishedOfficialFeatureNavItems(includeFallback),
+      ),
   )
 }
 
@@ -1817,7 +1913,10 @@ export async function getOfficialFeaturePage(
 ): Promise<null | OfficialFeaturePageView> {
   return readDraftOrPublished(
     () => readOfficialFeaturePage(slug, DRAFT_CMS_READ_OPTIONS),
-    () => readPublishedOfficialFeaturePage(slug),
+    () =>
+      readPublishedSnapshotOrSource(OFFICIAL_SNAPSHOT_KEYS.featurePage(slug), () =>
+        readPublishedOfficialFeaturePage(slug),
+      ),
   )
 }
 
@@ -1872,7 +1971,11 @@ const readPublishedOfficialUseCasesPage = cachePublishedCmsRead('use-cases-page'
 export async function getOfficialUseCasesPage(): Promise<OfficialUseCasesPageView> {
   return readDraftOrPublished(
     () => readOfficialUseCasesPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialUseCasesPage,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.casesPage,
+        readPublishedOfficialUseCasesPage,
+      ),
   )
 }
 
@@ -1914,7 +2017,11 @@ const readPublishedOfficialUseCaseNavItems = cachePublishedCmsRead('use-case-nav
 export async function getOfficialUseCaseNavItems(): Promise<OfficialUseCaseNavItem[]> {
   return readDraftOrPublished(
     () => readOfficialUseCaseNavItems(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialUseCaseNavItems,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.caseNavItems,
+        readPublishedOfficialUseCaseNavItems,
+      ),
   )
 }
 
@@ -2028,7 +2135,10 @@ export async function getOfficialUseCasePage(
 ): Promise<null | OfficialUseCasePageView> {
   return readDraftOrPublished(
     () => readOfficialUseCasePage(slug, DRAFT_CMS_READ_OPTIONS),
-    () => readPublishedOfficialUseCasePage(slug),
+    () =>
+      readPublishedSnapshotOrSource(OFFICIAL_SNAPSHOT_KEYS.casePage(slug), () =>
+        readPublishedOfficialUseCasePage(slug),
+      ),
   )
 }
 
@@ -2123,7 +2233,11 @@ const readPublishedOfficialBlogPosts = cachePublishedCmsRead('blog-posts', () =>
 export async function getOfficialBlogPosts(): Promise<OfficialBlogPostSummary[]> {
   return readDraftOrPublished(
     () => readOfficialBlogPosts(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialBlogPosts,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.blogPosts,
+        readPublishedOfficialBlogPosts,
+      ),
   )
 }
 
@@ -2203,7 +2317,10 @@ const readPublishedOfficialBlogPost = cachePublishedCmsRead('blog-post', (slug: 
 export async function getOfficialBlogPost(slug: string): Promise<null | OfficialBlogPostView> {
   return readDraftOrPublished(
     () => readOfficialBlogPost(slug, DRAFT_CMS_READ_OPTIONS),
-    () => readPublishedOfficialBlogPost(slug),
+    () =>
+      readPublishedSnapshotOrSource(OFFICIAL_SNAPSHOT_KEYS.blogPost(slug), () =>
+        readPublishedOfficialBlogPost(slug),
+      ),
   )
 }
 
@@ -2254,7 +2371,11 @@ const readPublishedOfficialFriendlyLinks = cachePublishedCmsRead('friendly-links
 export async function getOfficialFriendlyLinks(): Promise<OfficialFriendlyLinkView[]> {
   return readDraftOrPublished(
     () => readOfficialFriendlyLinks(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialFriendlyLinks,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.friendlyLinks,
+        readPublishedOfficialFriendlyLinks,
+      ),
   )
 }
 
@@ -2290,7 +2411,8 @@ const readPublishedOfficialFaqPage = cachePublishedCmsRead('faq-page', () =>
 export async function getOfficialFaqPage(): Promise<OfficialFaqPageView> {
   return readDraftOrPublished(
     () => readOfficialFaqPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialFaqPage,
+    () =>
+      readPublishedSnapshotOrSource(OFFICIAL_SNAPSHOT_KEYS.faqPage, readPublishedOfficialFaqPage),
   )
 }
 
@@ -2363,7 +2485,11 @@ const readPublishedOfficialFaqCategories = cachePublishedCmsRead('faq-categories
 export async function getOfficialFaqCategories(): Promise<OfficialFaqCategoryView[]> {
   return readDraftOrPublished(
     () => readOfficialFaqCategories(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialFaqCategories,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.faqCategories,
+        readPublishedOfficialFaqCategories,
+      ),
   )
 }
 
@@ -2415,7 +2541,11 @@ const readPublishedOfficialPrivacyPage = cachePublishedCmsRead('privacy-page', (
 export async function getOfficialPrivacyPage(): Promise<OfficialLegalPageView> {
   return readDraftOrPublished(
     () => readOfficialPrivacyPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialPrivacyPage,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.privacyPage,
+        readPublishedOfficialPrivacyPage,
+      ),
   )
 }
 
@@ -2448,6 +2578,202 @@ const readPublishedOfficialTermsPage = cachePublishedCmsRead('terms-page', () =>
 export async function getOfficialTermsPage(): Promise<OfficialLegalPageView> {
   return readDraftOrPublished(
     () => readOfficialTermsPage(DRAFT_CMS_READ_OPTIONS),
-    readPublishedOfficialTermsPage,
+    () =>
+      readPublishedSnapshotOrSource(
+        OFFICIAL_SNAPSHOT_KEYS.termsPage,
+        readPublishedOfficialTermsPage,
+      ),
   )
+}
+
+/** 全站快照刷新结果。 */
+export type OfficialSnapshotRefreshResult = {
+  /** 写入的详情页数量。 */
+  counts: OfficialSnapshotManifest['counts']
+  /** 生成耗时。 */
+  durationMs: number
+  /** 生成时间。 */
+  generatedAt: string
+  /** 写入的业务快照 key。 */
+  keys: string[]
+  /** 生成覆盖的公开路径。 */
+  routes: string[]
+}
+
+/**
+ * 从 Feature 导航 href 中提取 slug。
+ * @param href Feature 导航链接
+ * @returns Feature slug
+ */
+function readFeatureSlugFromHref(href: string): string | null {
+  const match = /^\/features\/([^/?#]+)/.exec(href)
+
+  return match?.[1] ? decodeURIComponent(match[1]) : null
+}
+
+/**
+ * 去重并排序公开路径。
+ * @param routes 原始路径
+ * @returns 稳定排序后的公开路径
+ */
+function normalizeSnapshotRoutes(routes: string[]): string[] {
+  return Array.from(new Set(routes)).sort((a, b) => a.localeCompare(b))
+}
+
+/**
+ * 从 Payload 生成全站 R2 JSON 快照。
+ * 该函数是唯一需要批量读取 Payload/D1 的公开内容刷新入口。
+ *
+ * @param options.reason 刷新原因
+ * @returns 快照刷新结果
+ */
+export async function refreshOfficialSiteSnapshots(
+  options: { reason?: string } = {},
+): Promise<OfficialSnapshotRefreshResult> {
+  const startedAt = Date.now()
+  const generatedAt = new Date(startedAt).toISOString()
+  const previousManifest = await readOfficialSnapshotManifest()
+  const snapshotEntries: Array<{ data: unknown; key: string }> = []
+  const routes = [
+    '/',
+    '/about',
+    '/blog',
+    '/contact',
+    '/faqs',
+    '/features',
+    '/links',
+    '/pricing',
+    '/privacy',
+    '/terms',
+    '/use-cases',
+  ]
+
+  /**
+   * 注册待写入快照。
+   * @param key 快照 key
+   * @param data 快照数据
+   */
+  function addSnapshot(key: string, data: unknown): void {
+    snapshotEntries.push({ data, key })
+  }
+
+  const [
+    aboutPage,
+    featuresPage,
+    useCasesPage,
+    featureNavItems,
+    strictFeatureNavItems,
+    useCaseNavItems,
+    blogPosts,
+    friendlyLinks,
+    faqPage,
+    faqCategories,
+    privacyPage,
+    termsPage,
+  ] = await Promise.all([
+    readOfficialAboutPage(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFeaturesPage(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialUseCasesPage(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFeatureNavItems({ includeFallback: true }, PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFeatureNavItems({ includeFallback: false }, PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialUseCaseNavItems(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialBlogPosts(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFriendlyLinks(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFaqPage(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialFaqCategories(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialPrivacyPage(PUBLISHED_CMS_READ_OPTIONS),
+    readOfficialTermsPage(PUBLISHED_CMS_READ_OPTIONS),
+  ])
+
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.aboutPage, aboutPage)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.featuresPage, featuresPage)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.casesPage, useCasesPage)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.featureNavItems(true), featureNavItems)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.featureNavItems(false), strictFeatureNavItems)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.caseNavItems, useCaseNavItems)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.blogPosts, blogPosts)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.friendlyLinks, friendlyLinks)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.faqPage, faqPage)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.faqCategories, faqCategories)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.privacyPage, privacyPage)
+  addSnapshot(OFFICIAL_SNAPSHOT_KEYS.termsPage, termsPage)
+
+  for (const item of strictFeatureNavItems) {
+    const slug = readFeatureSlugFromHref(item.href)
+
+    if (!slug) {
+      continue
+    }
+
+    const page = await readOfficialFeaturePage(slug, PUBLISHED_CMS_READ_OPTIONS)
+
+    if (!page) {
+      continue
+    }
+
+    routes.push(`/features/${page.slug}`)
+    addSnapshot(OFFICIAL_SNAPSHOT_KEYS.featurePage(page.slug), page)
+  }
+
+  for (const item of useCaseNavItems) {
+    const page = await readOfficialUseCasePage(item.slug, PUBLISHED_CMS_READ_OPTIONS)
+
+    if (!page) {
+      continue
+    }
+
+    routes.push(`/use-cases/${page.slug}`)
+    addSnapshot(OFFICIAL_SNAPSHOT_KEYS.casePage(page.slug), page)
+  }
+
+  for (const item of blogPosts) {
+    const post = await readOfficialBlogPost(item.slug, PUBLISHED_CMS_READ_OPTIONS)
+
+    if (!post) {
+      continue
+    }
+
+    routes.push(`/blog/${post.slug}`)
+    addSnapshot(OFFICIAL_SNAPSHOT_KEYS.blogPost(post.slug), post)
+  }
+
+  const keys = snapshotEntries.map((entry) => entry.key)
+  const nextKeySet = new Set(keys)
+
+  await Promise.all(
+    snapshotEntries.map((entry) => writeOfficialSnapshot(entry.key, entry.data, generatedAt)),
+  )
+
+  if (previousManifest) {
+    await Promise.all(
+      previousManifest.keys
+        .filter((key) => !nextKeySet.has(key))
+        .map((key) => deleteOfficialSnapshot(key)),
+    )
+  }
+
+  const manifest: OfficialSnapshotManifest = {
+    counts: {
+      blogPosts: blogPosts.length,
+      featurePages: strictFeatureNavItems.length,
+      useCasePages: useCaseNavItems.length,
+    },
+    durationMs: Date.now() - startedAt,
+    generatedAt,
+    keys,
+    reason: options.reason ?? 'manual',
+    routes: normalizeSnapshotRoutes(routes),
+    version: 1,
+  }
+
+  await writeOfficialSnapshotManifest(manifest)
+  await clearOfficialSnapshotDirty()
+
+  return {
+    counts: manifest.counts,
+    durationMs: manifest.durationMs,
+    generatedAt: manifest.generatedAt,
+    keys: manifest.keys,
+    routes: manifest.routes,
+  }
 }

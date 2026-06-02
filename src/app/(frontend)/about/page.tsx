@@ -43,10 +43,7 @@ function hasFaqSection(page: Awaited<ReturnType<typeof getOfficialAboutPage>>): 
  * @returns About 页面
  */
 export default async function AboutPage() {
-  const [page, useCases] = await Promise.all([
-    getOfficialAboutPage(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const [page, useCases] = await Promise.all([getOfficialAboutPage(), getOfficialUseCaseNavItems()])
   const showTeam = page.teamMembers.length > 0
   const showFaq = hasFaqSection(page)
   const showFaqHeader = Boolean(page.faqEyebrow || page.faqTitle || page.faqDescription)
@@ -77,12 +74,13 @@ export default async function AboutPage() {
             preferences. Again, and again, and again.
           </p>
           <p>
-            We built Noumi because the real problem isn&apos;t intelligence — it&apos;s memory. An AI
-            that can&apos;t remember who you are can&apos;t actually work for you.
+            We built Noumi because the real problem isn&apos;t intelligence — it&apos;s memory. An
+            AI that can&apos;t remember who you are can&apos;t actually work for you.
           </p>
           <p>
             Every interaction with Noumi is an investment. The longer you use it, the more it knows
-            your work, your rules, and your standards. That&apos;s not a feature. That&apos;s the point.
+            your work, your rules, and your standards. That&apos;s not a feature. That&apos;s the
+            point.
           </p>
         </section>
 
@@ -97,8 +95,8 @@ export default async function AboutPage() {
                   Meet Our Founders<em>.</em>
                 </h2>
                 <p className="reveal d2">
-                  Operators, researchers, and AI obsessives building the future of how humans and
-                  AI work together.
+                  Operators, researchers, and AI obsessives building the future of how humans and AI
+                  work together.
                 </p>
               </div>
 
@@ -130,9 +128,9 @@ export default async function AboutPage() {
             everything.
           </p>
           <div className={styles.joinCta}>
-            <a className={styles.joinMailto} href="mailto:hr@noumi.ai">
+            <a className={styles.joinMailto} href="mailto:official@noumi.ai">
               <span className={styles.joinMailtoLabel}>Join us</span>
-              <span className={styles.joinMailtoAddr}>hr@noumi.ai →</span>
+              <span className={styles.joinMailtoAddr}>official@noumi.ai →</span>
             </a>
           </div>
         </section>
@@ -169,7 +167,10 @@ export default async function AboutPage() {
           </>
         ) : null}
 
-        <section aria-labelledby="about-cta" className={`${styles.aboutCta} cta-band official-cta-band`}>
+        <section
+          aria-labelledby="about-cta"
+          className={`${styles.aboutCta} cta-band official-cta-band`}
+        >
           <h2 className="reveal" id="about-cta">
             The longer you use Noumi,
             <br />

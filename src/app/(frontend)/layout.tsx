@@ -4,6 +4,7 @@ import Script from 'next/script'
 import { OfficialAnalyticsProvider } from '@/components/site/OfficialAnalyticsProvider'
 import { CookieConsentBanner } from '@/components/site/CookieConsentBanner'
 import { OfficialGlobalEffects } from '@/components/site/official/OfficialGlobalEffects'
+import { OfficialPersistentChrome } from '@/components/site/official/OfficialPersistentChrome'
 import { buildOfficialGoogleTagBootstrapScript, OFFICIAL_GOOGLE_TAG_ID } from '@/lib/site/analytics'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -56,7 +57,7 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
         />
         <OfficialAnalyticsProvider>
           <OfficialGlobalEffects />
-          {children}
+          <OfficialPersistentChrome>{children}</OfficialPersistentChrome>
           <CookieConsentBanner />
         </OfficialAnalyticsProvider>
       </body>

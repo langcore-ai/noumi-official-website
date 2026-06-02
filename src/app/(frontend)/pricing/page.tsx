@@ -2,11 +2,6 @@ import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
 import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
-import {
   OFFICIAL_JSON_LD_PAGE_META,
   PRICING_PAGE_JSON_LD,
   PRICING_SOFTWARE_APPLICATION_JSON_LD,
@@ -37,13 +32,10 @@ export async function generateMetadata() {
  * @returns Pricing 内容
  */
 export default async function PricingPage() {
-  const useCases = await getOfficialUseCaseNavItems()
-
   return (
     <div className="page-body">
       <StructuredData data={PRICING_PAGE_JSON_LD} />
       <StructuredData data={PRICING_SOFTWARE_APPLICATION_JSON_LD} />
-      <OfficialHomeHeader activeItem="/pricing" useCases={useCases} />
 
       <section className={styles.pricingHero}>
         <h1 className="reveal">Simple, transparent pricing.</h1>
@@ -209,8 +201,6 @@ export default async function PricingPage() {
           </Link>
         </div>
       </section>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

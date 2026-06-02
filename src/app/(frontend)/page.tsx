@@ -1,13 +1,8 @@
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
-import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import {
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
   OFFICIAL_PRODUCT_AUTH_URL,
@@ -30,13 +25,10 @@ const TRUSTED_LOGOS = [
  * @returns 首页内容
  */
 export default async function HomePage() {
-  const useCases = await getOfficialUseCaseNavItems()
-
   return (
-    <div className="page-shell">
+    <>
       <StructuredData data={HOME_JSON_LD} />
       <OfficialHomeEffects />
-      <OfficialHomeHeader useCases={useCases} />
 
       <main id="top">
         <section className="hero">
@@ -266,8 +258,6 @@ export default async function HomePage() {
           <span aria-hidden="true" className="home-cta-band__cat official-cta-art" />
         </section>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
-    </div>
+    </>
   )
 }

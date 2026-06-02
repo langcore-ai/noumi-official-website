@@ -55,6 +55,68 @@ button {
   transition: padding-top 0.28s ease;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.route-loading {
+  min-height: 62vh;
+  display: grid;
+  place-items: center;
+  padding-inline: 24px;
+}
+
+.route-loading__stage {
+  width: min(520px, 100%);
+  display: grid;
+  gap: 18px;
+}
+
+.route-loading__mark,
+.route-loading__line {
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border-soft) 76%, white 24%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.route-loading__mark {
+  width: 72px;
+  height: 14px;
+}
+
+.route-loading__line {
+  width: 72%;
+  height: 18px;
+}
+
+.route-loading__line--wide {
+  width: 100%;
+  height: 36px;
+}
+
+.route-loading__line--short {
+  width: 44%;
+}
+
+.route-loading__mark::after,
+.route-loading__line::after {
+  content: "";
+  display: block;
+  width: 42%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: route-loading-shimmer 1.1s ease-in-out infinite;
+}
+
 .container {
   width: min(calc(100% - 64px), var(--container));
   margin: 0 auto;
@@ -1661,6 +1723,8 @@ button {
   .official-beta-banner::before,
   .official-beta-banner__apply,
   .official-beta-banner__close,
+  .route-loading__mark::after,
+  .route-loading__line::after,
   .page-body,
   .hero {
     animation: none;
@@ -1692,6 +1756,16 @@ button {
   50% {
     opacity: 1;
     transform: scaleX(1.04) scaleY(1.08);
+  }
+}
+
+@keyframes route-loading-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(260%);
   }
 }
 

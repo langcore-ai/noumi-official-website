@@ -1,9 +1,5 @@
 import { StructuredData } from '@/components/site/StructuredData'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import { getOfficialAboutPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { getOfficialAboutPage } from '@/lib/site/official-cms'
 import { ABOUT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import {
   createOfficialMetadata,
@@ -43,7 +39,7 @@ function hasFaqSection(page: Awaited<ReturnType<typeof getOfficialAboutPage>>): 
  * @returns About 页面
  */
 export default async function AboutPage() {
-  const [page, useCases] = await Promise.all([getOfficialAboutPage(), getOfficialUseCaseNavItems()])
+  const page = await getOfficialAboutPage()
   const showTeam = page.teamMembers.length > 0
   const showFaq = hasFaqSection(page)
   const showFaqHeader = Boolean(page.faqEyebrow || page.faqTitle || page.faqDescription)
@@ -51,7 +47,6 @@ export default async function AboutPage() {
   return (
     <div className="page-body">
       <StructuredData data={ABOUT_PAGE_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
 
       <main className={styles.aboutPage}>
         <section aria-labelledby="belief-h1" className={styles.belief}>
@@ -189,8 +184,6 @@ export default async function AboutPage() {
           </a>
         </section>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

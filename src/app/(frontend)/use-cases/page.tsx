@@ -1,9 +1,5 @@
 import Link from 'next/link'
 
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { StructuredData } from '@/components/site/StructuredData'
 import {
   getOfficialUseCaseNavItems,
@@ -88,8 +84,10 @@ export async function generateMetadata() {
  * @returns 聚合页内容
  */
 export default async function UseCasesIndexPage() {
-  const useCases = await getOfficialUseCaseNavItems()
-  const page = await getOfficialUseCasesPage()
+  const [useCases, page] = await Promise.all([
+    getOfficialUseCaseNavItems(),
+    getOfficialUseCasesPage(),
+  ])
   const hasCards = page.cards.length > 0
   const hasMoreCard =
     Boolean(page.moreTitle) ||
@@ -105,7 +103,6 @@ export default async function UseCasesIndexPage() {
     <div className="page-body">
       <StructuredData data={USE_CASES_PAGE_JSON_LD} />
       <StructuredData data={USE_CASES_FAQ_JSON_LD} />
-      <OfficialHomeHeader activeItem="/use-cases" useCases={useCases} />
 
       <header className={styles.pageHero}>
         <div className={`${styles.heroCat} reveal`}>
@@ -210,8 +207,6 @@ export default async function UseCasesIndexPage() {
           {CTA.label}
         </Link>
       </section>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

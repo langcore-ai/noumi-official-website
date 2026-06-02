@@ -1,10 +1,6 @@
 import Link from 'next/link'
 
-import {
-  getOfficialFeatureNavItems,
-  type OfficialFeatureNavItem,
-  type OfficialUseCaseNavItem,
-} from '@/lib/site/official-cms'
+import type { OfficialFeatureNavItem, OfficialUseCaseNavItem } from '@/lib/site/official-cms'
 import {
   OFFICIAL_LOGO,
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
@@ -25,7 +21,7 @@ const PRIMARY_NAV_ITEMS = [
 type PrimaryNavItem = (typeof PRIMARY_NAV_ITEMS)[number]['href']
 
 /** 官网导航可高亮项。 */
-type ActiveNavItem = PrimaryNavItem
+export type ActiveNavItem = PrimaryNavItem
 
 /**
  * 渲染移动端折叠菜单的主导航链接。
@@ -238,16 +234,15 @@ export function OfficialUseCaseHeader(props: {
 }
 
 /**
- * 首页页脚
- * @param props use case 页签
- * @returns 首页页脚
+ * 官网统一页脚
+ * @param props Features 与 Use Case 导航项
+ * @returns 官网统一页脚
  */
-export async function OfficialHomeFooter(props: {
-  features?: OfficialFeatureNavItem[]
+export function OfficialHomeFooter(props: {
+  features: OfficialFeatureNavItem[]
   useCases: OfficialUseCaseNavItem[]
 }) {
-  const { useCases } = props
-  const features = props.features ?? (await getOfficialFeatureNavItems())
+  const { features, useCases } = props
 
   return (
     <footer className="site-footer" id="footer">

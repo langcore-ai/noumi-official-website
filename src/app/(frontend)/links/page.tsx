@@ -1,15 +1,7 @@
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import {
-  getOfficialFriendlyLinks,
-  getOfficialUseCaseNavItems,
-  type OfficialFriendlyLinkView,
-} from '@/lib/site/official-cms'
+import { getOfficialFriendlyLinks, type OfficialFriendlyLinkView } from '@/lib/site/official-cms'
 import {
   createOfficialMetadata,
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
@@ -139,15 +131,11 @@ function FriendlyLinkAvatar(props: { link: OfficialFriendlyLinkView }) {
  * @returns links 页面
  */
 export default async function LinksPage() {
-  const [links, useCases] = await Promise.all([
-    getOfficialFriendlyLinks(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const links = await getOfficialFriendlyLinks()
 
   return (
     <div className={`page-body ${styles.linksPage}`}>
       <StructuredData data={createLinksJsonLd(links)} />
-      <OfficialHomeHeader useCases={useCases} />
 
       <main>
         <section aria-labelledby="links-h1" className={styles.hero}>
@@ -218,8 +206,6 @@ export default async function LinksPage() {
           </Link>
         </section>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

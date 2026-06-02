@@ -1,16 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
-import {
-  getOfficialFeatureNavItems,
-  getOfficialFeaturePage,
-  getOfficialUseCaseNavItems,
-} from '@/lib/site/official-cms'
+import { getOfficialFeaturePage } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './feature-page.module.css'
@@ -51,11 +43,7 @@ export async function generateMetadata(props: FeaturePageProps) {
  */
 export default async function FeatureDetailPage(props: FeaturePageProps) {
   const { slug } = await props.params
-  const [page, features, useCases] = await Promise.all([
-    getOfficialFeaturePage(slug),
-    getOfficialFeatureNavItems(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const page = await getOfficialFeaturePage(slug)
 
   if (!page) {
     notFound()
@@ -64,17 +52,13 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
   if (page.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader activeItem="/features" useCases={useCases} />
         <OfficialRawHtml html={page.htmlContent || ''} />
-        <OfficialHomeFooter features={features} useCases={useCases} />
       </div>
     )
   }
 
   return (
     <div className={`${styles.featurePage} page-body`}>
-      <OfficialHomeHeader activeItem="/features" useCases={useCases} />
-
       <main>
         <section aria-labelledby={`${page.slug}-h1`} className={styles.hero}>
           <div className={`${styles.heroCopy} reveal`}>
@@ -146,8 +130,6 @@ export default async function FeatureDetailPage(props: FeaturePageProps) {
           </section>
         ) : null}
       </main>
-
-      <OfficialHomeFooter features={features} useCases={useCases} />
     </div>
   )
 }

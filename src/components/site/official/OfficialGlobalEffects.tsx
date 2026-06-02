@@ -12,7 +12,6 @@ export function OfficialGlobalEffects(): null {
   const pathname = usePathname()
 
   useEffect(() => {
-    const revealItems = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
     const navigation = document.querySelector<HTMLElement>('[data-official-nav]')
 
     const observer = new IntersectionObserver(
@@ -31,10 +30,43 @@ export function OfficialGlobalEffects(): null {
       },
     )
 
-    revealItems.forEach((item) => {
+    /**
+     * 观察一个 reveal 节点。切页 loading 先挂载时，新页面内容会稍后插入 DOM。
+     * 这里保持幂等，避免同一个节点被重复观察。
+     */
+    const observeRevealItem = (item: HTMLElement) => {
       if (!item.classList.contains('in')) {
         observer.observe(item)
       }
+    }
+
+    /**
+     * 扫描节点及其子节点中的 reveal 元素。
+     * @param node 新增 DOM 节点
+     */
+    const observeRevealTree = (node: Node) => {
+      if (!(node instanceof HTMLElement)) {
+        return
+      }
+
+      if (node.matches('.reveal')) {
+        observeRevealItem(node)
+      }
+
+      node.querySelectorAll<HTMLElement>('.reveal').forEach(observeRevealItem)
+    }
+
+    document.querySelectorAll<HTMLElement>('.reveal').forEach(observeRevealItem)
+
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach(observeRevealTree)
+      })
+    })
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
     })
 
     const handleScroll = () => {
@@ -49,6 +81,7 @@ export function OfficialGlobalEffects(): null {
     window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
+      mutationObserver.disconnect()
       observer.disconnect()
       window.removeEventListener('scroll', handleScroll)
     }

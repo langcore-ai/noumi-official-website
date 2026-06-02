@@ -1,9 +1,4 @@
 import { StructuredData } from '@/components/site/StructuredData'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 import { CONTACT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -27,12 +22,9 @@ export async function generateMetadata() {
  * @returns Contact 页面
  */
 export default async function ContactPage() {
-  const useCases = await getOfficialUseCaseNavItems()
-
   return (
     <div className="page-body">
       <StructuredData data={CONTACT_PAGE_JSON_LD} />
-      <OfficialHomeHeader useCases={useCases} />
 
       <main>
         <div className={styles.contactWrap}>
@@ -65,8 +57,6 @@ export default async function ContactPage() {
           </div>
         </div>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

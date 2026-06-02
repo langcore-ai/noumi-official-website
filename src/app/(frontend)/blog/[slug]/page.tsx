@@ -2,9 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
-import { OfficialHomeFooter, OfficialHomeHeader } from '@/components/site/official/OfficialHomeChrome'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
-import { getOfficialBlogPost, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { getOfficialBlogPost } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './blog-post.module.css'
@@ -46,10 +45,7 @@ export async function generateMetadata(props: BlogPostPageProps) {
  */
 export default async function BlogPostPage(props: BlogPostPageProps) {
   const { slug } = await props.params
-  const [post, useCases] = await Promise.all([
-    getOfficialBlogPost(slug),
-    getOfficialUseCaseNavItems(),
-  ])
+  const post = await getOfficialBlogPost(slug)
 
   if (!post) {
     notFound()
@@ -58,17 +54,13 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
   if (post.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
         <OfficialRawHtml html={post.htmlContent || ''} />
-        <OfficialHomeFooter useCases={useCases} />
       </div>
     )
   }
 
   return (
     <div className={`${styles.blogPostPage} page-body`}>
-      <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
-
       <main className={styles.postWrap}>
         <Link className={`${styles.postBack} reveal`} href="/blog">← Back to Blog</Link>
 
@@ -123,8 +115,6 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
           </Link>
         </section>
       ) : null}
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

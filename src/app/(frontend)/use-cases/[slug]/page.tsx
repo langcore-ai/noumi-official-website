@@ -1,13 +1,9 @@
 import { notFound } from 'next/navigation'
 
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
-import {
-  OfficialHomeFooter,
-  OfficialUseCaseHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { OfficialUseCaseWorkflow } from '@/components/site/official/OfficialUseCaseWorkflow'
-import { getOfficialUseCaseNavItems, getOfficialUseCasePage } from '@/lib/site/official-cms'
+import { getOfficialUseCasePage } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './use-case.module.css'
@@ -48,10 +44,7 @@ export async function generateMetadata(props: UseCasePageProps) {
  */
 export default async function UseCaseDetailPage(props: UseCasePageProps) {
   const { slug } = await props.params
-  const [page, useCases] = await Promise.all([
-    getOfficialUseCasePage(slug),
-    getOfficialUseCaseNavItems(),
-  ])
+  const page = await getOfficialUseCasePage(slug)
 
   if (!page) {
     notFound()
@@ -60,17 +53,13 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
   if (page.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialUseCaseHeader activeSlug={page.slug} useCases={useCases} />
         <OfficialRawHtml html={page.htmlContent || ''} />
-        <OfficialHomeFooter useCases={useCases} />
       </div>
     )
   }
 
   return (
     <div className={`${styles.useCasePage} page-body`}>
-      <OfficialUseCaseHeader activeSlug={page.slug} useCases={useCases} />
-
       <section aria-labelledby={`${page.slug}-h1`} className={styles.roleHero}>
         <div className={`${styles.roleHeroText} reveal`}>
           {page.heroEyebrow ? <span className="sec-label">{page.heroEyebrow}</span> : null}
@@ -154,8 +143,6 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
           <a className="btn-cream official-cta-button reveal d2" href={page.ctaButton.href}>{page.ctaButton.label}</a>
         </section>
       ) : null}
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

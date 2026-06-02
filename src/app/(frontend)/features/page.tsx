@@ -2,12 +2,7 @@ import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
 import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import {
   getOfficialFeaturesPage,
-  getOfficialUseCaseNavItems,
   type OfficialFeatureCardTone,
   type OfficialUseCasesCardTone,
 } from '@/lib/site/official-cms'
@@ -117,16 +112,12 @@ export async function generateMetadata() {
  * @returns Features 页面内容
  */
 export default async function FeaturesPage() {
-  const [page, useCases] = await Promise.all([
-    getOfficialFeaturesPage(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const page = await getOfficialFeaturesPage()
 
   return (
     <div className="page-body">
       <StructuredData data={FEATURES_PAGE_JSON_LD} />
       <StructuredData data={FEATURES_FAQ_JSON_LD} />
-      <OfficialHomeHeader activeItem="/features" useCases={useCases} />
 
       <main className={styles.featuresPage}>
         <section aria-label="Core features" className={`${styles.sec} ${styles.secFeatures}`}>
@@ -313,14 +304,6 @@ export default async function FeaturesPage() {
           Start building your AI today →
         </Link>
       </section>
-
-      <OfficialHomeFooter
-        features={page.featureCards.map((card) => ({
-          label: card.title,
-          href: card.cta.href,
-        }))}
-        useCases={useCases}
-      />
     </div>
   )
 }

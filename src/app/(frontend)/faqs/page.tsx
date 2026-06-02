@@ -1,14 +1,6 @@
 import { MarkdownContent } from '@/components/site/MarkdownContent'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
-import {
-  getOfficialFaqCategories,
-  getOfficialFaqPage,
-  getOfficialUseCaseNavItems,
-} from '@/lib/site/official-cms'
+import { getOfficialFaqCategories, getOfficialFaqPage } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './faqs.module.css'
@@ -30,26 +22,21 @@ export async function generateMetadata() {
  * @returns FAQ 页面内容
  */
 export default async function FaqPage() {
-  const [page, categories, useCases] = await Promise.all([
+  const [page, categories] = await Promise.all([
     getOfficialFaqPage(),
     getOfficialFaqCategories(),
-    getOfficialUseCaseNavItems(),
   ])
 
   if (page.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader useCases={useCases} />
         <OfficialRawHtml html={page.htmlContent || ''} />
-        <OfficialHomeFooter useCases={useCases} />
       </div>
     )
   }
 
   return (
     <div className="page-body">
-      <OfficialHomeHeader useCases={useCases} />
-
       <header className="page-hero">
         <span className="sec-label reveal">Questions, answered</span>
         <h1 className="reveal d1">FAQ</h1>
@@ -79,8 +66,6 @@ export default async function FaqPage() {
           <a href="mailto:official@noumi.ai">official@noumi.ai</a>
         </div>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

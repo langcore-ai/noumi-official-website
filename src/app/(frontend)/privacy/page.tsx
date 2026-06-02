@@ -1,10 +1,6 @@
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
-import { getOfficialPrivacyPage, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { getOfficialPrivacyPage } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
 /**
@@ -26,30 +22,23 @@ export async function generateMetadata() {
  * @returns 法律文档页面
  */
 export default async function PrivacyPage() {
-  const [page, useCases] = await Promise.all([
-    getOfficialPrivacyPage(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const page = await getOfficialPrivacyPage()
 
   if (page.renderMode === 'html') {
     return (
       <div className="page-body">
-        <OfficialHomeHeader useCases={useCases} />
         <OfficialRawHtml html={page.htmlContent || ''} />
-        <OfficialHomeFooter useCases={useCases} />
       </div>
     )
   }
 
   return (
     <div className="page-body">
-      <OfficialHomeHeader useCases={useCases} />
       <header className="legal-header">
         <h1>{page.heroTitle || 'Privacy Policy'}</h1>
         {page.heroDescription ? <p className="legal-meta">{page.heroDescription}</p> : null}
       </header>
       <OfficialContentSections sections={page.sections} />
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

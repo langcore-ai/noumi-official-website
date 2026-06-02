@@ -1,11 +1,7 @@
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
-import {
-  OfficialHomeFooter,
-  OfficialHomeHeader,
-} from '@/components/site/official/OfficialHomeChrome'
-import { getOfficialBlogPosts, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { getOfficialBlogPosts } from '@/lib/site/official-cms'
 import { BLOG_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -29,15 +25,11 @@ export async function generateMetadata() {
  * @returns 文章列表
  */
 export default async function BlogIndexPage() {
-  const [posts, useCases] = await Promise.all([
-    getOfficialBlogPosts(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const posts = await getOfficialBlogPosts()
 
   return (
     <div className="page-body">
       <StructuredData data={BLOG_PAGE_JSON_LD} />
-      <OfficialHomeHeader activeItem="/blog" useCases={useCases} />
 
       <header className="page-hero">
         <span className="sec-label">From the team</span>
@@ -82,8 +74,6 @@ export default async function BlogIndexPage() {
           <span aria-hidden="true" className={styles.blogFooterCat} />
         </div>
       </main>
-
-      <OfficialHomeFooter useCases={useCases} />
     </div>
   )
 }

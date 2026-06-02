@@ -56,8 +56,8 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
           strategy="afterInteractive"
         />
         <OfficialAnalyticsProvider>
-          <OfficialGlobalEffects />
           <OfficialPersistentChrome>{children}</OfficialPersistentChrome>
+          <OfficialGlobalEffects />
           <CookieConsentBanner />
         </OfficialAnalyticsProvider>
       </body>

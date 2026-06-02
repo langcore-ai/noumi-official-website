@@ -18,8 +18,10 @@ export function OfficialGlobalEffects(): null {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('in')
-            entry.target.classList.add('is-visible')
+            const target = entry.target
+
+            target.classList.add('in')
+            target.classList.add('is-visible')
             observer.unobserve(entry.target)
           }
         })
@@ -35,7 +37,7 @@ export function OfficialGlobalEffects(): null {
      * 这里保持幂等，避免同一个节点被重复观察。
      */
     const observeRevealItem = (item: HTMLElement) => {
-      if (!item.classList.contains('in')) {
+      if (!item.classList.contains('in') && !item.classList.contains('is-visible')) {
         observer.observe(item)
       }
     }

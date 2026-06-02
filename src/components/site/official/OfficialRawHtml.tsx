@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 
-import { normalizeSiteHref } from '@/lib/site/url'
+import { useRouter } from 'next/navigation'
+
+import { isFilePathname, normalizeSiteHref } from '@/lib/site/url'
 
 /**
  * HTML 模式中需要在浏览器端重新执行的脚本
@@ -41,6 +43,8 @@ const JSON_LD_SCRIPT_TYPE = 'application/ld+json'
 
 /** CMS HTML 渲染容器 class，用于限制移动端兜底样式作用域。 */
 const RAW_HTML_CONTAINER_CLASS = 'official-raw-html'
+/** 不应交给 App Router 处理的站内路径前缀。 */
+const RAW_HTML_ROUTER_EXCLUDED_PREFIXES = ['/api', '/admin', '/_next', '/assets']
 
 /** 管理员粘贴整页 HTML 时的移动端兜底样式。 */
 const RAW_HTML_RESPONSIVE_STYLE = `<style data-noumi-raw-html-mobile>
@@ -254,6 +258,50 @@ function normalizeHtmlHrefs(markup: string): string {
 }
 
 /**
+ * 判断路径是否应由 App Router 做客户端切换。
+ * @param href 已规范化 href
+ * @returns 是否为站内页面链接
+ */
+function isClientRoutableHref(href: string): boolean {
+  if (!href.startsWith('/')) {
+    return false
+  }
+
+  const url = new URL(href, 'https://noumi.ai')
+
+  if (isFilePathname(url.pathname)) {
+    return false
+  }
+
+  return !RAW_HTML_ROUTER_EXCLUDED_PREFIXES.some(
+    (prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`),
+  )
+}
+
+/**
+ * 从 HTML 链接节点中读取可交给 App Router 的站内 href。
+ * @param anchor 链接节点
+ * @returns 可客户端切换的 href
+ */
+function getClientRoutableAnchorHref(anchor: HTMLAnchorElement): string | null {
+  const rawHref = anchor.getAttribute('href')
+
+  if (!rawHref || rawHref.startsWith('#') || anchor.hasAttribute('download')) {
+    return null
+  }
+
+  const target = anchor.getAttribute('target')
+
+  if (target && target.toLowerCase() !== '_self') {
+    return null
+  }
+
+  const normalizedHref = normalizeSiteHref(rawHref)
+
+  return isClientRoutableHref(normalizedHref) ? normalizedHref : null
+}
+
+/**
  * 把管理员粘贴的整页 HTML 转成“仅页面主体”的可渲染片段
  * @param html 原始 HTML
  * @returns 清理后的 HTML 与脚本
@@ -295,6 +343,7 @@ export function prepareOfficialRawHtml(html: string): PreparedRawHtml {
  */
 export function OfficialRawHtml(props: { html: string }) {
   const { html } = props
+  const router = useRouter()
   const containerRef = useRef<HTMLElement>(null)
   const prepared = useMemo(() => prepareOfficialRawHtml(html), [html])
 
@@ -315,10 +364,65 @@ export function OfficialRawHtml(props: { html: string }) {
       return scriptElement
     })
 
+    /**
+     * HTML 模式里的站内普通链接也走 App Router，避免硬刷新导致全局 header/footer 重载。
+     */
+    const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return
+      }
+
+      const anchor = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href]')
+
+      if (!anchor || !container.contains(anchor)) {
+        return
+      }
+
+      const href = getClientRoutableAnchorHref(anchor)
+
+      if (!href) {
+        return
+      }
+
+      event.preventDefault()
+      router.push(href)
+    }
+
+    /**
+     * 鼠标悬停/键盘聚焦时预取站内链接，降低进入 CMS 子页的等待体感。
+     */
+    const handlePotentialNavigation = (event: MouseEvent | FocusEvent) => {
+      const anchor = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href]')
+
+      if (!anchor || !container.contains(anchor)) {
+        return
+      }
+
+      const href = getClientRoutableAnchorHref(anchor)
+
+      if (href) {
+        router.prefetch(href)
+      }
+    }
+
+    container.addEventListener('click', handleClick)
+    container.addEventListener('mouseover', handlePotentialNavigation)
+    container.addEventListener('focusin', handlePotentialNavigation)
+
     return () => {
+      container.removeEventListener('click', handleClick)
+      container.removeEventListener('mouseover', handlePotentialNavigation)
+      container.removeEventListener('focusin', handlePotentialNavigation)
       scriptElements.forEach((scriptElement) => scriptElement.remove())
     }
-  }, [prepared.scripts])
+  }, [prepared.scripts, router])
 
   return (
     <>

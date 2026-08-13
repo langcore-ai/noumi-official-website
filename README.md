@@ -1,565 +1,117 @@
 # Noumi Official Website
 
-Noumi Official Website 是基于 Next.js、Payload CMS 3、Cloudflare Workers、D1 和 R2 构建的官网项目。项目同时包含公开官网前台、Payload 内容管理后台、内容预览、媒体上传、基础 SEO、invite 申请收集，以及 Cloudflare 部署配置。
+Noumi 官方网站与内容管理项目，基于 Next.js 15、React 19、Payload CMS 3、Cloudflare Workers、D1 和 R2 构建。仓库同时承载公开官网、Payload 管理后台、草稿预览、媒体存储、内容快照、SEO/埋点以及 Invite 申请数据管理。
 
-本仓库不是纯 Payload 模板项目。当前代码已经承载 Noumi 官网的正式页面与内容模型，但部分前端页面来自早期紧急上线阶段的 HTML 页面迁移，因此前端结构会保留一些历史形态：页面实现偏静态、样式按页面拆分为专属 CSS Module，同时仍有少量全局共享样式，部分页面没有完全组件化。后续维护时应优先保证稳定上线和最小改动，不建议为了“整理结构”一次性大重构。
+> 完整的代码、CMS、Cloudflare、部署、回滚与离项交接说明见 [docs/HANDOVER.md](docs/HANDOVER.md)。在执行生产迁移或部署前，必须先阅读该文档。
+
+## 项目现状
+
+- 正式域名以 `https://noumi.ai` 为 canonical，产品登录/注册入口为 `https://www.noumi.ai/auth`。
+- Payload Admin 位于 `/admin`，Payload REST/GraphQL 位于 `/api`。
+- D1 保存 Payload 数据；同一个 R2 bucket 保存 Payload 媒体、CMS JSON 快照、页面 HTML 快照和 OpenNext 增量缓存。
+- 前台 layout 保持动态渲染，公开流量由 Worker 层的 R2 HTML 快照提供伪静态加速。
+- Invite 已经是正式 Payload collection；当前公开 `/invite` 和 Try Free 按钮跳转产品站，公开 waitlist 提交暂时关闭，服务端同步接口仍保留。
+- 仓库当前只有 Cloudflare 顶层环境，没有可用的 `production` 或 `staging` 命名环境。
+
+## 前端历史说明
+
+前端页面最初因紧急上线从静态 HTML 快速派生，因此仍保留较多页面级 JSX、历史 class 名和非理想组件边界。当前 CSS 已从页面代码中拆出：基础样式位于 `official-base.css`、首页/共享样式位于 `official-home.css`，大多数内页使用各自的 `*.module.css`。
+
+后续维护应优先保证视觉和 URL 兼容，不建议在没有完整回归的情况下做跨页面 CSS 合并或一次性组件化重构。CMS 另有“整页 HTML”渲染能力，这是受信任代码发布通道，不是安全沙箱，详见交接文档。
 
 ## 技术栈
 
-- Next.js 15 App Router
-- React 19
-- Payload CMS 3
-- Cloudflare Workers / OpenNext for Cloudflare
-- Cloudflare D1 SQLite
-- Cloudflare R2 Storage
-- TypeScript
-- bun
-- Vitest
-- Playwright
-
-## 主要能力
-
-- 官网前台页面渲染
-- Payload CMS 后台内容管理
-- Blog、Use Case、FAQ、法律页面和站点设置管理
-- Payload draft / preview 流程
-- R2 媒体存储
-- D1 数据库存储和 migration
-- invite 申请收集与后台只读查看
-- 基础 metadata、Open Graph、结构化数据支持
-
-## 代码结构
-
-```text
-src/
-├── access/                  # Payload 访问控制与 CMS 角色判断
-├── app/
-│   ├── (frontend)/          # 官网前台路由、布局、前台全局样式
-│   ├── (payload)/           # Payload admin、Payload API、GraphQL 路由
-│   ├── api/                 # 独立于 Payload 的业务 API
-│   ├── sitemap.ts           # sitemap 输出
-│   └── my-route/            # Payload 模板遗留示例路由，后续确认无用后可删除
-├── collections/             # Payload collections
-├── components/              # 前台、后台与站点组件
-├── fields/                  # Payload 复用字段配置
-├── globals/                 # Payload globals
-├── lib/
-│   └── site/                # 官网数据读取、CMS 映射、SEO、i18n、预览、invite 工具
-├── locales/                 # 前台静态字典
-├── migrations/              # Payload / D1 migration
-├── payload-types.ts         # Payload 生成类型
-└── payload.config.ts        # Payload 主配置
-```
-
-根目录重要文件：
-
-```text
-package.json                 # 脚本、依赖和 Node/bun 版本约束
-wrangler.jsonc               # Cloudflare Workers、D1、R2 绑定配置
-open-next.config.ts          # OpenNext Cloudflare 配置
-tsconfig.json                # TypeScript 配置
-next.config.ts               # Next.js 与 Payload 打包配置
-vitest.config.mts            # 集成测试配置
-playwright.config.ts         # E2E 测试配置
-AGENTS.md                    # 工程协作与实现约束
-```
-
-## 前台页面结构说明
-
-前台页面主要位于 `src/app/(frontend)`。当前官网页面可以分为三类：
-
-1. **静态营销页面**：例如首页、About、Pricing、Contact、Invite。这些页面大多由早期 HTML 页面迁移而来，内容仍以 React JSX 和页面专属 CSS Module 为主。
-2. **CMS 驱动页面**：例如 Blog 详情、Use Case 详情、FAQ、Privacy、Terms。页面从 Payload 读取内容，再映射为前台 view model 渲染。
-3. **HTML 模式页面**：Blog 和 Use Case 支持在 CMS 中切换为 HTML 模式，用于承接从旧静态 HTML 或外部 HTML 页面迁移过来的内容。
-
-### 前端历史背景
-
-前台页面最初为了紧急上线，曾从静态 HTML 派生并快速接入 Next.js。因此当前结构并不完全遵循理想化的组件拆分方式：
-
-- 一些页面仍保留大段 JSX 内容。
-- 大多数内页已经拆出页面专属 `*.module.css`，例如 `about.module.css`、`blog.module.css`、`pricing.module.css`、`invite.module.css`。
-- `official-home.css` 仍承担首页和部分官网共享样式。
-- 部分 class 命名沿用旧 HTML 页面，未完全按组件边界重命名。
-- 部分视觉模块为了保持上线效果，优先复刻旧页面，而不是先抽象为通用组件。
-
-### CSS 组织现状
-
-前台样式主要来自：
-
-- `src/app/(frontend)/official-base.css`：官网基础样式、CSS 变量和全局元素样式。
-- `src/app/(frontend)/official-home.css`：首页和部分官网共享样式。
-- 各前台路由目录下的 `*.module.css`：页面专属 CSS Module，例如 About、Blog、Pricing、FAQ、Invite、Use Case 等页面样式。
-- `src/app/(frontend)/styles.css`：旧版前台样式，当前未作为主样式入口使用，后续可确认后清理。
-- `public/assets/legacy/static-html-style.css`：静态 HTML 迁移遗留样式，主要作为历史资产存在，后续可确认后清理。
-
-新增样式建议：
-
-- 小范围页面改动优先沿用当前页面已有 CSS Module 或共享 class 写法。
-- 新页面或较大改动应优先建立页面级 CSS Module，避免继续扩大 `official-home.css`。
-- 不要在没有验证影响范围时重命名全局 class。
-- 不要为了统一风格把多个页面的 CSS 一次性合并。
-
-### Public 资产组织
-
-`public` 根目录只保留浏览器、搜索引擎或部署平台约定会直接读取的文件，例如 `_headers`、`favicon.ico`、`favicon-*.png`、`apple-touch-icon.png`、`noumi.svg`、`noumi-white.svg`。
-
-业务图片统一放在 `public/assets` 下，并使用小写 kebab-case 文件名：
-
-- `assets/home/`：首页主视觉与通用 CTA 装饰。
-- `assets/pricing/`：Pricing 页面相关装饰。
-- `assets/blog/`：Blog 页面相关装饰。
-- `assets/features/`：Features 页面相关装饰。
-- `assets/use-cases/`：Use Cases 页面相关装饰和头像。
-- `assets/logos/`：信任墙公司 Logo。
-- `assets/product/`：产品截图、技能页截图等产品素材。
-- `assets/social/`：OG、社交分享图等外部平台素材。
-- `assets/legacy/`：迁移遗留且当前不作为主链路使用的历史资产。
-
-## CMS 管理范围
-
-Payload CMS 负责管理以下内容。
-
-### Collections
-
-- `users`：后台用户和角色权限。
-- `media`：图片和上传文件，实际文件存储在 R2。
-- `blog-posts`：Blog 文章。
-- `feature-pages`：Feature 子页。
-- `use-case-pages`：Use Case 页面。
-- `faq-items`：FAQ 条目。
-- `friendly-links`：友情链接目录。
-
-### Globals
-
-- `site-settings`：站点名称、站点 URL、默认 SEO 描述、导航、页脚、默认分享图等。
-- `privacy-page`：隐私政策页内容。
-- `terms-page`：服务条款页内容。
-
-### Blog 和 Use Case 渲染模式
-
-`blog-posts` 和 `use-case-pages` 支持两种渲染模式：
-
-- `template`：默认模板模式，使用结构化字段渲染页面。
-- `html`：HTML 模式，直接粘贴 HTML 内容，并由前台在统一 navbar 和 footer 之间渲染。
-
-HTML 模式主要用于承接旧 HTML 页面或外部 HTML 内容。它是迁移效率优先的方案，不是长期最理想的内容结构。因为 HTML 模式会注入原始 HTML，并可能执行内联脚本，所以维护时要谨慎控制编辑权限和内容来源。
-
-### CMS 读取与映射
-
-前台读取 CMS 的主要入口在 `src/lib/site/official-cms.ts`。该文件负责：
-
-- 通过 `src/lib/site/payload-client.ts` 复用 Payload client 初始化结果。
-- 判断是否处于 draft preview。
-- 查询 Blog、Use Case、FAQ、法律页面。
-- 将 Payload 文档映射为前台使用的 view model。
-- 过滤空字段，避免前台渲染无效内容。
-- 对公开发布态内容优先读取 R2 JSON 快照；只有快照缺失或本地 R2 runtime 不可用时才回源 Payload。
-- 通过 `refreshOfficialSiteSnapshots` 批量生成全站 JSON 快照，并写入 manifest、dirty marker 和过期 key 清理结果。
-- 对发布态 CMS 读取使用 Next `unstable_cache`，缓存时间由 `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制，默认 300 秒。
-- 对导航、列表和 FAQ 查询使用 `select` 与 `pagination: false`，避免把 HTML 大字段、正文 blocks 和不需要的分页统计读入前台请求。
-
-R2 快照相关代码位于：
-
-```text
-src/lib/site/official-snapshot-store.ts      # R2 JSON 快照读写、manifest、dirty marker、刷新锁
-src/lib/site/official-snapshot-hooks.ts      # Payload 发布后标脏并后台请求刷新
-src/app/api/site/snapshots/refresh/route.ts  # 手动刷新和状态查询 API
-worker.ts                                    # Cloudflare Cron 与页面 HTML 快照层
-```
-
-公开页面的 HTML 快照由 `worker.ts` 在 Cloudflare Worker 层处理：页面 GET/HEAD 请求会先读取 R2 HTML 快照，命中时不进入 OpenNext；快照缺失时走 OpenNext 渲染并后台回填。`/api`、`/admin`、`/_next`、`/assets`、静态文件、带 trailing slash 的规范化重定向路径，以及 draft preview cookie 请求不会使用 HTML 快照。
-
-站点设置和旧 SEO 工具链相关读取位于 `src/lib/site/cms.ts` 和 `src/lib/site/seo.ts`。
-
-前台 layout 仍保留 `force-dynamic`，因为 Payload draft preview 需要运行时读取草稿内容；公开发布内容的伪静态能力落在 CMS 读取层和 OpenNext R2 incremental cache，而不是构建期预渲染整页。直接把前台页面改成 ISR 会在构建期尝试读取 D1，并因构建阶段没有真实 D1 binding 而失败。
-
-## 不在 CMS 中管理的内容
-
-以下内容当前不通过 Payload CMS 管理。
-
-### 静态营销页面文案
-
-首页、About、Pricing、Contact 等页面的大部分文案仍直接写在对应页面组件中，例如：
-
-```text
-src/app/(frontend)/page.tsx
-src/app/(frontend)/about/page.tsx
-src/app/(frontend)/pricing/page.tsx
-src/app/(frontend)/contact/page.tsx
-```
-
-这些页面来自早期 HTML 迁移阶段。除非有明确 CMS 化需求，否则应按普通前端页面维护。
-
-`src/app/(frontend)/invite/page.tsx` 目前仅保留路由占位，并临时重定向到产品登录/注册页 `https://www.noumi.ai/auth`；不要把它作为可进入的营销页维护。
-
-### 页面专属 CSS
-
-多个页面的 CSS 已拆为路由目录下的专属 CSS Module，并配合少量前台全局样式使用；这些样式不通过 CMS 管理。
-
-### 静态图片和设计素材
-
-`public/assets` 下的 logo、首页展示图、品牌图、OG 图片等是静态资源，不通过 Payload `media` collection 管理。
-
-### Invite 申请数据
-
-invite 申请数据仍由 Payload collection `invite-requests` 管理。当前官网 waitlist 前台已暂停开放：`/invite` 会跳转到产品登录/注册页，公开提交/查询接口只返回产品 auth 入口，不再写入新 waitlist；携带共享 token 的服务间同步读取/状态回写能力仍保留给 `noumi-server` 使用。相关代码位于：
-
-```text
-src/app/(frontend)/invite/page.tsx
-src/app/api/site/invite-requests/route.ts
-src/app/api/site/invite-requests/lookup/route.ts
-src/collections/InviteRequests.ts
-src/lib/site/invite-requests.ts
-src/components/site/official/OfficialInviteRequestForm.tsx
-```
-
-### Cloudflare 绑定和部署配置
-
-D1、R2、Workers、OpenNext 配置不在 CMS 中管理，位于根目录配置文件。
-
-## 权限模型
-
-CMS 角色定义在 `src/access/cms.ts`。
-
-当前角色包括：
-
-- `admin`
-- `content-editor`
-- `legal-editor`
-- `translator`
-- `viewer`
-
-核心规则：
-
-- `admin` 拥有后台管理能力。
-- `content-editor` 主要负责营销内容新增、更新和删除。
-- `translator` 可更新营销和法律内容，但不负责新增/删除营销内容。
-- `legal-editor` 负责法律内容更新。
-- `viewer` 默认为只读或低权限角色。
-
-Payload Local API 默认可能绕过 access control。当前项目中，面向前台公开读取的查询应显式使用 `overrideAccess: false`，除非是经过 preview secret 控制的草稿预览流程。
-
-## 本地开发
-
-### 环境变量
-
-本地至少需要：
+| 领域            | 当前实现                                         |
+| --------------- | ------------------------------------------------ |
+| Web             | Next.js 15.4、React 19.2、TypeScript             |
+| CMS             | Payload CMS 3.81、Lexical、SEO/Redirects plugins |
+| Runtime         | Cloudflare Workers、OpenNext for Cloudflare      |
+| Data            | Cloudflare D1 SQLite                             |
+| Storage/cache   | Cloudflare R2                                    |
+| Analytics       | GA4、可选 PostHog、Consent Mode                  |
+| Test            | Vitest、Playwright                               |
+| Dependency lock | `bun.lock`                                       |
+| Script runner   | pnpm 9/10；部分脚本会在内部继续调用 pnpm         |
+
+## 快速开始
+
+要求：Node.js `^18.20.2 || >=20.9.0`，建议使用当前 LTS；同时安装 Bun 和 pnpm 9/10。
 
 ```bash
-PAYLOAD_SECRET=your-local-secret
+cp .env.example .env
+bun install --frozen-lockfile
+pnpm run payload migrate
+pnpm run dev
 ```
 
-可选环境变量：
+打开：
 
-```bash
-CLOUDFLARE_ENV=production
-PAYLOAD_PREVIEW_SECRET=your-preview-secret
-PAYLOAD_LOG_LEVEL=info
-PAYLOAD_ENABLE_DEV_AUTOSAVE=true
-PAYLOAD_ENABLE_DEV_LIVE_PREVIEW=true
-TEMPORARY_UI_ENABLED=true
-POSTHOG_ENABLED=false
-POSTHOG_PROJECT_KEY=phc_xxx
-POSTHOG_BROWSER_API_HOST=https://e.noumi.ai
-POSTHOG_UI_HOST=https://us.posthog.com
-OFFICIAL_CMS_REVALIDATE_SECONDS=300
-OFFICIAL_SNAPSHOT_REFRESH_SECONDS=7200
-OFFICIAL_SNAPSHOT_R2_PREFIX=official-site-snapshots
-OFFICIAL_SNAPSHOT_REFRESH_ORIGIN=https://noumi.ai
-OFFICIAL_SNAPSHOT_REFRESH_TOKEN=your-refresh-token
-```
+- 官网：`http://localhost:3000`
+- Payload Admin：`http://localhost:3000/admin`
 
 说明：
 
-- `PAYLOAD_SECRET` 是 Payload 初始化必需密钥。
-- `PAYLOAD_PREVIEW_SECRET` 用于 draft preview，未配置时会回退到 `PAYLOAD_SECRET`。
-- 本地默认关闭高频 autosave 和 live preview，以减少 D1 / Miniflare 锁竞争。
-- `TEMPORARY_UI_ENABLED` 是早期命名遗留的开关，用于控制 invite UI 相关能力，具体生效点以代码为准。
-- `POSTHOG_ENABLED` 控制官网前台是否加载 PostHog。
-- `POSTHOG_PROJECT_KEY` 是 PostHog 的公开 project key。
-- `POSTHOG_BROWSER_API_HOST` 应指向反向代理域名，生产默认建议用 `https://e.noumi.ai`。
-- `POSTHOG_UI_HOST` 是 PostHog 控制台地址，默认 `https://us.posthog.com`。
-- `OFFICIAL_CMS_REVALIDATE_SECONDS` 控制发布态 CMS 读取缓存时间，默认 300 秒；草稿预览不使用该缓存。
-- `OFFICIAL_SNAPSHOT_REFRESH_SECONDS` 控制公开内容 JSON 快照的 stale refresh 间隔，默认 3600 秒，设置为 `0` 可关闭按间隔自动刷新。
-- `OFFICIAL_SNAPSHOT_R2_PREFIX` 控制官网快照在 R2 中的目录前缀，默认 `official-site-snapshots`。
-- `OFFICIAL_SNAPSHOT_REFRESH_ORIGIN` 是发布后后台请求刷新 API、Cron 渲染 HTML 快照时使用的站点 origin。
-- `OFFICIAL_SNAPSHOT_REFRESH_TOKEN` 是手动/定时刷新 API 的 Bearer token；生产建议通过 Wrangler secret 配置。未配置时刷新 API 会回退使用 `PAYLOAD_SECRET`。
+- `bun.lock` 是仓库唯一锁文件，因此依赖安装以 Bun 为可复现基线。
+- `package.json` 的部署、类型生成和测试聚合脚本会调用 pnpm，不能只安装 Bun。
+- Payload adapter 配置为 `push: false`，全新本地 D1 需要先执行 migration。
+- 本地 autosave 和 live preview 默认关闭，以降低 Miniflare/D1 锁竞争；按需在 `.env` 中开启。
+- `pnpm run preview` 可能连接远程 D1，不应作为无风险的本地预览命令使用。
 
-### 启动开发服务器
+## 常用命令
 
 ```bash
-bun dev
+pnpm run dev                 # 本地 Next.js 开发
+pnpm run devsafe             # 删除 .next/.open-next 后启动开发
+pnpm run build               # Next.js 构建
+pnpm run generate:types      # 生成 Cloudflare/Payload 类型
+pnpm run generate:importmap  # 生成 Payload Admin import map
+pnpm run test:int            # Vitest 集成测试
+pnpm run test:e2e            # Playwright E2E
+pnpm run test                # 集成测试 + E2E
+pnpm run deploy:database     # 危险：直接迁移远程 D1
+pnpm run deploy:app          # OpenNext 构建并部署 Worker
+pnpm run deploy              # 危险：先迁移远程 D1，再部署应用
 ```
 
-如果 `.next` 或 `.open-next` 缓存导致异常，可使用：
+生产部署的准确环境选择、备份、执行顺序和失败处理见 [docs/HANDOVER.md](docs/HANDOVER.md)。不要直接照抄 `CLOUDFLARE_ENV=production`：当前配置中不存在该命名环境。
 
-```bash
-bun devsafe
-```
-
-`devsafe` 会删除构建缓存后重新启动。该命令包含删除本地缓存目录的操作，使用前确认没有需要保留的本地构建产物。
-
-## 常用脚本
-
-```bash
-bun dev                     # 启动 Next.js 开发服务器
-bun build                   # 构建 Next.js 应用
-bun start                   # 启动 Next.js production server
-bun payload                 # 运行 Payload CLI
-bun generate:types          # 生成 Cloudflare 类型和 Payload 类型
-bun generate:importmap      # 生成 Payload admin import map
-bun test:int                # 运行 Vitest 集成测试
-bun test:e2e                # 运行 Playwright E2E 测试
-bun test                    # 依次运行集成测试和 E2E 测试
-bun deploy                  # 执行数据库部署和应用部署
-```
-
-## Schema 和类型生成
-
-修改以下内容后通常需要生成类型：
-
-- `src/collections/*`
-- `src/globals/*`
-- `src/fields/*`
-- `src/payload.config.ts` 中影响 schema 的配置
-
-生成类型：
-
-```bash
-bun generate:types
-```
-
-如果新增或修改 Payload admin 自定义组件，还需要生成 import map：
-
-```bash
-bun generate:importmap
-```
-
-## 数据库和 Migration
-
-数据库使用 Cloudflare D1，通过 Payload D1 adapter 接入。Payload 配置中 `push: false`，表示项目以 migration 为准，避免开发环境自动 push schema 和正式 migration 冲突。
-
-重要原则：
-
-- 不要擅自执行生产 migration。
-- 修改 Payload schema 后，应创建并检查 migration。
-- 变更已有字段时，需要考虑历史数据兼容和回填策略。
-- D1 字段名、枚举名和 block 表结构要注意长度与兼容性限制。
-
-创建 migration：
-
-```bash
-bun payload migrate:create
-```
-
-部署时会先执行：
-
-```bash
-bun run deploy:database
-```
-
-然后执行应用构建与部署：
-
-```bash
-bun run deploy:app
-```
-
-完整部署：
-
-```bash
-bun deploy
-```
-
-## Cloudflare 运维指南
-
-### 绑定资源
-
-Cloudflare 绑定配置在 `wrangler.jsonc`。
-
-当前关键绑定：
-
-- `D1`：Payload 数据库和 invite 申请表。
-- `R2`：Payload media 文件存储。
-- `NEXT_INC_CACHE_R2_BUCKET`：OpenNext incremental cache，用于持久化发布态 CMS 数据缓存和 Next 增量缓存条目；当前与 `R2` 复用同一 bucket，并通过 `NEXT_INC_CACHE_R2_PREFIX` 隔离缓存路径。
-- `R2` 同时存储官网公开内容快照：`official-site-snapshots/data/*.json` 为 view model JSON，`official-site-snapshots/html/**/index.html` 为页面 HTML，`manifest.json`、`dirty.json` 和 `refresh-lock.json` 为快照管理对象。
-- `ASSETS`：OpenNext 静态资源。
-
-部署前需要确认：
-
-- Cloudflare 账号已登录。
-- D1 database id 正确。
-- R2 bucket 名称正确。
-- `NEXT_INC_CACHE_R2_BUCKET` binding 存在，且 `NEXT_INC_CACHE_R2_PREFIX` 不与媒体文件路径冲突。
-- `OFFICIAL_SNAPSHOT_R2_PREFIX` 不与媒体文件和 OpenNext incremental cache 前缀冲突。
-- Workers 环境变量中存在生产 `PAYLOAD_SECRET`。
-- 如使用独立刷新密钥，Workers secret 中存在 `OFFICIAL_SNAPSHOT_REFRESH_TOKEN`。
-- 如启用官网分析，还需要在 Workers 环境中设置 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_BROWSER_API_HOST` 和 `POSTHOG_UI_HOST`。
-- 如使用 preview，确认 `PAYLOAD_PREVIEW_SECRET` 策略。
-
-### 官网快照刷新
-
-公开前台的目标是发布态请求不读 Payload/D1。当前刷新链路如下：
-
-1. Payload 公开内容集合、媒体集合和前台相关 globals 在保存/删除后会写入 R2 dirty marker，并通过后台 `waitUntil` 请求刷新 API。
-2. `POST /api/site/snapshots/refresh?reason=manual` 会读取 Payload 发布态内容，生成全站 JSON 快照、manifest 和公开 routes。
-3. `worker.ts` 在刷新 API 成功后，会按 manifest routes 重新渲染并写入 R2 HTML 快照。
-4. `wrangler.jsonc` 配置了每小时一次的 Cloudflare Cron，同样调用刷新 API。
-5. 公开页面请求优先命中 R2 HTML；未命中时，页面组件优先读取 R2 JSON 快照，避免访问 Payload/D1。
-
-手动刷新示例：
-
-```bash
-curl -X POST \
-  -H "Authorization: Bearer $OFFICIAL_SNAPSHOT_REFRESH_TOKEN" \
-  "https://noumi.ai/api/site/snapshots/refresh?reason=manual"
-```
-
-查询当前快照状态：
-
-```bash
-curl \
-  -H "Authorization: Bearer $OFFICIAL_SNAPSHOT_REFRESH_TOKEN" \
-  "https://noumi.ai/api/site/snapshots/refresh"
-```
-
-如果刷新 API 返回 `409`，表示已有刷新任务持有锁；等待当前任务结束或 5 分钟锁过期后再重试。
-
-### 日志
-
-生产环境 Payload 使用 Cloudflare 兼容的 console logger。日志等级可通过：
-
-```bash
-PAYLOAD_LOG_LEVEL=info
-```
-
-Cloudflare Workers observability 当前在 `wrangler.jsonc` 中默认关闭。开启前需要评估费用和日志量。
-
-### 媒体文件
-
-媒体文件通过 Payload `media` collection 上传，实际存储在 R2。R2 bucket 配置在 `wrangler.jsonc`。
-
-如果前台图片无法加载，优先检查：
-
-- R2 binding 是否存在。
-- Payload media 文档中的 `url` 是否正确。
-- OpenNext / Workers 是否能访问对应资源。
-- `next.config.ts` 中图片访问配置是否覆盖当前路径。
-
-### Preview
-
-预览入口位于：
+## 目录导航
 
 ```text
-src/app/(frontend)/api/preview/route.ts
-src/app/(frontend)/api/preview/exit/route.ts
-src/lib/site/publishing.ts
+src/
+├── access/                  # Payload 角色与访问控制
+├── app/(frontend)/          # 公开官网路由及页面专属样式
+├── app/(payload)/           # Payload Admin、REST、GraphQL
+├── app/api/site/            # Analytics、Invite、Snapshot API
+├── collections/             # Payload collections
+├── globals/                 # Payload globals
+├── components/site/         # 官网共享组件与 HTML 渲染器
+├── components/admin/        # Payload Admin 自定义组件
+├── fields/                  # CMS 通用字段与 HTML 模式
+├── lib/site/                # CMS view model、快照、预览、SEO、埋点
+├── migrations/              # D1/Payload migrations
+└── payload.config.ts        # Payload 主配置
+
+worker.ts                    # OpenNext Worker 包装及 HTML 快照层
+wrangler.jsonc               # Worker、D1、R2、Cron、变量和日志配置
+open-next.config.ts          # OpenNext R2 incremental cache
+scripts/                     # 构建兼容补丁
+tests/                       # Vitest/Playwright
+docs/HANDOVER.md             # 完整人类交接文档
+README-AI.md                 # AI/代码代理导航
 ```
 
-Preview 流程：
+## 文档入口
 
-1. Payload admin 生成 preview URL。
-2. `/api/preview` 校验 secret。
-3. 校验通过后启用 Next draft mode。
-4. 前台读取 draft 内容并跳转到目标页面。
+- [完整交接与运维手册](docs/HANDOVER.md)
+- [AI 代码导航](README-AI.md)
+- [工程实现约束](AGENTS.md)
+- [环境变量模板](.env.example)
 
-如果预览不可用，优先检查：
+## 安全原则
 
-- `PAYLOAD_PREVIEW_SECRET` 或 `PAYLOAD_SECRET` 是否存在。
-- 页面是否在 `LIVE_PREVIEW_COLLECTIONS` 或 `LIVE_PREVIEW_GLOBALS` 中。
-- 当前本地环境是否关闭了 live preview。
-- D1 本地锁竞争是否导致读取失败。
-
-## 测试与验证
-
-修改代码后建议按风险选择验证方式。
-
-### 类型检查
-
-项目规则建议修改 TypeScript 后运行：
-
-```bash
-tsc --noEmit
-```
-
-当前 package scripts 未单独提供 `typecheck`，可直接运行上述命令或后续补充脚本。
-
-### 集成测试
-
-```bash
-bun test:int
-```
-
-### E2E 测试
-
-```bash
-bun test:e2e
-```
-
-### 全量测试
-
-```bash
-bun test
-```
-
-对于纯文案、纯 README、无运行时代码变更，可以不跑完整测试，但应人工确认文档中的脚本和路径仍与项目一致。
-
-### 官网埋点验证
-
-在本地或预发环境启用 `POSTHOG_ENABLED=true` 后，建议补一轮手工验证：
-
-- 前台 layout 会先注入 GA4 `dataLayer/gtag/js/config` 初始化脚本，并加载 `https://www.googletagmanager.com/gtag/js?id=G-TJBXDRBMVM`；`config` 禁用自动 `page_view`，页面浏览由官网 Provider 发送去除 query/hash 的事件。
-- 接受 cookie banner 的 Analytics 选项后，`/`、`/pricing`、`/about` 等主要 CTA 会向 `POSTHOG_BROWSER_API_HOST` 发请求；原先进入 waitlist 的 CTA 当前统一指向产品登录/注册页。
-- 每个 session 的首个官网入口页会发送 `landing_page_viewed`，不再只限首页；`official_page_viewed` 和 `official_cta_clicked` 会进入 PostHog。`official_invite_lookup_completed` 和 `official_invite_request_submitted` 属于保留的 waitlist 表单事件，当前 waitlist 下线时不应在常规路径触发。
-- 带埋点属性的 CTA 跳转产品侧时，会追加安全归因参数：`first_touch_source`、`first_touch_medium`、`first_touch_campaign`、`first_touch_referrer_origin`、`first_touch_landing_page`、`official_cta_id`、`source_surface=official`，以及仅用于主站注册后 PostHog alias 合并的 `posthog_anonymous_distinct_id`。
-- `app_active` 是 60 秒可见态心跳，带 `active_seconds=60`，用于主 dashboard 估算日均使用时长。
-- 浏览器请求与事件属性里不应出现邮箱、prompt、文件内容、URL query 或其他敏感值。
-- 拒绝 Analytics 时，官网不应再发 PostHog 请求。
-
-## 内容维护指南
-
-### 新增 Blog
-
-优先使用 `blog-posts` collection。
-
-- 常规文章使用 `template` 模式。
-- 迁移外部 HTML 时才使用 `html` 模式。
-- 发布前检查 slug、SEO 标题、描述、封面图和 `_status`。
-- 上线后谨慎修改 slug，避免影响 SEO 和外部链接。
-
-### 新增 Use Case
-
-优先使用 `use-case-pages` collection。
-
-- 常规页面使用 `template` 模式。
-- 从旧 HTML 派生页面时可使用 `html` 模式。
-- slug 会影响 `/use-cases/[slug]/` 路由，应保持稳定。
-
-### 修改 FAQ
-
-FAQ 使用 `faq-items` collection。
-
-- `category` 决定前台分组。
-- `sortOrder` 决定排序。
-- `isActive` 控制是否展示。
-
-### 修改法律页面
-
-隐私政策和服务条款通过 globals 管理：
-
-- `privacy-page`
-- `terms-page`
-
-法律页面由 `legal-editor`、`translator` 或 `admin` 更新。发布前应确认草稿状态和前台渲染效果。
-
-### 修改导航和页脚
-
-站点导航和页脚在 `site-settings` global 中维护。
-
-相关字段包括：
-
-- `navLinks`
-- `footerColumns`
-- `navCtaText`
-- `navCtaHref`
-- `footerDescription`
-- `footerCopyright`
+- 不在 Git、README、issue 或聊天记录中保存真实 secret。
+- 未备份和确认兼容性前，不执行远程 migration。
+- 不把来源不可信的 HTML 粘贴到 HTML 模式；该模式可执行内联脚本并影响全局 CSS。
+- 不清空 `official-website-bucket`；其中同时存在媒体和多类缓存/快照。
+- 不把 Worker 回滚等同于数据回滚；D1 与 R2 必须单独处理。

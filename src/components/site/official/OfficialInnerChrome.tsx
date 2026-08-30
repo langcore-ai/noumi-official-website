@@ -85,7 +85,7 @@ export function OfficialInnerHeader(props: OfficialInnerHeaderProps) {
             data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
             href={OFFICIAL_PRODUCT_AUTH_URL}
           >
-            Try Free →
+            Join Waitlist ↗
           </Link>
         </li>
       </ul>

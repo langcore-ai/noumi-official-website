@@ -193,3 +193,46 @@
     width: 100%;
   }
 }
+
+/* Prototype-aligned waitlist */
+.inviteWrap {
+  min-height: calc(100svh - 74px);
+  padding: 100px 32px;
+  background:
+    linear-gradient(90deg, rgba(41, 48, 56, 0.8), rgba(41, 48, 56, 0.25)),
+    url('/assets/redesign/cta-background.jpg') center / cover;
+}
+
+.inviteInner {
+  max-width: 720px;
+  padding: clamp(32px, 6vw, 72px);
+  border-radius: 5px;
+  background: rgba(252, 250, 243, 0.96);
+  text-align: left;
+}
+
+.inviteBadge,
+.inviteInner :global(.invite-input),
+.inviteInner :global(.invite-submit),
+.inviteInner :global(.invite-success) {
+  border-radius: 4px;
+}
+
+.inviteInner h1 {
+  color: var(--noumi-dark);
+  font-size: clamp(50px, 6vw, 78px);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.inviteInner h1 em,
+.inviteInner .inviteRegisterPrompt a {
+  color: var(--noumi-blue);
+  font-style: normal;
+}
+
+.inviteInner :global(.invite-submit) {
+  background: var(--noumi-dark);
+  color: var(--noumi-lite);
+}

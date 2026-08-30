@@ -1,261 +1,178 @@
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
-import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
 import {
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
   OFFICIAL_PRODUCT_AUTH_URL,
 } from '@/lib/site/official-site'
 
-/**
- * 首页信任墙 Logo 配置。
- */
-const TRUSTED_LOGOS = [
-  ['dominos.webp', "Domino's"],
-  ['aws.webp',"AWS"],
-  ['nvidia.webp', 'NVIDIA'],
-  ['siemens.webp', 'Siemens'],
-  ['amd.webp', 'AMD'],
-  ['microsoft.webp', 'Microsoft'],
+const HOME_FEATURES = [
+  {
+    index: '01',
+    title: 'Specialist Level Expertise',
+    description:
+      'Domain-specific expertise, ready when you are. Noumi brings the depth of a specialist to every project without the overhead of building a team.',
+    href: '/features',
+    image: '/assets/redesign/feature-expertise.jpg',
+  },
+  {
+    index: '02',
+    title: 'Full Project Fluency',
+    description:
+      'Noumi understands your goals, files, decisions, and working context — then carries that understanding across every stage of the project.',
+    href: '/features',
+    image: '/assets/redesign/feature-context.jpg',
+  },
+  {
+    index: '03',
+    title: 'Signature-Level Fluency',
+    description:
+      'Your standards become the default. Noumi learns how you think, write, and deliver so every result feels unmistakably yours.',
+    href: '/features',
+    image: '/assets/redesign/feature-fluency.png',
+  },
 ] as const
 
-/**
- * 官网首页
- * @returns 首页内容
- */
-export default async function HomePage() {
+const HOME_USE_CASES = [
+  {
+    title: 'Solutions Engineer',
+    description:
+      'Turn discovery notes and technical context into tailored, client-ready solutions.',
+    href: '/use-cases/solutions-engineer',
+    className: 'redesign-use-case--blue',
+  },
+  {
+    title: 'Product Manager',
+    description: 'Move from scattered research to clear requirements, decisions, and plans.',
+    href: '/use-cases/product-manager',
+    className: 'redesign-use-case--sand',
+  },
+  {
+    title: 'Journalist',
+    description:
+      'Organize sources, discover angles, and shape reporting without losing your voice.',
+    href: '/use-cases/journalist',
+    className: 'redesign-use-case--slate',
+  },
+] as const
+
+/** Noumi 官网首页。 */
+export default function HomePage() {
   return (
     <>
       <StructuredData data={HOME_JSON_LD} />
-      <OfficialHomeEffects />
-
-      <main id="top">
-        <section className="hero">
-          <div className="container hero__inner">
-            <span className="sec-label reveal is-visible">Don&apos;t teach your AI twice.</span>
-
-            <h1 className="hero__title reveal is-visible">
-              Autonomous AI Personal Assistant
-              <br />
-              Built to <span>Actually Do the Work</span>
-            </h1>
-
-            <p className="hero__copy reveal is-visible">
-              Noumi is your AI personal assistant that works like a colleague —
-              <br />
-              understanding context, managing tasks, and delivering results without constant prompting.
-            </p>
-
-            <div className="hero__actions reveal is-visible">
-              <Link
-                className="button button--dark button--large"
-                data-analytics-cta-id="home_hero_try_free"
-                data-analytics-event="official_cta_clicked"
-                data-analytics-placement="hero"
-                data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
-                href={OFFICIAL_PRODUCT_AUTH_URL}
+      <main className="redesign-home" id="top">
+        <section className="redesign-hero">
+          <div className="redesign-shell">
+            <div className="redesign-hero__media">
+              <video
+                autoPlay
+                className="redesign-hero__video"
+                loop
+                muted
+                playsInline
+                poster="/assets/redesign/hero-loop-poster.jpg"
               >
-                Try Free
-                <span aria-hidden="true">→</span>
-              </Link>
-              <a className="button button--ghost button--large" href="#features">
-                See How It Works
-              </a>
-            </div>
-          </div>
-
-          <div className="hero-visual container">
-            <div className="hero-visual__wrap hero-stage parallax" data-parallax="18">
-              <img
-                alt="Pixel cat on the left side of the hero visual"
-                className="hero-stage__left"
-                src="/assets/home/hero-cat-left.webp"
-              />
-              <img
-                alt="Main workspace window illustration"
-                className="hero-stage__window"
-                src="/assets/home/hero-main-window.webp"
-              />
-              <img
-                alt="Pixel cat on the right side of the hero visual"
-                className="hero-stage__right"
-                src="/assets/home/hero-cat-right.webp"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section aria-labelledby="trusted-title" className="trusted reveal">
-          <div className="container trusted__inner">
-            <h2 className="trusted__label" id="trusted-title">
-              Trusted by people from
-            </h2>
-            <div className="trusted__track-wrapper">
-              <div className="trusted__track">
-                {TRUSTED_LOGOS.map(([logo, alt]) => (
-                  <div className="trusted__item" key={logo}>
-                    <img alt={alt} src={`/assets/logos/${logo}`} />
-                  </div>
-                ))}
-                {TRUSTED_LOGOS.map(([logo]) => (
-                  <div
-                    aria-hidden="true"
-                    className="trusted__item trusted__item--decorative"
-                    key={`dup-${logo}`}
-                  >
-                    <span
-                      className="trusted__logo-copy"
-                      style={{ backgroundImage: `url(/assets/logos/${logo})` }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="features container" id="features">
-          <div className="feature-row reveal">
-            <div className="feature-copy">
-              <p className="feature-copy__eyebrow">01 — Feature</p>
-              <h2>Persistent Memory</h2>
-              <p>
-                Tell Noumi once. It remembers for every conversation after. Your projects,
-                preferences, and rules — always present, never re-explained.
-              </p>
-            </div>
-            <article aria-label="Persistent Memory demo" className="stacked-demo tilt-card">
-              <div className="demo-window demo-window--back">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">Last Session</h3>
-                <div className="demo-window__bubble demo-window__bubble--user">
-                  Always export your output in Markdown format.
-                </div>
-                <div className="demo-window__bubble demo-window__bubble--ai">
-                  Got it — I&apos;ve saved that as a default rule. Every output from here on will
-                  be in Markdown.
-                </div>
-              </div>
-              <div className="demo-window demo-window--front">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">New Conversation · 3 Days Later</h3>
-                <div className="demo-window__status">
-                  <span className="dot dot--green"></span>
-                  3 memory cards loaded automatically
-                </div>
-                <div className="demo-window__chip">Project: Noumi Website — Sprint 4</div>
-                <div className="demo-window__chip">Style: Concise, no buzzwords, Oxford comma</div>
-                <div className="demo-window__chip">Rule: Export in Markdown format</div>
-                <div className="demo-window__reply">
-                  Back to the website copy — want me to pick up where we left off on the Features
-                  section?
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div className="feature-row feature-row--reverse reveal">
-            <article
-              aria-label="Self-Evolving Skills demo"
-              className="stacked-demo stacked-demo--skills tilt-card"
-            >
-              <div className="demo-window demo-window--back">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">AI Output · First Draft</h3>
-                <div className="demo-window__strike">
-                  Our platform leverages synergistic cross-functional touchpoints to drive scalable
-                  value across enterprise ecosystems.
-                </div>
-              </div>
-              <div className="demo-window demo-window--front">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">After Your Correction</h3>
-                <div className="demo-window__clean">
-                  Our platform helps teams work better together — from first contact to signed
-                  contract.
-                </div>
-                <div className="demo-window__rule">
-                  Rule saved: avoid business jargon · always active
-                </div>
-              </div>
-            </article>
-            <div className="feature-copy">
-              <p className="feature-copy__eyebrow">02 — Feature</p>
-              <h2>Self-Evolving Skills</h2>
-              <p>
-                Every correction becomes a rule. Your preferences become its defaults. Noumi learns
-                from how you work — and applies it every time after.
-              </p>
-            </div>
-          </div>
-
-          <div className="feature-row reveal">
-            <div className="feature-copy">
-              <p className="feature-copy__eyebrow">03 — Feature</p>
-              <h2>Agentic Execution</h2>
-              <p>
-                Set the task. Walk away. Come back to finished work. Noumi breaks down complex jobs,
-                uses the right tools, and delivers while you focus on what matters.
-              </p>
-            </div>
-            <article
-              aria-label="Agentic Execution demo"
-              className="stacked-demo stacked-demo--execution tilt-card"
-            >
-              <div className="demo-window demo-window--back">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">Your Instruction</h3>
-                <p className="demo-window__prompt">
-                  &quot;Prepare the Q3 competitor analysis and format it as a slide deck.&quot;
+                <source src="/assets/redesign/hero-loop.mp4" type="video/mp4" />
+              </video>
+              <div className="redesign-hero__shade" />
+              <div className="redesign-hero__content">
+                <p className="redesign-kicker">Your AI workspace</p>
+                <h1>
+                  Effortless, trustworthy deliverables
+                  <br />
+                  in your Noumi workspace
+                </h1>
+                <p className="redesign-hero__copy">
+                  Claude alternative designed for business and solution professionals.
                 </p>
+                <Link
+                  className="redesign-button redesign-button--light"
+                  data-analytics-cta-id="home_hero_try_free"
+                  data-analytics-event="official_cta_clicked"
+                  data-analytics-placement="hero"
+                  data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+                  href={OFFICIAL_PRODUCT_AUTH_URL}
+                >
+                  Join Waitlist <span aria-hidden="true">↗</span>
+                </Link>
               </div>
-              <div className="demo-window demo-window--front">
-                <span aria-hidden="true" className="demo-window__ink"></span>
-                <h3 className="demo-window__label">Running Now · Step 4 of 5</h3>
-                <ol className="progress-list progress-list--demo">
-                  <li className="is-done">Research 5 competitors via web search</li>
-                  <li className="is-done">Pull pricing data and feature comparison</li>
-                  <li className="is-done">Apply your slide template and brand colors</li>
-                  <li className="is-active">Generating executive summary slide...</li>
-                  <li>Export and share to Google Drive</li>
-                </ol>
-                <div className="progress-footer">
-                  <span>Step 4 of 5</span>
-                  <div aria-hidden="true" className="progress-bar">
-                    <span></span>
-                  </div>
-                  <span>Est. 2 min</span>
-                </div>
-              </div>
-            </article>
+            </div>
           </div>
         </section>
 
-        <section className="home-cta-band official-cta-band">
-          <div className="home-cta-band__inner container reveal">
-            <h2>
-              <span className="home-cta-band__line home-cta-band__line--first">
-                The longer you use Noumi,
-              </span>
-              <span className="home-cta-band__line home-cta-band__line--second">
-                the less you have to explain.
-              </span>
-            </h2>
-            <p className="reveal d1">Free to start. No credit card required.</p>
+        <section className="redesign-features" id="features">
+          <div className="redesign-shell redesign-section-heading">
+            <p className="redesign-kicker redesign-kicker--dark">What makes Noumi different</p>
+            <h2>Noumi handles the rest. Only the irreplaceable you remains.</h2>
+          </div>
+          <div className="redesign-shell redesign-feature-stack">
+            {HOME_FEATURES.map((feature) => (
+              <article className="redesign-feature" key={feature.title}>
+                <div className="redesign-feature__copy">
+                  <span className="redesign-feature__index">{feature.index}</span>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                  <Link className="redesign-text-link" href={feature.href}>
+                    Explore the capability <span aria-hidden="true">↗</span>
+                  </Link>
+                </div>
+                <div className="redesign-feature__visual">
+                  <img alt="" src={feature.image} />
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="redesign-use-cases">
+          <div className="redesign-shell redesign-use-cases__header">
+            <div>
+              <p className="redesign-kicker redesign-kicker--dark">Use cases</p>
+              <h2>Built for the way you work</h2>
+            </div>
+            <Link className="redesign-text-link" href="/use-cases">
+              View all use cases <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
+          <div className="redesign-shell redesign-use-cases__grid">
+            {HOME_USE_CASES.map((useCase, index) => (
+              <Link
+                className={`redesign-use-case ${useCase.className}`}
+                href={useCase.href}
+                key={useCase.title}
+              >
+                <span className="redesign-use-case__number">0{index + 1}</span>
+                <div>
+                  <h3>{useCase.title}</h3>
+                  <p>{useCase.description}</p>
+                </div>
+                <span className="redesign-use-case__arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="redesign-final-cta">
+          <div className="redesign-shell redesign-final-cta__card">
+            <div>
+              <p className="redesign-kicker">Get started today</p>
+              <h2>Get to know me. I’ll get to know you.</h2>
+            </div>
             <Link
-              className="button button--light button--large official-cta-button reveal d2"
+              className="redesign-button redesign-button--light"
               data-analytics-cta-id="home_band_try_free"
               data-analytics-event="official_cta_clicked"
               data-analytics-placement="cta_band"
               data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
               href={OFFICIAL_PRODUCT_AUTH_URL}
             >
-              Start building your AI today
-              <span aria-hidden="true">→</span>
+              Join Waitlist <span aria-hidden="true">↗</span>
             </Link>
           </div>
-          <span aria-hidden="true" className="home-cta-band__cat official-cta-art" />
         </section>
       </main>
     </>

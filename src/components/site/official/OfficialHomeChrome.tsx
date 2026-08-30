@@ -57,11 +57,7 @@ export function OfficialHomeHeader(props: {
       <OfficialBetaBanner />
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
-          <img
-            alt="Noumi icon"
-            className="brand__icon brand__icon--img"
-            src={OFFICIAL_LOGO}
-          />
+          <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
           <span className="brand__wordmark">Noumi</span>
         </Link>
 
@@ -76,6 +72,9 @@ export function OfficialHomeHeader(props: {
               {item.label}
             </Link>
           ))}
+          <Link className="site-nav__about" href="/about">
+            About Us
+          </Link>
           <Link
             className="button button--dark button--nav"
             data-analytics-cta-id="home_header_try_free"
@@ -84,8 +83,8 @@ export function OfficialHomeHeader(props: {
             data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
             href={OFFICIAL_PRODUCT_AUTH_URL}
           >
-            Try Free
-            <span aria-hidden="true">→</span>
+            Join Waitlist
+            <span aria-hidden="true">↗</span>
           </Link>
         </nav>
 
@@ -111,8 +110,8 @@ export function OfficialHomeHeader(props: {
                   data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
                   href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
-                  Try Free
-                  <span aria-hidden="true">→</span>
+                  Join Waitlist
+                  <span aria-hidden="true">↗</span>
                 </Link>
               </nav>
             </div>
@@ -139,11 +138,7 @@ export function OfficialUseCaseHeader(props: {
       <OfficialBetaBanner />
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
-          <img
-            alt="Noumi icon"
-            className="brand__icon brand__icon--img"
-            src={OFFICIAL_LOGO}
-          />
+          <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
           <span className="brand__wordmark">Noumi</span>
         </Link>
 
@@ -249,11 +244,7 @@ export function OfficialHomeFooter(props: {
       <div className="container footer-grid">
         <div>
           <Link aria-label="Noumi home" className="brand brand--footer" href="/">
-            <img
-              alt="Noumi icon"
-              className="brand__icon brand__icon--img"
-              src={OFFICIAL_LOGO}
-            />
+            <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
             <span className="brand__wordmark brand__wordmark--footer">Noumi</span>
           </Link>
           <p className="footer-note">Don&apos;t teach your AI twice.</p>

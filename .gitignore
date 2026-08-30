@@ -52,3 +52,11 @@ node_modules/
 # OpenNext
 .open-next
 .wrangler
+.wrangler.backup-*/
+
+# Local infra and release reports
+.local/
+backups/
+
+# Local Webflow design reference
+/prototype-webflow/

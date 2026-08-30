@@ -75,6 +75,27 @@ pnpm run deploy              # 危险：先迁移远程 D1，再部署应用
 
 生产部署的准确环境选择、备份、执行顺序和失败处理见 [docs/HANDOVER.md](docs/HANDOVER.md)。不要直接照抄 `CLOUDFLARE_ENV=production`：当前配置中不存在该命名环境。
 
+## Infra 与发布入口
+
+日常环境、检查和发布操作统一通过 Bun 执行，并以仓库中的 `bun.lock` 作为依赖基线：
+
+```bash
+bun run help                          # 查看开发、检查和发布命令总览
+bun run infra:doctor                  # 环境、工具和 Cloudflare 目标检查
+bun run infra:setup                   # 初始化依赖与本地 .env
+bun run mode:local up                 # 后台启动本地 Next/Payload
+bun run mode:preview up               # 构建并预览 Cloudflare 产物
+bun run mode:preview rebuild          # 测试、重新构建并运行固定产物
+bun run mode:status                   # 查看本地模式状态
+bun run mode:stop                     # 停止所有托管模式
+bun run check:fast                    # 格式、lint、类型、集成测试、Next build
+bun run check:full                    # 加上 E2E 与 OpenNext build
+bun run release                       # 交互式生产发布向导
+bun run release --dry-run --app-only  # 不写远程资源的发布计划预演
+```
+
+`release` 默认要求 `main`、干净且已推送的 Git commit，并展示 Worker、D1、R2 目标。涉及 migration 时会先导出远程 D1，再迁移和部署；完成后执行生产 smoke test，并将不含 secret 的报告写入 `.local/releases/`。底层 `deploy:*` 脚本保留用于流水线组合和故障排查，不建议作为日常人工发布入口。
+
 ## 目录导航
 
 ```text

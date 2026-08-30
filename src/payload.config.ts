@@ -291,13 +291,30 @@ function getPayloadSecret(cloudflare: CloudflareContext): string {
  * @returns Cloudflare 运行时上下文
  */
 async function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
+  // 本地开发：Next.js dev 会对 payload.config 做多次模块实例化，且路由层的
+  // getCloudflareContext({async:true}) 在全局上下文缺失时也会兜底启动 platform proxy。
+  // 每次 getPlatformProxy 都会拉起一个 Miniflare，多个实例抢占同一端口导致
+  // EADDRINUSE 崩溃循环。这里用 opennext 的全局 symbol 做进程级单例（Promise 槽位，
+  // 并发竞态安全），使 payload.config 与路由层共享同一个 proxy。
+  const cloudflareContextSymbol = Symbol.for('__cloudflare-context__')
+  const globalScope = globalThis as Record<PropertyKey, unknown>
+  if (globalScope[cloudflareContextSymbol]) {
+    return globalScope[cloudflareContextSymbol] as Promise<CloudflareContext>
+  }
+  const proxyPromise = import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
     ({ getPlatformProxy }) =>
       getPlatformProxy({
         environment: process.env.CLOUDFLARE_ENV,
         remoteBindings: isProduction,
       } satisfies GetPlatformProxyOptions),
   )
+  globalScope[cloudflareContextSymbol] = proxyPromise
+  try {
+    return await proxyPromise
+  } catch (error) {
+    delete globalScope[cloudflareContextSymbol]
+    throw error
+  }
 }
 
 /**

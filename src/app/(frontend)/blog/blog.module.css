@@ -234,3 +234,75 @@
     display: none;
   }
 }
+
+/* Prototype-aligned journal index */
+.blogWrap {
+  max-width: 1360px;
+  padding: 100px 32px 130px;
+}
+
+.blogWrap :global(.page-hero) {
+  max-width: none;
+  padding: 0 0 72px;
+  text-align: left;
+}
+
+.blogWrap :global(.page-hero h1) {
+  max-width: 980px;
+  font-size: clamp(58px, 8vw, 110px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.94;
+}
+
+.blogGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px 16px;
+}
+
+.blogCard {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.blogCardCover {
+  aspect-ratio: 16 / 10;
+  border-radius: 5px;
+  background: var(--noumi-blue);
+}
+
+.blogCardBody {
+  padding: 24px 0;
+}
+
+.blogCardTitle {
+  font-family: var(--ff-display);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.blogCardTag,
+.blogSubscribe,
+.subscribeInput,
+.subscribeBtn {
+  border-radius: 4px;
+}
+
+.blogSubscribe {
+  background: var(--noumi-dark);
+  color: var(--noumi-lite);
+}
+
+@media (max-width: 700px) {
+  .blogWrap {
+    padding: 72px 20px 90px;
+  }
+
+  .blogGrid {
+    grid-template-columns: 1fr;
+  }
+}

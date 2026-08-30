@@ -222,3 +222,47 @@
     width: 96px;
   }
 }
+
+/* Prototype-aligned feature detail */
+.featurePage {
+  background: var(--noumi-paper);
+  color: var(--noumi-dark);
+}
+
+.hero {
+  max-width: 1360px;
+  min-height: 720px;
+  padding: 100px 32px;
+  gap: 60px;
+}
+
+.heroCopy h1 {
+  font-size: clamp(56px, 7vw, 100px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.94;
+}
+
+.heroVisual::before {
+  display: none;
+}
+
+.visualCard,
+.sectionCard {
+  border-color: var(--noumi-line);
+  border-radius: 5px;
+  background: var(--noumi-lite);
+  box-shadow: none;
+}
+
+.sections {
+  max-width: 1360px;
+  padding: 40px 32px 130px;
+}
+
+.sectionCard h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}

@@ -52,7 +52,7 @@
 }
 
 .contactEmail::before {
-  content: "\2709";
+  content: '\2709';
   font-size: 18px;
 }
 
@@ -105,4 +105,35 @@
   .contactDivider {
     margin: 56px 0 32px;
   }
+}
+
+/* Prototype-aligned contact page */
+.contactWrap {
+  background: var(--noumi-paper);
+}
+
+.contactInner {
+  max-width: 1360px;
+  padding: 110px 32px 140px;
+  text-align: left;
+}
+
+.contactInner h1 {
+  max-width: 940px;
+  color: var(--noumi-dark);
+  font-family: var(--ff-display);
+  font-size: clamp(60px, 8vw, 112px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+}
+
+.contactEmail {
+  border-radius: 4px;
+  background: var(--noumi-dark);
+  color: var(--noumi-lite);
+}
+
+.contactAlt {
+  color: #697078;
 }

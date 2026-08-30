@@ -351,3 +351,55 @@
     font-size: 15.5px;
   }
 }
+
+/* Prototype-aligned article */
+.blogPostPage {
+  background: var(--noumi-paper);
+}
+
+.postHeader {
+  max-width: 1040px;
+  padding: 96px 32px 64px;
+  text-align: left;
+}
+
+.postHeader h1 {
+  color: var(--noumi-dark);
+  font-family: var(--ff-display);
+  font-size: clamp(50px, 7vw, 94px);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.postCover {
+  max-width: 1360px;
+  border-radius: 5px;
+}
+
+.postWrap {
+  max-width: 820px;
+  padding-top: 72px;
+}
+
+.blogPostPage :global(.official-richtext-panel),
+.blogPostPage :global(.markdown-content) {
+  color: var(--noumi-dark);
+}
+
+.moreSection {
+  background: var(--noumi-lite);
+}
+
+.moreCard {
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  .postHeader,
+  .postWrap {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}

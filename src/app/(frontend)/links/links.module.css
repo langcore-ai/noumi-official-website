@@ -288,3 +288,48 @@
     justify-content: center;
   }
 }
+
+/* Prototype-aligned resources directory */
+.linksPage {
+  background: var(--noumi-paper);
+}
+
+.hero {
+  max-width: 1360px;
+  padding: 110px 32px 72px;
+  text-align: left;
+}
+
+.heroCat {
+  display: none;
+}
+
+.heroTitle {
+  max-width: 980px;
+  color: var(--noumi-dark);
+  font-size: clamp(58px, 8vw, 110px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.94;
+}
+
+.gridSection {
+  max-width: 1360px;
+  padding: 0 32px 130px;
+}
+
+.directoryGrid {
+  gap: 16px;
+}
+
+.directoryCard {
+  min-height: 260px;
+  border-color: var(--noumi-line);
+  border-radius: 5px;
+  background: var(--noumi-lite);
+  box-shadow: none;
+}
+
+.ctaBand {
+  background: var(--noumi-dark);
+}

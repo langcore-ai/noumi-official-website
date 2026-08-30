@@ -527,3 +527,142 @@
     justify-content: center;
   }
 }
+
+/* Prototype-aligned use-case index */
+.pageHero {
+  max-width: 1360px;
+  padding: 110px 32px 78px;
+  text-align: left;
+}
+
+.pageHero h1 {
+  max-width: 980px;
+  margin: 0;
+  color: var(--noumi-dark);
+  font-family: var(--ff-display);
+  font-size: clamp(58px, 8vw, 112px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+}
+
+.pageHero h1 em {
+  color: var(--noumi-blue);
+  font-style: normal;
+}
+
+.pageHero p {
+  max-width: 620px;
+  margin: 34px 0 0 auto;
+  color: #697078;
+  font-size: 17px;
+}
+
+.heroCat {
+  display: none;
+}
+
+.ucWrap {
+  max-width: 1360px;
+  padding: 0 32px 120px;
+}
+
+.ucGrid {
+  gap: 16px;
+}
+
+.ucCard {
+  min-height: 520px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.ucCardPm {
+  background: var(--noumi-blue);
+}
+
+.ucCardJournalist {
+  background: #b8956f;
+}
+
+.ucCardSolutions {
+  background: var(--noumi-dark);
+}
+
+.ucAvatar {
+  display: none;
+}
+
+.ucCardBody {
+  align-items: flex-end;
+  padding: 32px;
+}
+
+.ucCardTitle {
+  color: var(--noumi-lite);
+  font-size: clamp(36px, 3.4vw, 54px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.ucCardDesc,
+.ucCardCta {
+  color: rgba(252, 250, 243, 0.76);
+}
+
+.ucMore {
+  border: 1px solid var(--noumi-line);
+  border-radius: 5px;
+  background: var(--noumi-lite);
+}
+
+.ucMoreCat {
+  filter: grayscale(1);
+}
+
+.ucMoreText h2,
+.ucFaqHead h2 {
+  color: var(--noumi-dark);
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.ucPill {
+  border-color: var(--noumi-line);
+  border-radius: 3px;
+  background: transparent;
+}
+
+.ucFaqWrap {
+  margin-top: 140px;
+}
+
+.ucFaqHead {
+  text-align: left;
+}
+
+.ctaBand {
+  background: var(--noumi-dark);
+}
+
+@media (max-width: 760px) {
+  .pageHero {
+    padding: 80px 20px 56px;
+  }
+
+  .ucWrap {
+    padding: 0 20px 80px;
+  }
+
+  .ucGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ucCard {
+    min-height: 390px;
+  }
+}

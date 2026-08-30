@@ -831,3 +831,232 @@
     height: 60px;
   }
 }
+
+/* Prototype-aligned editorial treatment */
+.featuresPage {
+  background: var(--noumi-paper);
+  color: var(--noumi-dark);
+}
+
+.sec {
+  padding: 120px 32px;
+}
+
+.secInner {
+  max-width: 1360px;
+}
+
+.secHead {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.3fr) minmax(0, 0.7fr);
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 72px;
+  text-align: left;
+}
+
+.secHead > span,
+.secHead > .heroCat {
+  grid-column: 1;
+}
+
+.secHead h1,
+.secHead h2,
+.secHead p {
+  grid-column: 2;
+}
+
+.secHead h1,
+.secHead h2 {
+  margin-bottom: 20px;
+  color: var(--noumi-dark);
+  font-size: clamp(48px, 5.8vw, 82px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.secHead h1 em {
+  color: var(--noumi-blue);
+  font-style: normal;
+}
+
+.secHead p {
+  max-width: 680px;
+  margin: 0;
+  color: #697078;
+  font-size: 17px;
+}
+
+.heroCat {
+  display: none;
+}
+
+.secFeatures,
+.secAbilities,
+.secHow,
+.secRoles,
+.secFaq {
+  background: var(--noumi-paper);
+}
+
+.featGrid {
+  gap: 16px;
+}
+
+.featCard {
+  overflow: hidden;
+  min-height: 520px;
+  border-color: var(--noumi-line);
+  border-radius: 5px;
+  background: var(--noumi-lite);
+  box-shadow: none;
+}
+
+.featCard::before,
+.abilityCard::before {
+  display: none;
+}
+
+.featCardTop {
+  height: 160px;
+  background: var(--feat-card-strip);
+}
+
+.featCardMemory {
+  --feat-card-strip: var(--noumi-blue);
+}
+
+.featCardExecution {
+  --feat-card-strip: #78928c;
+}
+
+.featCardSkills {
+  --feat-card-strip: #b8956f;
+}
+
+.featCardBody {
+  padding: 30px;
+}
+
+.featCard h3 {
+  font-size: clamp(30px, 2.5vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.featCardDesc,
+.featCardList li {
+  color: #697078;
+}
+
+.featCardCta {
+  color: var(--noumi-dark) !important;
+}
+
+.abilityGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--noumi-line);
+}
+
+.abilityCard {
+  min-height: 250px;
+  padding: 34px;
+  border: 0;
+  border-radius: 0;
+  background: var(--noumi-lite);
+}
+
+.abilityCard h3,
+.howStep h3 {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.howSteps {
+  border-top: 1px solid var(--noumi-line);
+}
+
+.howStep {
+  grid-template-columns: 0.2fr 0.8fr;
+  padding: 48px 0;
+  border-bottom-color: var(--noumi-line);
+}
+
+.howNum {
+  color: var(--noumi-blue);
+}
+
+.howStepBox {
+  border-color: var(--noumi-line);
+  border-radius: 4px;
+  background: var(--noumi-lite);
+}
+
+.ucCard {
+  min-height: 430px;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.ucCardPm {
+  background: var(--noumi-blue);
+}
+
+.ucCardJournalist {
+  background: #b8956f;
+}
+
+.ucCardSolutions {
+  background: var(--noumi-dark);
+}
+
+.ucAvatar {
+  display: none;
+}
+
+.ucCardBody {
+  align-items: flex-end;
+}
+
+.ucCardTitle,
+.ucCardDesc,
+.ucCardCta {
+  color: var(--noumi-lite);
+}
+
+.faqItem {
+  border-color: var(--noumi-line);
+}
+
+.ctaBand {
+  background: var(--noumi-dark);
+}
+
+@media (max-width: 800px) {
+  .sec {
+    padding: 80px 20px;
+  }
+
+  .secHead {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .secHead > span,
+  .secHead h1,
+  .secHead h2,
+  .secHead p {
+    grid-column: 1;
+  }
+
+  .featGrid,
+  .abilityGrid,
+  .ucGrid {
+    grid-template-columns: 1fr;
+  }
+}

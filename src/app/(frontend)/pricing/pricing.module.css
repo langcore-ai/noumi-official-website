@@ -163,7 +163,7 @@
 }
 
 .trialBadge::before {
-  content: "\2726";
+  content: '\2726';
   font-size: 9px;
 }
 
@@ -276,7 +276,7 @@
 }
 
 .planFeatures li::before {
-  content: "\2713";
+  content: '\2713';
   color: var(--accent);
   font-size: 12px;
   font-weight: 600;
@@ -461,5 +461,153 @@
 
   .pricingCta h2 {
     margin-top: 88px;
+  }
+}
+
+/* Prototype-aligned pricing */
+.pricingHero {
+  max-width: 1360px;
+  padding: 110px 32px 72px;
+  text-align: left;
+}
+
+.pricingHero h1 {
+  max-width: 1040px;
+  margin: 0;
+  color: var(--noumi-dark);
+  font-family: var(--ff-display);
+  font-size: clamp(60px, 8vw, 112px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+}
+
+.pricingHero p {
+  margin: 28px 0 0;
+  color: #697078;
+  font-size: 18px;
+}
+
+.planGrid {
+  max-width: 1360px;
+  gap: 16px;
+  padding: 0 32px 120px;
+}
+
+.planCard {
+  min-height: 690px;
+  padding: 32px;
+  border-color: var(--noumi-line);
+  border-radius: 5px;
+  background: var(--noumi-lite);
+  box-shadow: none;
+}
+
+.planCard::before,
+.proCat {
+  display: none;
+}
+
+.featured {
+  border-color: var(--noumi-blue);
+  background: var(--noumi-blue);
+  color: var(--noumi-lite);
+  transform: none;
+}
+
+.featured .planName,
+.featured .planDesc,
+.featured .amount,
+.featured .period,
+.featured .planFeatures li {
+  color: var(--noumi-lite);
+}
+
+.teamCard {
+  background: var(--noumi-dark);
+  color: var(--noumi-lite);
+}
+
+.teamCard .planName,
+.teamCard .planDesc,
+.teamCard .customPrice,
+.teamCard .customPriceNote,
+.teamCard .planFeatures li {
+  color: var(--noumi-lite);
+}
+
+.planName {
+  font-family: var(--ff-display);
+  font-size: clamp(40px, 4vw, 58px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}
+
+.planDesc {
+  color: #697078;
+}
+
+.amount,
+.customPrice {
+  font-family: var(--ff-display);
+  font-weight: 400;
+}
+
+.planCta {
+  border-radius: 4px;
+  background: var(--noumi-dark);
+}
+
+.featured .planCta,
+.teamCard .planCta {
+  background: var(--noumi-lite);
+  color: var(--noumi-dark);
+}
+
+.planBadge,
+.trialBadge {
+  border-radius: 3px;
+}
+
+.pricingFaq {
+  max-width: 1360px;
+  padding: 100px 32px 130px;
+}
+
+.pricingFaq > h3 {
+  font-family: var(--ff-display);
+  font-size: clamp(46px, 6vw, 78px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.faqItem {
+  padding: 28px 0;
+  border-color: var(--noumi-line);
+}
+
+.pricingCta {
+  background: var(--noumi-dark);
+}
+
+@media (max-width: 900px) {
+  .planGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .planCard {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .pricingHero {
+    padding: 80px 20px 52px;
+  }
+
+  .planGrid,
+  .pricingFaq {
+    padding-right: 20px;
+    padding-left: 20px;
   }
 }

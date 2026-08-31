@@ -2577,13 +2577,10 @@ body {
 .redesign-hero__title-main,
 .redesign-hero__title-small {
   display: block;
-  opacity: 0;
-  animation: noumi-copy-rise 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .redesign-hero__title-main {
   font-size: clamp(38px, 4.15vw, 52px);
-  animation-delay: 0.3s;
 }
 
 .redesign-hero__title-small {
@@ -2591,7 +2588,6 @@ body {
   font-size: clamp(21px, 2.2vw, 28px);
   letter-spacing: -0.04em;
   line-height: 1.1;
-  animation-delay: 0.42s;
 }
 
 .redesign-hero__copy {
@@ -2602,14 +2598,10 @@ body {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.35;
-  opacity: 0;
-  animation: noumi-copy-rise 0.72s 0.54s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .redesign-hero .redesign-button {
   margin-top: 38px;
-  opacity: 0;
-  animation: noumi-copy-rise 0.72s 0.66s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .redesign-button--dark {
@@ -2741,18 +2733,6 @@ body {
   }
 }
 
-@keyframes noumi-copy-rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes noumi-hero-drift {
   from {
     transform: scale(1.002);
@@ -2867,15 +2847,5 @@ body {
 
   .redesign-section-heading h2 {
     font-size: 28px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .redesign-hero__title-main,
-  .redesign-hero__title-small,
-  .redesign-hero__copy,
-  .redesign-hero .redesign-button {
-    opacity: 1;
-    transform: none;
   }
 }

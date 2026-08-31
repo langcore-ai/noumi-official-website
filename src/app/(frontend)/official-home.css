@@ -2676,11 +2676,35 @@ body {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-.redesign-section-heading .redesign-kicker span {
-  margin: 0 6px;
-  font-size: 12px;
+.redesign-kicker__mark {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+}
+
+.redesign-kicker__mark::before {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  box-shadow:
+    -4px 4px currentColor,
+    0 4px currentColor,
+    0 8px currentColor;
+  content: '';
+}
+
+.redesign-kicker__mark--right {
+  transform: scaleX(-1);
 }
 
 .redesign-section-heading h2 {
@@ -2843,5 +2867,15 @@ body {
 
   .redesign-section-heading h2 {
     font-size: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .redesign-hero__title-main,
+  .redesign-hero__title-small,
+  .redesign-hero__copy,
+  .redesign-hero .redesign-button {
+    opacity: 1;
+    transform: none;
   }
 }

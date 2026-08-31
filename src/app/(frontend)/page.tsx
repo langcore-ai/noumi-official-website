@@ -114,7 +114,15 @@ export default function HomePage() {
         <section className="redesign-features" id="features">
           <div className="redesign-shell redesign-section-heading reveal">
             <p className="redesign-kicker redesign-kicker--dark">
-              <span aria-hidden="true">✣</span> What is Noumi <span aria-hidden="true">✣</span>
+              <span
+                aria-hidden="true"
+                className="redesign-kicker__mark redesign-kicker__mark--left"
+              />
+              <span>What is Noumi</span>
+              <span
+                aria-hidden="true"
+                className="redesign-kicker__mark redesign-kicker__mark--right"
+              />
             </p>
             <h2>
               Noumi Handles The Rest.

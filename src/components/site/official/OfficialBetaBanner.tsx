@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 
 /** 官网顶部公告横幅。 */

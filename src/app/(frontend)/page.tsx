@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
 import { StructuredData } from '@/components/site/StructuredData'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
 import {
@@ -56,6 +57,7 @@ export default function HomePage() {
   return (
     <>
       <StructuredData data={HOME_JSON_LD} />
+      <OfficialHomeEffects />
       <main className="redesign-home" id="top">
         <section className="redesign-hero">
           <div className="redesign-shell">
@@ -125,8 +127,11 @@ export default function HomePage() {
             </h2>
           </div>
           <div className="redesign-shell redesign-feature-stack">
-            {HOME_FEATURES.map((feature) => (
-              <article className="redesign-feature" key={feature.title}>
+            {HOME_FEATURES.map((feature, index) => (
+              <article
+                className={`redesign-feature${index === 0 ? ' is-active' : ''}`}
+                key={feature.title}
+              >
                 <div className="redesign-feature__copy">
                   <div className="redesign-feature__title-wrap">
                     <h3>{feature.title}</h3>

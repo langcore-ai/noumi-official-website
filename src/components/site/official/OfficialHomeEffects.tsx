@@ -11,6 +11,10 @@ export function OfficialHomeEffects(): null {
   useEffect(() => {
     const tiltCards = Array.from(document.querySelectorAll<HTMLElement>('.tilt-card'))
     const parallaxItems = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'))
+    const featureArea = document.querySelector<HTMLElement>('.redesign-feature-stack')
+    const featureCards = featureArea
+      ? Array.from(featureArea.querySelectorAll<HTMLElement>('.redesign-feature'))
+      : []
     const heroStage = document.querySelector<HTMLElement>('.hero-stage')
     const heroLayers = heroStage
       ? {
@@ -26,6 +30,29 @@ export function OfficialHomeEffects(): null {
       parallaxItems.forEach((item) => {
         const depth = Number(item.dataset.parallax || 0)
         item.style.transform = `translate3d(0, ${scrollY * (depth / 1000)}px, 0)`
+      })
+    }
+
+    /**
+     * 复刻 Webflow 的 SCROLLING_IN_VIEW 时间线：0–37、40–57、60–77
+     * 分别激活三张卡片，37–40 与 57–60 为状态交接区间。
+     */
+    const handleFeatureProgress = () => {
+      if (!featureArea || featureCards.length === 0) {
+        return
+      }
+
+      if (window.innerWidth < 768) {
+        featureCards.forEach((card) => card.classList.remove('is-active'))
+        return
+      }
+
+      const rect = featureArea.getBoundingClientRect()
+      const progress = ((window.innerHeight - rect.top) / (window.innerHeight + rect.height)) * 100
+      const activeIndex = progress < 38.5 ? 0 : progress < 58.5 ? 1 : progress < 78.5 ? 2 : -1
+
+      featureCards.forEach((card, index) => {
+        card.classList.toggle('is-active', index === activeIndex)
       })
     }
 
@@ -48,7 +75,10 @@ export function OfficialHomeEffects(): null {
     })
 
     handleParallax()
+    handleFeatureProgress()
     window.addEventListener('scroll', handleParallax, { passive: true })
+    window.addEventListener('scroll', handleFeatureProgress, { passive: true })
+    window.addEventListener('resize', handleFeatureProgress)
 
     if (heroStage && heroLayers?.left && heroLayers.window && heroLayers.right) {
       const handlePointerMove = (event: PointerEvent) => {
@@ -72,6 +102,8 @@ export function OfficialHomeEffects(): null {
 
       return () => {
         window.removeEventListener('scroll', handleParallax)
+        window.removeEventListener('scroll', handleFeatureProgress)
+        window.removeEventListener('resize', handleFeatureProgress)
         heroStage.removeEventListener('pointermove', handlePointerMove)
         heroStage.removeEventListener('pointerleave', handlePointerLeave)
       }
@@ -79,6 +111,8 @@ export function OfficialHomeEffects(): null {
 
     return () => {
       window.removeEventListener('scroll', handleParallax)
+      window.removeEventListener('scroll', handleFeatureProgress)
+      window.removeEventListener('resize', handleFeatureProgress)
     }
   }, [])
 

@@ -9,27 +9,21 @@ import {
 
 const HOME_FEATURES = [
   {
-    index: '01',
     title: 'Specialist Level Expertise',
     description:
-      'Domain-specific expertise, ready when you are. Noumi brings the depth of a specialist to every project without the overhead of building a team.',
-    href: '/features',
+      'Meeting notes become agency-grade flowcharts and Gantt charts, dropped into pixel-matched PowerPoint, Word, and Excel templates, with no junior-analyst placeholder work.\n\nA PRD, Figma, or Axure file becomes a clickable prototype in one step.',
     image: '/assets/redesign/feature-expertise.jpg',
   },
   {
-    index: '02',
     title: 'Full Project Fluency',
     description:
-      'Noumi understands your goals, files, decisions, and working context — then carries that understanding across every stage of the project.',
-    href: '/features',
+      'Every document, recording, and email, pulled from your drives and CRM.\n\nAn AI CRM and PMS that works from full project context, not just stores it, writing grounded materials, keeping documents in sync, in a workspace shared with your team and agents.',
     image: '/assets/redesign/feature-context.jpg',
   },
   {
-    index: '03',
     title: 'Signature-Level Fluency',
     description:
-      'Your standards become the default. Noumi learns how you think, write, and deliver so every result feels unmistakably yours.',
-    href: '/features',
+      'It picks up the judgment and taste behind your work, how you structure a deliverable and the business behind it, so every solution reads like you.\n\nRepeated routines become dedicated agents, handling high-volume work reliably.',
     image: '/assets/redesign/feature-fluency.png',
   },
 ] as const
@@ -134,12 +128,11 @@ export default function HomePage() {
             {HOME_FEATURES.map((feature) => (
               <article className="redesign-feature" key={feature.title}>
                 <div className="redesign-feature__copy">
-                  <span className="redesign-feature__index">{feature.index}</span>
-                  <h3>{feature.title}</h3>
+                  <div className="redesign-feature__title-wrap">
+                    <h3>{feature.title}</h3>
+                    <span aria-hidden="true" className="redesign-feature__arrow" />
+                  </div>
                   <p>{feature.description}</p>
-                  <Link className="redesign-text-link" href={feature.href}>
-                    Explore the capability <span aria-hidden="true">↗</span>
-                  </Link>
                 </div>
                 <div className="redesign-feature__visual">
                   <img alt="" src={feature.image} />

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
+import { OfficialUseCasesShowcase } from '@/components/site/official/OfficialUseCasesShowcase'
 import { StructuredData } from '@/components/site/StructuredData'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
 import {
@@ -26,29 +27,6 @@ const HOME_FEATURES = [
     description:
       'It picks up the judgment and taste behind your work, how you structure a deliverable and the business behind it, so every solution reads like you.\n\nRepeated routines become dedicated agents, handling high-volume work reliably.',
     image: '/assets/redesign/feature-fluency.png',
-  },
-] as const
-
-const HOME_USE_CASES = [
-  {
-    title: 'Solutions Engineer',
-    description:
-      'Turn discovery notes and technical context into tailored, client-ready solutions.',
-    href: '/use-cases/solutions-engineer',
-    className: 'redesign-use-case--blue',
-  },
-  {
-    title: 'Product Manager',
-    description: 'Move from scattered research to clear requirements, decisions, and plans.',
-    href: '/use-cases/product-manager',
-    className: 'redesign-use-case--sand',
-  },
-  {
-    title: 'Journalist',
-    description:
-      'Organize sources, discover angles, and shape reporting without losing your voice.',
-    href: '/use-cases/journalist',
-    className: 'redesign-use-case--slate',
   },
 ] as const
 
@@ -149,31 +127,21 @@ export default function HomePage() {
 
         <section className="redesign-use-cases">
           <div className="redesign-shell redesign-use-cases__header">
-            <div>
-              <p className="redesign-kicker redesign-kicker--dark">Use cases</p>
-              <h2>Built for the way you work</h2>
-            </div>
-            <Link className="redesign-text-link" href="/use-cases">
-              View all use cases <span aria-hidden="true">↗</span>
-            </Link>
+            <p className="redesign-kicker redesign-kicker--dark">
+              <span
+                aria-hidden="true"
+                className="redesign-kicker__mark redesign-kicker__mark--left"
+              />
+              <span>Use Cases</span>
+              <span
+                aria-hidden="true"
+                className="redesign-kicker__mark redesign-kicker__mark--right"
+              />
+            </p>
+            <h2>Built for the way you work</h2>
           </div>
-          <div className="redesign-shell redesign-use-cases__grid">
-            {HOME_USE_CASES.map((useCase, index) => (
-              <Link
-                className={`redesign-use-case ${useCase.className}`}
-                href={useCase.href}
-                key={useCase.title}
-              >
-                <span className="redesign-use-case__number">0{index + 1}</span>
-                <div>
-                  <h3>{useCase.title}</h3>
-                  <p>{useCase.description}</p>
-                </div>
-                <span className="redesign-use-case__arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </Link>
-            ))}
+          <div className="redesign-shell">
+            <OfficialUseCasesShowcase />
           </div>
         </section>
 

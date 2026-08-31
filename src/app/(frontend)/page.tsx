@@ -76,26 +76,35 @@ export default function HomePage() {
               >
                 <source src="/assets/redesign/hero-loop.mp4" type="video/mp4" />
               </video>
-              <div className="redesign-hero__shade" />
               <div className="redesign-hero__content">
-                <p className="redesign-kicker">Your AI workspace</p>
                 <h1>
-                  Effortless, trustworthy deliverables
-                  <br />
-                  in your Noumi workspace
+                  <span className="redesign-hero__title-main">
+                    Effortless,
+                    <br />
+                    Trustworthy
+                    <br />
+                    Deliverables
+                  </span>
+                  <span className="redesign-hero__title-small">In Your Noumi Workspace</span>
                 </h1>
                 <p className="redesign-hero__copy">
-                  Claude alternative designed for business and solution professionals.
+                  Claude alternative designed for business and
+                  <br />
+                  solution professionals
                 </p>
                 <Link
-                  className="redesign-button redesign-button--light"
+                  className="redesign-button redesign-button--dark redesign-button--animated"
                   data-analytics-cta-id="home_hero_try_free"
                   data-analytics-event="official_cta_clicked"
                   data-analytics-placement="hero"
                   data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
                   href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
-                  Join Waitlist <span aria-hidden="true">↗</span>
+                  <span>Join Waitlist</span>
+                  <span aria-hidden="true" className="redesign-button__arrows">
+                    <img alt="" src="/assets/redesign/arrow.svg" />
+                    <img alt="" src="/assets/redesign/arrow.svg" />
+                  </span>
                 </Link>
               </div>
             </div>
@@ -103,9 +112,15 @@ export default function HomePage() {
         </section>
 
         <section className="redesign-features" id="features">
-          <div className="redesign-shell redesign-section-heading">
-            <p className="redesign-kicker redesign-kicker--dark">What makes Noumi different</p>
-            <h2>Noumi handles the rest. Only the irreplaceable you remains.</h2>
+          <div className="redesign-shell redesign-section-heading reveal">
+            <p className="redesign-kicker redesign-kicker--dark">
+              <span aria-hidden="true">✣</span> What is Noumi <span aria-hidden="true">✣</span>
+            </p>
+            <h2>
+              Noumi Handles The Rest.
+              <br />
+              Only The Irreplaceable You Remains.
+            </h2>
           </div>
           <div className="redesign-shell redesign-feature-stack">
             {HOME_FEATURES.map((feature) => (

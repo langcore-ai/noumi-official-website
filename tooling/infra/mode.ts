@@ -50,7 +50,7 @@ const action = process.argv[3] ?? 'status'
 function commandFor(target: Mode, port: number): string[] {
   return target === 'local'
     ? ['bun', 'run', 'dev', '--hostname', '0.0.0.0', '--port', String(port)]
-    : ['bun', 'run', 'preview', '--port', String(port)]
+    : ['bun', 'run', 'preview', '--ip', '0.0.0.0', '--port', String(port)]
 }
 
 function defaultPortFor(target: Mode): number {
@@ -202,10 +202,8 @@ async function start(target: Mode): Promise<number> {
   }
   spinner.stop(`${target} 已就绪`)
   console.log(success(`● ${target} 已就绪：${urlFor(port)}`))
-  if (target === 'local') {
-    for (const address of getLanIPv4Addresses()) {
-      console.log(`  局域网：${command(urlFor(port, address))}`)
-    }
+  for (const address of getLanIPv4Addresses()) {
+    console.log(`  局域网：${command(urlFor(port, address))}`)
   }
   return 0
 }

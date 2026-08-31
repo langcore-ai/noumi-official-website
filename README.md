@@ -95,6 +95,8 @@ bun run release                       # 交互式生产发布向导
 bun run release --dry-run --app-only  # 不写远程资源的发布计划预演
 ```
 
+`mode:local` 与 `mode:preview` 都监听 `0.0.0.0`；启动成功后会输出本机和局域网访问地址。只应在可信局域网中使用，Payload Admin 也会通过该端口暴露。
+
 `release` 默认要求 `main`、干净且已推送的 Git commit，并展示 Worker、D1、R2 目标。涉及 migration 时会先导出远程 D1，再迁移和部署；完成后执行生产 smoke test，并将不含 secret 的报告写入 `.local/releases/`。底层 `deploy:*` 脚本保留用于流水线组合和故障排查，不建议作为日常人工发布入口。
 
 ## 目录导航

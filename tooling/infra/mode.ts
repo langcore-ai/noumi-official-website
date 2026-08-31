@@ -21,6 +21,29 @@ import { command, danger, muted, statusMark, success, title, warning } from './t
 
 type Mode = 'local' | 'preview'
 
+/** 不同模式的完整启动预算；preview 包含 Next.js 与 OpenNext 两段生产构建。 */
+const STARTUP_TIMEOUT_MS: Record<Mode, number> = {
+  local: 90_000,
+  preview: 300_000,
+}
+
+/** 模式切换时等待旧进程组退出，避免多个 Next 进程同时写入 `.next`。 */
+const PROCESS_STOP_TIMEOUT_MS = 10_000
+
+function isManagedProcessGroupAlive(pid: number): boolean {
+  try {
+    process.kill(-pid, 0)
+    return true
+  } catch {
+    try {
+      process.kill(pid, 0)
+      return true
+    } catch {
+      return false
+    }
+  }
+}
+
 const mode = process.argv[2] as Mode | 'status' | 'stop' | undefined
 const action = process.argv[3] ?? 'status'
 
@@ -80,14 +103,39 @@ async function status(): Promise<number> {
   return 0
 }
 
-function stop(target: Mode): number {
-  console.log(stopBackground(target) ? success(`● 已停止 ${target}`) : muted(`○ ${target} 未运行`))
+async function stopAndWait(target: Mode): Promise<boolean> {
+  const pid = readPid(target)
+  const stopped = stopBackground(target)
+  if (!stopped || !pid) return true
+
+  const deadline = Date.now() + PROCESS_STOP_TIMEOUT_MS
+  while (Date.now() < deadline) {
+    if (!isManagedProcessGroupAlive(pid)) return true
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  console.error(
+    danger(`● ${target} 进程组收到停止信号后仍未退出；已中止启动，避免并发写入构建目录`),
+  )
+  return false
+}
+
+async function stop(target: Mode): Promise<number> {
+  const wasRunning = readPid(target) !== null
+  const stopped = await stopAndWait(target)
+  if (!wasRunning) {
+    console.log(muted(`○ ${target} 未运行`))
+    return 0
+  }
+  if (!stopped) return 1
+
+  console.log(success(`● 已停止 ${target}`))
   return 0
 }
 
 async function start(target: Mode): Promise<number> {
   const other = target === 'local' ? 'preview' : 'local'
-  stopBackground(other)
+  if (!(await stopAndWait(other))) return 1
   const existingPid = readPid(target)
   if (existingPid) {
     const existingPort = readManagedPort(target, defaultPortFor(target))
@@ -101,8 +149,7 @@ async function start(target: Mode): Promise<number> {
         `● 检测到 ${target} PID ${existingPid} 存活但 :${existingPort} 未就绪，正在清理并重新启动`,
       ),
     )
-    stopBackground(target)
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    if (!(await stopAndWait(target))) return 1
   }
   const port = await chooseAvailablePort(target)
   if (port === null) {
@@ -126,7 +173,7 @@ async function start(target: Mode): Promise<number> {
     process.exit(130)
   }
   process.once('SIGINT', interrupt)
-  const deadline = Date.now() + 60_000
+  const deadline = Date.now() + STARTUP_TIMEOUT_MS[target]
   let healthStatus: number | null = null
   while (Date.now() < deadline) {
     if (!readPid(target)) break
@@ -176,9 +223,9 @@ async function logs(target: Mode): Promise<number> {
 async function main(): Promise<number> {
   if (mode === 'status') return status()
   if (mode === 'stop') {
-    stop('local')
-    stop('preview')
-    return 0
+    const localCode = await stop('local')
+    const previewCode = await stop('preview')
+    return localCode || previewCode
   }
   if (mode !== 'local' && mode !== 'preview') {
     console.log(
@@ -187,13 +234,13 @@ async function main(): Promise<number> {
     return 1
   }
   if (action === 'up' || action === 'start') return start(mode)
-  if (action === 'stop') return stop(mode)
+  if (action === 'stop') return await stop(mode)
   if (action === 'restart') {
-    stop(mode)
+    if (!(await stopAndWait(mode))) return 1
     return start(mode)
   }
   if (action === 'rebuild') {
-    stop(mode)
+    if (!(await stopAndWait(mode))) return 1
     if (mode === 'local') {
       console.log(
         warning(
@@ -202,6 +249,7 @@ async function main(): Promise<number> {
       )
       return 1
     }
+    if (!(await stopAndWait('local'))) return 1
     console.log(title('运行测试与生产构建检查'))
     const checkCode = run(['bun', 'run', 'check:fast'])
     if (checkCode !== 0) {

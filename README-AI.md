@@ -98,7 +98,7 @@ Any change to this path requires explicit security review and tests.
 
 ## Operational Constraints
 
-- Never run `deploy`, `deploy:database`, migration reset/down/fresh commands, or `preview` without reading the production warnings in [docs/HANDOVER.md](docs/HANDOVER.md).
+- Never run `deploy`, `deploy:database`, or migration reset/down/fresh commands without reading the production warnings in [docs/HANDOVER.md](docs/HANDOVER.md). The repository's `preview` script uses simulated bindings but is not a staging environment; do not bypass it with the raw OpenNext preview command.
 - Deployment is non-atomic: remote D1 migration finishes before Worker deployment.
 - Worker rollback does not roll back D1 or R2.
 - Do not purge the shared R2 bucket.
@@ -107,7 +107,7 @@ Any change to this path requires explicit security review and tests.
 
 ## Known Risks
 
-The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh, remote-D1 preview risk, missing staging isolation, and limited test coverage.
+The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh, missing staging isolation, and limited test coverage.
 
 ## Verification
 

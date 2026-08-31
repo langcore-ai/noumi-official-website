@@ -624,11 +624,13 @@ pnpm run dev
 
 Payload D1 adapter 配置 `push: false`，schema 以 migration 为准。普通非生产 `dev` 通过 Wrangler/Miniflare 本地上下文工作，不应依赖生产 D1。
 
-`pnpm run preview` 是 OpenNext/Workers 预览，Payload 在 production mode 下会请求 remote bindings，因此可能连接正式 D1。没有独立 staging 前，不要在 preview 中执行 Admin 保存、Invite 更新或任何写操作。
+`pnpm run preview` 是 OpenNext/Workers 本地预览；脚本通过 `OPEN_NEXT_LOCAL_BINDINGS=true` 禁用 OpenNext 启动前环境读取的远程 binding proxy，并向后续 Wrangler dev 显式传入 `--local`。主配置中供 Payload CLI 生产 migration 选择远程代理的 D1 `remote: true` 保持不变，但默认 preview 的 D1/R2 都使用本地模拟，不会读写正式资源。全新本地 D1 需先执行 migration 才能使用 Admin。该模式仍不等于 staging，不能验证生产数据、权限或远程 binding 的真实状态。
+
+不要绕过项目脚本直接执行 `opennextjs-cloudflare preview`。当前上游命令在启动 Wrangler 前会先读取环境，这一步不会自动继承 Wrangler `--local`；在主配置 D1 `remote: true` 的情况下可能创建远程 proxy。
 
 ### 15.4 构建补丁
 
-`prebuild` 会运行 `scripts/patch-opennext-env-shim.mjs`，直接修补安装后的 OpenNext shim，以兼容当前环境变量行为。升级 `@opennextjs/cloudflare` 后必须检查：
+`prebuild` 会运行两个受保护的兼容补丁：`scripts/patch-opennext-env-shim.mjs` 补齐 OpenNext 的 `@next/env` shim；`scripts/patch-opennext-local-bindings.mjs` 让启动前的环境读取在 `OPEN_NEXT_LOCAL_BINDINGS=true` 时禁用远程 binding proxy。升级 `@opennextjs/cloudflare` 后必须检查：
 
 - 上游目标文件路径是否仍存在。
 - 补丁是否仍必要。
@@ -640,12 +642,12 @@ Payload D1 adapter 配置 `push: false`，schema 以 migration 为准。普通�
 
 | Script                      | 用途与风险                                                              |
 | --------------------------- | ----------------------------------------------------------------------- |
-| `prebuild`                  | 修改已安装 OpenNext env shim；由 build 生命周期使用                     |
+| `prebuild`                  | 应用 OpenNext env shim 与本地 binding 隔离补丁；由 build 生命周期使用   |
 | `build`                     | Next.js production build，Node heap 上限 8 GB                           |
 | `dev`                       | Next.js 本地开发                                                        |
 | `devsafe`                   | 删除 `.next`、`.open-next` 后开发；只删构建缓存                         |
 | `start`                     | 运行 Next.js production server，不是 Cloudflare runtime                 |
-| `preview`                   | OpenNext build/preview；当前可能访问远程 D1，视为高风险                 |
+| `preview`                   | OpenNext build + Wrangler 本地预览；使用本地模拟 D1/R2                  |
 | `payload`                   | Payload CLI 透传入口                                                    |
 | `generate:types`            | 依次生成 Cloudflare 与 Payload 类型                                     |
 | `generate:types:cloudflare` | 从 Wrangler 生成 `cloudflare-env.d.ts`                                  |
@@ -1044,7 +1046,7 @@ Media 与 snapshot/cache 同 bucket，但 media 不是可丢弃缓存。Snapshot
 2. 确认 migration 是否全部成功。
 3. 检查 Worker logs 和 D1 dashboard。
 4. 检查 `payload-client.ts` 首次初始化是否失败；其 Promise 在当前 isolate 内不会自动重试。
-5. 不要用 `preview` 反复测试写操作，避免误触正式 D1。
+5. `preview` 默认使用本地模拟 D1；生产数据问题应在明确授权的远程只读检查或真正 staging 中验证。
 
 ### Raw HTML 页面样式破坏全站
 
@@ -1098,15 +1100,15 @@ Playwright 覆盖：
 
 ### 24.3 改动类型对应验证
 
-| 改动                     | 最低验证                                                           |
-| ------------------------ | ------------------------------------------------------------------ |
-| 静态页面/CSS             | `build` + 目标页 desktop/mobile + 首页/header/footer 回归          |
-| CMS loader/view model    | `test:int` + published/draft 页面 + snapshot refresh               |
-| Collection/global schema | migration 审阅 + types + Admin + 历史数据兼容                      |
-| Raw HTML                 | Raw HTML tests + preview/publish + security/CSS review             |
-| Worker/snapshot          | OpenNext preview（仅安全环境）+ R2 key/status + curl header + logs |
-| Analytics/consent        | analytics/consent tests + browser network/storage                  |
-| Cloudflare config        | typegen + dry review + bindings/secrets/dashboard 校验             |
+| 改动                     | 最低验证                                                             |
+| ------------------------ | -------------------------------------------------------------------- |
+| 静态页面/CSS             | `build` + 目标页 desktop/mobile + 首页/header/footer 回归            |
+| CMS loader/view model    | `test:int` + published/draft 页面 + snapshot refresh                 |
+| Collection/global schema | migration 审阅 + types + Admin + 历史数据兼容                        |
+| Raw HTML                 | Raw HTML tests + preview/publish + security/CSS review               |
+| Worker/snapshot          | 项目脚本的本地 OpenNext preview + R2 key/status + curl header + logs |
+| Analytics/consent        | analytics/consent tests + browser network/storage                    |
+| Cloudflare config        | typegen + dry review + bindings/secrets/dashboard 校验               |
 
 ## 25. 已知风险登记
 
@@ -1117,7 +1119,7 @@ Playwright 覆盖：
 | P1     | Raw HTML 可执行内联脚本、事件属性并污染全局 CSS                           | 继续限制角色；考虑 sanitizer/iframe/CSP 与安全测试  |
 | P1     | `/api/preview/exit` 的 path 规范化可能通过反斜杠编码形成外部跳转          | 修复 URL/path 校验并补测试                          |
 | P1     | Preview 响应回填路径未再次检查 preview cookie，可能污染公开 HTML snapshot | 在写入前统一校验 request preview 状态并补 E2E       |
-| P1     | 没有 staging；OpenNext preview 可能连接远程 D1                            | 建独立 Cloudflare environment/resources             |
+| P1     | 没有 staging；本地 OpenNext preview 无法验证真实远程 bindings 和生产数据  | 建独立 Cloudflare environment/resources             |
 | P1     | 部署先迁移 D1 后部署 Worker，无自动回滚                                   | 建 backup、expand/contract、health check 和发布流程 |
 | P1     | FAQ 小 HTML 没有 sanitizer，且 translator 可编辑部分来源                  | 限制标签/净化/权限                                  |
 | P2     | Snapshot 锁非原子、dirty 早于 HTML 完成清除、删除路由遗留 HTML            | 设计带 owner 的原子协调和 HTML manifest 清理        |

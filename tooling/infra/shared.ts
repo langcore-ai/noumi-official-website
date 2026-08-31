@@ -69,7 +69,8 @@ export function readPid(name: string): number | null {
 export function startBackground(name: string, command: string[]): number {
   ensureLocalInfraDir()
   const logPath = join(localInfraDir, `${name}.log`)
-  const logFd = openSync(logPath, 'a', 0o600)
+  // 每次启动只保留本次运行日志，避免错误诊断被前一次构建输出干扰。
+  const logFd = openSync(logPath, 'w', 0o600)
   const child = spawn(command[0], command.slice(1), {
     cwd: repositoryRoot,
     detached: true,

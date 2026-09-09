@@ -10,7 +10,7 @@ The `/about` page now follows the supplied `prototype-webflow/about.html` rather
 - Original recruitment copy, photo, email, seven FAQ questions/answers and Get Started Today CTA.
 - Title metadata and the AboutPage JSON-LD node match the new page. Existing CMS records and collection definitions remain untouched; this page deliberately renders a versioned prototype content snapshot.
 
-The export begins its introduction with the repeated, joined text “We build tools for the people who know their craftNoumi…”. The duplicated headline was removed and paragraph breaks restored. All other wording, including the source's member spelling “Chunk Liao” and its separate FAQ recruitment address `hr@noumi.ai`, is preserved. This is content reproduction, not independent verification of the FAQ's product/privacy statements.
+The export begins its introduction with the repeated, joined text “We build tools for the people who know their craftNoumi…”. Per the user's text-parity correction, this first paragraph is preserved verbatim, including the joined “craftNoumi”; do not editorially remove the repeated headline. Other wording, including the source's member spelling “Chunk Liao” and its separate FAQ recruitment address `hr@noumi.ai`, is also preserved. This is content reproduction, not independent verification of the FAQ's product/privacy statements.
 
 ## Interaction mapping
 

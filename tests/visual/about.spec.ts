@@ -39,6 +39,9 @@ test('About matches prototype content, all ten portraits and seven FAQ answers',
     '9px',
   )
   await expect(page.locator('h1')).toHaveText('We build tools for the people who know their Craft')
+  await expect(page.locator('[data-about-motion="intro"] p').first()).toHaveText(
+    "We build tools for the people who know their craftNoumi is built for the business analyst, the sales engineer, the specialists: the people who've spent years earning their judgment.",
+  )
   expect(
     (await page.locator('[data-about-motion="hero"] .redesign-kicker__mark--left').boundingBox())
       ?.width,

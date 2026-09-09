@@ -9,7 +9,7 @@ export function OfficialBetaBanner() {
       <div className="official-beta-banner__inner">
         <p className="official-beta-banner__title">
           What Is AI in HR? The Definition Most Teams Get Wrong -{' '}
-          <Link className="official-beta-banner__link" href="/blog">
+          <Link className="official-beta-banner__link" href="/blog/what-is-ai-in-hr">
             Read the blog
           </Link>
         </p>

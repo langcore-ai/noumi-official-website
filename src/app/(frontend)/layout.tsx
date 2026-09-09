@@ -11,6 +11,7 @@ import { createOfficialMetadata } from '@/lib/site/official-site'
 import './official-base.css'
 import './official-home.css'
 import './prototype-parity.css'
+import './prototype-pages.css'
 
 /**
  * 前台页面保留运行时渲染以支持 Payload 草稿预览；发布态 CMS 读取在读取层走 R2 增量缓存。

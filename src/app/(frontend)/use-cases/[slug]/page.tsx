@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation'
+import { PrototypePage } from '@/components/site/prototype/PrototypePage'
+import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
 
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
@@ -23,6 +25,7 @@ type UseCasePageProps = {
  */
 export async function generateMetadata(props: UseCasePageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/use-cases/${slug}`)) return prototypeMetadata(`/use-cases/${slug}`)
   const page = await getOfficialUseCasePage(slug)
 
   if (!page) {
@@ -44,6 +47,7 @@ export async function generateMetadata(props: UseCasePageProps) {
  */
 export default async function UseCaseDetailPage(props: UseCasePageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/use-cases/${slug}`)) return <PrototypePage route={`/use-cases/${slug}`} />
   const page = await getOfficialUseCasePage(slug)
 
   if (!page) {

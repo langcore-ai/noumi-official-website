@@ -93,7 +93,15 @@ for (const width of [390, 768, 1440]) {
     ]) {
       const response = await page.goto(route)
       expect(response?.status(), route).toBe(200)
-      await expect(page.locator('h1').first()).toBeVisible()
+      if (route === '/terms' || route === '/privacy') {
+        // The legal prototype uses tab labels, not an invented heading above the document.
+        await expect(
+          page.getByRole('tab', {
+            name: route === '/privacy' ? 'Privacy' : 'Terms of Service',
+            exact: true,
+          }),
+        ).toHaveAttribute('aria-selected', 'true')
+      } else await expect(page.locator('h1').first()).toBeVisible()
       expect(await page.evaluate(() => document.documentElement.scrollWidth), route).toBe(width)
       if (route === '/') {
         const title = page.locator('.redesign-hero__title-main')

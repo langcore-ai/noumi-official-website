@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { PrototypePage } from '@/components/site/prototype/PrototypePage'
+import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
 
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialFeaturePage } from '@/lib/site/official-cms'
@@ -22,6 +24,7 @@ type FeaturePageProps = {
  */
 export async function generateMetadata(props: FeaturePageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/features/${slug}`)) return prototypeMetadata(`/features/${slug}`)
   const page = await getOfficialFeaturePage(slug)
 
   if (!page) {
@@ -43,6 +46,7 @@ export async function generateMetadata(props: FeaturePageProps) {
  */
 export default async function FeatureDetailPage(props: FeaturePageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/features/${slug}`)) return <PrototypePage route={`/features/${slug}`} />
   const page = await getOfficialFeaturePage(slug)
 
   if (!page) {

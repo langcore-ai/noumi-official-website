@@ -1,4 +1,5 @@
 import { StructuredData } from '@/components/site/StructuredData'
+import Link from 'next/link'
 import { CONTACT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 
@@ -51,8 +52,8 @@ export default async function ContactPage() {
             </p>
             <h3 className={styles.screenReaderOnly}>Legal and privacy</h3>
             <p className={`${styles.contactAlt} reveal`}>
-              Legal or privacy inquiries? See our <a href="/privacy">Privacy Policy</a> or{' '}
-              <a href="/terms">Terms of Service</a>
+              Legal or privacy inquiries? See our <Link href="/privacy">Privacy Policy</Link> or{' '}
+              <Link href="/terms">Terms of Service</Link>
             </p>
           </div>
         </div>

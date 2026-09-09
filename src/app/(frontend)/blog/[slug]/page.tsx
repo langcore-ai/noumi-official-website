@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { PrototypePage } from '@/components/site/prototype/PrototypePage'
+import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
 
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
@@ -23,6 +25,7 @@ type BlogPostPageProps = {
  */
 export async function generateMetadata(props: BlogPostPageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/blog/${slug}`)) return prototypeMetadata(`/blog/${slug}`)
   const post = await getOfficialBlogPost(slug)
 
   if (!post) {
@@ -45,6 +48,7 @@ export async function generateMetadata(props: BlogPostPageProps) {
  */
 export default async function BlogPostPage(props: BlogPostPageProps) {
   const { slug } = await props.params
+  if (getPrototypePage(`/blog/${slug}`)) return <PrototypePage route={`/blog/${slug}`} />
   const post = await getOfficialBlogPost(slug)
 
   if (!post) {

@@ -13,6 +13,10 @@ test('footer Contact preserves prototype icons, separators and hover movement', 
   await links.first().scrollIntoViewIfNeeded()
   await expect(links).toHaveCount(4)
   await expect(links).toHaveText(['Email', 'YouTube', 'LinkedIn', 'Twitter'])
+  await expect(page.locator('.footer-grid > div').last()).toHaveAttribute(
+    'data-motion-state',
+    'done',
+  )
   for (const link of await links.all()) {
     const icon = link.locator('img')
     await expect
@@ -21,8 +25,42 @@ test('footer Contact preserves prototype icons, separators and hover movement', 
     const bounds = await icon.boundingBox()
     expect(bounds?.width).toBeGreaterThan(19)
     expect(bounds?.width).toBeLessThan(35)
+    const initialY = bounds!.y
     await link.hover()
+    // Inspect the transition halfway through, not just its final transform.
+    const halfway = await icon.evaluate((img) => {
+      const transition = img
+        .getAnimations()
+        .find(
+          (animation) =>
+            animation instanceof CSSTransition && animation.transitionProperty === 'transform',
+        )
+      if (!transition) throw new Error('Missing horizontal icon transition')
+      transition.pause()
+      transition.currentTime = 150
+      const matrix = new DOMMatrix(getComputedStyle(img).transform)
+      const result = { x: matrix.m41, y: matrix.m42 }
+      transition.play()
+      return result
+    })
+    expect(halfway.x).toBeCloseTo(2.5, 1)
+    expect(halfway.y).toBe(0)
     await expect(icon).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 5, 0)')
+    expect((await icon.boundingBox())!.y).toBeCloseTo(initialY, 1)
+    const underline = await link.locator('span').evaluate((span) => {
+      const style = getComputedStyle(span, '::after')
+      return {
+        color: style.backgroundColor,
+        height: style.height,
+        margin: style.marginTop,
+        width: parseFloat(style.width),
+        labelWidth: span.getBoundingClientRect().width,
+      }
+    })
+    expect(underline.color).toBe('rgb(77, 114, 194)')
+    expect(underline.height).toBe('1px')
+    expect(underline.margin).toBe('2px')
+    expect(underline.width).toBeCloseTo(underline.labelWidth, 1)
     await expect(link).toHaveCSS('color', 'rgb(255, 255, 255)')
   }
   await expect(links.first()).toHaveCSS('border-bottom-width', '1px')

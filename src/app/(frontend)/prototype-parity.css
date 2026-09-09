@@ -429,8 +429,16 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   border-bottom: 0;
 }
 .footer-social-link > span {
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
-  transition: background-size 300ms linear;
+  display: block;
+}
+.footer-social-link > span::after {
+  content: '';
+  display: block;
+  width: 0%;
+  height: 1px;
+  margin-top: 2px;
+  background-color: var(--noumi-blue);
+  transition: width 300ms linear;
 }
 .footer-social-link > img {
   display: block;
@@ -443,14 +451,14 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 .site-footer .footer-grid a.footer-social-link:is(:hover, :focus-visible) {
   color: #fff;
 }
-.footer-social-link:is(:hover, :focus-visible) > span {
-  background-size: 100% 1px;
+.footer-social-link:is(:hover, :focus-visible) > span::after {
+  width: 100%;
 }
 .footer-social-link:is(:hover, :focus-visible) > img {
   transform: translateX(5px);
 }
 @media (prefers-reduced-motion: reduce) {
-  .footer-social-link > span,
+  .footer-social-link > span::after,
   .footer-social-link > img {
     transition: none;
   }

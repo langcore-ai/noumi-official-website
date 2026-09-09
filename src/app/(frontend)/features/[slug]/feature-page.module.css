@@ -230,17 +230,17 @@
 }
 
 .hero {
-  max-width: 1360px;
-  min-height: 720px;
-  padding: 100px 32px;
+  max-width: 1200px;
+  min-height: 540px;
+  padding: 70px 24px;
   gap: 60px;
 }
 
 .heroCopy h1 {
-  font-size: clamp(56px, 7vw, 100px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.94;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .heroVisual::before {
@@ -256,13 +256,13 @@
 }
 
 .sections {
-  max-width: 1360px;
+  max-width: 1200px;
   padding: 40px 32px 130px;
 }
 
 .sectionCard h2 {
   font-family: var(--ff-display);
-  font-size: clamp(36px, 4vw, 56px);
+  font-size: clamp(26px, 3vw, 32px);
   font-weight: 400;
   letter-spacing: -0.045em;
 }

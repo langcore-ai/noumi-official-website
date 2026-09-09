@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import type { OfficialFeatureNavItem, OfficialUseCaseNavItem } from '@/lib/site/official-cms'
+import type { OfficialUseCaseNavItem } from '@/lib/site/official-cms'
 import {
   OFFICIAL_LOGO,
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
@@ -102,6 +102,9 @@ export function OfficialHomeHeader(props: {
             <div className="mobile-nav__panel-inner">
               <nav aria-label="Mobile primary navigation" className="mobile-nav__group">
                 {renderMobilePrimaryLinks(activeItem)}
+                <Link className="mobile-nav__link" href="/about">
+                  About
+                </Link>
                 <Link
                   className="mobile-nav__cta"
                   data-analytics-cta-id="home_header_try_free"
@@ -233,62 +236,59 @@ export function OfficialUseCaseHeader(props: {
  * @param props Features 与 Use Case 导航项
  * @returns 官网统一页脚
  */
-export function OfficialHomeFooter(props: {
-  features: OfficialFeatureNavItem[]
-  useCases: OfficialUseCaseNavItem[]
-}) {
-  const { features, useCases } = props
-
+export function OfficialHomeFooter() {
   return (
     <footer className="site-footer" id="footer">
       <div className="container footer-grid">
         <div>
           <Link aria-label="Noumi home" className="brand brand--footer" href="/">
-            <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
-            <span className="brand__wordmark brand__wordmark--footer">Noumi</span>
+            <img
+              alt="Noumi"
+              className="footer-prototype-logo"
+              src="/assets/redesign/logo-white.png"
+            />
           </Link>
-          <p className="footer-note">Don&apos;t teach your AI twice.</p>
-        </div>
-        {features.length > 0 ? (
-          <div>
-            <p className="footer-heading">FEATURES</p>
-            {features.map((feature) => (
-              <Link href={feature.href} key={feature.href}>
-                {feature.label}
-              </Link>
-            ))}
-          </div>
-        ) : null}
-        <div>
-          <p className="footer-heading">USE CASES</p>
-          {useCases.map((useCase) => (
-            <Link href={`/use-cases/${useCase.slug}`} key={useCase.slug}>
-              {useCase.label}
-            </Link>
-          ))}
+          <p className="footer-note">
+            Professional Agent that does the work, holds the full context, and delivers to your
+            standard.
+          </p>
         </div>
         <div>
-          <p className="footer-heading">COMPANY</p>
+          <h2 className="footer-heading">Product</h2>
+          <Link href="/">Home</Link>
           <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
+          <Link href="/features">Features</Link>
+          <Link href="/use-cases">Use Cases</Link>
+          <Link href="/blog">Blog</Link>
           <Link href="/pricing">Pricing</Link>
         </div>
         <div>
-          <p className="footer-heading">RESOURCES</p>
-          <Link href="/blog">Blog</Link>
+          <h2 className="footer-heading">Resources</h2>
           <Link href="/faqs">FAQ</Link>
+          <Link href="/terms">Terms &amp; Conditions</Link>
+          <Link href="/privacy">Privacy</Link>
           <Link href="/links">Links</Link>
         </div>
         <div>
-          <p className="footer-heading">LEGAL</p>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms of Service</Link>
+          <h2 className="footer-heading">Contact</h2>
+          <a href="mailto:official@noumi.ai">Email</a>
+          <a href="https://www.youtube.com/@Noumi-AI" target="_blank" rel="noopener noreferrer">
+            YouTube
+          </a>
+          <a
+            href="https://www.linkedin.com/company/noumi-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            LinkedIn
+          </a>
+          <a href="https://x.com/Noumi_ai" target="_blank" rel="noopener noreferrer">
+            Twitter
+          </a>
         </div>
       </div>
-
       <div className="container footer-bottom">
         <span>© 2026 Noumi. All rights reserved.</span>
-        <span>noumi.ai</span>
       </div>
     </footer>
   )

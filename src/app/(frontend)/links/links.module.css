@@ -295,9 +295,9 @@
 }
 
 .hero {
-  max-width: 1360px;
-  padding: 110px 32px 72px;
-  text-align: left;
+  max-width: 1000px;
+  padding: 70px 24px 60px;
+  text-align: center;
 }
 
 .heroCat {
@@ -307,14 +307,14 @@
 .heroTitle {
   max-width: 980px;
   color: var(--noumi-dark);
-  font-size: clamp(58px, 8vw, 110px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.94;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .gridSection {
-  max-width: 1360px;
+  max-width: 1200px;
   padding: 0 32px 130px;
 }
 

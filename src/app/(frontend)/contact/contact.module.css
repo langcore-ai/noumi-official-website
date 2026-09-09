@@ -113,19 +113,19 @@
 }
 
 .contactInner {
-  max-width: 1360px;
-  padding: 110px 32px 140px;
-  text-align: left;
+  max-width: 1000px;
+  padding: 60px 24px 80px;
+  text-align: center;
 }
 
 .contactInner h1 {
   max-width: 940px;
   color: var(--noumi-dark);
   font-family: var(--ff-display);
-  font-size: clamp(60px, 8vw, 112px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.92;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .contactEmail {

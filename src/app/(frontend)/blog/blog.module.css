@@ -237,22 +237,23 @@
 
 /* Prototype-aligned journal index */
 .blogWrap {
-  max-width: 1360px;
+  max-width: 1200px;
   padding: 100px 32px 130px;
 }
 
 .blogWrap :global(.page-hero) {
   max-width: none;
   padding: 0 0 72px;
-  text-align: left;
+  text-align: center;
 }
 
 .blogWrap :global(.page-hero h1) {
   max-width: 980px;
-  font-size: clamp(58px, 8vw, 110px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.94;
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin-inline: auto;
 }
 
 .blogGrid {
@@ -279,7 +280,7 @@
 
 .blogCardTitle {
   font-family: var(--ff-display);
-  font-size: clamp(28px, 3vw, 42px);
+  font-size: clamp(22px, 2vw, 28px);
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 1.05;

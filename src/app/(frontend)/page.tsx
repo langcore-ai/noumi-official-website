@@ -125,7 +125,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="redesign-use-cases">
+        <section className="redesign-use-cases" id="use-cases">
           <div className="redesign-shell redesign-use-cases__header">
             <p className="redesign-kicker redesign-kicker--dark">
               <span
@@ -148,18 +148,22 @@ export default function HomePage() {
         <section className="redesign-final-cta">
           <div className="redesign-shell redesign-final-cta__card">
             <div>
-              <p className="redesign-kicker">Get started today</p>
-              <h2>Get to know me. I’ll get to know you.</h2>
+              <h2>Get Started Today</h2>
+              <p>Get to know me. I’ll get to know you.</p>
             </div>
             <Link
-              className="redesign-button redesign-button--light"
+              className="redesign-button redesign-button--dark redesign-button--animated"
               data-analytics-cta-id="home_band_try_free"
               data-analytics-event="official_cta_clicked"
               data-analytics-placement="cta_band"
               data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
               href={OFFICIAL_PRODUCT_AUTH_URL}
             >
-              Join Waitlist <span aria-hidden="true">↗</span>
+              Join Waitlist
+              <span aria-hidden="true" className="redesign-button__arrows">
+                <img alt="" src="/assets/redesign/arrow.svg" />
+                <img alt="" src="/assets/redesign/arrow.svg" />
+              </span>
             </Link>
           </div>
         </section>

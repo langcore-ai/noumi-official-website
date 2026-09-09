@@ -722,6 +722,23 @@
 
 .belief {
   border-radius: 0;
+  background: var(--noumi-paper);
+  padding: 70px 24px 80px;
+}
+
+.belief h1 {
+  color: var(--noumi-dark);
+  font-size: clamp(32px, 3.4vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+.belief h1 em,
+.beliefLabel {
+  color: var(--noumi-blue);
+}
+.belief p {
+  color: var(--noumi-dark);
 }
 
 .card,
@@ -737,8 +754,8 @@
   background: var(--noumi-dark);
 }
 
-.joinSection .joinCta h2,
-.joinSection .joinCta p {
+.joinSection h2,
+.joinSection p {
   color: var(--noumi-lite);
 }
 

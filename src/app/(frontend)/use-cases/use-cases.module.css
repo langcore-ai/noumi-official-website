@@ -530,20 +530,20 @@
 
 /* Prototype-aligned use-case index */
 .pageHero {
-  max-width: 1360px;
-  padding: 110px 32px 78px;
-  text-align: left;
+  max-width: 1000px;
+  padding: 70px 24px 60px;
+  text-align: center;
 }
 
 .pageHero h1 {
   max-width: 980px;
-  margin: 0;
+  margin: 0 auto;
   color: var(--noumi-dark);
   font-family: var(--ff-display);
-  font-size: clamp(58px, 8vw, 112px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.92;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .pageHero h1 em {
@@ -553,7 +553,7 @@
 
 .pageHero p {
   max-width: 620px;
-  margin: 34px 0 0 auto;
+  margin: 24px auto 0;
   color: #697078;
   font-size: 17px;
 }

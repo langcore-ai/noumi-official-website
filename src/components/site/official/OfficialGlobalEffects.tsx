@@ -12,8 +12,6 @@ export function OfficialGlobalEffects(): null {
   const pathname = usePathname()
 
   useEffect(() => {
-    const navigation = document.querySelector<HTMLElement>('[data-official-nav]')
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -71,21 +69,9 @@ export function OfficialGlobalEffects(): null {
       subtree: true,
     })
 
-    const handleScroll = () => {
-      if (!navigation) {
-        return
-      }
-
-      navigation.style.boxShadow = window.scrollY > 16 ? '0 4px 28px rgba(28,27,46,0.07)' : 'none'
-    }
-
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
     return () => {
       mutationObserver.disconnect()
       observer.disconnect()
-      window.removeEventListener('scroll', handleScroll)
     }
   }, [pathname])
 

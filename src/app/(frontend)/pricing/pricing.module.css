@@ -466,20 +466,20 @@
 
 /* Prototype-aligned pricing */
 .pricingHero {
-  max-width: 1360px;
-  padding: 110px 32px 72px;
-  text-align: left;
+  max-width: 1000px;
+  padding: 70px 24px 60px;
+  text-align: center;
 }
 
 .pricingHero h1 {
   max-width: 1040px;
-  margin: 0;
+  margin: 0 auto;
   color: var(--noumi-dark);
   font-family: var(--ff-display);
-  font-size: clamp(60px, 8vw, 112px);
+  font-size: clamp(32px, 3.4vw, 48px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.92;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .pricingHero p {
@@ -489,7 +489,7 @@
 }
 
 .planGrid {
-  max-width: 1360px;
+  max-width: 1200px;
   gap: 16px;
   padding: 0 32px 120px;
 }

@@ -1,0 +1,382 @@
+/* Values verified against the supplied Webflow export, not a new theme. */
+:root {
+  --cream: #f5f3ee;
+  --cream-mid: #fcfaf3;
+  --ink: #3b3f43;
+  --ink-soft: #3b3f43;
+  --ink-muted: #6e86a4;
+  --accent: #4d72c2;
+  --ff-display: 'Noto Serif SC', Georgia, serif;
+  --ff-body: 'Noto Sans SC', system-ui, sans-serif;
+}
+body {
+  font-family: var(--ff-body);
+}
+
+.redesign-home,
+.redesign-use-cases,
+.site-header--home,
+.site-header--home.is-scrolled {
+  background: var(--noumi-paper);
+}
+
+.site-header--home .nav-row {
+  padding-top: 44px;
+  padding-bottom: 20px;
+}
+.site-header--home .site-nav {
+  gap: 0;
+}
+.site-header--home .site-nav a {
+  padding-inline: 24px;
+}
+.site-header--home .site-nav .button--nav,
+.site-header--home .site-nav__about {
+  box-shadow: none;
+  padding-inline: 15px;
+}
+.site-header--home .site-nav__about {
+  width: 148px;
+  justify-content: space-between;
+}
+.site-header--home .site-nav .button--nav {
+  width: 173px;
+  margin-left: 15px;
+  justify-content: space-between;
+}
+.official-beta-banner__inner {
+  max-width: 560px;
+  padding-inline: 0 34px;
+}
+
+.redesign-hero__media,
+.redesign-hero__video {
+  animation: none;
+}
+.redesign-hero h1 {
+  letter-spacing: 0;
+}
+.redesign-hero__title-main {
+  font-size: 48px;
+  line-height: 1.15;
+}
+.redesign-hero__title-small {
+  letter-spacing: -1px;
+  font-size: 26px;
+}
+.redesign-hero__content {
+  animation: prototype-grow-in 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.25s both;
+}
+@keyframes prototype-grow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.redesign-kicker__mark {
+  width: 9px;
+  height: 13px;
+  flex-basis: 9px;
+  background: url('/assets/redesign/subtitle-left.svg') center / contain no-repeat;
+}
+.redesign-kicker__mark::before {
+  content: none;
+}
+.redesign-kicker__mark--right {
+  transform: none;
+  background-image: url('/assets/redesign/subtitle-right.svg');
+}
+.redesign-section-heading h2,
+.redesign-use-cases h2 {
+  font-size: 30px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.redesign-section-heading .redesign-kicker,
+.redesign-use-cases__header .redesign-kicker {
+  gap: 10px;
+  letter-spacing: 1.28px;
+}
+.redesign-feature-stack {
+  display: flow-root;
+}
+.redesign-feature {
+  top: 70px;
+  z-index: 1;
+}
+.redesign-feature:nth-child(2) {
+  top: 80px;
+}
+.redesign-feature:nth-child(3) {
+  top: 90px;
+}
+.redesign-feature__copy {
+  padding: 0;
+}
+.redesign-feature h3,
+.redesign-feature.is-active h3 {
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--feature-title-color, rgba(0, 0, 0, 0.3));
+  transition: none;
+}
+.redesign-feature p {
+  line-height: 1.4;
+}
+.redesign-feature__arrow,
+.redesign-feature.is-active .redesign-feature__arrow {
+  transform: rotate(calc(var(--feature-active, 0) * 90deg));
+  background: url('/assets/redesign/feature-arrow.svg') center / contain no-repeat;
+  transition: none;
+}
+.redesign-feature__arrow::before,
+.redesign-feature.is-active .redesign-feature__arrow::before {
+  inset: 0;
+  width: 8px;
+  height: 12px;
+  background: url('/assets/redesign/feature-arrow-active.svg') center / contain no-repeat;
+  box-shadow: none;
+  opacity: var(--feature-active, 0);
+  transition: none;
+}
+.redesign-feature__visual img {
+  border-radius: 5px;
+}
+.redesign-features {
+  padding-bottom: 100px;
+}
+.redesign-use-cases {
+  padding-block: 0 25px;
+}
+.redesign-use-cases__header {
+  gap: 20px;
+  padding-block: 20px;
+  margin-bottom: 20px;
+}
+.redesign-use-cases > .redesign-shell:last-child {
+  padding: 25px;
+}
+.noumi-usecases-frame {
+  display: block;
+  height: 800px;
+  border: 0;
+  background: var(--noumi-lite);
+}
+
+.redesign-final-cta {
+  padding: 50px 20px;
+  background: url('/assets/redesign/cta-swirl.jpg') center / cover;
+}
+.redesign-final-cta__card {
+  min-height: 0;
+  max-width: 1220px;
+  padding: 80px 50px;
+  border: 0.5px solid #cecece;
+  background: #ffffff80;
+  backdrop-filter: blur(17px);
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  text-align: center;
+  color: var(--noumi-dark);
+}
+.redesign-final-cta h2 {
+  font-size: 32px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  margin-bottom: 20px;
+}
+.redesign-final-cta p {
+  font-size: 18px;
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .redesign-feature {
+    position: sticky;
+    grid-template-columns: 0.35fr 0.65fr;
+    margin: 25px;
+    padding: 25px;
+  }
+  .redesign-feature:nth-child(1) {
+    top: 70px !important;
+  }
+  .redesign-feature:nth-child(2) {
+    top: 80px !important;
+  }
+  .redesign-feature:nth-child(3) {
+    top: 90px !important;
+  }
+  .redesign-feature h3 {
+    font-size: 14px;
+  }
+  .redesign-feature p {
+    max-width: 95%;
+    font-size: 14px;
+  }
+}
+@media (max-width: 900px) {
+  .site-header--home .nav-row {
+    padding-block: 12px;
+  }
+}
+@media (max-width: 767px) {
+  .redesign-feature {
+    position: relative;
+    top: auto;
+    margin: 20px 0;
+    padding: 24px;
+    grid-template-columns: 1fr;
+  }
+  .redesign-feature p {
+    max-width: 100%;
+  }
+  .redesign-feature h3 {
+    font-size: 16px;
+  }
+  .redesign-use-cases > .redesign-shell:last-child {
+    padding: 0;
+  }
+  .redesign-final-cta__card {
+    width: 100%;
+    padding: 50px 20px;
+  }
+  .redesign-section-heading h2,
+  .redesign-use-cases h2 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 600px) {
+  .site-header--home {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+  }
+  .page-body {
+    padding-top: 110px;
+  }
+  .redesign-hero h1 {
+    width: 100%;
+  }
+  .redesign-hero h1 br {
+    display: initial;
+  }
+  .redesign-hero__title-main {
+    overflow-wrap: normal;
+  }
+  .redesign-hero__title-main {
+    font-size: clamp(34px, 9vw, 42px);
+  }
+  .redesign-hero__title-small {
+    font-size: 23px;
+  }
+}
+
+.site-footer {
+  padding: 0;
+  background: var(--noumi-dark);
+}
+.site-footer .footer-grid {
+  width: min(calc(100% - 40px), 1200px);
+  grid-template-columns: 1.1fr 0.7fr 0.7fr 0.7fr;
+  gap: 0;
+  border-inline: 1px solid #ffffff1a;
+}
+.site-footer .footer-grid > div {
+  padding: 50px 20px 30px;
+}
+.site-footer .footer-grid > div + div {
+  border-left: 1px solid #ffffff1a;
+}
+.footer-prototype-logo {
+  width: 60%;
+  height: auto;
+}
+.site-footer .footer-note {
+  margin-top: 70px;
+  color: #fff9;
+  font-size: 16px;
+}
+.site-footer .footer-heading {
+  margin-bottom: 24px;
+  color: var(--noumi-paper);
+  font: 500 25px / 1.4 var(--ff-display);
+  letter-spacing: 0;
+}
+
+/* The prototype header belongs to normal document flow. A fixed header
+   obscures the feature cards' 70/80/90px sticky positions. */
+.site-header,
+.site-header--home {
+  position: relative;
+  top: auto;
+  box-shadow: none;
+}
+.redesign-home,
+.page-body {
+  padding-top: 0;
+}
+.page-hero h1 {
+  font-size: clamp(32px, 3.4vw, 48px);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+.sec-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: var(--noumi-blue);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.28px;
+}
+.sec-label::before,
+.sec-label::after {
+  content: '';
+  width: 9px;
+  height: 13px;
+  flex: 0 0 9px;
+  background: url('/assets/redesign/subtitle-left.svg') center / contain no-repeat;
+}
+.sec-label::after {
+  background-image: url('/assets/redesign/subtitle-right.svg');
+}
+.site-footer .footer-grid a:not(.brand) {
+  display: block;
+  margin-block: 14px;
+  color: #fff9;
+  font-size: 16px;
+}
+.site-footer .footer-grid a:hover {
+  color: var(--noumi-lite);
+}
+.site-footer .footer-bottom {
+  justify-content: center;
+  padding-block: 25px;
+  color: #fff9;
+}
+@media (max-width: 767px) {
+  .site-footer .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .site-footer .footer-grid > div {
+    padding: 30px 16px;
+    border-bottom: 1px solid #ffffff1a;
+  }
+  .site-footer .footer-grid > div:nth-child(3) {
+    border-left: 0;
+  }
+  .site-footer .footer-note {
+    margin-top: 24px;
+  }
+  .site-footer .footer-heading {
+    font-size: 20px;
+  }
+}

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { getOfficialFeatureNavItems, getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
+import { getOfficialUseCaseNavItems } from '@/lib/site/official-cms'
 
 import { OfficialHomeFooter } from './OfficialHomeChrome'
 import { OfficialPersistentHeader } from './OfficialPersistentHeader'
@@ -12,16 +12,13 @@ import { OfficialPersistentHeader } from './OfficialPersistentHeader'
  */
 export async function OfficialPersistentChrome(props: { children: ReactNode }) {
   const { children } = props
-  const [features, useCases] = await Promise.all([
-    getOfficialFeatureNavItems(),
-    getOfficialUseCaseNavItems(),
-  ])
+  const useCases = await getOfficialUseCaseNavItems()
 
   return (
     <div className="page-shell">
       <OfficialPersistentHeader useCases={useCases} />
       {children}
-      <OfficialHomeFooter features={features} useCases={useCases} />
+      <OfficialHomeFooter />
     </div>
   )
 }

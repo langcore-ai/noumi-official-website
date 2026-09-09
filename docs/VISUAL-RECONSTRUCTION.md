@@ -43,6 +43,8 @@ The browser suite checks exact homepage colors and dimensions, sticky positions 
 
 ## Acceptance boundary
 
+Footer Contact follow-up: restored the original Email, YouTube, LinkedIn and X icons in the shared footer, with full-width rows, 15px spacing and separators. The prototype's misleading `instagram.png` and `behance.png` filenames contain email and YouTube artwork respectively; public assets have semantic names. Hover/focus uses the source's 300ms underline expansion and 5px icon translation, not an invented icon crossfade. A browser regression covers image loading, dimensions, separators, hover/focus and mobile overflow.
+
 About follow-up: the user explicitly requested a full content reconstruction after discovering the old copy. `/about` now renders the prototype's company story, ten-member grid and seven FAQs instead of the old CMS view. See [About reconstruction](ABOUT-RECONSTRUCTION.md); the earlier content-preservation boundary no longer applies to that page. CMS records themselves were not changed.
 
 Homepage animation follow-up: see [the source event mapping and verification](HOMEPAGE-MOTION.md). The LAN Worker preview now passes 13 browser tests, including the complete entrance and pointer-motion checks.

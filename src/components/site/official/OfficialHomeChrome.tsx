@@ -271,20 +271,38 @@ export function OfficialHomeFooter() {
         </div>
         <div>
           <h2 className="footer-heading">Contact</h2>
-          <a href="mailto:official@noumi.ai">Email</a>
-          <a href="https://www.youtube.com/@Noumi-AI" target="_blank" rel="noopener noreferrer">
-            YouTube
-          </a>
-          <a
-            href="https://www.linkedin.com/company/noumi-ai"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
-          <a href="https://x.com/Noumi_ai" target="_blank" rel="noopener noreferrer">
-            Twitter
-          </a>
+          <div className="footer-social-area">
+            {[
+              {
+                label: 'Email',
+                href: 'mailto:official@noumi.ai?subject=Inquiry%20from%20Noumi%20Website',
+                icon: 'email.png',
+              },
+              { label: 'YouTube', href: 'https://www.youtube.com/@Noumi-AI', icon: 'youtube.png' },
+              {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/noumi-ai',
+                icon: 'linkedin.svg',
+              },
+              { label: 'Twitter', href: 'https://x.com/Noumi_ai', icon: 'twitter.svg' },
+            ].map(({ label, href, icon }) => (
+              <a
+                className="footer-social-link"
+                href={href}
+                key={label}
+                target={href.startsWith('https:') ? '_blank' : undefined}
+                rel={href.startsWith('https:') ? 'noopener noreferrer' : undefined}
+              >
+                <span>{label}</span>
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  src={`/assets/redesign/footer-${icon}`}
+                />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
       <div className="container footer-bottom">

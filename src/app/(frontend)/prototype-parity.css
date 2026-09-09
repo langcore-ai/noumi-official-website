@@ -409,6 +409,52 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 .site-footer .footer-grid a:hover {
   color: var(--noumi-lite);
 }
+.footer-social-area {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
+}
+.site-footer .footer-grid a.footer-social-link {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ffffff1a;
+  background: none;
+}
+.site-footer .footer-grid a.footer-social-link:last-child {
+  border-bottom: 0;
+}
+.footer-social-link > span {
+  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
+  transition: background-size 300ms linear;
+}
+.footer-social-link > img {
+  display: block;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  padding-right: 5px;
+  transition: transform 300ms linear;
+}
+.site-footer .footer-grid a.footer-social-link:is(:hover, :focus-visible) {
+  color: #fff;
+}
+.footer-social-link:is(:hover, :focus-visible) > span {
+  background-size: 100% 1px;
+}
+.footer-social-link:is(:hover, :focus-visible) > img {
+  transform: translateX(5px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-social-link > span,
+  .footer-social-link > img {
+    transition: none;
+  }
+}
 .site-footer .footer-bottom {
   justify-content: center;
   padding-block: 25px;

@@ -1,5 +1,6 @@
 // @ts-ignore OpenNext 在构建后生成该入口，本地可能存在也可能不存在。
 import openNextWorker from './.open-next/worker.js'
+import { allowsHtmlSnapshot } from './src/lib/site/html-snapshot-policy'
 
 /** 快照刷新 Worker 环境变量。 */
 type SnapshotWorkerEnv = Cloudflare.Env & {
@@ -272,6 +273,7 @@ async function readOfficialHtmlSnapshot(
   }
 
   const html = await object.text()
+  if (!allowsHtmlSnapshot(html)) return null
 
   if (!(await isOfficialHtmlSnapshotAssetCompatible(request, env, html))) {
     return null
@@ -304,7 +306,10 @@ async function writeOfficialHtmlSnapshot(
     return
   }
 
-  await env.R2.put(createOfficialHtmlSnapshotKey(env, pathname), await response.text(), {
+  const html = await response.text()
+  if (!allowsHtmlSnapshot(html)) return
+
+  await env.R2.put(createOfficialHtmlSnapshotKey(env, pathname), html, {
     customMetadata: {
       generatedAt: new Date().toISOString(),
       pathname,

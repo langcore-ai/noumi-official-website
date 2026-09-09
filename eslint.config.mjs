@@ -35,6 +35,9 @@ const eslintConfig = [
     ignores: [
       '.next/',
       '.open-next/',
+      '.wrangler/',
+      '.wrangler.backup-*/',
+      '.local/',
       'prototype-webflow/',
       'src/payload-types.ts',
       'src/payload-generated-schema.ts',

@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { MotionConfig, MotionItem, MotionTarget, PageMotion } from '@/lib/site/prototype/types'
 import { HOME_MOTION, installPrototypeMotion } from '@/lib/site/prototype-motion'
 
@@ -12,9 +12,10 @@ const easing = (value?: string) =>
     outCubic: 'cubic-bezier(.215,.61,.355,1)',
   })[value || ''] || 'linear'
 
-export function PrototypeEffects({ motion }: { motion: PageMotion }): null {
+export function PrototypeEffects({ motion }: { motion: PageMotion }) {
+  const anchor = useRef<HTMLSpanElement>(null)
   useLayoutEffect(() => {
-    const root = document.querySelector<HTMLElement>('[data-prototype-source]')
+    const root = anchor.current?.closest<HTMLElement>('[data-prototype-source]')
     if (!root) return
     const reduced = matchMedia('(prefers-reduced-motion: reduce)')
     const cleanup: (() => void)[] = []
@@ -86,10 +87,11 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }): null {
       const records = active.get(el) || new Map<string, Animation>()
       active.set(el, records)
       for (const [property, value] of Object.entries(props)) {
+        const finalValue = property === 'height' && c.heightUnit === 'AUTO' ? 'auto' : value
         const from = getComputedStyle(el)[property as keyof CSSStyleDeclaration] as string
         records.get(property)?.cancel()
         if (initial || reduced.matches) {
-          Object.assign(el.style, { [property]: value })
+          Object.assign(el.style, { [property]: finalValue })
           continue
         }
         const animation = el.animate([{ [property]: from }, { [property]: value }], {
@@ -100,7 +102,7 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }): null {
         })
         records.set(property, animation)
         animation.onfinish = () => {
-          Object.assign(el.style, { [property]: value })
+          Object.assign(el.style, { [property]: finalValue })
           animation.cancel()
           records.delete(property)
         }
@@ -356,5 +358,5 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }): null {
       footer()
     }
   }, [motion])
-  return null
+  return <span hidden ref={anchor} />
 }

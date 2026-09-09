@@ -76,6 +76,9 @@ for (const [file, route] of Object.entries(routes)) {
   let counter = 0
   function clean(n) {
     if (!n.tagName) return
+    // Preserve the FAQ title's text/class styling while giving the page a semantic H1.
+    if (file === 'faq.html' && n.tagName === 'h2' && has(n, 'section-title'))
+      n.tagName = n.nodeName = 'h1'
     n.childNodes = (n.childNodes || []).filter((c) => !excluded(c))
     n.attrs = (n.attrs || []).filter((a) => !a.name.startsWith('on'))
     // Motion is progressively enhanced after hydration; HTML is visible without JS.

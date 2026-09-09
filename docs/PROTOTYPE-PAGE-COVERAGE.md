@@ -38,7 +38,9 @@ All 23 `.html` URLs permanently redirect to their canonical routes. Existing CMS
 
 `PrototypePage` uses server-rendered markup within the existing shared navigation/footer. The scoped source CSS preserves typography, media queries, grids, dimensions and colors without affecting other routes or Payload admin. `PrototypeEffects` replays the relevant source interaction action lists, resolving the source CSS color variables rather than stale RGB values stored beside them. It supports scroll entrances, card/button hover and keyboard focus, source-timed FAQ expansion/collapse, keyboard-accessible tabs, testimonial navigation/autoplay and pointer-follow images. Reduced motion reveals content without entrance delays. Timers, observers and animations are cleaned up on navigation.
 
-The legal prototype deliberately has tabs instead of a separate H1. Browser coverage checks the selected legal tab instead of inventing a heading that is absent from the reference.
+Animation bindings are anchored to the component's own DOM node, not a document-wide first match that might belong to a transient streamed copy. Expanded FAQ heights return to `auto` after animation to survive viewport/font changes. A no-script-only fallback exposes the streamed page between the header and footer and removes the loading placeholder; browser verification checks the resulting geometry.
+
+The legal prototype deliberately has tabs instead of a separate H1. Browser coverage checks the selected legal tab instead of inventing a heading that is absent from the reference. The FAQ page's existing title is promoted from H2 to H1 for semantics; its text and source class styling are unchanged.
 
 ## Explicit source limitations and adaptations
 
@@ -51,8 +53,12 @@ The legal prototype deliberately has tabs instead of a separate H1. Browser cove
 
 ## Verification
 
+Final local verification (2026-09-09): production OpenNext build and LAN preview startup succeeded; all 24 Playwright browser tests and 34 integration tests passed. `tsc --noEmit`, `eslint . --quiet` and `git diff --check` passed. Payload import-map generation reported no new imports. All 26 routes in the local snapshot refresh manifest were refreshed after the build; no remote deployment or CMS record edits were performed.
+
 The child-page browser suite checks every compiled route at 390, 768 and 1440px, exact heading text, runtime errors, overflow, local asset responses, FAQ and tabs, carousel navigation and HTML aliases. Existing homepage/About/footer regression tests remain in the suite.
 
 Local original-versus-reconstruction measurements for Features, Use Cases, Specialist Level Expertise and Pricing matched headline font family, size, line height, color and width; headline Y differed by approximately 0.2px due to the shared header. Full-page screenshots were also reviewed; this is not a blanket claim of pixel equality for empty CMS bindings, third-party players or the protected-page form.
 
-When updating the LAN Worker preview, rebuild and refresh its local HTML snapshots through the existing authorized refresh API. Rebuilding alone can leave a previous HTML snapshot visible. Do not refresh or overwrite remote CMS content as part of this local visual workflow.
+When updating the LAN Worker preview, rebuild and refresh its local HTML snapshots through the existing authorized refresh API. The refresh manifest now includes the prototype routes as well as the existing CMS routes. Rebuilding alone can leave a previous HTML snapshot visible. Do not refresh or overwrite remote CMS content as part of this local visual workflow.
+
+HTML snapshot reads and writes reject pages with a `robots` or `googlebot` noindex directive, including streamed error pages returned with HTTP 200. This prevents replaying an old error/template snapshot with obsolete JavaScript chunks. Unit coverage checks directive case, attribute ordering and unrelated prose containing the word noindex.

@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
+import prototypeRoutes from '@/lib/site/prototype/routes.json'
 import {
   acquireOfficialSnapshotRefreshLock,
   clearOfficialSnapshotDirty,
@@ -2635,6 +2636,7 @@ export async function refreshOfficialSiteSnapshots(
   const previousManifest = await readOfficialSnapshotManifest()
   const snapshotEntries: Array<{ data: unknown; key: string }> = []
   const routes = [
+    ...Object.values(prototypeRoutes),
     '/',
     '/about',
     '/blog',

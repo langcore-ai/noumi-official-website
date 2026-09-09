@@ -15,7 +15,7 @@ for (const width of [390, 768, 1440]) {
     for (const [route, source] of Object.entries(pages)) {
       if (route === '/' || route === '/about') continue
       await page.goto(route)
-      const main = page.locator(`[data-prototype-source="${source.file}"]`)
+      const main = page.locator(`[data-prototype-source="${source.file}"]:visible`)
       await expect(main).toHaveCount(1)
       await expect(main.locator('h1,h2,h3').filter({ hasText: /\S/ })).toHaveText(source.headings)
       await expect(main).toBeVisible()
@@ -32,11 +32,19 @@ test('prototype FAQ, price tabs, feature hover and testimonial navigation work',
   page,
 }) => {
   await page.goto('/features')
-  const card = page.locator('.prototype-page .features-card').first()
+  // Next may briefly retain a hidden streamed copy; inspect the visitor-visible page.
+  const main = page.locator('.prototype-page:visible')
+  await expect(main).toHaveCSS('background-color', 'rgb(245, 243, 238)')
+  await expect(main.locator('.faq-area')).toHaveCSS('width', '1000px')
+  await expect(main.locator('.features-icon-area').first()).toHaveCSS(
+    'background-color',
+    'rgb(77, 114, 194)',
+  )
+  const card = main.locator('.features-card').first()
   await card.scrollIntoViewIfNeeded()
   await card.hover()
   await expect(card.locator('.process-link-wrap')).toHaveCSS('opacity', '1')
-  const faq = page.locator('.prototype-page details').first()
+  const faq = main.locator('details').first()
   await faq.locator('summary').click()
   await expect(faq).toHaveAttribute('open', '')
   await expect(faq.locator('.faq-answer')).toBeVisible()
@@ -52,7 +60,7 @@ test('prototype FAQ, price tabs, feature hover and testimonial navigation work',
   await page.getByRole('tab', { name: 'Yearly', exact: true }).press('Home')
   await expect(page.locator('.w-tab-pane:visible')).toHaveAttribute('data-w-tab', 'One Month')
   await page.goto('/use-cases/solutions-engineer')
-  const slider = page.locator('.prototype-page .w-slider')
+  const slider = main.locator('.w-slider')
   await slider.getByRole('button', { name: 'Next testimonial' }).click()
   await expect(slider.locator('.w-slide').nth(1)).toHaveAttribute('aria-hidden', 'false')
 })
@@ -61,12 +69,33 @@ test('HTML aliases map to canonical pages; unknown routes use the native not-fou
   page,
 }) => {
   await page.goto('/specialist-level-expertise.html')
+  test.setTimeout(120000)
+  const routes = JSON.parse(readFileSync('src/lib/site/prototype/routes.json', 'utf8')) as Record<
+    string,
+    string
+  >
+  for (const [html, route] of Object.entries(routes)) {
+    await page.goto('/' + html)
+    expect(new URL(page.url()).pathname, html).toBe(route)
+  }
+  await page.goto('/specialist-level-expertise.html')
   await expect(page).toHaveURL(/\/features\/specialist-level-expertise$/)
   await expect(page.locator('h1')).toHaveText('Specialist Level Expertise')
   await page.goto('/this-route-does-not-exist')
   // The shared loading boundary streams before Next can set a 404 HTTP status.
-  await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(1)
-  await expect(page.locator('[data-prototype-source="404.html"]')).toBeVisible()
+  expect(await page.locator('meta[name="robots"][content*="noindex"]').count()).toBeGreaterThan(0)
+  await expect(page.locator('[data-prototype-source="404.html"]:visible')).toBeVisible()
+})
+
+test('prototype content and FAQ remain usable without JavaScript', async ({ browser }) => {
+  const page = await browser.newPage({ javaScriptEnabled: false })
+  await page.goto((process.env.VISUAL_BASE_URL || 'http://127.0.0.1:3017') + '/features')
+  await expect(page.locator('h1')).toBeVisible()
+  const faq = page.locator('details[data-prototype-faq]').first()
+  await faq.locator('summary').click()
+  await expect(faq).toHaveAttribute('open', '')
+  await expect(faq.locator('.faq-answer')).toBeVisible()
+  await page.close()
 })
 
 test('all local prototype assets exist', async ({ request }) => {

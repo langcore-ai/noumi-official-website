@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { featureActivation, featureScrollProgress } from '@/lib/site/feature-progress'
+import { installPrototypeMotion } from '@/lib/site/prototype-motion'
 
 /** Scroll-driven Webflow a-95 timeline; no pointer-triggered activation. */
 export function OfficialHomeEffects(): null {
+  useLayoutEffect(installPrototypeMotion, [])
+
   useEffect(() => {
     const area = document.querySelector<HTMLElement>('.redesign-feature-stack')
     if (!area) return

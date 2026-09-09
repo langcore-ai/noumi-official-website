@@ -15,7 +15,7 @@
 - Navigation returns to normal document flow, so it does not cover sticky feature titles. Mobile layout no longer doubles header spacing; title line breaks remain visible. About is available in the mobile menu.
 - Feature cards: original 35/65 columns, 25px margin/padding, sticky 70/80/90px, original SVG arrows; continuous 37–40 / 57–60 / 77–80 keyframe transitions, 50% end offset and smoothing from the final source event.
 - Gallery: original styles and complete source content hosted locally, language switch, attachments, real output links, carousel, keyboard access and image lightbox. Pending transitions cannot overwrite a newer selection. Optional language storage respects locale consent.
-- CTA: original blue/silver swirl, centered title/subtitle/button and translucent panel. Footer: original four-column organization, logo, colors and contact destinations.
+- CTA: original exported background image, centered title/subtitle/button and translucent panel. The source filename says blue/silver swirl but its actual pixels show the blurred workspace photo. Footer: original four-column organization, logo, colors and contact destinations.
 - Inner pages: remove oversized, tight-tracked headings and mismatched split headings; unify display/body fonts, surfaces and widths. Correct About light-on-light text and dark recruitment-section text.
 
 ## Reproducible checks
@@ -42,6 +42,8 @@ Set `CHROMIUM_PATH` when the local Chromium executable is not `/usr/bin/chromium
 The browser suite checks exact homepage colors and dimensions, sticky positions and activation, all 16 cases and local images, 11 public routes at 390/768/1440px, reduced motion, mobile menu navigation, language consent and stale transition cancellation. It does not submit forms, alter CMS records or deploy the site.
 
 ## Acceptance boundary
+
+Homepage animation follow-up: see [the source event mapping and verification](HOMEPAGE-MOTION.md). The LAN Worker preview now passes 13 browser tests, including the complete entrance and pointer-motion checks.
 
 Final local results: production build and TypeScript checks passed; integration tests passed (31/31); browser regression passed in both development and the production bundle (8/8 each). ESLint completed with no errors (existing warnings remain). Payload import-map generation required no changes. Production browser verification used local bindings, not the remote D1 database.
 

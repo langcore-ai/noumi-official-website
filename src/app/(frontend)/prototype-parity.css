@@ -31,7 +31,7 @@ body {
   padding-inline: 24px;
 }
 .site-header--home .site-nav .button--nav,
-.site-header--home .site-nav__about {
+.site-header--home .site-nav .site-nav__about {
   box-shadow: none;
   padding-inline: 15px;
 }
@@ -65,16 +65,61 @@ body {
   font-size: 26px;
 }
 .redesign-hero__content {
-  animation: prototype-grow-in 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.25s both;
+  animation: none;
 }
-@keyframes prototype-grow-in {
-  from {
-    opacity: 0;
-    transform: scale(0.75);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+
+/* IX2 a/a-2: preserve the static button bounds while exchanging arrow sides. */
+.prototype-button-content,
+.site-header--home .site-nav .button--nav > .prototype-button-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  overflow: hidden;
+}
+.prototype-button-content > * {
+  flex-shrink: 0;
+  transition: transform 300ms linear;
+}
+.prototype-button-arrow {
+  width: 9px;
+  height: 13px;
+}
+.prototype-button-arrow--incoming {
+  position: absolute;
+  left: -40px;
+}
+a:is(:hover, :focus-visible) .prototype-button-content > * {
+  transform: translateX(40px);
+}
+.site-header--home .site-nav__about::after,
+.site-header--home .site-nav .button--nav::after {
+  content: none;
+}
+.site-nav__about .prototype-button-arrow {
+  filter: invert(0.78);
+}
+/* The hero a-5 targets .home-button-text-wrap, absent from this prototype's
+   actual button. Do not add the unrelated vertical arrow swap here. */
+.redesign-hero .redesign-button__arrows img:first-child {
+  transform: none;
+}
+.redesign-hero .redesign-button__arrows img:last-child {
+  display: none;
+}
+.site-footer .footer-grid a:not(.brand) {
+  width: fit-content;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
+  transition:
+    color 300ms linear,
+    background-size 300ms linear;
+}
+.site-footer .footer-grid a:not(.brand):is(:hover, :focus-visible) {
+  background-size: 100% 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prototype-button-content > * {
+    transition: none;
   }
 }
 
@@ -131,9 +176,16 @@ body {
 }
 .redesign-feature__arrow,
 .redesign-feature.is-active .redesign-feature__arrow {
-  transform: rotate(calc(var(--feature-active, 0) * 90deg));
-  background: url('/assets/redesign/feature-arrow.svg') center / contain no-repeat;
+  transform: none;
+  rotate: calc(var(--feature-active, 0) * 90deg);
+  background: none;
   transition: none;
+}
+.redesign-feature__arrow-initial {
+  position: absolute;
+  inset: 0;
+  background: url('/assets/redesign/feature-arrow.svg') center / contain no-repeat;
+  opacity: calc(1 - var(--feature-active, 0));
 }
 .redesign-feature__arrow::before,
 .redesign-feature.is-active .redesign-feature__arrow::before {

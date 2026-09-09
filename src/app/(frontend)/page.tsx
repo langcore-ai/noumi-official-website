@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { OfficialHomeEffects } from '@/components/site/official/OfficialHomeEffects'
+import { PrototypeButtonContent } from '@/components/site/official/PrototypeButtonContent'
 import { OfficialUseCasesShowcase } from '@/components/site/official/OfficialUseCasesShowcase'
 import { StructuredData } from '@/components/site/StructuredData'
 import { HOME_JSON_LD } from '@/lib/site/json-ld'
@@ -86,7 +87,7 @@ export default function HomePage() {
         </section>
 
         <section className="redesign-features" id="features">
-          <div className="redesign-shell redesign-section-heading reveal">
+          <div className="redesign-shell redesign-section-heading">
             <p className="redesign-kicker redesign-kicker--dark">
               <span
                 aria-hidden="true"
@@ -113,7 +114,9 @@ export default function HomePage() {
                 <div className="redesign-feature__copy">
                   <div className="redesign-feature__title-wrap">
                     <h3>{feature.title}</h3>
-                    <span aria-hidden="true" className="redesign-feature__arrow" />
+                    <span aria-hidden="true" className="redesign-feature__arrow">
+                      <span className="redesign-feature__arrow-initial" />
+                    </span>
                   </div>
                   <p>{feature.description}</p>
                 </div>
@@ -151,20 +154,18 @@ export default function HomePage() {
               <h2>Get Started Today</h2>
               <p>Get to know me. I’ll get to know you.</p>
             </div>
-            <Link
-              className="redesign-button redesign-button--dark redesign-button--animated"
-              data-analytics-cta-id="home_band_try_free"
-              data-analytics-event="official_cta_clicked"
-              data-analytics-placement="cta_band"
-              data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
-              href={OFFICIAL_PRODUCT_AUTH_URL}
-            >
-              Join Waitlist
-              <span aria-hidden="true" className="redesign-button__arrows">
-                <img alt="" src="/assets/redesign/arrow.svg" />
-                <img alt="" src="/assets/redesign/arrow.svg" />
-              </span>
-            </Link>
+            <div className="redesign-final-cta__button">
+              <Link
+                className="redesign-button redesign-button--dark redesign-button--animated"
+                data-analytics-cta-id="home_band_try_free"
+                data-analytics-event="official_cta_clicked"
+                data-analytics-placement="cta_band"
+                data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+                href={OFFICIAL_PRODUCT_AUTH_URL}
+              >
+                <PrototypeButtonContent>Join Waitlist</PrototypeButtonContent>
+              </Link>
+            </div>
           </div>
         </section>
       </main>

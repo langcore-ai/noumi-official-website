@@ -8,6 +8,7 @@ import {
 } from '@/lib/site/official-site'
 
 import { OfficialBetaBanner } from './OfficialBetaBanner'
+import { PrototypeButtonContent } from './PrototypeButtonContent'
 
 /** 官网主导航固定链接。 */
 const PRIMARY_NAV_ITEMS = [
@@ -73,7 +74,7 @@ export function OfficialHomeHeader(props: {
             </Link>
           ))}
           <Link className="site-nav__about" href="/about">
-            About Us
+            <PrototypeButtonContent>About Us</PrototypeButtonContent>
           </Link>
           <Link
             className="button button--dark button--nav"
@@ -83,8 +84,7 @@ export function OfficialHomeHeader(props: {
             data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
             href={OFFICIAL_PRODUCT_AUTH_URL}
           >
-            Join Waitlist
-            <span aria-hidden="true">↗</span>
+            <PrototypeButtonContent>Join Waitlist</PrototypeButtonContent>
           </Link>
         </nav>
 

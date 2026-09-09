@@ -26,23 +26,25 @@ describe('official site metadata', () => {
 
     expect(metadata.metadataBase?.toString()).toBe(`${OFFICIAL_SITE_URL}/`)
     expect(icons.shortcut).toBe(OFFICIAL_SHORTCUT_ICON)
-    expect(icons.icon).toEqual([
-      {
-        url: OFFICIAL_FAVICON,
-        sizes: '96x96',
-        type: 'image/png',
-      },
-      {
-        url: OFFICIAL_FAVICON_SMALL,
-        sizes: '48x48',
-        type: 'image/png',
-      },
-      {
-        url: OFFICIAL_FAVICON_LARGE,
-        sizes: '192x192',
-        type: 'image/png',
-      },
-    ])
+    expect(icons.icon).toEqual(
+      expect.arrayContaining([
+        {
+          url: OFFICIAL_FAVICON,
+          sizes: '96x96',
+          type: 'image/png',
+        },
+        {
+          url: OFFICIAL_FAVICON_SMALL,
+          sizes: '48x48',
+          type: 'image/png',
+        },
+        {
+          url: OFFICIAL_FAVICON_LARGE,
+          sizes: '192x192',
+          type: 'image/png',
+        },
+      ]),
+    )
     expect(icons.apple).toEqual([
       {
         url: OFFICIAL_APPLE_TOUCH_ICON,

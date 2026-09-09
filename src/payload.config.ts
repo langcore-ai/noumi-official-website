@@ -305,7 +305,7 @@ async function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
     ({ getPlatformProxy }) =>
       getPlatformProxy({
         environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
+        remoteBindings: isProduction && process.env.OPEN_NEXT_LOCAL_BINDINGS !== 'true',
       } satisfies GetPlatformProxyOptions),
   )
   globalScope[cloudflareContextSymbol] = proxyPromise
@@ -332,7 +332,8 @@ async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
     } as CloudflareContext
   }
 
-  if (isCLI || !isProduction) {
+  // Explicit local production verification must not open a remote D1 session.
+  if (isCLI || !isProduction || process.env.OPEN_NEXT_LOCAL_BINDINGS === 'true') {
     return getCloudflareContextFromWrangler()
   }
 

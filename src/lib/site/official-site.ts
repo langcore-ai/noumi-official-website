@@ -104,7 +104,11 @@ export function createOfficialMetadata(options: {
     title: options.title,
     description: options.description,
     icons: {
+      shortcut: OFFICIAL_SHORTCUT_ICON,
       icon: [
+        { url: OFFICIAL_FAVICON, sizes: '96x96', type: 'image/png' },
+        { url: OFFICIAL_FAVICON_SMALL, sizes: '48x48', type: 'image/png' },
+        { url: OFFICIAL_FAVICON_LARGE, sizes: '192x192', type: 'image/png' },
         {
           url: OFFICIAL_FAVICON_LIGHT,
           sizes: 'any',

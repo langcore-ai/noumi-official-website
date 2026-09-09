@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 import { OfficialRawHtml, prepareOfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
+
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn() }) }))
 
 describe('OfficialRawHtml', () => {
   it('preserves JSON-LD scripts from full HTML while stripping them from body markup', () => {

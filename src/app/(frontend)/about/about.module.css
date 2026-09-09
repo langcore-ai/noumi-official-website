@@ -1,771 +1,389 @@
-/* About 页面专属样式。 */
-.aboutPage {
-  overflow-x: clip;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: var(--ff-body);
+.page {
+  color: #3b3f43;
+  background: #f5f3ee;
 }
-
-.belief {
-  padding: 160px 48px 128px;
-  background: var(--ink);
-  text-align: center;
-}
-
-.beliefLabel {
-  color: var(--accent-soft);
-}
-
-.belief h1 {
-  max-width: 900px;
-  margin: 0 auto 24px;
-  color: var(--cream);
+.page h1,
+.page h2,
+.page h3 {
   font-family: var(--ff-display);
-  font-size: clamp(26px, 3.5vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.14;
+  font-weight: 500;
+  letter-spacing: 0;
+  margin: 0;
 }
-
-.belief h1 em {
-  color: var(--accent-soft);
-  font-style: italic;
+.page p {
+  margin: 0;
 }
-
-.belief p {
-  color: rgba(245, 240, 232, 0.48);
-  font-size: 18px;
-  font-weight: 300;
-}
-
-.origin,
-.joinSection {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 96px 48px 80px;
-}
-
-.origin h2,
-.joinSection h2 {
-  margin-bottom: 40px;
-  color: var(--ink);
-  font-family: var(--ff-display);
-  font-size: clamp(26px, 3vw, 42px);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-}
-
-.joinSection h2 em {
-  color: var(--accent);
-  font-style: italic;
-}
-
-.origin p,
-.joinSection p {
-  margin-bottom: 22px;
-  color: var(--ink-soft);
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.88;
-}
-
-.origin p:last-child,
-.joinSection p:last-child {
-  margin-bottom: 0;
-}
-
-.origin a,
-.joinSection a,
-.faqAnswerInner a {
-  color: var(--accent);
-}
-
-.divider {
-  max-width: 720px;
-  margin: 0 auto;
-  border: none;
-  border-top: 1px solid var(--border);
-}
-
-.teamSection {
-  overflow: hidden;
-  padding: 100px 0 0;
-  background: var(--cream);
-}
-
-.teamHeader {
-  margin-bottom: 52px;
-  padding: 0 48px;
-  text-align: center;
-}
-
-.teamHeader h2 {
-  margin-bottom: 14px;
-  color: var(--ink);
-  font-family: var(--ff-display);
-  font-size: clamp(32px, 4vw, 56px);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-}
-
-.teamHeader h2 em {
-  color: var(--accent);
-  font-style: italic;
-}
-
-.teamHeader p {
-  max-width: 500px;
-  margin: 0 auto;
-  color: var(--ink-muted);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.65;
-}
-
-.carouselStage {
-  position: relative;
+.page :global(.redesign-kicker) {
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 32px 0 48px;
+  gap: 10px;
+  margin-block: 25px;
+  color: #4d72c2;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  line-height: 19.6px;
 }
-
-.carouselTrack {
-  position: relative;
-  width: 100%;
-  height: 420px;
-  cursor: grab;
-  perspective: 1400px;
-}
-
-.carouselTrackDragging {
-  cursor: grabbing;
-}
-
-.slide {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  transition: all 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  user-select: none;
-}
-
-.card {
+.hero {
+  max-width: 1200px;
+  margin: auto;
+  padding: 39px 20px 0;
   display: flex;
-  min-height: 340px;
   flex-direction: column;
   align-items: center;
-  padding: 36px 28px 32px;
-  border: 1px solid rgba(28, 27, 46, 0.07);
-  border-radius: 20px;
-  background: #f3efe6;
+  gap: 20px;
   text-align: center;
-  transition:
-    border-color 0.4s ease,
-    box-shadow 0.4s ease;
 }
-
-.slide[data-pos='0'] {
-  z-index: 10;
-  opacity: 1;
-  transform: translateX(-50%) translateY(-50%) translateZ(0) rotateY(0deg) scale(1);
-}
-
-.slide[data-pos='0'] .card {
-  border-color: rgba(28, 27, 46, 0.09);
-  box-shadow:
-    0 2px 4px rgba(80, 60, 20, 0.06),
-    0 8px 20px rgba(80, 60, 20, 0.1),
-    0 24px 48px rgba(80, 60, 20, 0.12);
-}
-
-.slide[data-pos='1'] {
-  z-index: 8;
-  cursor: pointer;
-  opacity: 0.85;
-  transform: translateX(calc(-50% + 280px)) translateY(-50%) translateZ(-80px) rotateY(-18deg)
-    scale(0.88);
-}
-
-.slide[data-pos='-1'] {
-  z-index: 8;
-  cursor: pointer;
-  opacity: 0.85;
-  transform: translateX(calc(-50% - 280px)) translateY(-50%) translateZ(-80px) rotateY(18deg)
-    scale(0.88);
-}
-
-.slide[data-pos='1'] .card,
-.slide[data-pos='-1'] .card {
-  box-shadow:
-    0 2px 4px rgba(80, 60, 20, 0.04),
-    0 8px 20px rgba(80, 60, 20, 0.08),
-    0 16px 36px rgba(80, 60, 20, 0.09);
-}
-
-.slide[data-pos='2'] {
-  z-index: 6;
-  cursor: pointer;
-  opacity: 0.55;
-  transform: translateX(calc(-50% + 490px)) translateY(-50%) translateZ(-180px) rotateY(-28deg)
-    scale(0.72);
-}
-
-.slide[data-pos='-2'] {
-  z-index: 6;
-  cursor: pointer;
-  opacity: 0.55;
-  transform: translateX(calc(-50% - 490px)) translateY(-50%) translateZ(-180px) rotateY(28deg)
-    scale(0.72);
-}
-
-.slide[data-pos='2'] .card,
-.slide[data-pos='-2'] .card {
-  box-shadow:
-    0 4px 12px rgba(80, 60, 20, 0.06),
-    0 10px 24px rgba(80, 60, 20, 0.07);
-}
-
-.slide[data-pos='3'] {
-  z-index: 5;
-  cursor: pointer;
-  opacity: 0.28;
-  transform: translateX(calc(-50% + 640px)) translateY(-50%) translateZ(-260px) rotateY(-33deg)
-    scale(0.56);
-}
-
-.slide[data-pos='-3'] {
-  z-index: 5;
-  cursor: pointer;
-  opacity: 0.28;
-  transform: translateX(calc(-50% - 640px)) translateY(-50%) translateZ(-260px) rotateY(33deg)
-    scale(0.56);
-}
-
-.slide[data-pos='4'],
-.slide[data-pos='5'],
-.slide[data-pos='6'],
-.slide[data-pos='7'],
-.slide[data-pos='-4'],
-.slide[data-pos='-5'],
-.slide[data-pos='-6'],
-.slide[data-pos='-7'] {
-  z-index: 3;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(calc(-50% + 760px)) translateY(-50%) translateZ(-320px) rotateY(-36deg)
-    scale(0.48);
-}
-
-.avatarRing {
-  width: 96px;
-  height: 96px;
-  flex-shrink: 0;
-  margin-bottom: 20px;
-  overflow: hidden;
-  border: 3px solid rgba(144, 144, 245, 0.5);
-  border-radius: 50%;
-  background: #e8e2d8;
-  box-shadow: 0 2px 8px rgba(80, 60, 20, 0.12);
-}
-
-.avatarRing img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  -webkit-user-drag: none;
-}
-
-.avatarFallback {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
-  font-family: var(--ff-display);
+.hero h1 {
   font-size: 38px;
-  font-weight: 700;
-  letter-spacing: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+}
+.hero em {
+  color: #4d72c2;
+}
+.intro {
+  max-width: 1200px;
+  margin: 25px auto 0;
+  padding: 63px 0 18px 18px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 25px;
+}
+.intro p + p {
+  margin-top: 25px;
+}
+.team {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-top: 119px;
+}
+.teamHeading {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.teamGrid {
+  max-width: 1164px;
+  margin: 18px auto 0;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 30px;
+}
+.member {
+  min-width: 0;
+  padding: 45px;
+  border: 1px solid #d2d5dc;
+  border-radius: 5px;
+  background: #fcfaf3;
+}
+.member > a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.portrait {
+  position: relative;
+  overflow: hidden;
+}
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.overlay {
+  position: absolute;
+  inset: auto 0 0;
+  height: 0;
+  background: #fcfaf3;
+  pointer-events: none;
+}
+.memberCaption {
+  text-align: center;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.memberCaption h3 {
+  font-size: 18px;
+  line-height: 1.4;
+  text-transform: capitalize;
+}
+.memberCaption p {
+  color: #3b3f43;
+  font-size: 14px;
   line-height: 1;
 }
-
-.cardName {
-  margin-bottom: 12px;
-  color: var(--ink);
-  font-family: var(--ff-display);
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+.recruitment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 18px;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 5px;
+  background: #fcfaf3;
 }
-
-.cardBody {
-  width: 100%;
+.recruitment h2 {
+  font-size: 30px;
+  line-height: 1.4;
 }
-
-.cardRole {
+.recruitmentCopy {
+  max-width: 500px;
+  margin-top: 25px;
+  font-size: 12px;
+  line-height: 25px;
+}
+.teamPhoto {
   display: block;
-  margin-bottom: 14px;
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
 }
-
-.cardBio {
-  max-width: 240px;
-  margin: 0 auto;
-  color: var(--ink-soft);
-  font-size: 13.5px;
-  font-weight: 300;
-  line-height: 1.75;
+.email {
+  margin-top: 30px;
 }
-
-.arrowBtn {
-  position: absolute;
-  z-index: 20;
-  top: 50%;
-  display: flex;
-  width: 48px;
-  height: 48px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border-med);
-  border-radius: 50%;
-  background: rgba(237, 232, 220, 0.82);
-  backdrop-filter: blur(8px);
-  color: var(--ink-soft);
-  cursor: pointer;
+.email h3 {
   font-size: 20px;
-  transform: translateY(calc(-50% - 14px));
-  transition: all 0.2s;
+  margin-bottom: 10px;
 }
-
-.arrowBtn:hover {
-  border-color: rgba(28, 27, 46, 0.28);
-  background: #fff;
-  box-shadow: 0 4px 16px rgba(28, 27, 46, 0.1);
-  color: var(--ink);
+.email a {
+  color: #4d72c2;
+  font-size: 20px;
 }
-
-.arrowPrev {
-  left: clamp(16px, 3vw, 48px);
-}
-
-.arrowNext {
-  right: clamp(16px, 3vw, 48px);
-}
-
-.carouselDots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 0 60px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(28, 27, 46, 0.18);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.dotActive {
-  width: 24px;
-  border-radius: 4px;
-  background: var(--ink);
-}
-
-.joinCta {
-  margin-top: 44px;
-}
-
-.joinMailto {
-  display: inline-flex;
-  overflow: hidden;
-  align-items: stretch;
-  margin-bottom: 14px;
-  border-radius: 10px;
-  box-shadow:
-    0 1px 4px rgba(28, 27, 46, 0.1),
-    0 4px 14px rgba(28, 27, 46, 0.07);
-  text-decoration: none;
-  transition:
-    box-shadow 0.25s,
-    transform 0.2s;
-}
-
-.joinMailto:hover {
-  box-shadow: 0 6px 24px rgba(28, 27, 46, 0.16);
-  transform: translateY(-2px);
-}
-
-.joinMailtoLabel,
-.joinMailtoAddr {
-  display: flex;
-  align-items: center;
-  padding: 14px 24px;
-  font-size: 14.5px;
-}
-
-.joinMailtoLabel {
-  background: var(--ink);
-  color: var(--cream);
-  font-weight: 500;
-}
-
-.joinMailtoAddr {
-  gap: 8px;
-  background: var(--cream-mid);
-  color: var(--accent);
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-
-.joinMailto:hover .joinMailtoAddr {
-  background: var(--cream-dark);
-  color: var(--accent);
-}
-
 .faqSection {
-  padding: 120px 48px;
-  background: var(--cream);
+  max-width: 1200px;
+  margin: 25px auto 0;
+  padding: 65px 20px 18px;
 }
-
-.faqInner {
-  max-width: 780px;
-  margin: 0 auto;
-}
-
-.faqHeader {
-  margin-bottom: 72px;
-  text-align: center;
-}
-
-.faqHeader h2 {
-  margin-bottom: 14px;
-  color: var(--ink);
-  font-family: var(--ff-display);
-  font-size: clamp(30px, 3.8vw, 50px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
-
-.faqHeader p {
-  color: var(--ink-muted);
-  font-size: 16px;
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.faqList {
+.faqHeading {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
 }
-
-.faqItem {
-  border-bottom: 1px solid var(--border);
+.faqHeading h2 {
+  font-size: 30px;
+  line-height: 1.4;
 }
-
-.faqItem:first-child {
-  border-top: 1px solid var(--border);
-}
-
-.faqQuestion {
+.faqList {
+  max-width: 1000px;
+  margin: 50px auto 0;
   display: flex;
-  width: 100%;
+  flex-direction: column;
+  gap: 20px;
+}
+.faqItem {
+  border: 1px solid #6e86a429;
+  border-radius: 5px;
+  background: #fcfaf3;
+  overflow: hidden;
+  transition: background 300ms linear;
+}
+.faqItem[open] {
+  background: #eaebfe;
+}
+.faqItem summary {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 26px 4px;
-  border: none;
-  background: none;
-  color: var(--ink);
+  gap: 20px;
+  padding: 30px;
   cursor: pointer;
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 1.45;
-  text-align: left;
-  transition: color 0.2s;
+  font: 500 16px/1.4 var(--ff-body);
+  list-style: none;
+  transition: color 300ms linear;
 }
-
-.faqQuestion:hover {
-  color: var(--accent);
+.faqItem summary::-webkit-details-marker {
+  display: none;
 }
-
-.faqQuestion:hover .faqIcon {
-  border-color: rgba(75, 75, 232, 0.35);
-  color: var(--accent);
+.faqItem summary:focus-visible {
+  outline: 2px solid #4d72c2;
+  outline-offset: -4px;
 }
-
+.faqItem[open] summary {
+  color: #4d72c2;
+}
 .faqIcon {
-  display: flex;
-  width: 28px;
-  height: 28px;
+  position: relative;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--border-med);
-  border-radius: 50%;
-  color: var(--ink-muted);
-  font-size: 16px;
-  transition:
-    background 0.2s,
-    border-color 0.2s,
-    color 0.2s,
-    transform 0.35s ease;
 }
-
-.faqItemOpen .faqIcon {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--cream);
-  transform: rotate(45deg);
-}
-
-.faqAnswer {
-  max-height: 0;
-  overflow: hidden;
-  padding: 0 4px;
-  transition:
-    max-height 0.4s ease,
-    padding 0.35s ease;
-}
-
-.faqItemOpen .faqAnswer {
-  max-height: 420px;
-}
-
-.faqAnswerInner {
-  padding-bottom: 24px;
-}
-
-.faqAnswerInner p {
-  color: var(--ink-soft);
-  font-size: 15.5px;
-  font-weight: 300;
-  line-height: 1.82;
-}
-
-.faqAnswerInner p + p {
-  margin-top: 12px;
-}
-
-.faqAnswerInner a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.aboutCta h2 {
-  max-width: 760px;
-  font-size: clamp(36px, 4.6vw, 56px);
-}
-
-.aboutCta h2 em {
-  white-space: normal;
-}
-
-.screenReaderOnly {
+.faqIcon::before,
+.faqIcon::after {
+  content: '';
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  background: currentColor;
+  transition:
+    transform 300ms linear,
+    opacity 300ms linear;
+}
+.faqIcon::before {
+  height: 2px;
+  width: 14px;
+  top: 6px;
+}
+.faqIcon::after {
+  width: 2px;
+  height: 14px;
+  left: 6px;
+}
+.faqItem[open] .faqIcon::before {
+  transform: rotate(90deg);
+}
+.faqItem[open] .faqIcon::after {
+  opacity: 0;
+}
+.answer {
   overflow: hidden;
-  border: 0;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
 }
-
-@media (max-width: 960px) {
-  .belief {
-    padding: 120px 24px 96px;
+.answer p {
+  padding: 0 30px 30px;
+  color: #4d72c2;
+  font-size: 14px;
+  line-height: 25px;
+}
+.answer a {
+  color: inherit;
+  text-decoration: underline;
+}
+@media (min-width: 992px) and (max-width: 1439px) {
+  .memberCaption h3 {
+    font-size: 16px;
   }
-
-  .origin,
-  .joinSection {
-    padding: 72px 24px;
+}
+@media (max-width: 1279px) {
+  .member {
+    padding: 30px;
   }
-
-  .teamSection {
-    padding: 80px 0 0;
+  .teamGrid {
+    gap: 20px;
   }
-
-  .teamHeader {
-    margin-bottom: 40px;
-    padding: 0 24px;
+  .hero h1 {
+    font-size: 32px;
   }
-
+  .memberCaption h3 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 991px) {
+  .hero {
+    max-width: 650px;
+  }
+  .hero h1 {
+    font-size: 28px;
+    line-height: 1.5;
+  }
+  .intro {
+    max-width: 728px;
+  }
+  .teamGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 728px;
+  }
+  .member {
+    padding: 25px;
+  }
+  .memberCaption h3 {
+    font-size: 12px;
+  }
+  .recruitment h2,
+  .faqHeading h2 {
+    font-size: 26px;
+  }
+  .faqItem summary {
+    padding: 20px;
+  }
+  .answer p {
+    padding: 0 20px 20px;
+  }
+}
+@media (max-width: 767px) {
+  .hero {
+    max-width: 500px;
+  }
+  .hero h1 {
+    font-size: 30px;
+    line-height: 1.1;
+  }
+  .intro {
+    font-size: 12px;
+    padding: 35px 22px 18px;
+    line-height: 18px;
+  }
+  .intro p + p {
+    margin-top: 18px;
+  }
+  .teamGrid {
+    max-width: 80%;
+  }
+  .member {
+    padding: 20px;
+  }
+  .recruitment {
+    grid-template-columns: 1fr;
+    margin-inline: 20px;
+    padding: 20px;
+  }
+  .recruitmentCopy {
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .teamPhoto {
+    display: none;
+  }
   .faqSection {
-    padding: 80px 24px;
+    padding-top: 40px;
   }
 }
-
-@media (max-width: 768px) {
-  .carouselTrack {
-    height: 380px;
+@media (max-width: 479px) {
+  .team {
+    padding-top: 25px;
   }
-
-  .slide {
-    width: 260px;
+  .hero {
+    max-width: 390px;
+    padding: 42px 31px 0;
   }
-
-  .slide[data-pos='1'] {
-    transform: translateX(calc(-50% + 210px)) translateY(-50%) translateZ(-60px) rotateY(-16deg)
-      scale(0.84);
+  .hero h1 {
+    font-size: 30px;
   }
-
-  .slide[data-pos='-1'] {
-    transform: translateX(calc(-50% - 210px)) translateY(-50%) translateZ(-60px) rotateY(16deg)
-      scale(0.84);
+  .teamGrid {
+    max-width: calc(100% - 20px);
+    padding-inline: 11px;
   }
-
-  .slide[data-pos='2'] {
-    opacity: 0.4;
-    transform: translateX(calc(-50% + 360px)) translateY(-50%) translateZ(-140px) rotateY(-26deg)
-      scale(0.68);
+  .member {
+    padding: 15px;
   }
-
-  .slide[data-pos='-2'] {
-    opacity: 0.4;
-    transform: translateX(calc(-50% - 360px)) translateY(-50%) translateZ(-140px) rotateY(26deg)
-      scale(0.68);
+  .memberCaption {
+    margin-top: 15px;
+    gap: 10px;
   }
-}
-
-@media (max-width: 600px) {
-  .belief {
-    padding: 100px 20px 72px;
+  .faqList {
+    gap: 15px;
+    margin-top: 18px;
   }
-
-  .origin,
-  .joinSection {
-    padding: 56px 20px;
+  .faqItem summary {
+    font-size: 18px;
+    padding-block: 15px;
   }
-
-  .carouselStage {
-    padding: 12px 0 88px;
-  }
-
-  .carouselTrack {
-    height: 360px;
-  }
-
-  .arrowBtn {
-    top: auto;
-    bottom: 24px;
-    transform: none;
-  }
-
-  .joinMailto {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .joinMailtoLabel,
-  .joinMailtoAddr {
-    justify-content: center;
+  .answer p {
+    font-size: 14px;
+    line-height: 1.5;
   }
 }
-
-/* Prototype-aligned about page */
-.aboutPage {
-  background: var(--noumi-paper);
-  color: var(--noumi-dark);
-}
-
-.origin,
-.belief,
-.teamSection,
-.faqSection,
-.joinSection {
-  padding-right: 32px;
-  padding-left: 32px;
-}
-
-.origin h1,
-.belief h2,
-.teamHeader h2,
-.faqHeader h2,
-.joinCta h2 {
-  color: var(--noumi-dark);
-  font-family: var(--ff-display);
-  font-weight: 400;
-  letter-spacing: -0.05em;
-  line-height: 1;
-}
-
-.origin h1 {
-  font-size: clamp(58px, 8vw, 112px);
-}
-
-.belief,
-.faqSection {
-  background: var(--noumi-lite);
-}
-
-.belief {
-  border-radius: 0;
-  background: var(--noumi-paper);
-  padding: 70px 24px 80px;
-}
-
-.belief h1 {
-  color: var(--noumi-dark);
-  font-size: clamp(32px, 3.4vw, 48px);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: 0;
-}
-.belief h1 em,
-.beliefLabel {
-  color: var(--noumi-blue);
-}
-.belief p {
-  color: var(--noumi-dark);
-}
-
-.card,
-.faqItem,
-.joinMailto {
-  border-color: var(--noumi-line);
-  border-radius: 5px;
-  background: var(--noumi-lite);
-  box-shadow: none;
-}
-
-.joinSection {
-  background: var(--noumi-dark);
-}
-
-.joinSection h2,
-.joinSection p {
-  color: var(--noumi-lite);
-}
-
-@media (max-width: 700px) {
-  .origin,
-  .belief,
-  .teamSection,
-  .faqSection,
-  .joinSection {
-    padding-right: 20px;
-    padding-left: 20px;
+@media (prefers-reduced-motion: reduce) {
+  .faqItem,
+  .faqItem summary,
+  .faqIcon::before,
+  .faqIcon::after {
+    transition: none;
   }
 }

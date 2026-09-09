@@ -1,5 +1,13 @@
 /** Homepage Webflow IX2 bindings, matched against actual index.html nodes (not stale exports). */
-export type PrototypeMotionKind = 'grow' | 'slide' | 'fade' | 'left-marker' | 'right-marker'
+export type PrototypeMotionKind =
+  | 'grow'
+  | 'slide'
+  | 'fade'
+  | 'left-marker'
+  | 'right-marker'
+  | 'image-scale'
+  | 'image-wipe'
+export type PrototypeMotionBinding = readonly [string, string, PrototypeMotionKind, number]
 
 export const HOME_MOTION = [
   ['e-133', '.redesign-hero__content', 'grow', 250],
@@ -24,6 +32,8 @@ export const HOME_MOTION = [
 ] as const satisfies readonly (readonly [string, string, PrototypeMotionKind, number])[]
 
 export function prototypeMotionFrames(kind: PrototypeMotionKind): Keyframe[] {
+  if (kind === 'image-scale') return [{ transform: 'scale(1.4)' }, { transform: 'scale(1)' }]
+  if (kind === 'image-wipe') return [{ height: '100%' }, { height: '0%' }]
   if (kind === 'left-marker' || kind === 'right-marker') {
     return [
       { transform: `translateX(${kind === 'left-marker' ? 30 : -30}px)` },
@@ -39,7 +49,9 @@ export function prototypeMotionFrames(kind: PrototypeMotionKind): Keyframe[] {
 }
 
 /** Progressive enhancement: no JS leaves content visible; cleanup never leaves hidden copy. */
-export function installPrototypeMotion(): () => void {
+export function installPrototypeMotion(
+  bindings: readonly PrototypeMotionBinding[] = HOME_MOTION,
+): () => void {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
   const records = new Map<HTMLElement, Animation | null>()
   const triggers = new Map<Element, HTMLElement[]>()
@@ -64,7 +76,7 @@ export function installPrototypeMotion(): () => void {
   )
 
   const scan = () => {
-    for (const [event, selector, kind, delay] of HOME_MOTION) {
+    for (const [event, selector, kind, delay] of bindings) {
       document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
         if (records.has(element)) return
         element.dataset.motionEvent = event
@@ -78,7 +90,8 @@ export function installPrototypeMotion(): () => void {
           duration: marker ? 600 : 1000,
           delay,
           // Webflow's empty easing is linear; grow/slide/fade presets use outQuart.
-          easing: marker ? 'linear' : 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+          easing:
+            marker || kind.startsWith('image-') ? 'linear' : 'cubic-bezier(0.165, 0.84, 0.44, 1)',
           fill: 'both',
         })
         animation.pause()
@@ -93,7 +106,8 @@ export function installPrototypeMotion(): () => void {
     }
   }
   const revealFocused = (event: FocusEvent) => {
-    if (!(event.target instanceof Node)) return
+    // Pointer focus must not move a target between pointerdown and pointerup.
+    if (!(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return
     for (const element of records.keys()) {
       if (element.contains(event.target)) finish(element)
     }

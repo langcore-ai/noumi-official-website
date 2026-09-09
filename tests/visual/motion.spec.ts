@@ -73,7 +73,11 @@ test('client navigation cleans up and reinitializes homepage motion', async ({ p
   await expect(page.locator('.redesign-hero__content')).toHaveAttribute('data-motion-state', 'done')
   await page.locator('.site-nav__about').click()
   await expect(page).toHaveURL(/\/about$/)
-  await expect(page.locator('[data-motion-event]')).toHaveCount(0)
+  await expect(page.locator('[data-motion-event="e-133"]')).toHaveCount(0)
+  await expect(page.locator('[data-about-motion="hero"]')).toHaveAttribute(
+    'data-motion-event',
+    'e-227',
+  )
   await page.locator('.site-header .brand').click()
   await expect(page).toHaveURL(/\/$/)
   await expect(page.locator('.redesign-hero__content')).toHaveAttribute('data-motion-state', 'done')

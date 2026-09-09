@@ -1,0 +1,101 @@
+{
+  "intro": [
+    "Noumi is built for the business analyst, the sales engineer, the specialists: the people who've spent years earning their judgment.",
+    "We don't believe AI should replace that judgment. We believe it should power it.",
+    "Most AI tools forget you the moment the conversation ends. Noumi remembers: your standards, your context, the decisions you've already made. The longer you work with it, the more it becomes an extension of how you already think, not a replacement for it.",
+    "That's the whole bet: not smarter AI, but AI that actually knows who it's working for."
+  ],
+  "team": [
+    {
+      "name": "Abel zhai",
+      "role": "CEO",
+      "href": "https://www.linkedin.com/in/zhaixingji/",
+      "image": "/assets/about/member-1.jpeg"
+    },
+    {
+      "name": "Billy Chi",
+      "role": "CTO",
+      "href": "https://www.linkedin.com/in/billy-chi-98670b231/",
+      "image": "/assets/about/member-2.png"
+    },
+    {
+      "name": "Arnold Hu",
+      "role": "COO",
+      "href": "https://linkedin.com/in/captain1386/?skipRedirect=true",
+      "image": "/assets/about/member-3.jpeg"
+    },
+    {
+      "name": "Tao Yang",
+      "role": "Product Lead",
+      "href": "https://www.linkedin.com/in/tao-yang-777317289/",
+      "image": "/assets/about/member-4.png"
+    },
+    {
+      "name": "Chunk Liao",
+      "role": "User Expert",
+      "href": "https://www.linkedin.com/in/chuck-liao-bb193a110/",
+      "image": "/assets/about/member-5.png"
+    },
+    {
+      "name": "Grit Zhao",
+      "role": "Product Hunt",
+      "href": "#",
+      "image": "/assets/about/member-6.png"
+    },
+    {
+      "name": "Yoyo Wu",
+      "role": "Product Manager",
+      "href": "https://www.linkedin.com/in/youyou-wu-0b6b16265/",
+      "image": "/assets/about/member-7.png"
+    },
+    {
+      "name": "Kun Jiang",
+      "role": "Product Manager",
+      "href": "https://www.linkedin.com/in/kun-jiang-b91b17423/",
+      "image": "/assets/about/member-8.png"
+    },
+    {
+      "name": "Ruini Zhang",
+      "role": "Product Lead",
+      "href": "https://www.linkedin.com/in/ruini-zhang-732477376/",
+      "image": "/assets/about/member-9.png"
+    },
+    {
+      "name": "Huiling Pan",
+      "role": "Growth Lead",
+      "href": "https://www.linkedin.com/in/huilingpan257/",
+      "image": "/assets/about/member-10.png"
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is Noumi, and what does it actually do?",
+      "answer": "Noumi is an AI personal assistant that works like a real colleague — understanding your context, managing your tasks, and delivering results without constant prompting. Unlike standard chatbots, Noumi builds persistent memory across every interaction: your preferences, work style, and standards carry forward. The longer you use it, the less you have to explain."
+    },
+    {
+      "question": "What can Noumi actually do for me day-to-day?",
+      "answer": "Noumi handles the work that eats your time — drafting documents, researching topics, synthesising notes, managing follow-ups, and executing multi-step tasks autonomously. It can also develop new <a href=\"https://noumi.ai/features/self-evolving-skills\" class=\"link\">skills over time</a> tailored to your specific workflows. Think of it as a capable teammate that gets faster and sharper the more context it has. See the full picture on our Features page."
+    },
+    {
+      "question": "Who is Noumi built for?",
+      "answer": "Noumi is built for knowledge workers who rely on AI daily and are frustrated by re-explaining themselves every session — product managers, solutions engineers, journalists, consultants, and anyone whose work requires depth, context, and judgment. If you find yourself pasting the same background into AI tools repeatedly, Noumi is designed to solve exactly that."
+    },
+    {
+      "question": "Is my data private and secure?",
+      "answer": "<br>Yes. Your data belongs to you. We don't use your interactions to train shared models, and memory is stored in isolated, encrypted environments per user. You can export or delete your memory at any time. See our Privacy Policy and Terms of Service for full details."
+    },
+    {
+      "question": "How much does Noumi cost?",
+      "answer": "You can get started for free — no credit card required. Free access gives you a real sense of how Noumi's memory and execution engine work. Paid plans unlock advanced features and higher usage limits. See our Pricing page for the full breakdown."
+    },
+    {
+      "question": "Who's behind Noumi?",
+      "answer": "We're a small, senior team — and deliberately so. Every core member has spent years building and shipping real products: some have scaled businesses from zero to millions in revenue, others come from deep AI research and enterprise SaaS. We believe a tight group of experienced builders moves faster and makes better decisions than a large one. We're actively onboarding early users and iterating fast. Follow our thinking on the Noumi blog."
+    },
+    {
+      "question": "How can I join the Noumi team?",
+      "answer": "We're always looking for people who want to define what AI actually working looks like. What matters to us isn't a specific background — it's conviction, craft, and judgment. Drop us a note at hr@noumi.ai with a short intro and what you'd bring. We read everything."
+    }
+  ],
+  "recruitment": "We're a small team of operators, researchers, and AI obsessives, many of us with experience building and scaling products. We move fast, care deeply about craft, and are tackling one of the most interesting problems in AI: what an AI colleague should actually look like.<br><br>We care less about credentials than conviction, judgment, and the drive to build things that genuinely work.<br><br>If you see something we're missing or want to be part of what we're building, write to us. Tell us what you'd bring and why it matters to you. We read everything.<br>"
+}

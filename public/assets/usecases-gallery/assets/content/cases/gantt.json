@@ -1,0 +1,21 @@
+{
+  "id": "gantt",
+  "title": { "en": "Project Gantt Chart & Timeline", "zh": "项目甘特图与时间线" },
+  "type": "A",
+  "prompt": {
+    "en": "Generate a Gantt chart and a timeline for the project based on @Project Implementation Plan.docx",
+    "zh": "根据 @Project Implementation Plan.docx 帮我生成一张项目甘特图和一张时间线图。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "name": { "en": "Project Implementation Plan.docx", "zh": "项目实施计划.docx" }, "ext": "DOC", "src": "project-implementation-plan.docx" }
+  ],
+  "reply": {
+    "en": "Generated both views from the implementation plan: a Gantt chart breaking down all 20 tasks across the 6 phases with role assignments and dependencies, and a milestone timeline marking each phase gate along the ~26.5-week schedule.",
+    "zh": "已根据实施计划生成两张图：一张甘特图，按 6 个阶段拆解全部 20 个任务并标出负责角色与依赖关系；一张时间线图，标出约 26.5 周排期中每个阶段的关键里程碑（Gate）。"
+  },
+  "duration": "2m 15s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Project Gantt chart", "zh": "项目甘特图" }, "src": "gantt-chart.png" },
+    { "kind": "image", "caption": { "en": "Project milestone timeline", "zh": "项目里程碑时间线" }, "src": "project-timeline.png" }
+  ]
+}

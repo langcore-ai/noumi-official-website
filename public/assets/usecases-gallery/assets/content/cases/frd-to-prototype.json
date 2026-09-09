@@ -1,0 +1,23 @@
+{
+  "id": "frd-to-prototype",
+  "title": { "en": "Interactive Prototype from FRD", "zh": "根据 FRD 生成可交互原型" },
+  "type": "A",
+  "prompt": {
+    "en": "Based on this @FRD.docx and referring to the UI design of this image @reference image.png, generate a usable interactive prototype for me.",
+    "zh": "根据这份 @FRD.docx，并参考这张图片 @reference image.png 的 UI 设计风格，帮我生成一个可用的交互原型。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "FRD.docx", "zh": "FRD.docx" }, "ext": "DOC", "src": null },
+    { "kind": "image", "name": { "en": "Reference Image.jpg", "zh": "参考设计图.jpg" }, "ext": "JPG", "src": "noumi-crm-reference.jpg" }
+  ],
+  "reply": {
+    "en": "Generated a fully interactive prototype from the FRD, matching the reference UI's layout and visual style, with real navigation between pages. Click this link to interact with the prototype: https://www.noumi.ai/agent/projectmanager/light-systems/projecthub-prototype/",
+    "zh": "已根据 FRD 生成一版可交互原型，页面布局和视觉风格参考了给定的设计图，页面之间可以真实跳转。点击下方链接查看完整原型。"
+  },
+  "duration": "6m 30s",
+  "outputAttachments": [
+    { "kind": "link", "label": { "en": "ProjectHub Prototype", "zh": "ProjectHub Prototype" }, "url": "https://www.noumi.ai/agent/projectmanager/light-systems/projecthub-prototype/" },
+    { "kind": "image", "caption": { "en": "ProjectHub prototype — project dashboard", "zh": "ProjectHub 原型——项目仪表盘" }, "src": "projecthub-1.jpg" },
+    { "kind": "image", "caption": { "en": "ProjectHub prototype — project detail & Gantt chart", "zh": "ProjectHub 原型——项目详情与甘特图" }, "src": "projecthub-2.jpg" }
+  ]
+}

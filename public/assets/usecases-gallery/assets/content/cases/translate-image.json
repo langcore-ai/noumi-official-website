@@ -1,0 +1,20 @@
+{
+  "id": "translate-image",
+  "title": { "en": "Translate Text in an Image", "zh": "翻译图片中的文字" },
+  "type": "A",
+  "prompt": {
+    "en": "Translate all text in the image into Chinese while preserving the original image structure. Replace \"WhatsApp / Slack / Telegram\" with \"Feishu / WeCom / DingTalk\"",
+    "zh": "把图片里的所有文字翻译成中文，保持原图结构不变。把「WhatsApp / Slack / Telegram」替换成「飞书 / 企微 / 钉钉」"
+  },
+  "inputAttachments": [
+    { "kind": "image", "name": { "en": "Langhub Product Architecture.jpg", "zh": "Langhub 产品架构图.jpg" }, "ext": "JPG", "src": "langhub-product-architecture.jpg" }
+  ],
+  "reply": {
+    "en": "Translated all text in the diagram into Chinese and swapped the IM entry points to Feishu / WeCom / DingTalk, keeping the exact same layout and structure.",
+    "zh": "已将图中所有文字翻译成中文，并把 IM 入口替换成飞书 / 企微 / 钉钉，图片结构保持不变。"
+  },
+  "duration": "1m 40s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Langhub product architecture diagram (Chinese)", "zh": "Langhub 产品架构图（中文版）" }, "src": "langhub-product-architecture-zh.jpg" }
+  ]
+}

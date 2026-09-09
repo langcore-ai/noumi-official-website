@@ -1,0 +1,49 @@
+{
+  "id": "build-brd",
+  "title": { "en": "Build BRD, FRD, User Stories & BPMN", "zh": "整合并生成需求文档" },
+  "type": "A",
+  "prompt": {
+    "en": "Based on the available project materials @Requirements @Meeting notes, including:\n1. ==Stakeholder inputs:== business brief, meeting notes, plus relevant email conversations retrieved from my Gmail, including threads with sarah.mitchell@acme.com and david.chen@acme.com\n2. ==Pre-sales handover:== project background, proposed solution, and key requirements and current process image captured during pre-sales\n3. ==My own analysis:== initial research, requirement analysis, and working notes\n4. ==Previous cases:== similar past projects retrieved from Google Drive for reference on structure, framework, terminology, and document styling\nPlease consolidate and clarify the requirements, ==identify gaps or open questions==, and ==generate a complete requirements package== including the BRD, FRD, User Stories with acceptance criteria, and an end-to-end business process flow. ==Ensure all deliverables are consistent.==",
+    "zh": "基于以下现有项目材料 @Requirements @Meeting notes：\n1. ==相关方输入：==业务简介、会议纪要，以及从我的 Gmail 中检索到的相关邮件往来，包括与 sarah.mitchell@acme.com 和 david.chen@acme.com 的邮件往来\n2. ==售前交接材料：==项目背景、方案建议，以及售前阶段整理的关键需求和现状流程图\n3. ==我自己的分析：==前期调研、需求分析和工作笔记\n4. ==历史案例：==从 Google Drive 检索到的类似历史项目，用于参考结构、框架、术语和文档风格\n请帮我整合并厘清需求，==识别其中的缺口或待澄清问题==，并==生成一套完整的需求包==，包括 BRD、FRD、带验收标准的用户故事，以及端到端的业务流程图。==确保所有交付物之间保持一致。=="
+  },
+  "artifacts": [
+    {
+      "name": { "en": "Requirements", "zh": "需求材料" },
+      "files": [
+        { "name": { "en": "executive-business-brief.pdf", "zh": "executive-business-brief.pdf" }, "ext": "PDF" },
+        { "name": { "en": "crm-project-handover.docx", "zh": "crm-project-handover.docx" }, "ext": "DOC" }
+      ]
+    },
+    {
+      "name": { "en": "Meeting notes", "zh": "会议纪要" },
+      "files": [
+        { "name": { "en": "interview-kevin-zhao-it-system-administrator.md", "zh": "interview-kevin-zhao-it-system-administrator.md" }, "ext": "MD" },
+        { "name": { "en": "interview-laura-bennett-legal-counsel.md", "zh": "interview-laura-bennett-legal-counsel.md" }, "ext": "MD" },
+        { "name": { "en": "interview-jennifer-walsh-marketing-manager.md", "zh": "interview-jennifer-walsh-marketing-manager.md" }, "ext": "MD" },
+        { "name": { "en": "interview-david-park-sales-director.md", "zh": "interview-david-park-sales-director.md" }, "ext": "MD" },
+        { "name": { "en": "interview-james-lee-ecosystem-manager.md", "zh": "interview-james-lee-ecosystem-manager.md" }, "ext": "MD" },
+        { "name": { "en": "interview-rachel-kim-presales-engineer.md", "zh": "interview-rachel-kim-presales-engineer.md" }, "ext": "MD" },
+        { "name": { "en": "interview-alex-martinez-sales-rep.md", "zh": "interview-alex-martinez-sales-rep.md" }, "ext": "MD" }
+      ]
+    }
+  ],
+  "connectors": [
+    { "name": { "en": "Gmail", "zh": "Gmail" }, "logo": "✉", "color": "#ea4335" },
+    { "name": { "en": "Google Drive", "zh": "Google Drive" }, "logo": "▲", "color": "#34a853" }
+  ],
+  "inputAttachments": [
+    { "kind": "image", "name": { "en": "current-process.jpg", "zh": "现状流程图.jpg" }, "src": "current-process.jpg" }
+  ],
+  "reply": {
+    "en": "Consolidated all sources, flagged 4 open questions, and generated a consistent BRD, FRD, User Stories, and process flow.",
+    "zh": "已整合全部材料，识别出 4 处待澄清问题，并生成了一套相互一致的 BRD、FRD、用户故事和业务流程图。"
+  },
+  "duration": "8m 42s",
+  "outputAttachments": [
+    { "kind": "link", "label": { "en": "Requirements Package", "zh": "需求文档包" }, "url": "https://www.noumi.ai/s/t2fhv8sqk7" },
+    { "kind": "image", "caption": { "en": "End-to-end business process flow (BPMN)", "zh": "端到端业务流程图（BPMN）" }, "src": "BApackage-BPMN.svg" },
+    { "kind": "image", "caption": { "en": "BRD draft", "zh": "BRD 文档草稿" }, "src": "BApackage-BRD.jpg" },
+    { "kind": "image", "caption": { "en": "Requirements clarification questions", "zh": "需求澄清问题" }, "src": "BApackage-Requirements-Clarification.jpg" },
+    { "kind": "image", "caption": { "en": "FRD draft", "zh": "FRD 文档草稿" }, "src": "BApackage-FRD.jpg" }
+  ]
+}

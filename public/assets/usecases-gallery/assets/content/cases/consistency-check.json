@@ -1,0 +1,33 @@
+{
+  "id": "consistency-check",
+  "title": { "en": "Consistency Check before Sign-off", "zh": "签署前一致性校验" },
+  "type": "A",
+  "prompt": {
+    "en": "Before sign-off, review the files:\n1. @Requirement Package\n2. API documentation at http://172.16.42.18:8082/langhub-crm/swagger-ui/index.html\n3. connected postgresql database\nPerform a requirements consistency review. Identify contradictions, ambiguities, missing requirements, data mismatches, and traceability gaps.\nSummarize the key findings and open questions requiring clarification",
+    "zh": "签署前，请审阅以下内容：\n1. @Requirement Package\n2. API 文档：http://172.16.42.18:8082/langhub-crm/swagger-ui/index.html\n3. 已连接的 postgresql 数据库\n请做一次需求一致性审查，识别其中的矛盾、歧义、缺失需求、数据不匹配和可追溯性缺口。\n总结关键发现和需要澄清的开放问题"
+  },
+  "artifacts": [
+    {
+      "name": { "en": "Requirement Package", "zh": "需求包" },
+      "files": [
+        { "name": { "en": "LangHub-CRM-Business-Requirements-Document.docx", "zh": "LangHub-CRM-Business-Requirements-Document.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Functional-Requirements-Document.docx", "zh": "LangHub-CRM-Functional-Requirements-Document.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Requirements-Clarification.md", "zh": "LangHub-CRM-Requirements-Clarification.md" }, "ext": "MD" },
+        { "name": { "en": "LangHub-CRM-User-Stories-Backlog.docx", "zh": "LangHub-CRM-User-Stories-Backlog.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Lead-to-Contract-Process.drawio", "zh": "LangHub-CRM-Lead-to-Contract-Process.drawio" }, "ext": "DRAWIO" }
+      ]
+    }
+  ],
+  "connectors": [
+    { "name": { "en": "PostgreSQL database", "zh": "PostgreSQL 数据库" }, "logo": "▤", "color": "#336791" }
+  ],
+  "inputAttachments": [],
+  "reply": {
+    "en": "Found several contradictions, ambiguities, and traceability gaps across the requirement package, API, and database schema — details and open questions below.",
+    "zh": "在需求包、API 和数据库表结构之间发现了若干矛盾、歧义和可追溯性缺口，详情和待澄清问题见下方。"
+  },
+  "duration": "6m 05s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Consistency check findings and open questions", "zh": "一致性校验发现与待澄清问题" }, "src": "consistency-check.png" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "bpmn",
+  "title": { "en": "Turn Notes into a BPMN Diagram", "zh": "会议记录转 BPMN 流程图" },
+  "type": "A",
+  "prompt": {
+    "en": "Generate an end-to-end process flow diagram based on these raw stakeholder notes, one lane per role, decisions as flow.",
+    "zh": "根据这份原始的与会者会议记录，生成一张端到端的流程图，每个角色对应一条泳道，决策点用流程节点表示。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "Decision Session Minutes.pdf", "zh": "决策会议纪要.pdf" }, "ext": "PDF", "src": null }
+  ],
+  "reply": {
+    "en": "BPMN diagram complete and visually reviewed. Modeled as 5 lanes (split by the participant roles in §2 of the meeting minutes, plus automated system behavior): Marketing Operations, Ecosystem Partnerships, Sales Representative, CRM System (automated), and Sales Director; with 8 decision gateways.",
+    "zh": "BPMN 流程图已完成并通过视觉复核。模型结构为 5 条泳道（按会议记录 §2 参会角色 + 系统自动化行为拆分）：Marketing Operations、Ecosystem Partnerships、Sales Representative、CRM System（自动化）、Sales Director；共 8 个判定网关。"
+  },
+  "duration": "3m 40s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "BPMN diagram — CRM Lead Ownership, Visibility & Follow-up Governance Process", "zh": "BPMN 流程图 —— CRM 线索归属、可见性与跟进治理流程" }, "src": "bpmn-lead-governance.png" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "architecture",
+  "title": { "en": "Architecture & Deployment Diagrams", "zh": "架构与部署图" },
+  "type": "A",
+  "prompt": {
+    "en": "Based on this architecture doc, generate a product architecture diagram, an on-premises deployment network topology diagram, and a backup and recovery architecture diagram.",
+    "zh": "基于这份架构文档，帮我生成一张产品架构图、一张本地化部署网络拓扑图，以及一张备份与恢复架构图。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "Architecture Design Doc.docx", "zh": "架构设计文档.docx" }, "ext": "DOC", "src": null }
+  ],
+  "reply": {
+    "en": "Generated all three diagrams from the architecture doc: a layered product architecture diagram (interaction, execution, capability, models/tools, task management, and deployment layers), an on-premises network topology diagram (DMZ, application, and data zones with traffic flows), and a backup & recovery architecture diagram covering scheduled backups and access controls.",
+    "zh": "已根据架构文档生成全部三张图：分层的产品架构图（交互层、执行控制层、能力集成层、模型与工具层、任务管理层、服务部署层），本地化部署网络拓扑图（DMZ、应用、数据分区及流量走向），以及备份与恢复架构图（定期备份策略与访问控制）。"
+  },
+  "duration": "4m 05s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Product architecture diagram", "zh": "产品架构图" }, "src": "architecture-product.svg" },
+    { "kind": "image", "caption": { "en": "On-premises deployment network topology diagram", "zh": "本地化部署网络拓扑图" }, "src": "architecture-network-topology.svg" },
+    { "kind": "image", "caption": { "en": "Backup and recovery architecture diagram", "zh": "备份与恢复架构图" }, "src": "architecture-backup-recovery.svg" }
+  ]
+}

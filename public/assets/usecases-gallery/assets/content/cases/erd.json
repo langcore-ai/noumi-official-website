@@ -1,0 +1,17 @@
+{
+  "id": "erd",
+  "title": { "en": "Generate ERDs from Database", "zh": "从数据库生成 ERD" },
+  "type": "A",
+  "prompt": {
+    "en": "Connect to the database, and generate an Entity-Relationship Diagram (ERD) for our ERP database.\nDatabase connection: postgresql://erp_readonly:demo_8f2a1c7d@10.0.4.20:5432/erp_analysis",
+    "zh": "帮我连上数据库，给我们的 ERP 数据库生成一张实体关系图（ERD）。\n数据库连接：postgresql://erp_readonly:demo_8f2a1c7d@10.0.4.20:5432/erp_analysis"
+  },
+  "reply": {
+    "en": "Connected to the ERP database and mapped out the ERD — covering CRM (leads/contacts/opportunities), project delivery, contracts & payments, subcontractor management, and system/user config, with primary and foreign keys labeled.",
+    "zh": "已连接到 ERP 数据库并生成 ERD 图，覆盖 CRM（线索/联系人/商机）、项目交付、合同与回款、分包管理、系统与用户配置等模块，主外键均已标注。"
+  },
+  "duration": "2m 12s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "ERP database ERD", "zh": "ERP 数据库 ERD 图" }, "src": "erd-diagram.png" }
+  ]
+}

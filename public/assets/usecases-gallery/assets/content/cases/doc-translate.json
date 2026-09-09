@@ -1,0 +1,26 @@
+{
+  "id": "doc-translate",
+  "title": { "en": "Translate Docs Without Losing Formatting", "zh": "翻译文档且不破坏排版" },
+  "type": "A",
+  "prompt": {
+    "en": "Translate the full content of the uploaded business documents ==from English into Japanese and German==.\n1. ==Preserve the original formatting exactly==, like layout, headings, fonts, styles, spacing, and alignment, etc.\n2. ==Keep business and technical terminology consistent== throughout the documents. The translated files should be presentation-ready for my clients.",
+    "zh": "把上传的这些业务文档全文==翻译成日语和德语==。\n1. ==完全保持原始格式==，包括排版、标题层级、字体、样式、间距、对齐方式等。\n2. ==全篇业务和技术术语保持一致==。翻译后的文件要能直接用于客户展示。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "LangHub-CRM-BRD.docx", "zh": "LangHub-CRM-BRD.docx" }, "ext": "DOC", "src": null },
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "Noumi-Product-Introduction-EN.pptx", "zh": "Noumi-Product-Introduction-EN.pptx" }, "ext": "PPT", "src": null },
+    { "kind": "file", "isPlaceholder": true, "name": { "en": "Project Plan Implementation Table.xlsx", "zh": "项目实施计划表.xlsx" }, "ext": "XLS", "src": null }
+  ],
+  "reply": {
+    "en": "Translated all three documents into Japanese and German, keeping layout, headings, fonts, and terminology consistent throughout — ready to present to clients. Click the links below to view the translated files.",
+    "zh": "已将三份文档分别翻译成日语和德语，排版、标题层级、字体和术语全篇保持一致，可以直接用于客户展示。点击下方链接查看翻译后的文件。"
+  },
+  "duration": "8m 40s",
+  "outputAttachments": [
+    { "kind": "link", "label": { "en": "Docs in Japanese", "zh": "日语版文档" }, "url": "https://www.noumi.ai/s/w8m7z8hno8" },
+    { "kind": "link", "label": { "en": "Docs in German", "zh": "德语版文档" }, "url": "https://www.noumi.ai/s/yj9af2ftmv" },
+    { "kind": "image", "caption": { "en": "Translated Word document (Japanese)", "zh": "翻译后的 Word 文档（日语）" }, "src": "translated-word-en-jp.jpg" },
+    { "kind": "image", "caption": { "en": "Translated slide deck (German)", "zh": "翻译后的幻灯片（德语）" }, "src": "translated-slides-de.jpg" },
+    { "kind": "image", "caption": { "en": "Translated spreadsheet (Japanese)", "zh": "翻译后的表格（日语）" }, "src": "translated-excel-jp.jpg" }
+  ]
+}

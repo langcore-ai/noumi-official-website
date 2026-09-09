@@ -1,0 +1,20 @@
+{
+  "id": "research",
+  "title": { "en": "Client Research", "zh": "客户调研" },
+  "type": "A",
+  "prompt": {
+    "en": "Research Bosch and prepare me for an upcoming requirement elicitation meeting.",
+    "zh": "帮我调研一下 Bosch，为即将进行的需求调研会议做准备。"
+  },
+  "inputAttachments": [],
+  "reply": {
+    "en": "Completed the research on Robert Bosch GmbH: company background, commercial context, and discovery agenda for the meeting. Click the link below to view the full report.",
+    "zh": "已完成对 Robert Bosch GmbH 的调研：公司背景、商业现状，以及会议用的调研议程都整理好了。点击下方链接查看完整报告。"
+  },
+  "duration": "1m 20s",
+  "outputAttachments": [
+    { "kind": "link", "label": { "en": "Robert Bosch GmbH Research Report", "zh": "Robert Bosch GmbH 调研报告" }, "url": "https://www.noumi.ai/s/zz932yasw3" },
+    { "kind": "image", "caption": { "en": "Research report — executive assessment & company profile", "zh": "调研报告——高层评估与公司概况" }, "src": "client-research-1.jpg" },
+    { "kind": "image", "caption": { "en": "Research report — ownership structure & revenue mix", "zh": "调研报告——股权结构与营收构成" }, "src": "client-research-2.jpg" }
+  ]
+}

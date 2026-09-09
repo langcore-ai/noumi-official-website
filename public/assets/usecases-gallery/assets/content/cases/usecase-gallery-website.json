@@ -1,0 +1,26 @@
+{
+  "id": "usecase-gallery-website",
+  "title": { "en": "Use Cases Gallery Website", "zh": "Use Cases 展示画廊网站" },
+  "type": "A",
+  "prompt": {
+    "en": "I want to build an interactive Use Cases Gallery.\nPlease use the attached @Use-Cases-Gallery-Design-Brief.docx as the functional and interaction requirements.\n1. For the interaction/layout: @UI-claude-page-reference.png is the interaction/layout reference. I like how the categories are presented as tabs at the top. @Noumi-Main-Agent-Orb.html is the Noumi interactive playful icon.\n2. Screenshots @UI-typography.png @UI-bg-color.png @UI-font-color.png are our existing Noumi UI design references. Please follow their overall visual style, spacing, typography, colors, and component design.\n3. The gallery contains five main categories: Discover & Document, Check & Validate, Diagram, Image, Build. Each category contains multiple use cases.\n4. For now, please focus on building the overall UI framework, components, layout, and interactions. I’ll provide the final use case content and copy later, so please use appropriate placeholders for the content at this stage.\nNote: Users should be able to switch between categories from the top navigation, then browse individual use cases from a catalog on the left. The selected use case should be displayed in the main content area.\nPlease make the overall experience polished, simple, and easy to explore.\nFeel free to improve the interaction or layout if you think there is a better approach.",
+    "zh": "我想搭建一个可交互的 Use Cases 展示画廊。\n请以附带的 @Use-Cases-Gallery-Design-Brief.docx 作为功能和交互需求说明。\n1. 交互/布局方面：@UI-claude-page-reference.png 是交互/布局参考图，我很喜欢这种分类以顶部标签形式展示的方式。@Noumi-Main-Agent-Orb.html 是 Noumi 的趣味互动小图标。\n2. 截图 @UI-typography.png @UI-bg-color.png @UI-font-color.png 是我们现有的 Noumi UI 设计参考，请在整体视觉风格、间距、字体排版、色彩和组件设计上参考它们。\n3. 画廊包含五大主分类：调研与文档、核查与验证、流程图、图片、搭建。每个分类下有多个用例。\n4. 目前请先专注搭建整体的 UI 框架、组件、布局和交互，具体用例内容和文案我之后再补充，现阶段先用合适的占位内容代替。\n备注：用户应该可以从顶部导航切换分类，然后从左侧的用例目录浏览各个具体用例，选中的用例需展示在主内容区。\n请让整体体验尽量精致、简洁、易于探索。\n如果你觉得有更好的交互或布局方式，也欢迎自行优化。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "name": { "en": "Use Cases Gallery Design Brief.docx", "zh": "Use Cases Gallery 设计说明.docx" }, "ext": "DOC", "src": "use-cases-gallery-design-brief.docx" },
+    { "kind": "image", "name": { "en": "UI-claude-page-reference.png", "zh": "UI-claude-page-reference.png" }, "ext": "PNG", "src": "ui-claude-page-reference.png" },
+    { "kind": "file", "name": { "en": "Noumi-Main-Agent-Orb.html", "zh": "Noumi-Main-Agent-Orb.html" }, "ext": "HTML", "src": "noumi-main-agent-orb.html" },
+    { "kind": "image", "name": { "en": "UI-typography.png", "zh": "UI-typography.png" }, "ext": "PNG", "src": "ui-typography.png" },
+    { "kind": "image", "name": { "en": "UI-bg-color.png", "zh": "UI-bg-color.png" }, "ext": "PNG", "src": "ui-bg-color.png" },
+    { "kind": "image", "name": { "en": "UI-font-color.png", "zh": "UI-font-color.png" }, "ext": "PNG", "src": "ui-font-color.png" }
+  ],
+  "reply": {
+    "en": "Built the full interactive gallery framework, view live result : https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/\n\n==👀 ✍️ Author's note: Yep, the page you’re browsing right now was built with Noumi from the requirements and design references above.==",
+    "zh": "已搭建好完整的交互式画廊框架，查看上线结果：https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/\n\n==👀 ✍️ 作者按：没错，你现在正在浏览的这个页面，就是 Noumi 根据以上需求和设计参考搭建出来的。=="
+  },
+  "duration": "16m 05s",
+  "outputAttachments": [
+    { "kind": "link", "label": { "en": "Live Gallery Website", "zh": "上线的画廊网站" }, "url": "https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/" },
+    { "kind": "image", "caption": { "en": "The finished interactive gallery — this very page", "zh": "最终成品——交互式画廊，也就是你正在浏览的这个页面" }, "src": "gallery-website-live.jpg" }
+  ]
+}

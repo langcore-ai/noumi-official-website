@@ -1,0 +1,23 @@
+{
+  "id": "build-rfp",
+  "title": { "en": "Create Documents from a Template", "zh": "按模板生成文档" },
+  "type": "A",
+  "prompt": {
+    "en": "Based on the content of this file @LangHub-CRM-Project-Blueprint_V1.0_20260827.md and related images, generate a Word document that matches the content format of this template Word @Template_Blueprint.docx",
+    "zh": "基于这份文件 @LangHub-CRM-Project-Blueprint_V1.0_20260827.md 以及相关图片的内容，生成一份 Word 文档，内容格式要和这份模板 Word @Template_Blueprint.docx 保持一致"
+  },
+  "inputAttachments": [
+    { "kind": "file", "name": { "en": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md", "zh": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md" }, "ext": "MD", "src": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md" }
+  ],
+  "reply": {
+    "en": "Generated the Word document with content mapped into the template's structure, styles, and formatting.",
+    "zh": "已生成 Word 文档，内容已按模板的结构、样式和格式排版好。"
+  },
+  "duration": "3m 12s",
+  "outputAttachments": [
+    { "kind": "file", "name": { "en": "LangHub_CRM_Project_Blueprint_V1.0.docx", "zh": "LangHub_CRM_Project_Blueprint_V1.0.docx" }, "ext": "DOC", "src": "LangHub_CRM_Project_Blueprint_V1.0.docx" },
+    { "kind": "image", "caption": { "en": "Generated document following the template's layout", "zh": "生成文档，排版与模板一致" }, "src": "template-follow1.png" },
+    { "kind": "image", "caption": { "en": "Generated document, section detail", "zh": "生成文档，章节细节" }, "src": "template-follow2.png" },
+    { "kind": "image", "caption": { "en": "Generated document, section detail", "zh": "生成文档，章节细节" }, "src": "template-follow3.jpg" }
+  ]
+}

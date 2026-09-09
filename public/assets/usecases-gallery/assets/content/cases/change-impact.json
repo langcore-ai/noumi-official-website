@@ -1,0 +1,31 @@
+{
+  "id": "change-impact",
+  "title": { "en": "Requirement Change Impact Analysis", "zh": "需求变更影响分析" },
+  "type": "A",
+  "prompt": {
+    "en": "A new requirement clarification has been confirmed in @joint-session-contract-approval-clarification-2026-08-20.md. Analyze its impact across the existing requirements package @Requirement Package\nIdentify what need to be added, updated, or removed, and flag any downstream inconsistencies or traceability impacts.",
+    "zh": "一项新的需求澄清已在 @joint-session-contract-approval-clarification-2026-08-20.md 中确认。请分析它对现有需求包 @Requirement Package 的影响\n识别哪些内容需要新增、更新或删除，并标记出下游的不一致或可追溯性影响。"
+  },
+  "artifacts": [
+    {
+      "name": { "en": "Requirement Package", "zh": "需求包" },
+      "files": [
+        { "name": { "en": "LangHub-CRM-Business-Requirements-Document.docx", "zh": "LangHub-CRM-Business-Requirements-Document.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Functional-Requirements-Document.docx", "zh": "LangHub-CRM-Functional-Requirements-Document.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Requirements-Clarification.md", "zh": "LangHub-CRM-Requirements-Clarification.md" }, "ext": "MD" },
+        { "name": { "en": "LangHub-CRM-User-Stories-Backlog.docx", "zh": "LangHub-CRM-User-Stories-Backlog.docx" }, "ext": "DOC" },
+        { "name": { "en": "LangHub-CRM-Lead-to-Contract-Process.drawio", "zh": "LangHub-CRM-Lead-to-Contract-Process.drawio" }, "ext": "DRAWIO" }
+      ]
+    }
+  ],
+  "inputAttachments": [],
+  "reply": {
+    "en": "Traced the clarification across the requirement package and flagged the affected sections and inconsistencies.",
+    "zh": "已在需求包中追溯该澄清项的影响范围，并标出受影响的章节和不一致之处。"
+  },
+  "duration": "2m 47s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Impact analysis summary", "zh": "影响分析总览" }, "src": "change-analysis.jpg" },
+    { "kind": "image", "caption": { "en": "Affected requirements and traceability detail", "zh": "受影响需求与可追溯性细节" }, "src": "change-analysis2.jpg" }
+  ]
+}

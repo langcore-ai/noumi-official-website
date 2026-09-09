@@ -1,0 +1,24 @@
+{
+  "id": "polish-diagrams",
+  "title": { "en": "Polish Diagrams", "zh": "批量美化架构图" },
+  "type": "A",
+  "prompt": {
+    "en": "These 3 diagrams were drafted quickly in draw.io and look too plain for a client deck — same for all three: clean up the visual hierarchy, give each zone/layer a clearer color scheme, and make them presentation-ready without changing the underlying logic.",
+    "zh": "这 3 张图是用 draw.io 快速画的草稿，配色和排版比较简陋，不太能直接放进给客户的汇报材料。麻烦帮我统一美化一下：理清各分层/分区的视觉层级，配色更专业一些，逻辑不要改，做成可以直接拿去汇报的效果。"
+  },
+  "inputAttachments": [
+    { "kind": "image", "name": { "en": "Noumi Product Architecture.svg", "zh": "Noumi 产品架构图.svg" }, "ext": "SVG", "src": "noumi-product-architecture.svg" },
+    { "kind": "image", "name": { "en": "On-Premises Deployment Network Topology.svg", "zh": "本地化部署网络拓扑图.svg" }, "ext": "SVG", "src": "on-premises-deployment-network-topology.svg" },
+    { "kind": "image", "name": { "en": "Secure On-Premises Deployment Network Topology.svg", "zh": "安全本地化部署网络拓扑图.svg" }, "ext": "SVG", "src": "secure-on-premises-deployment-network-topology.svg" }
+  ],
+  "reply": {
+    "en": "Polished all 3 diagrams: rebuilt each as a color-coded, presentation-ready visual with consistent typography and clearer zone grouping, while keeping every component, connection, and label unchanged — just the Noumi product architecture, the on-premises deployment network topology, and the backup & recovery architecture.",
+    "zh": "已完成 3 张图的美化：统一了字体和分区配色，用更清晰的色块划分各层/各区域，组件、连线和文案内容全部保留不变——分别是 Noumi 产品架构图、本地化部署网络拓扑图、备份与容灾架构图。"
+  },
+  "duration": "4m 05s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Polished: Noumi Product Architecture", "zh": "美化后：Noumi 产品架构图" }, "src": "polished-noumi-product-architecture.jpg" },
+    { "kind": "image", "caption": { "en": "Polished: Backup & Recovery Architecture", "zh": "美化后：备份与容灾架构图" }, "src": "polished-backup-recovery-architecture.jpg" },
+    { "kind": "image", "caption": { "en": "Polished: On-Premises Deployment Network Topology", "zh": "美化后：本地化部署网络拓扑图" }, "src": "polished-on-premises-deployment-network.jpg" }
+  ]
+}

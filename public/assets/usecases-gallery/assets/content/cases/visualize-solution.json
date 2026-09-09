@@ -1,0 +1,20 @@
+{
+  "id": "visualize-solution",
+  "title": { "en": "Visualize a Complex Solution", "zh": "把复杂方案可视化" },
+  "type": "A",
+  "prompt": {
+    "en": "Turn this solution into a clear, presentation-ready visual showing the key business processes, system components, data flows, stakeholders, and expected outcomes in one coherent diagram.",
+    "zh": "把这份方案做成一张清晰、可直接用于汇报的可视化图，在一张图里体现关键业务流程、系统组件、数据流、相关方和预期成效。"
+  },
+  "inputAttachments": [
+    { "kind": "file", "name": { "en": "Langhub Enterprise Delivery Solution Brief.docx", "zh": "Langhub 企业交付方案说明书.docx" }, "ext": "DOC", "src": "langhub-enterprise-delivery-solution-brief.docx" }
+  ],
+  "reply": {
+    "en": "Turned the solution brief into a single architecture diagram: request intake from enterprise IM, routing through the Main Agent, core execution in the Agent Runtime, project/task context management, team collaboration, and delivery through external systems and file outputs — with special capabilities called out on the side.",
+    "zh": "已把整份方案说明书提炼成一张架构图：从企业 IM 入口接收请求，经 Main Agent 识别与分发，进入 Agent Runtime 核心执行层，配合项目/任务管理与团队协作，最终通过外部系统集成与文件交付产出结果，特色能力单独列在右侧。"
+  },
+  "duration": "3m 20s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Langhub product architecture diagram", "zh": "Langhub 产品架构图" }, "src": "langhub-product-architecture.jpg" }
+  ]
+}

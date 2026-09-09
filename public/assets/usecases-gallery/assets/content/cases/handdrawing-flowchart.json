@@ -1,0 +1,20 @@
+{
+  "id": "handdrawing-flowchart",
+  "title": { "en": "Turn Hand Sketch into a Flowchart", "zh": "手绘草图转专业流程图" },
+  "type": "A",
+  "prompt": {
+    "en": "@handdrawing-sketches.jpg convert this sketch into a professional business process flowchart, strictly preserving its original content and layout.",
+    "zh": "@handdrawing-sketches.jpg 把这张手绘草图转换成专业的业务流程图，严格保留原始内容和布局。"
+  },
+  "inputAttachments": [
+    { "kind": "image", "name": { "en": "handdrawing-sketches.jpg", "zh": "handdrawing-sketches.jpg" }, "ext": "JPG", "src": "handdrawing-sketches.jpg" }
+  ],
+  "reply": {
+    "en": "Redrew the hand sketch as a clean, professional flowchart, preserving the original 3-step structure, all labels, and layout.",
+    "zh": "已将手绘草图重绘为清晰、专业的流程图，保留了原有的三步结构、所有文字标注和布局。"
+  },
+  "duration": "2m 15s",
+  "outputAttachments": [
+    { "kind": "image", "caption": { "en": "Professional flowchart redrawn from the hand sketch", "zh": "根据手绘草图重绘的专业流程图" }, "src": "handdrawing-diagram.png" }
+  ]
+}

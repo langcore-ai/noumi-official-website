@@ -11,6 +11,7 @@
     "infra:setup": "bun tooling/infra/cli.ts setup",
     "mode:local": "bun tooling/infra/mode.ts local",
     "mode:preview": "bun tooling/infra/mode.ts preview",
+    "mode:reload": "bun tooling/infra/mode.ts reload",
     "mode:status": "bun tooling/infra/mode.ts status",
     "mode:stop": "bun tooling/infra/mode.ts stop",
     "release": "bun tooling/release/cli.ts",

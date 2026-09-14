@@ -30,11 +30,17 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], channel: 'chromium' },
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: ['--no-sandbox'],
+          executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
+        },
+      },
     },
   ],
   webServer: {
-    command: 'pnpm dev',
+    command: 'bun run dev',
     reuseExistingServer: true,
     url: 'http://localhost:3000',
   },

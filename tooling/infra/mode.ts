@@ -21,7 +21,7 @@ import { command, danger, muted, statusMark, success, title, warning } from './t
 
 type Mode = 'local' | 'preview'
 
-/** 不同模式的完整启动预算；preview 包含 Next.js 与 OpenNext 两段生产构建。 */
+/** 不同模式的就绪预算；local 的 next build 在前台完成，后台只跑 next start；preview 含两段生产构建。 */
 const STARTUP_TIMEOUT_MS: Record<Mode, number> = {
   local: 90_000,
   preview: 300_000,
@@ -44,12 +44,12 @@ function isManagedProcessGroupAlive(pid: number): boolean {
   }
 }
 
-const mode = process.argv[2] as Mode | 'status' | 'stop' | undefined
+const mode = process.argv[2] as Mode | 'status' | 'stop' | 'reload' | undefined
 const action = process.argv[3] ?? 'status'
 
 function commandFor(target: Mode, port: number): string[] {
   return target === 'local'
-    ? ['bun', 'run', 'dev', '--hostname', '0.0.0.0', '--port', String(port)]
+    ? ['bun', 'run', 'start', '--hostname', '0.0.0.0', '--port', String(port)]
     : ['bun', 'run', 'preview', '--ip', '0.0.0.0', '--port', String(port)]
 }
 
@@ -133,7 +133,7 @@ async function stop(target: Mode): Promise<number> {
   return 0
 }
 
-async function start(target: Mode): Promise<number> {
+async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promise<number> {
   const other = target === 'local' ? 'preview' : 'local'
   if (!(await stopAndWait(other))) return 1
   const existingPid = readPid(target)
@@ -162,6 +162,14 @@ async function start(target: Mode): Promise<number> {
   }
   if (port !== defaultPortFor(target)) {
     console.log(warning(`● 端口 ${defaultPortFor(target)} 已被占用，自动切换到 ${port}`))
+  }
+  if (target === 'local' && !options.skipBuild) {
+    console.log(title('构建 Next.js 生产产物'))
+    const buildCode = run(['bun', 'run', 'build'])
+    if (buildCode !== 0) {
+      console.error(danger('● 构建失败，未启动 local'))
+      return buildCode
+    }
   }
   writeManagedPort(target, port)
   startBackground(target, commandFor(target, port))
@@ -218,8 +226,24 @@ async function logs(target: Mode): Promise<number> {
   return 0
 }
 
+async function reload(): Promise<number> {
+  const running = (['local', 'preview'] as const).filter((target) => readPid(target) !== null)
+  if (running.length === 0) {
+    console.log(warning('没有正在运行的模式；请先执行 bun run mode:local up 或 mode:preview up'))
+    return 1
+  }
+  const target = running[0]
+  if (running.length > 1) {
+    console.log(warning(`检测到 ${running.join('、')} 均在运行，本次只重载 ${target}`))
+  }
+  if (!(await stopAndWait(target))) return 1
+  console.log(title(`重新构建并启动 ${target}`))
+  return start(target)
+}
+
 async function main(): Promise<number> {
   if (mode === 'status') return status()
+  if (mode === 'reload') return reload()
   if (mode === 'stop') {
     const localCode = await stop('local')
     const previewCode = await stop('preview')
@@ -227,7 +251,7 @@ async function main(): Promise<number> {
   }
   if (mode !== 'local' && mode !== 'preview') {
     console.log(
-      `用法: ${command('bun tooling/infra/mode.ts <local|preview> <up|stop|restart|rebuild|status|logs>')}`,
+      `用法: ${command('bun tooling/infra/mode.ts <local|preview> <up|stop|restart|rebuild|status|logs>')}，或 ${command('bun tooling/infra/mode.ts reload')}`,
     )
     return 1
   }
@@ -239,14 +263,7 @@ async function main(): Promise<number> {
   }
   if (action === 'rebuild') {
     if (!(await stopAndWait(mode))) return 1
-    if (mode === 'local') {
-      console.log(
-        warning(
-          `● local 是热更新开发模式；固定产物请使用 ${command('bun run mode:preview rebuild')}`,
-        ),
-      )
-      return 1
-    }
+    // check:fast 里的 next build 会写 .next，先停掉 local 避免并发读写构建目录。
     if (!(await stopAndWait('local'))) return 1
     console.log(title('运行测试与生产构建检查'))
     const checkCode = run(['bun', 'run', 'check:fast'])
@@ -254,7 +271,8 @@ async function main(): Promise<number> {
       console.error(danger('● 检查失败，未启动旧产物'))
       return checkCode
     }
-    return start(mode)
+    // check:fast 已包含 next build，这里直接启动产物，避免重复构建。
+    return start(mode, { skipBuild: true })
   }
   if (action === 'status' || action === 'ps') return status()
   if (action === 'logs') return logs(mode)

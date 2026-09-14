@@ -21,7 +21,8 @@ body {
 }
 
 .site-header--home .nav-row {
-  padding-top: 44px;
+  min-height: 88px;
+  padding-top: 20px;
   padding-bottom: 20px;
 }
 .site-header--home .site-nav {
@@ -274,6 +275,7 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 @media (max-width: 900px) {
   .site-header--home .nav-row {
+    min-height: 74px;
     padding-block: 12px;
   }
 }
@@ -304,6 +306,9 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   }
 }
 @media (max-width: 600px) {
+  .site-header--home .nav-row {
+    min-height: 66px;
+  }
   .site-header--home {
     position: fixed;
     inset-inline: 0;

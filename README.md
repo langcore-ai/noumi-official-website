@@ -55,6 +55,7 @@ pnpm run dev
 - `package.json` 的部署、类型生成和测试聚合脚本会调用 pnpm，不能只安装 Bun。
 - Payload adapter 配置为 `push: false`，全新本地 D1 需要先执行 migration。
 - 本地 autosave 和 live preview 默认关闭，以降低 Miniflare/D1 锁竞争；按需在 `.env` 中开启。
+- `bun run mode:local up` 是打包运行模式：先执行 `next build` 再后台 `next start`，不做热加载；需要热更新时直接用 `pnpm run dev`。
 - `pnpm run preview` 与 `bun run mode:preview up` 会同时禁用 OpenNext 预取阶段的远程 binding proxy，并显式传入 Wrangler `--local`，默认使用本地模拟的 D1/R2，不会读写远程资源；全新本地 D1 仍需先执行 migration 才能使用 Admin。
 - 不要绕过项目脚本直接运行 `opennextjs-cloudflare preview`；上游命令的启动前环境读取不会自动继承 Wrangler `--local`，可能按主配置连接远程 D1。
 
@@ -84,7 +85,8 @@ pnpm run deploy              # 危险：先迁移远程 D1，再部署应用
 bun run help                          # 查看开发、检查和发布命令总览
 bun run infra:doctor                  # 环境、工具和 Cloudflare 目标检查
 bun run infra:setup                   # 初始化依赖与本地 .env
-bun run mode:local up                 # 后台启动本地 Next/Payload
+bun run mode:local up                 # 构建 Next 生产产物并后台启动（非热加载）
+bun run mode:local rebuild            # 检查、重新构建并启动 local 固定产物
 bun run mode:preview up               # 构建并预览 Cloudflare 产物
 bun run mode:preview rebuild          # 测试、重新构建并运行固定产物
 bun run mode:status                   # 查看本地模式状态

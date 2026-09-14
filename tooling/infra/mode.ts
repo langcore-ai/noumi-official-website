@@ -164,8 +164,8 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
     console.log(warning(`● 端口 ${defaultPortFor(target)} 已被占用，自动切换到 ${port}`))
   }
   if (target === 'local' && !options.skipBuild) {
-    console.log(title('构建 Next.js 生产产物'))
-    const buildCode = run(['bun', 'run', 'build'])
+    console.log(title('快速构建 Next.js 生产产物（跳过 tsc/lint）'))
+    const buildCode = run(['bun', 'run', 'build:quick'])
     if (buildCode !== 0) {
       console.error(danger('● 构建失败，未启动 local'))
       return buildCode

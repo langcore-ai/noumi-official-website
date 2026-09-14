@@ -29,7 +29,7 @@ test('homepage palette, geometry and continuous scroll activation', async ({ pag
   }
 })
 
-test('all gallery cases, local images, language and accessible lightbox', async ({ page }) => {
+test('all gallery cases, local images, English copy and accessible lightbox', async ({ page }) => {
   await page.goto('/assets/usecases-gallery/index.html')
   await expect(page.locator('.pill')).toHaveCount(5)
   let count = 0
@@ -61,9 +61,8 @@ test('all gallery cases, local images, language and accessible lightbox', async 
     }
   }
   expect(count).toBe(16)
-  await page.getByRole('button', { name: '中文', exact: true }).click()
-  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
-  await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('#langSwitch')).toHaveCount(0)
   await page.locator('.media-block').first().click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.keyboard.press('Tab')
@@ -130,18 +129,16 @@ test('mobile menu closes on navigation and About copy has contrast', async ({ pa
   await expect(page.locator('h1')).toHaveCSS('color', 'rgb(59, 63, 67)')
 })
 
-test('gallery respects consent and cancels obsolete transitions', async ({ page }) => {
+test('gallery ignores stored language and cancels obsolete transitions', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('noumi-cookie-consent', JSON.stringify({ version: 3, locale: true }))
+    localStorage.setItem('noumi-usecases-lang', 'zh')
+  })
   await page.goto('/assets/usecases-gallery/index.html')
   await expect(page.locator('.pill')).toHaveCount(5)
-  await page.getByRole('button', { name: '中文', exact: true }).click()
-  expect(await page.evaluate(() => localStorage.getItem('noumi-usecases-lang'))).toBeNull()
-  await page.evaluate(() =>
-    localStorage.setItem('noumi-cookie-consent', JSON.stringify({ version: 3, locale: true })),
-  )
-  await page.getByRole('button', { name: 'EN', exact: true }).click()
-  await page.getByRole('button', { name: '中文', exact: true }).click()
-  await page.reload()
-  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
+  await expect(page.locator('#heroTitle')).toHaveText('What you can deliver with Noumi')
+  await expect(page.locator('#langSwitch')).toHaveCount(0)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await page.locator('.case-item[data-index="1"]').click()
   await page.locator('.pill').last().click()
   await expect(page.locator('.case-fade')).toHaveClass(/in/)

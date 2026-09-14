@@ -12,6 +12,39 @@ export function OfficialGlobalEffects(): null {
   const pathname = usePathname()
 
   useEffect(() => {
+    const labels = new Set<HTMLElement>()
+    const labelObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('subtitle-motion--visible')
+        labelObserver.unobserve(entry.target)
+      }
+    })
+    const scanLabels = () => {
+      document
+        .querySelectorAll<HTMLElement>(
+          '.redesign-kicker, .sec-label, .prototype-page .subtitle-wrap',
+        )
+        .forEach((label) => {
+          if (labels.has(label)) return
+          labels.add(label)
+          label.classList.add('subtitle-motion')
+          labelObserver.observe(label)
+        })
+    }
+    scanLabels()
+    const labelMutations = new MutationObserver(scanLabels)
+    labelMutations.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      labelObserver.disconnect()
+      labelMutations.disconnect()
+      labels.forEach((label) =>
+        label.classList.remove('subtitle-motion', 'subtitle-motion--visible'),
+      )
+    }
+  }, [pathname])
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

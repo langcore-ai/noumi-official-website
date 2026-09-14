@@ -31,6 +31,21 @@ body {
 .site-header--home .site-nav a {
   padding-inline: 24px;
 }
+.site-header .site-nav a:not(.button--nav):is(:hover, :focus-visible, [aria-current='page']),
+.site-header .mobile-nav__link:is(:hover, :focus-visible, [aria-current='page']) {
+  color: var(--noumi-blue);
+}
+.site-header--use-case .site-nav a[aria-current='page'] {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  border-bottom-color: var(--noumi-blue);
+}
+.site-header .mobile-nav__link[aria-current='page'] {
+  padding-inline: 4px;
+  background: transparent;
+  box-shadow: none;
+}
 .site-header--home .site-nav .button--nav,
 .site-header--home .site-nav .site-nav__about {
   box-shadow: none;
@@ -40,8 +55,14 @@ body {
   width: 148px;
   justify-content: space-between;
 }
+.site-header--home .site-nav .site-nav__about[aria-current='page'] {
+  min-height: 40px;
+  border-radius: 5px;
+  background: rgba(110, 134, 164, 0.16);
+}
 .site-header--home .site-nav .button--nav {
-  width: 173px;
+  min-width: 173px;
+  width: max-content;
   margin-left: 15px;
   justify-content: space-between;
 }
@@ -103,14 +124,6 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 .site-nav__about .prototype-button-arrow {
   filter: invert(0.78);
 }
-/* The hero a-5 targets .home-button-text-wrap, absent from this prototype's
-   actual button. Do not add the unrelated vertical arrow swap here. */
-.redesign-hero .redesign-button__arrows img:first-child {
-  transform: none;
-}
-.redesign-hero .redesign-button__arrows img:last-child {
-  display: none;
-}
 .site-footer .footer-grid a:not(.brand) {
   width: fit-content;
   background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
@@ -156,14 +169,14 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   display: flow-root;
 }
 .redesign-feature {
-  top: 70px;
+  top: calc(var(--official-header-height, 136px) + 10px);
   z-index: 1;
 }
 .redesign-feature:nth-child(2) {
-  top: 80px;
+  top: calc(var(--official-header-height, 136px) + 20px);
 }
 .redesign-feature:nth-child(3) {
-  top: 90px;
+  top: calc(var(--official-header-height, 136px) + 30px);
 }
 .redesign-feature__copy {
   padding: 0;
@@ -220,8 +233,9 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 .noumi-usecases-frame {
   display: block;
-  height: 800px;
   border: 0;
+  border-radius: 5px;
+  overflow: hidden;
   background: var(--noumi-lite);
 }
 
@@ -260,13 +274,13 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
     padding: 25px;
   }
   .redesign-feature:nth-child(1) {
-    top: 70px !important;
+    top: calc(var(--official-header-height, 136px) + 10px) !important;
   }
   .redesign-feature:nth-child(2) {
-    top: 80px !important;
+    top: calc(var(--official-header-height, 136px) + 20px) !important;
   }
   .redesign-feature:nth-child(3) {
-    top: 90px !important;
+    top: calc(var(--official-header-height, 136px) + 30px) !important;
   }
   .redesign-feature h3 {
     font-size: 14px;
@@ -369,8 +383,12 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   letter-spacing: 0;
 }
 
-/* The prototype header belongs to normal document flow. A fixed header
-   obscures the feature cards' 70/80/90px sticky positions. */
+/* Keep the shared wrapper in flow so every route reserves the header's height. */
+.official-persistent-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
 .site-header,
 .site-header--home {
   position: relative;
@@ -407,6 +425,49 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 .sec-label::after {
   background-image: url('/assets/redesign/subtitle-right.svg');
+}
+/* Webflow JS a-54 / e-605: initial ±30px, then 500ms delay + 600ms linear.
+   Keep the resting position outside the text even when animations are disabled. */
+.subtitle-motion .redesign-kicker__mark--left,
+.subtitle-motion .subtitle-arrow-wrap.left,
+.sec-label.subtitle-motion::before {
+  --subtitle-start: 30px;
+}
+.subtitle-motion .redesign-kicker__mark--right,
+.subtitle-motion .subtitle-arrow-wrap.right,
+.sec-label.subtitle-motion::after {
+  --subtitle-start: -30px;
+}
+.subtitle-motion:not(.subtitle-motion--visible) .redesign-kicker__mark,
+.subtitle-motion:not(.subtitle-motion--visible) .subtitle-arrow-wrap,
+.sec-label.subtitle-motion:not(.subtitle-motion--visible)::before,
+.sec-label.subtitle-motion:not(.subtitle-motion--visible)::after {
+  transform: translateX(var(--subtitle-start));
+}
+.subtitle-motion--visible .redesign-kicker__mark,
+.subtitle-motion--visible .subtitle-arrow-wrap,
+.sec-label.subtitle-motion--visible::before,
+.sec-label.subtitle-motion--visible::after {
+  transform: translateX(0);
+  animation: subtitle-brackets-open 600ms linear 500ms both;
+}
+@keyframes subtitle-brackets-open {
+  from {
+    transform: translateX(var(--subtitle-start));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .subtitle-motion .redesign-kicker__mark,
+  .subtitle-motion .subtitle-arrow-wrap,
+  .sec-label.subtitle-motion::before,
+  .sec-label.subtitle-motion::after {
+    animation: none;
+    /* Override the pending selector as well as any exported inline transform. */
+    transform: none !important;
+  }
 }
 .site-footer .footer-grid a:not(.brand) {
   display: block;
@@ -492,5 +553,48 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   }
   .site-footer .footer-heading {
     font-size: 20px;
+  }
+}
+
+/* Keep feature cards inset evenly from their surrounding frame on large screens. */
+@media (min-width: 1440px) {
+  .prototype-page[data-prototype-source="features.html"] .features-card-area {
+    padding-top: 30px;
+  }
+}
+
+.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-card-brand-wrap {
+  flex: 0 1 140px;
+  min-width: 0;
+  height: 32px;
+  align-items: center;
+}
+.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-card-brand-wrap img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 32px;
+  object-fit: contain;
+}
+.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-icon-area {
+  flex-shrink: 0;
+}
+
+/* Profession cards retain hover feedback without navigation. */
+.prototype-page[data-prototype-source="use-cases.html"] .integration-card {
+  cursor: default;
+}
+.prototype-page[data-prototype-source="use-cases.html"] .integration-link:has(.integration-arrow-wrap) {
+  width: fit-content;
+  border-radius: 4px;
+  transition: background-color 160ms ease;
+}
+.prototype-page[data-prototype-source="use-cases.html"] .integration-link:has(.integration-arrow-wrap):hover {
+  background-color: #e5e5e5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prototype-page[data-prototype-source="use-cases.html"] .integration-link {
+    transition: none;
   }
 }

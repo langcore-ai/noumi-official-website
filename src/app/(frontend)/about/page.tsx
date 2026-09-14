@@ -132,7 +132,7 @@ export default function AboutPage() {
           <div className="redesign-shell redesign-final-cta__card">
             <div>
               <h2 id="about-cta">Get Started Today</h2>
-              <p>Get to know me. I’ll get to know you.</p>
+              <p>Get to know me. I&apos;ll get to know you.</p>
             </div>
             <div className="redesign-final-cta__button">
               <Link

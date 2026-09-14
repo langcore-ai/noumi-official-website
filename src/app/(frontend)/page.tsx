@@ -75,11 +75,7 @@ export default function HomePage() {
                   data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
                   href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
-                  <span>Join Waitlist</span>
-                  <span aria-hidden="true" className="redesign-button__arrows">
-                    <img alt="" src="/assets/redesign/arrow.svg" />
-                    <img alt="" src="/assets/redesign/arrow.svg" />
-                  </span>
+                  <PrototypeButtonContent>Try Noumi Free</PrototypeButtonContent>
                 </Link>
               </div>
             </div>
@@ -141,7 +137,6 @@ export default function HomePage() {
                 className="redesign-kicker__mark redesign-kicker__mark--right"
               />
             </p>
-            <h2>Built for the way you work</h2>
           </div>
           <div className="redesign-shell">
             <OfficialUseCasesShowcase />
@@ -152,7 +147,7 @@ export default function HomePage() {
           <div className="redesign-shell redesign-final-cta__card">
             <div>
               <h2>Get Started Today</h2>
-              <p>Get to know me. I’ll get to know you.</p>
+              <p>Get to know me. I&apos;ll get to know you.</p>
             </div>
             <div className="redesign-final-cta__button">
               <Link
@@ -163,7 +158,7 @@ export default function HomePage() {
                 data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
                 href={OFFICIAL_PRODUCT_AUTH_URL}
               >
-                <PrototypeButtonContent>Join Waitlist</PrototypeButtonContent>
+                <PrototypeButtonContent>Try Noumi Free</PrototypeButtonContent>
               </Link>
             </div>
           </div>

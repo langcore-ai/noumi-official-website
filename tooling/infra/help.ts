@@ -9,7 +9,7 @@ const commandGroups = [
   {
     title: '开发模式',
     commands: [
-      ['bun run mode:local up', '构建 Next 生产产物并后台启动（非热加载）'],
+      ['bun run mode:local up', '快速构建(跳过 tsc/lint)并后台启动,非热加载'],
       ['bun run mode:preview up', '构建并启动 OpenNext/Cloudflare 本地预览'],
       ['bun run mode:<local|preview> rebuild', '检查、重新构建并启动固定产物'],
       ['bun run mode:reload', '重新构建并重启当前运行的模式'],

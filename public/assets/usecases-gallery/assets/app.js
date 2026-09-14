@@ -1,6 +1,6 @@
 /**
  * Noumi Use Case 展示站 · app.js
- * 渲染 / hover 切换 / 语言切换 / toast / 灯箱大图。
+ * 渲染 / hover 切换 / 英文展示 / toast / 灯箱大图。
  * 所有浏览器 URL 使用 new URL(..., document.baseURI) 解析，禁止根绝对路径。
  * 图片类附件（输入缩略图 / 产出物截图）点击后在当前页全屏灯箱打开原图，
  * 右上角关闭按钮 / 点击背景 / 按 Esc 均可退出。
@@ -9,12 +9,11 @@
   "use strict";
 
   var CATEGORIES = [];
-  var LANG_KEY = "noumi-usecases-lang";
   var HOVER_DEBOUNCE_MS = 60;
   var FADE_MS = 120;
 
   var state = {
-    lang: readStoredLang(),
+    lang: "en",
     catIndex: 0,
     caseIndex: 0,
     hoverMode: false,
@@ -27,35 +26,9 @@
   var caseTimer = null;
   var previousFocus = null;
 
-  function readStoredLang() {
-    try {
-      if (!canStorePreference()) return "en";
-      var v = window.localStorage.getItem(LANG_KEY);
-      if (v === "en" || v === "zh") return v;
-    } catch (_) {
-      /* localStorage unavailable, fall through to default */
-    }
-    return "en";
-  }
-
-  function storeLang(lang) {
-    try {
-      if (canStorePreference()) window.localStorage.setItem(LANG_KEY, lang);
-    } catch (_) {
-      /* ignore persistence failure */
-    }
-  }
-
-  function canStorePreference() {
-    try {
-      var consent = JSON.parse(window.localStorage.getItem("noumi-cookie-consent") || "null");
-      return !!consent && consent.locale === true;
-    } catch (_) { return false; }
-  }
-
   function t(field) {
     if (!field) return "";
-    return field[state.lang] != null ? field[state.lang] : field.zh || field.en || "";
+    return field.en || "";
   }
 
   function resolveAsset(relPath) {
@@ -209,7 +182,6 @@
   }
 
   function cacheEls() {
-    els.langSwitch = document.getElementById("langSwitch");
     els.heroTitle = document.getElementById("heroTitle");
     els.heroCta = document.getElementById("heroCta");
     els.pillGroup = document.getElementById("pillGroup");
@@ -231,33 +203,6 @@
     state.hoverMode = detectHoverMode();
     els.pillGroup.classList.toggle("degraded", !state.hoverMode);
     els.sidebar.classList.toggle("degraded", !state.hoverMode);
-  }
-
-  /* ---------------- Language ---------------- */
-  function renderLangSwitch() {
-    els.langSwitch.innerHTML =
-      '<button type="button" data-lang="en" class="' +
-      (state.lang === "en" ? "active" : "") +
-      '">EN</button>' +
-      '<button type="button" data-lang="zh" class="' +
-      (state.lang === "zh" ? "active" : "") +
-      '">中文</button>';
-
-    Array.prototype.forEach.call(els.langSwitch.querySelectorAll("button"), function (btn) {
-      btn.addEventListener("click", function () {
-        var lang = btn.getAttribute("data-lang");
-        if (lang === state.lang) return;
-        setLang(lang);
-      });
-    });
-  }
-
-  function setLang(lang) {
-    state.lang = lang;
-    storeLang(lang);
-    document.documentElement.setAttribute("lang", lang === "zh" ? "zh-CN" : "en");
-    // Keep current category/case selection stable across language switch.
-    renderAll(false);
   }
 
   /* ---------------- Hero ---------------- */
@@ -1062,7 +1007,6 @@
 
   /* ---------------- Global render ---------------- */
   function renderAll(animateCase) {
-    renderLangSwitch();
     renderHero();
     renderPills();
     renderSidebar();

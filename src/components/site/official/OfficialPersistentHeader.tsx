@@ -34,6 +34,10 @@ function getActivePrimaryNavItem(pathname: string): ActiveNavItem | undefined {
     return '/pricing'
   }
 
+  if (pathname === '/about' || pathname.startsWith('/about/')) {
+    return '/about'
+  }
+
   return undefined
 }
 
@@ -60,6 +64,23 @@ export function OfficialPersistentHeader(props: { useCases: OfficialUseCaseNavIt
   const activeUseCaseSlug = getUseCaseDetailSlug(pathname)
 
   useEffect(() => {
+    const wrapper = headerWrapperRef.current
+    const shell = wrapper?.parentElement
+    if (!wrapper || !shell) return
+
+    const updateHeight = () => {
+      shell.style.setProperty('--official-header-height', `${wrapper.getBoundingClientRect().height}px`)
+    }
+    const observer = new ResizeObserver(updateHeight)
+    observer.observe(wrapper)
+    updateHeight()
+    return () => {
+      observer.disconnect()
+      shell.style.removeProperty('--official-header-height')
+    }
+  }, [])
+
+  useEffect(() => {
     // 切页后关闭移动端菜单，避免持久 header 保留上一次的展开状态。
     headerWrapperRef.current
       ?.querySelectorAll<HTMLInputElement>('.mobile-nav__toggle')
@@ -69,7 +90,7 @@ export function OfficialPersistentHeader(props: { useCases: OfficialUseCaseNavIt
   }, [pathname])
 
   return (
-    <div ref={headerWrapperRef}>
+    <div className="official-persistent-header" ref={headerWrapperRef}>
       {activeUseCaseSlug ? (
         <OfficialUseCaseHeader activeSlug={activeUseCaseSlug} useCases={useCases} />
       ) : (

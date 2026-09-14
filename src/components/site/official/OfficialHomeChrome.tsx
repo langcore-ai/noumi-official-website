@@ -22,7 +22,7 @@ const PRIMARY_NAV_ITEMS = [
 type PrimaryNavItem = (typeof PRIMARY_NAV_ITEMS)[number]['href']
 
 /** 官网导航可高亮项。 */
-export type ActiveNavItem = PrimaryNavItem
+export type ActiveNavItem = PrimaryNavItem | '/about'
 
 /**
  * 渲染移动端折叠菜单的主导航链接。
@@ -73,7 +73,11 @@ export function OfficialHomeHeader(props: {
               {item.label}
             </Link>
           ))}
-          <Link className="site-nav__about" href="/about">
+          <Link
+            aria-current={activeItem === '/about' ? 'page' : undefined}
+            className="site-nav__about"
+            href="/about"
+          >
             <PrototypeButtonContent>About Us</PrototypeButtonContent>
           </Link>
           <Link
@@ -84,7 +88,7 @@ export function OfficialHomeHeader(props: {
             data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
             href={OFFICIAL_PRODUCT_AUTH_URL}
           >
-            <PrototypeButtonContent>Join Waitlist</PrototypeButtonContent>
+            <PrototypeButtonContent>Try Noumi Free</PrototypeButtonContent>
           </Link>
         </nav>
 
@@ -102,7 +106,11 @@ export function OfficialHomeHeader(props: {
             <div className="mobile-nav__panel-inner">
               <nav aria-label="Mobile primary navigation" className="mobile-nav__group">
                 {renderMobilePrimaryLinks(activeItem)}
-                <Link className="mobile-nav__link" href="/about">
+                <Link
+                  aria-current={activeItem === '/about' ? 'page' : undefined}
+                  className="mobile-nav__link"
+                  href="/about"
+                >
                   About
                 </Link>
                 <Link
@@ -113,7 +121,7 @@ export function OfficialHomeHeader(props: {
                   data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
                   href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
-                  Join Waitlist
+                  Try Noumi Free
                   <span aria-hidden="true">↗</span>
                 </Link>
               </nav>

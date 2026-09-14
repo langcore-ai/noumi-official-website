@@ -161,9 +161,13 @@ export default async function LinksPage() {
         <section aria-label="Directory listings" className={styles.gridSection}>
           <div className={styles.directoryGrid}>
             {links.map((link, index) => (
-              <article
+              <a
                 className={`${styles.directoryCard} ${getCardRevealClass(index)}`}
                 key={link.id}
+                href={link.href}
+                rel="noopener noreferrer"
+                target="_blank"
+                aria-label={`Visit ${link.title} (opens in a new tab)`}
               >
                 <div className={styles.cardTop}>
                   <FriendlyLinkAvatar link={link} />
@@ -173,16 +177,11 @@ export default async function LinksPage() {
                   </div>
                 </div>
                 <div className={styles.cardBottom}>
-                  <a
-                    className={styles.cardVisit}
-                    href={link.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
+                  <span className={styles.cardVisit}>
                     Visit <span aria-hidden="true">→</span>
-                  </a>
+                  </span>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </section>

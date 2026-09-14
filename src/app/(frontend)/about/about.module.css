@@ -49,8 +49,8 @@
   margin: 25px auto 0;
   padding: 63px 0 18px 18px;
   text-align: left;
-  font-size: 12px;
-  line-height: 25px;
+  font-size: 16px;
+  line-height: 1.6;
 }
 .intro p + p {
   margin-top: 25px;
@@ -116,9 +116,11 @@
   text-transform: capitalize;
 }
 .memberCaption p {
-  color: #3b3f43;
+  align-self: center;
+  color: #86898e;
   font-size: 14px;
   line-height: 1;
+  white-space: nowrap;
 }
 .recruitment {
   display: grid;
@@ -137,8 +139,8 @@
 .recruitmentCopy {
   max-width: 500px;
   margin-top: 25px;
-  font-size: 12px;
-  line-height: 25px;
+  font-size: 16px;
+  line-height: 1.6;
 }
 .teamPhoto {
   display: block;
@@ -315,9 +317,9 @@
     line-height: 1.1;
   }
   .intro {
-    font-size: 12px;
+    font-size: 14px;
     padding: 35px 22px 18px;
-    line-height: 18px;
+    line-height: 1.6;
   }
   .intro p + p {
     margin-top: 18px;
@@ -334,8 +336,8 @@
     padding: 20px;
   }
   .recruitmentCopy {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 1.6;
   }
   .teamPhoto {
     display: none;

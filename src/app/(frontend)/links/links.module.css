@@ -103,14 +103,17 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   background: #f3efe6;
-  cursor: default;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
     border-color 0.2s ease;
 }
 
-.directoryCard:hover {
+.directoryCard:hover,
+.directoryCard:focus-visible {
   border-color: var(--accent-soft);
   box-shadow: 0 8px 32px rgba(28, 27, 46, 0.08);
   transform: translateY(-3px);
@@ -190,7 +193,8 @@
     opacity 0.15s;
 }
 
-.directoryCard:hover .cardVisit {
+.directoryCard:hover .cardVisit,
+.directoryCard:focus-visible .cardVisit {
   gap: 6px;
   opacity: 1;
 }
@@ -323,7 +327,6 @@
 }
 
 .directoryCard {
-  min-height: 260px;
   border-color: var(--noumi-line);
   border-radius: 5px;
   background: var(--noumi-lite);
@@ -332,4 +335,9 @@
 
 .ctaBand {
   background: var(--noumi-dark);
+}
+
+.directoryCard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }

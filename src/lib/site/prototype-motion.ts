@@ -27,8 +27,6 @@ export const HOME_MOTION = [
   ['e-221', '.site-footer .footer-grid > div:nth-child(3)', 'slide', 550],
   ['e-223', '.site-footer .footer-grid > div:nth-child(4)', 'slide', 650],
   ['e-225', '.site-footer .footer-bottom', 'slide', 350],
-  ['e-605', '.redesign-kicker__mark--left', 'left-marker', 500],
-  ['e-605', '.redesign-kicker__mark--right', 'right-marker', 500],
 ] as const satisfies readonly (readonly [string, string, PrototypeMotionKind, number])[]
 
 export function prototypeMotionFrames(kind: PrototypeMotionKind): Keyframe[] {

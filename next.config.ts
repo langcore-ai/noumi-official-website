@@ -1,8 +1,10 @@
+import type { NextConfig } from 'next'
 import { withPayload } from '@payloadcms/next/withPayload'
 import prototypeRoutes from './src/lib/site/prototype/routes.json'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
+  // 本地快速构建(build:quick)跳过类型检查以提速;不设 QUICK_BUILD 的生产/CI 构建保持完整检查。
+  ...(process.env.QUICK_BUILD === 'true' ? { typescript: { ignoreBuildErrors: true } } : {}),
   // 重定向状态码由 middleware 控制为 301，避免 Next 内置 trailing slash 跳转返回 308。
   skipTrailingSlashRedirect: true,
   async redirects() {

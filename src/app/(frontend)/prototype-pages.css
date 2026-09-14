@@ -13,6 +13,8 @@
 }
 .prototype-page details.faq {
   display: block;
+  /* FAQ panels stay below the sticky header, unlike overlay dropdown menus. */
+  z-index: 0;
 }
 .prototype-page .faq-area {
   width: 100%;

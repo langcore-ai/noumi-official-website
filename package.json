@@ -17,6 +17,7 @@
     "release": "bun tooling/release/cli.ts",
     "prebuild": "node ./scripts/patch-opennext-env-shim.mjs && node ./scripts/patch-opennext-local-bindings.mjs",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "build:quick": "cross-env QUICK_BUILD=true NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --no-lint",
     "build:cloudflare": "bun run prebuild && opennextjs-cloudflare build",
     "check:fast": "prettier --check package.json tooling && eslint . && tsc --noEmit && bun run test:int && bun run build",
     "check:full": "bun run check:fast && bun run test:e2e && bun run build:cloudflare",

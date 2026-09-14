@@ -121,6 +121,8 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }) {
       { threshold: 0 },
     )
     for (const event of motion.events) {
+      // Shared subtitle motion also covers CMS labels and the homepage.
+      if (event.action.config.actionListId === 'a-54') continue
       for (const element of select(event.target)) {
         const list = motion.lists[event.action.config.actionListId]
         if (
@@ -229,16 +231,28 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }) {
       }
     }
     // Native markup works without JS; hydrated toggles replay the source's 300ms action lists.
+    const closeFaqs = new Map<HTMLDetailsElement, () => void>()
     root.querySelectorAll<HTMLDetailsElement>('details[data-prototype-faq]').forEach((details) => {
       const summary = details.querySelector('summary')
       if (!summary) return
       let expanded = details.open
       let timer: ReturnType<typeof setTimeout>
+      closeFaqs.set(details, () => {
+        clearTimeout(timer)
+        expanded = false
+        details.open = false
+        details.dispatchEvent(new Event('prototype-close'))
+      })
       const toggle = (event: MouseEvent) => {
         event.preventDefault()
         clearTimeout(timer)
         expanded = !expanded
-        if (expanded) details.open = true
+        if (expanded) {
+          closeFaqs.forEach((close, other) => {
+            if (other !== details && other.open) close()
+          })
+          details.open = true
+        }
         details.dispatchEvent(new Event(expanded ? 'prototype-open' : 'prototype-close'))
         if (!expanded)
           timer = setTimeout(

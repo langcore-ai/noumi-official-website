@@ -70,6 +70,9 @@ body {
 }
 
 /* IX2 a/a-2: preserve the static button bounds while exchanging arrow sides. */
+.site-header .button--nav:is(:hover, :focus-visible) {
+  transform: none;
+}
 .prototype-button-content,
 .site-header--home .site-nav .button--nav > .prototype-button-content {
   position: relative;

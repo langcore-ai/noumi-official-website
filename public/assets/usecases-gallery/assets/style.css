@@ -1046,8 +1046,16 @@ body {
 .media-row {
   display: flex;
   gap: 10px;
-  overflow-x: hidden;
+  /* Trackpad/touch swiping scrolls the row; the arrows drive the same scroller. */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.media-row::-webkit-scrollbar {
+  display: none;
 }
 
 .media-row .media-block {

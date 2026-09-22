@@ -690,6 +690,29 @@
       row.scrollTo({ left: blocks[current].offsetLeft, behavior: "smooth" });
     }
 
+    // Trackpad/touch swipes move the row without going through go(); follow them so
+    // the arrows keep stepping from the block the reader actually stopped at.
+    var syncFrame = 0;
+
+    function syncCurrent() {
+      syncFrame = 0;
+      var nearest = 0;
+      var nearestDistance = Infinity;
+      blocks.forEach(function (block, index) {
+        var distance = Math.abs(block.offsetLeft - row.scrollLeft);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearest = index;
+        }
+      });
+      current = nearest;
+    }
+
+    row.addEventListener("scroll", function () {
+      if (syncFrame) return;
+      syncFrame = requestAnimationFrame(syncCurrent);
+    });
+
     var nav = document.createElement("div");
     nav.className = "media-nav";
 

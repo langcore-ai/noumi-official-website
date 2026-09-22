@@ -183,7 +183,7 @@
 
   function cacheEls() {
     els.heroTitle = document.getElementById("heroTitle");
-    els.heroCta = document.getElementById("heroCta");
+    els.heroCtaLabel = document.getElementById("heroCtaLabel");
     els.pillGroup = document.getElementById("pillGroup");
     els.sidebar = document.getElementById("sidebar");
     els.caseFade = document.getElementById("caseFade");
@@ -224,7 +224,7 @@
       els.heroTitle.appendChild(buildHeroOrb());
       els.heroTitle.appendChild(document.createTextNode(after));
     }
-    els.heroCta.textContent = t(HERO_COPY.cta);
+    els.heroCtaLabel.textContent = t(HERO_COPY.cta);
   }
 
   function buildHeroOrb() {

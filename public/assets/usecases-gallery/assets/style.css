@@ -118,33 +118,60 @@ body {
 .hero-cta {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  min-height: 40px;
+  min-width: 173px;
   margin-top: 22px;
-  background: var(--msg-user-bg);
-  color: #ffffff;
+  background: var(--ink);
+  color: #f6f0e7;
   font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: var(--w-semibold);
+  font-size: 16px;
+  font-weight: var(--w-bold);
+  line-height: 1.6;
   text-decoration: none;
-  padding: 12px 28px;
-  border-radius: 999px;
-  box-shadow: 0 6px 18px var(--ink-25);
-  opacity: 0;
-  transform: translateY(8px);
-  animation: rise 0.5s ease forwards;
-  animation-delay: 0.08s;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 5px 15px;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: none;
 }
 
-.hero-cta:hover,
-.hero-cta:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px var(--ink-25);
+/* Match the shared header CTA, including its sliding arrow treatment. */
+.hero-cta .prototype-button-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  overflow: hidden;
+}
+
+.hero-cta .prototype-button-content > * {
+  flex-shrink: 0;
+  transition: transform 300ms linear;
+}
+
+.hero-cta .prototype-button-arrow {
+  width: 9px;
+  height: 13px;
+}
+
+.hero-cta .prototype-button-arrow--incoming {
+  position: absolute;
+  left: -40px;
+}
+
+.hero-cta:is(:hover, :focus-visible) .prototype-button-content > * {
+  transform: translateX(40px);
 }
 
 .hero-cta:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta .prototype-button-content > * {
+    transition: none;
+  }
 }
 
 .nx-ma {

@@ -389,6 +389,10 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   top: 0;
   z-index: 30;
 }
+.official-persistent-header .site-header,
+.official-persistent-header .site-header :is(a, button, label, span, p) {
+  font-weight: 700;
+}
 .site-header,
 .site-header--home {
   position: relative;
@@ -581,20 +585,36 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   flex-shrink: 0;
 }
 
-/* Profession cards retain hover feedback without navigation. */
+/* The prototype pins this wrapper only below 768px; above it the 20x20 SVG is left
+   to flex sizing, so a longer perk shrinks the icon. Fix the box so every bullet
+   renders the same circle. */
+.prototype-page[data-prototype-source='pricing.html'] .pricing-point-icon-wrap {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+/* Available profession cards are links; Coming Soon cards remain static. */
 .prototype-page[data-prototype-source="use-cases.html"] .integration-card {
   cursor: default;
 }
-.prototype-page[data-prototype-source="use-cases.html"] .integration-link:has(.integration-arrow-wrap) {
+.prototype-page[data-prototype-source='use-cases.html'] .integration-card[href] {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.prototype-page[data-prototype-source='use-cases.html'] .integration-card[href]:focus-visible {
+  background-color: var(--bg-color--white);
+  outline: 2px solid var(--font-color--primary-color);
+  outline-offset: -2px;
+}
+/* Coming Soon cards omit the Learn More arrow and retain the hovered background. */
+.prototype-page[data-prototype-source='use-cases.html']
+  .integration-card:not(:has(.integration-arrow-wrap)) {
+  background-color: var(--bg-color--white);
+}
+/* The prototype anchor shrinks to its content (Webflow w-inline-block). */
+.prototype-page[data-prototype-source='use-cases.html']
+  .integration-link:has(.integration-arrow-wrap) {
   width: fit-content;
-  border-radius: 4px;
-  transition: background-color 160ms ease;
-}
-.prototype-page[data-prototype-source="use-cases.html"] .integration-link:has(.integration-arrow-wrap):hover {
-  background-color: #e5e5e5;
-}
-@media (prefers-reduced-motion: reduce) {
-  .prototype-page[data-prototype-source="use-cases.html"] .integration-link {
-    transition: none;
-  }
 }

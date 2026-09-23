@@ -562,8 +562,22 @@ export type OfficialBlogPostView = OfficialBlogPostSummary & {
   ogImage: Media | null
   /** 正文分节 */
   sections: OfficialContentSection[]
+  /** FAQ 条目（Markdown 回答，前台渲染时经白名单净化） */
+  faqItems: OfficialBlogFaqItem[]
   /** 推荐文章 */
   relatedPosts: OfficialBlogPostSummary[]
+}
+
+/**
+ * Blog 文章 FAQ 条目
+ */
+export type OfficialBlogFaqItem = {
+  /** FAQ 主键 */
+  id: string
+  /** 问题 */
+  question: string
+  /** Markdown 回答 */
+  answerMarkdown: string
 }
 
 /**
@@ -2311,6 +2325,18 @@ async function readOfficialBlogPost(
       title: post.meta?.title ?? post.htmlCardTitle,
     }),
     sections: mapSections(post.sections),
+    faqItems: (post.faqItems ?? [])
+      .map((item, index) => {
+        const question = normalizeText(item?.question)
+        const answerMarkdown = normalizeText(item?.answer)
+
+        if (!question || !answerMarkdown) {
+          return null
+        }
+
+        return { id: item?.id ?? `faq-${index}`, question, answerMarkdown }
+      })
+      .filter((item): item is OfficialBlogFaqItem => Boolean(item)),
     relatedPosts: fallbackRelatedPosts,
   }
 }

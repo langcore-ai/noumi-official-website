@@ -12,6 +12,7 @@ import {
   createRenderModeField,
   HtmlRenderModeSiblingData,
   isCardRenderMode,
+  isMarkdownRenderMode,
   isTemplateRenderMode,
   htmlModeWriteAccess,
   withTemplateCondition,
@@ -263,6 +264,30 @@ export const BlogPosts: CollectionConfig = {
         description: '文章页底部推荐阅读；未填写时前台可自动补一个已发布文章。',
         condition: isTemplateRenderMode,
       },
+    },
+    {
+      name: 'faqItems',
+      type: 'array',
+      localized: true,
+      label: 'FAQ',
+      admin: {
+        description: '渲染为原型 FAQ 手风琴；回答使用 Markdown，前台经白名单净化后再输出。',
+        condition: isMarkdownRenderMode,
+      },
+      fields: [
+        {
+          name: 'question',
+          type: 'text',
+          label: '问题',
+          required: true,
+        },
+        {
+          name: 'answer',
+          type: 'textarea',
+          label: '回答（Markdown）',
+          required: true,
+        },
+      ],
     },
     withTemplateCondition(MARKETING_SECTIONS_FIELD),
   ],

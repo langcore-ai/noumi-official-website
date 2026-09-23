@@ -280,6 +280,16 @@ export interface BlogPost {
    */
   relatedPosts?: (number | BlogPost)[] | null;
   /**
+   * 渲染为原型 FAQ 手风琴；回答使用 Markdown，前台经白名单净化后再输出。
+   */
+  faqItems?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * 营销页统一使用的正文结构；前台会通过视图模型层做二次映射。
    */
   sections?:
@@ -1150,6 +1160,13 @@ export interface BlogPostsSelect<T extends boolean = true> {
         id?: T;
       };
   relatedPosts?: T;
+  faqItems?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   sections?:
     | T
     | {

@@ -4,31 +4,31 @@ Source of truth: the 23 HTML files in the ignored `prototype-webflow/` directory
 
 ## Page-by-page mapping
 
-| Original HTML | Application route | Implementation |
-| --- | --- | --- |
-| index.html | / | Previously reconstructed React homepage; regression retained |
-| about.html | /about | Previously reconstructed React company page; exact introductory copy retained |
-| features.html | /features | Original hero, three interactive feature cards, eight capabilities, workflow, FAQ, CTA |
-| specialist-level-expertise.html | /features/specialist-level-expertise | Original illustration, four specialist capabilities, video area, FAQ, CTA |
-| full-project-fluency.html | /features/full-project-fluency | Original context illustration, content and video area, FAQ, CTA |
-| signature-level-fluency.html | /features/signature-level-fluency | Original experience illustration, content and video area, FAQ, CTA |
-| use-cases.html | /use-cases | Original workspace hero, profession grid, FAQ, CTA |
-| solution-engineer.html | /use-cases/solutions-engineer | Original profession introduction, video and testimonial carousel |
-| business-analyst.html | /use-cases/business-analyst | Original profession introduction, video and testimonial carousel |
-| pricing.html | /pricing | Original One Month / Monthly / Yearly tabs and all plan text, FAQ, CTA |
-| faq.html | /faqs | Original questions and answers with native, animated disclosure controls |
-| terms-conditions.html | /terms; /privacy | Original legal tabs; /privacy opens the Privacy tab on the server |
-| blog.html | /blog | Original category tabs, article entry and empty category states |
-| blog-article.html | /blog/what-is-ai-in-hr | Complete original HR article, article FAQ and CTA |
-| detail_blog.html | /templates/blog | Faithful empty CMS template preview; noindex |
-| detail_blog-author.html | /templates/blog-author | Faithful empty CMS template preview; noindex |
-| detail_blog-category.html | /templates/blog-category | Faithful empty CMS template preview; noindex |
-| detail_career.html | /templates/career | Faithful empty CMS template preview; noindex |
-| detail_integration.html | /templates/integration | Faithful empty CMS template preview; noindex |
-| 401.html | /protected | Original password-page appearance; no fake authentication endpoint |
-| 404.html | /not-found; unknown-route boundary | Original missing-page appearance |
-| template-info/licenses.html | /template-info/licenses | Original asset license/reference page; noindex |
-| template-info/style-guide.html | /template-info/style-guide | Original design-token/component reference page; noindex |
+| Original HTML                   | Application route                    | Implementation                                                                                                                   |
+| ------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| index.html                      | /                                    | Previously reconstructed React homepage; regression retained                                                                     |
+| about.html                      | /about                               | Previously reconstructed React company page; exact introductory copy retained                                                    |
+| features.html                   | /features                            | Original hero, three interactive feature cards, eight capabilities, workflow, FAQ, CTA                                           |
+| specialist-level-expertise.html | /features/specialist-level-expertise | Original illustration, four specialist capabilities, video area, FAQ, CTA                                                        |
+| full-project-fluency.html       | /features/full-project-fluency       | Original context illustration, content and video area, FAQ, CTA                                                                  |
+| signature-level-fluency.html    | /features/signature-level-fluency    | Original experience illustration, content and video area, FAQ, CTA                                                               |
+| use-cases.html                  | /use-cases                           | Original workspace hero, profession grid, FAQ, CTA                                                                               |
+| solution-engineer.html          | /use-cases/solutions-engineer        | Original profession introduction, video and testimonial carousel                                                                 |
+| business-analyst.html           | /use-cases/business-analyst          | Original profession introduction, video and testimonial carousel                                                                 |
+| pricing.html                    | /pricing                             | Original One Month / Monthly / Yearly tabs and all plan text, FAQ, CTA                                                           |
+| faq.html                        | /faqs                                | Original questions and answers with native, animated disclosure controls                                                         |
+| terms-conditions.html           | /terms; /privacy                     | Original legal tabs; /privacy opens the Privacy tab on the server                                                                |
+| blog.html                       | /blog                                | 原型 banner/tab/card/CTA 标记（`.prototype-page` + Webflow 类名）驱动 CMS 已发布文章；分类按钮由文章标签生成，空集合占位不再渲染 |
+| blog-article.html               | /blog/what-is-ai-in-hr               | Complete original HR article, article FAQ and CTA                                                                                |
+| detail_blog.html                | /templates/blog                      | Faithful empty CMS template preview; noindex                                                                                     |
+| detail_blog-author.html         | /templates/blog-author               | Faithful empty CMS template preview; noindex                                                                                     |
+| detail_blog-category.html       | /templates/blog-category             | Faithful empty CMS template preview; noindex                                                                                     |
+| detail_career.html              | /templates/career                    | Faithful empty CMS template preview; noindex                                                                                     |
+| detail_integration.html         | /templates/integration               | Faithful empty CMS template preview; noindex                                                                                     |
+| 401.html                        | /protected                           | Original password-page appearance; no fake authentication endpoint                                                               |
+| 404.html                        | /not-found; unknown-route boundary   | Original missing-page appearance                                                                                                 |
+| template-info/licenses.html     | /template-info/licenses              | Original asset license/reference page; noindex                                                                                   |
+| template-info/style-guide.html  | /template-info/style-guide           | Original design-token/component reference page; noindex                                                                          |
 
 All 23 `.html` URLs permanently redirect to their canonical routes. Existing CMS detail slugs without an equivalent HTML file remain available through their existing handlers. Contact, Links and Invite have no HTML counterpart in this export; they are not silently replaced by unrelated templates.
 

@@ -181,25 +181,25 @@ cloudflare-env.d.ts                   Wrangler 生成类型，不是运行时配
 
 动态文档的实际 slug 存在 D1，仓库只能确认路由模式，不能确认生产中有哪些实例。
 
-| 路由                | 主体数据来源 | CMS 现状                                                                      | 样式/备注                                 |
-| ------------------- | ------------ | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| `/`                 | 静态 JSX     | 外层 Feature/Use Case 导航读 CMS                                              | `official-home.css`                       |
-| `/about`            | 主体静态     | 团队成员和 About FAQ 来自 `about-page`                                        | `about.module.css`                        |
-| `/contact`          | 静态 JSX     | 未进 CMS                                                                      | `contact.module.css`                      |
-| `/pricing`          | 静态 JSX     | 套餐、FAQ、CTA 未进 CMS                                                       | `pricing.module.css`                      |
-| `/features`         | 混合         | 卡片、角色、FAQ、OG 图来自 `features-page`；部分区块静态；有代码默认值        | `features.module.css`                     |
-| `/features/[slug]`  | CMS          | 已发布 `feature-pages`，支持 template/raw HTML                                | `feature-page.module.css`                 |
-| `/use-cases`        | 混合         | 卡片/FAQ/OG 图来自 `use-cases-page`，导航来自 `use-case-pages`；Hero/CTA 静态 | `use-cases.module.css`                    |
-| `/use-cases/[slug]` | CMS          | 已发布 `use-case-pages`，支持 template/raw HTML                               | `use-case.module.css`                     |
-| `/blog`             | CMS          | 已发布 `blog-posts` 列表                                                      | `blog.module.css`；订阅输入目前无提交逻辑 |
-| `/blog/[slug]`      | CMS          | 已发布 `blog-posts`，支持 template/raw HTML                                   | `blog-post.module.css`                    |
-| `/faqs`             | CMS          | `faq-page` 控制 template/raw HTML；template 读取启用的 `faq-items`            | `faqs.module.css`                         |
-| `/privacy`          | CMS          | `privacy-page` template/raw HTML                                              | 结构化模式复用共享 section 样式           |
-| `/terms`            | CMS          | `terms-page` template/raw HTML                                                | 结构化模式复用共享 section 样式           |
-| `/links`            | 混合         | 页面框架静态，卡片来自启用的 `friendly-links`                                 | `links.module.css`                        |
-| `/invite`           | 重定向       | Invite collection 是正式模型，但当前不展示申请页                              | 跳 `https://www.noumi.ai/auth`            |
-| `/robots.txt`       | 运行时生成   | 不依赖 CMS                                                                    | 当前允许全部 crawler                      |
-| `/sitemap.xml`      | 运行时生成   | 动态 Blog/Feature/Use Case 来自 CMS                                           | 当前未包含 `/links` 和 `/invite`          |
+| 路由                | 主体数据来源 | CMS 现状                                                                                                                | 样式/备注                                                              |
+| ------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `/`                 | 静态 JSX     | 外层 Feature/Use Case 导航读 CMS                                                                                        | `official-home.css`                                                    |
+| `/about`            | 主体静态     | 团队成员和 About FAQ 来自 `about-page`                                                                                  | `about.module.css`                                                     |
+| `/contact`          | 静态 JSX     | 未进 CMS                                                                                                                | `contact.module.css`                                                   |
+| `/pricing`          | 静态 JSX     | 套餐、FAQ、CTA 未进 CMS                                                                                                 | `pricing.module.css`                                                   |
+| `/features`         | 混合         | 卡片、角色、FAQ、OG 图来自 `features-page`；部分区块静态；有代码默认值                                                  | `features.module.css`                                                  |
+| `/features/[slug]`  | CMS          | 已发布 `feature-pages`，支持 template/raw HTML                                                                          | `feature-page.module.css`                                              |
+| `/use-cases`        | 混合         | 卡片/FAQ/OG 图来自 `use-cases-page`，导航来自 `use-case-pages`；Hero/CTA 静态                                           | `use-cases.module.css`                                                 |
+| `/use-cases/[slug]` | CMS          | 已发布 `use-case-pages`，支持 template/raw HTML                                                                         | `use-case.module.css`                                                  |
+| `/blog`             | CMS          | 已发布 `blog-posts` 列表；页面用原型 `blog.html` 标记（`prototype-page` + banner/tab/card/CTA），分类按钮由文章标签生成 | 样式来自 `prototype-pages*.css`；适配规则见 `prototype-pages.css` 末尾 |
+| `/blog/[slug]`      | CMS          | 已发布 `blog-posts`，支持 template/markdown/raw HTML                                                                    | `blog-post.module.css`                                                 |
+| `/faqs`             | CMS          | `faq-page` 控制 template/raw HTML；template 读取启用的 `faq-items`                                                      | `faqs.module.css`                                                      |
+| `/privacy`          | CMS          | `privacy-page` template/raw HTML                                                                                        | 结构化模式复用共享 section 样式                                        |
+| `/terms`            | CMS          | `terms-page` template/raw HTML                                                                                          | 结构化模式复用共享 section 样式                                        |
+| `/links`            | 混合         | 页面框架静态，卡片来自启用的 `friendly-links`                                                                           | `links.module.css`                                                     |
+| `/invite`           | 重定向       | Invite collection 是正式模型，但当前不展示申请页                                                                        | 跳 `https://www.noumi.ai/auth`                                         |
+| `/robots.txt`       | 运行时生成   | 不依赖 CMS                                                                                                              | 当前允许全部 crawler                                                   |
+| `/sitemap.xml`      | 运行时生成   | 动态 Blog/Feature/Use Case 来自 CMS                                                                                     | 当前未包含 `/links` 和 `/invite`                                       |
 
 ### 6.1 正式站点外层
 
@@ -211,17 +211,17 @@ cloudflare-env.d.ts                   Wrangler 生成类型，不是运行时配
 
 ### 7.1 Collections
 
-| Slug              | 用途                  | Draft/version          | 公开读取                       | 备注                                             |
-| ----------------- | --------------------- | ---------------------- | ------------------------------ | ------------------------------------------------ |
-| `users`           | Admin 用户与角色      | 否                     | 否                             | 首个用户自动 admin，后续默认 viewer              |
-| `media`           | 上传文件              | 否                     | 是                             | 文件存 R2；Workers 不支持 crop/focal point       |
-| `blog-posts`      | Blog                  | 是，单文档最多 50 版本 | 仅 Payload `_status=published` | template/raw HTML；另有自定义 editorial `status` |
-| `feature-pages`   | Feature 子页          | 是                     | 仅 published                   | template/raw HTML                                |
-| `use-case-pages`  | Use Case 子页         | 是                     | 仅 published                   | template/raw HTML                                |
-| `faq-items`       | FAQ 条目              | 否                     | Payload API 全部公开           | 正式前台额外过滤 `isActive=true`                 |
-| `friendly-links`  | `/links` 卡片         | 否                     | 匿名仅 active                  | 支持手填或 HTML badge 字段提取                   |
-| `invite-requests` | 正式 Invite 申请数据  | 否                     | 仅 admin                       | 公开提交当前关闭；服务同步保留                   |
-| `redirects`       | Redirects plugin 生成 | plugin 管理            | 需重新核实 plugin 默认 access  | 当前前台没有发现消费该集合的跳转逻辑             |
+| Slug              | 用途                  | Draft/version          | 公开读取                       | 备注                                                                                      |
+| ----------------- | --------------------- | ---------------------- | ------------------------------ | ----------------------------------------------------------------------------------------- |
+| `users`           | Admin 用户与角色      | 否                     | 否                             | 首个用户自动 admin，后续默认 viewer                                                       |
+| `media`           | 上传文件              | 否                     | 是                             | 文件存 R2；Workers 不支持 crop/focal point                                                |
+| `blog-posts`      | Blog                  | 是，单文档最多 50 版本 | 仅 Payload `_status=published` | template/markdown/raw HTML（Markdown 推荐，HTML 仅 admin）；另有自定义 editorial `status` |
+| `feature-pages`   | Feature 子页          | 是                     | 仅 published                   | template/raw HTML                                                                         |
+| `use-case-pages`  | Use Case 子页         | 是                     | 仅 published                   | template/raw HTML                                                                         |
+| `faq-items`       | FAQ 条目              | 否                     | Payload API 全部公开           | 正式前台额外过滤 `isActive=true`                                                          |
+| `friendly-links`  | `/links` 卡片         | 否                     | 匿名仅 active                  | 支持手填或 HTML badge 字段提取                                                            |
+| `invite-requests` | 正式 Invite 申请数据  | 否                     | 仅 admin                       | 公开提交当前关闭；服务同步保留                                                            |
+| `redirects`       | Redirects plugin 生成 | plugin 管理            | 需重新核实 plugin 默认 access  | 当前前台没有发现消费该集合的跳转逻辑                                                      |
 
 Payload 还会维护 preferences、migrations、versions、locks 等内部表，不应把这些表作为业务 API 直接操作。
 
@@ -300,6 +300,8 @@ Payload 还会维护 preferences、migrations、versions、locks 等内部表，
 | 上传/更新媒体               | 是    | 是             | 否           | 是         | 否     |
 | 删除媒体                    | 是    | 是             | 否           | 否         | 否     |
 | 编辑通用 Raw HTML 字段      | 是    | 是             | 否           | 否         | 否     |
+| 创建/切换 HTML 模式文章     | 是    | 否             | 否           | 否         | 否     |
+| 编辑 Markdown 模式文章      | 是    | 是             | 否           | 是         | 否     |
 | 更新 Privacy/Terms          | 是    | 否             | 是           | 是         | 否     |
 | 编辑 Privacy/Terms Raw HTML | 是    | 否             | 否           | 否         | 否     |
 | 查看/处理 Invite            | 是    | 否             | 否           | 否         | 否     |
@@ -417,6 +419,25 @@ Features、Use Cases、About 的部分 FAQ answer 还允许少量 HTML，并以 
 - Metadata 仍在 CMS SEO 字段/页面代码中维护。
 - Blog HTML 模式同时填写列表卡片字段，否则列表页可能只回退到 slug。
 - 每次修改至少检查桌面、移动端、preview、正式发布和 snapshot 命中版本。
+
+### 10.6 Markdown 模式（Blog）
+
+`blog-posts` 除 template/HTML 外还支持 `renderMode = 'markdown'`，作为常规文章的推荐模式。
+
+| 项目          | 实现                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| 字段          | `markdownContent`（localized textarea，与 `htmlContent` 并存；HTML 原值保留可回滚）        |
+| 列表卡片      | 复用 `htmlCard*` 字段（HTML 与 Markdown 共用，条件为 `renderMode !== 'template'`）         |
+| 后台编辑器    | `src/components/admin/MarkdownEditor.tsx`，左原稿右实时预览（marked + DOMPurify）          |
+| 渲染管线      | `src/lib/site/markdown.ts`：remark-gfm → rehype-raw → rehype-sanitize → slug/锚点 → 高亮   |
+| 安全边界      | 渲染结果过白名单：script/iframe/style/表单、事件属性、`javascript:` 链接一律剥离           |
+| 前台样式      | 渲染进 `.blogPostPage .markdown-content`，样式见 `blog-post.module.css`                    |
+| HTML 模式权限 | 创建或切换到 HTML 模式仅限 admin（`BlogPosts` 的 `beforeValidate` 守卫）                   |
+| 存量迁移      | `bun scripts/migrate-blog-html-to-markdown.ts [--write] [--remote] [--limit N] [--slug S]` |
+
+迁移脚本默认只跑 dry-run，输出审计报告到 `.local/reports/`（每条记录列出被丢弃的 script/style/iframe/nav-footer 与风险提示）；确认后再加 `--write`。
+HTML→Markdown 转换使用 turndown + `turndown-plugin-gfm`（表格/删除线/任务列表），`htmlContent` 不删除，便于逐篇回滚。
+Markdown 文章的 `title` 字段为空，列表与 metadata 走 `htmlCardTitle` / SEO 字段；正文标题由 Markdown 自身的 `#` 决定。
 
 ## 11. Invite 实现说明
 

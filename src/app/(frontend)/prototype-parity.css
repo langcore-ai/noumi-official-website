@@ -21,12 +21,16 @@ body {
 }
 
 .site-header--home .nav-row {
-  min-height: 88px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  min-height: 70px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 .site-header--home .site-nav {
   gap: 0;
+}
+/* 临时隐藏最新文章推广条 */
+.official-beta-banner {
+  display: none;
 }
 .site-header--home .site-nav a {
   padding-inline: 24px;
@@ -292,8 +296,8 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 @media (max-width: 900px) {
   .site-header--home .nav-row {
-    min-height: 74px;
-    padding-block: 12px;
+    min-height: 59px;
+    padding-block: 10px;
   }
 }
 @media (max-width: 767px) {
@@ -324,7 +328,7 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 @media (max-width: 600px) {
   .site-header--home .nav-row {
-    min-height: 66px;
+    min-height: 53px;
   }
   .site-header--home {
     position: fixed;

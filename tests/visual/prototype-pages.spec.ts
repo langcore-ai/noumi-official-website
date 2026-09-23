@@ -13,8 +13,15 @@ for (const width of [390, 768, 1440]) {
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
     for (const [route, source] of Object.entries(pages)) {
-      // '/'、'/about' 是原生重建页；'/blog' 已接回 CMS 列表，三者都不再由 PrototypePage 渲染。
-      if (route === '/' || route === '/about' || route === '/blog') continue
+      // '/'、'/about' 是原生重建页；'/blog' 与 '/blog/what-is-ai-in-hr' 已由 CMS 接管
+      // （列表与文章详情），这几条路由都不再由 PrototypePage 渲染。旧的 .html 别名仍会重定向到它们。
+      if (
+        route === '/' ||
+        route === '/about' ||
+        route === '/blog' ||
+        route === '/blog/what-is-ai-in-hr'
+      )
+        continue
       await page.goto(route)
       const main = page.locator(`[data-prototype-source="${source.file}"]:visible`)
       await expect(main).toHaveCount(1)

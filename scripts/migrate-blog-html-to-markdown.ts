@@ -1,8 +1,8 @@
 /**
- * Blog HTML → Markdown 迁移脚本
+ * Blog 旧版整页 HTML → Markdown 迁移脚本
  *
- * 将 `render_mode = 'html'` 的存量文章（整页 HTML）转换为 `markdownContent`，
- * 并把文章切换为 Markdown 渲染模式；`htmlContent` 原值保留作为回滚备份。
+ * 把 `render_mode = 'html'` 的文章转换为 `markdownContent` + `faqItems`，
+ * 并切换为 Markdown 渲染模式；`htmlContent` 原值保留作为回滚备份。
  *
  * 用法：
  *   bun scripts/migrate-blog-html-to-markdown.ts                    # 本地 D1，dry-run，仅输出审计报告
@@ -12,14 +12,12 @@
  *
  * 可选参数：--limit N、--slug <slug>、--report <path>
  */
+import { spawnSync } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
-import TurndownService from 'turndown'
-import { gfm } from 'turndown-plugin-gfm'
-
+import { convertLegacyBlogArticle, type LegacyConversionAudit } from './lib/legacy-blog-html'
 import type { Config } from '../src/payload-types'
 
 /** 已配置的 Payload locale 联合类型。 */
@@ -27,18 +25,14 @@ type PayloadLocale = Config['locale']
 
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-/** 单篇文章的转换审计结果。 */
+/** 单篇文章的审计结果。 */
 type PostAudit = {
   id: number
   slug: string
   locale: string
   htmlLength: number
   markdownLength: number
-  removed: { scripts: number; styles: number; iframes: number; navOrFooter: number; head: number }
-  images: number
-  tables: number
-  headings: number
-  warnings: string[]
+  audit: LegacyConversionAudit
 }
 
 /** 待转换的原始记录。 */
@@ -50,90 +44,18 @@ type SourcePost = {
 }
 
 /** 转换结果。 */
-type ConvertedPost = PostAudit & { markdown: string }
-
-const turndown = new TurndownService({
-  headingStyle: 'atx',
-  codeBlockStyle: 'fenced',
-  bulletListMarker: '-',
-  emDelimiter: '*',
-  strongDelimiter: '**',
-})
-
-turndown.use(gfm)
-turndown.remove(['script', 'style', 'noscript', 'head', 'nav', 'footer'])
-
-/**
- * 统计并移除会影响 Markdown 转换的整块元素。
- * @param html 原始 HTML
- * @returns 清理后的 HTML 与移除计数
- */
-function stripNonContentBlocks(html: string): { html: string; removed: PostAudit['removed'] } {
-  const patterns: Array<[keyof PostAudit['removed'], RegExp]> = [
-    ['scripts', /<script\b[^>]*>[\s\S]*?<\/script>/gi],
-    ['styles', /<style\b[^>]*>[\s\S]*?<\/style>/gi],
-    ['iframes', /<iframe\b[^>]*>[\s\S]*?<\/iframe>|<iframe\b[^>]*\/>/gi],
-    ['navOrFooter', /<(nav|footer)\b[^>]*>[\s\S]*?<\/\1>/gi],
-    ['head', /<head\b[^>]*>[\s\S]*?<\/head>/gi],
-  ]
-
-  const removed = { scripts: 0, styles: 0, iframes: 0, navOrFooter: 0, head: 0 }
-  let cleaned = html
-
-  for (const [key, pattern] of patterns) {
-    removed[key] = (cleaned.match(pattern) ?? []).length
-    cleaned = cleaned.replace(pattern, '')
-  }
-
-  return { html: cleaned, removed }
+type ConvertedPost = PostAudit & {
+  markdown: string
+  faqItems: Array<{ answer: string; question: string }>
 }
 
 /**
- * 统计 HTML 中的结构元素数量。
- * @param html HTML 片段
- * @returns 图片/表格/标题计数
- */
-function countStructure(html: string): Pick<PostAudit, 'images' | 'tables' | 'headings'> {
-  return {
-    images: (html.match(/<img\b/gi) ?? []).length,
-    tables: (html.match(/<table\b/gi) ?? []).length,
-    headings: (html.match(/<h[1-6]\b/gi) ?? []).length,
-  }
-}
-
-/**
- * 把整页 HTML 转换为 Markdown 并生成审计信息。
+ * 转换单篇文章并输出审计信息。
  * @param post 原始记录
  * @returns 转换结果
  */
 function convertPost(post: SourcePost): ConvertedPost {
-  const stripped = stripNonContentBlocks(post.html)
-  const structure = countStructure(stripped.html)
-  const markdown = turndown
-    .turndown(stripped.html)
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-
-  const warnings: string[] = []
-
-  if (stripped.removed.scripts > 0) {
-    warnings.push(`丢弃 ${stripped.removed.scripts} 个内联脚本（交互逻辑不会迁移）`)
-  }
-  if (stripped.removed.styles > 0) {
-    warnings.push(`丢弃 ${stripped.removed.styles} 段内联样式（视觉需人工核对）`)
-  }
-  if (stripped.removed.iframes > 0) {
-    warnings.push(`丢弃 ${stripped.removed.iframes} 个 iframe`)
-  }
-  if (stripped.removed.navOrFooter > 0) {
-    warnings.push(`丢弃 ${stripped.removed.navOrFooter} 个 nav/footer 块`)
-  }
-  if (/\son[a-z]+\s*=/i.test(post.html)) {
-    warnings.push('原 HTML 含内联事件属性（on*），已丢弃')
-  }
-  if (markdown.length < 200) {
-    warnings.push('转换后内容过短，需人工确认')
-  }
+  const { markdown, faqItems, audit } = convertLegacyBlogArticle(post.html)
 
   return {
     id: post.id,
@@ -141,10 +63,9 @@ function convertPost(post: SourcePost): ConvertedPost {
     locale: post.locale,
     htmlLength: post.html.length,
     markdownLength: markdown.length,
-    removed: stripped.removed,
-    ...structure,
-    warnings,
+    audit,
     markdown,
+    faqItems,
   }
 }
 
@@ -231,7 +152,11 @@ async function writeLocal(converted: ConvertedPost[]): Promise<number> {
     await payload.update({
       collection: 'blog-posts',
       id: post.id,
-      data: { markdownContent: post.markdown, renderMode: 'markdown' },
+      data: {
+        markdownContent: post.markdown,
+        faqItems: post.faqItems,
+        renderMode: 'markdown',
+      },
       locale: post.locale as PayloadLocale,
       overrideAccess: true,
       depth: 0,
@@ -249,27 +174,35 @@ async function writeLocal(converted: ConvertedPost[]): Promise<number> {
 function writeRemote(converted: ConvertedPost[]): number {
   const escape = (value: string) => value.replace(/'/g, "''")
   const statements: string[] = []
+  const reportDir = join(repositoryRoot, '.local', 'reports')
+
+  mkdirSync(reportDir, { recursive: true })
 
   for (const post of converted) {
     statements.push(
       `UPDATE blog_posts_locales SET markdown_content = '${escape(post.markdown)}' WHERE _parent_id = ${post.id} AND _locale = '${escape(post.locale)}';`,
     )
+    statements.push(
+      `DELETE FROM blog_posts_faq_items WHERE _parent_id = ${post.id} AND _locale = '${escape(post.locale)}';`,
+    )
+
+    post.faqItems.forEach((item, index) => {
+      const id = `${post.locale}-${post.id}-faq-${index + 1}`
+      statements.push(
+        `INSERT INTO blog_posts_faq_items (_order, _parent_id, _locale, id, question, answer) VALUES (${index + 1}, ${post.id}, '${escape(post.locale)}', '${escape(id)}', '${escape(item.question)}', '${escape(item.answer)}');`,
+      )
+    })
+
     statements.push(`UPDATE blog_posts SET render_mode = 'markdown' WHERE id = ${post.id};`)
   }
 
-  const reportDir = join(repositoryRoot, '.local', 'reports')
-  mkdirSync(reportDir, { recursive: true })
   const sqlPath = join(reportDir, `blog-markdown-migration-${Date.now()}.sql`)
   writeFileSync(sqlPath, `${statements.join('\n')}\n`, 'utf8')
 
   const result = spawnSync(
     'bunx',
     ['wrangler', 'd1', 'execute', 'D1', '--remote', '--file', sqlPath],
-    {
-      cwd: repositoryRoot,
-      encoding: 'utf8',
-      stdio: 'inherit',
-    },
+    { cwd: repositoryRoot, encoding: 'utf8', stdio: 'inherit' },
   )
 
   if (result.status !== 0) {
@@ -284,17 +217,15 @@ function writeRemote(converted: ConvertedPost[]): number {
  * @param audits 审计结果
  */
 function printAudit(audits: PostAudit[]): void {
-  const flagged = audits.filter((audit) => audit.warnings.length > 0)
+  const flagged = audits.filter((entry) => entry.audit.warnings.length > 0)
 
   console.log('')
   console.log(`共 ${audits.length} 条记录待迁移，${flagged.length} 条带风险提示。`)
   console.log('')
 
-  for (const audit of flagged) {
-    console.log(
-      `⚠️  #${audit.id} ${audit.slug || '(无 slug)'} [${audit.locale}] html=${audit.htmlLength} → md=${audit.markdownLength}`,
-    )
-    for (const warning of audit.warnings) {
+  for (const entry of flagged) {
+    console.log(`⚠️  #${entry.id} ${entry.slug || '(无 slug)'} [${entry.locale}]`)
+    for (const warning of entry.audit.warnings) {
       console.log(`     - ${warning}`)
     }
   }
@@ -333,7 +264,9 @@ async function main(): Promise<void> {
   }
 
   const converted = sources.map(convertPost)
-  const audits: PostAudit[] = converted.map(({ markdown: _markdown, ...audit }) => audit)
+  const audits: PostAudit[] = converted.map(
+    ({ markdown: _markdown, faqItems: _faq, ...audit }) => audit,
+  )
 
   printAudit(audits)
 

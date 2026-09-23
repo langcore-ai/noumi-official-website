@@ -19,7 +19,7 @@ Source of truth: the 23 HTML files in the ignored `prototype-webflow/` directory
 | faq.html                        | /faqs                                | Original questions and answers with native, animated disclosure controls                                                         |
 | terms-conditions.html           | /terms; /privacy                     | Original legal tabs; /privacy opens the Privacy tab on the server                                                                |
 | blog.html                       | /blog                                | 原型 banner/tab/card/CTA 标记（`.prototype-page` + Webflow 类名）驱动 CMS 已发布文章；分类按钮由文章标签生成，空集合占位不再渲染 |
-| blog-article.html               | /blog/what-is-ai-in-hr               | Complete original HR article, article FAQ and CTA                                                                                |
+| blog-article.html               | /blog/what-is-ai-in-hr               | CMS 文章页接管该 URL（原型 banner/正文/FAQ/CTA 版式 + Markdown 正文）                                                            |
 | detail_blog.html                | /templates/blog                      | Faithful empty CMS template preview; noindex                                                                                     |
 | detail_blog-author.html         | /templates/blog-author               | Faithful empty CMS template preview; noindex                                                                                     |
 | detail_blog-category.html       | /templates/blog-category             | Faithful empty CMS template preview; noindex                                                                                     |

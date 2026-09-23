@@ -7,6 +7,7 @@ import { OfficialContentSections } from '@/components/site/official/OfficialCont
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialBlogPost } from '@/lib/site/official-cms'
 import { createOfficialMetadata } from '@/lib/site/official-site'
+import { renderMarkdownToHtml } from '@/lib/site/markdown'
 
 import styles from './blog-post.module.css'
 
@@ -63,10 +64,30 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
     )
   }
 
+  if (post.renderMode === 'markdown') {
+    return (
+      <div className={`${styles.blogPostPage} page-body`}>
+        <main className={styles.postWrap}>
+          <Link className={`${styles.postBack} reveal`} href="/blog">
+            ← Back to Blog
+          </Link>
+
+          <article
+            className="markdown-content"
+            // 渲染结果已过 rehype-sanitize 白名单，可安全注入。
+            dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(post.markdownContent || '') }}
+          />
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className={`${styles.blogPostPage} page-body`}>
       <main className={styles.postWrap}>
-        <Link className={`${styles.postBack} reveal`} href="/blog">← Back to Blog</Link>
+        <Link className={`${styles.postBack} reveal`} href="/blog">
+          ← Back to Blog
+        </Link>
 
         <article>
           <header className={`${styles.postHeader} reveal d1`}>
@@ -77,7 +98,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
               </span>
             </div>
             <h1>{post.title}</h1>
-            {post.lead || post.excerpt ? <p className={styles.postLead}>{post.lead || post.excerpt}</p> : null}
+            {post.lead || post.excerpt ? (
+              <p className={styles.postLead}>{post.lead || post.excerpt}</p>
+            ) : null}
           </header>
 
           {post.coverImage?.url ? (
@@ -94,7 +117,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
         <section className={`${styles.postWrap} ${styles.moreSection}`}>
           <div className={styles.moreTop}>
             <h2>More from the blog</h2>
-            <Link className={styles.moreViewAll} href="/blog">View all →</Link>
+            <Link className={styles.moreViewAll} href="/blog">
+              View all →
+            </Link>
           </div>
           <Link className={styles.moreCard} href={`/blog/${post.relatedPosts[0].slug}`}>
             <div className={styles.moreThumb}>
@@ -107,9 +132,13 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
             </div>
             <div className={styles.moreBody}>
               <div className={styles.moreTags}>
-                {post.relatedPosts[0].tags[0] ? <span className={styles.moreTag}>{post.relatedPosts[0].tags[0]}</span> : null}
+                {post.relatedPosts[0].tags[0] ? (
+                  <span className={styles.moreTag}>{post.relatedPosts[0].tags[0]}</span>
+                ) : null}
                 <span className={styles.moreMetaText}>
-                  {[post.relatedPosts[0].readingTime, post.relatedPosts[0].publishedAt].filter(Boolean).join(' · ')}
+                  {[post.relatedPosts[0].readingTime, post.relatedPosts[0].publishedAt]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </span>
               </div>
               <h3>{post.relatedPosts[0].title}</h3>

@@ -208,9 +208,9 @@ export interface Media {
 export interface BlogPost {
   id: number;
   /**
-   * 默认模板沿用当前文章结构；HTML 模式只需要 slug 与 HTML 内容。
+   * 默认模板沿用当前文章结构；Markdown 模式只需要 slug 与 Markdown 内容；HTML 模式仅管理员可用。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * 文章标题，同时可作为默认 H1。
    */
@@ -223,6 +223,10 @@ export interface BlogPost {
    * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
    */
   htmlContent?: string | null;
+  /**
+   * 仅 Markdown 模式使用；支持 GFM 语法（标题/列表/表格/代码块/引用/图片）。渲染时白名单净化，内联脚本与危险属性会被剥离。
+   */
+  markdownContent?: string | null;
   /**
    * Blog 列表卡片顶部图片。
    */
@@ -463,7 +467,7 @@ export interface FeaturePage {
   /**
    * 默认模板用于结构化 Feature 子页；HTML 模式只需要 slug 与 HTML 内容。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * Feature 子页路由 slug，例如 persistent-memory。
    */
@@ -526,7 +530,7 @@ export interface UseCasePage {
   /**
    * 默认模板沿用当前 use case 结构；HTML 模式只需要 slug 与 HTML 内容。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * Use case 路由 slug；应与固定外部 URL 保持一致。
    */
@@ -1126,6 +1130,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   htmlContent?: T;
+  markdownContent?: T;
   htmlCardImage?: T;
   htmlCardTag?: T;
   htmlCardTitle?: T;
@@ -1948,7 +1953,7 @@ export interface FaqPage {
   /**
    * 默认模板模式继续读取 FAQ 条目；HTML 模式只需要 HTML 内容。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
    */
@@ -1969,7 +1974,7 @@ export interface PrivacyPage {
   /**
    * 默认模板模式沿用当前法律页结构；HTML 模式只需要 HTML 内容。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
    */
@@ -2169,7 +2174,7 @@ export interface TermsPage {
   /**
    * 默认模板模式沿用当前法律页结构；HTML 模式只需要 HTML 内容。
    */
-  renderMode: 'template' | 'html';
+  renderMode: 'template' | 'markdown' | 'html';
   /**
    * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
    */

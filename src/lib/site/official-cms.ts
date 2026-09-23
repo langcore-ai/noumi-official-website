@@ -549,9 +549,11 @@ export type OfficialBlogPostSummary = {
  */
 export type OfficialBlogPostView = OfficialBlogPostSummary & {
   /** 前台渲染模式 */
-  renderMode: 'html' | 'template'
+  renderMode: 'html' | 'markdown' | 'template'
   /** HTML 模式源码 */
   htmlContent?: string
+  /** Markdown 模式原稿 */
+  markdownContent?: string
   /** SEO 标题 */
   metaTitle?: string
   /** SEO 描述 */
@@ -2150,9 +2152,10 @@ export async function getOfficialUseCasePage(
  */
 function mapBlogPostSummary(post: BlogPostSummarySource): OfficialBlogPostSummary | null {
   const slug = normalizeText(post.slug)
-  const isHtmlMode = post.renderMode === 'html'
+  // HTML 与 Markdown 两种模式共用列表卡片字段（htmlCard*）。
+  const isCardMode = post.renderMode !== 'template'
   const title =
-    (isHtmlMode ? normalizeText(post.htmlCardTitle) : undefined) ??
+    (isCardMode ? normalizeText(post.htmlCardTitle) : undefined) ??
     normalizeText(post.title) ??
     (slug ? humanizeSlug(slug) : undefined)
 
@@ -2163,21 +2166,21 @@ function mapBlogPostSummary(post: BlogPostSummarySource): OfficialBlogPostSummar
   return {
     slug,
     title,
-    excerpt: isHtmlMode ? normalizeText(post.htmlCardDescription) : normalizeText(post.excerpt),
+    excerpt: isCardMode ? normalizeText(post.htmlCardDescription) : normalizeText(post.excerpt),
     lead: normalizeText(post.lead),
     author: normalizeText(post.author),
-    publishedAt: isHtmlMode
+    publishedAt: isCardMode
       ? formatHtmlBlogCardDate(post.publishedAt || post.createdAt)
       : normalizeText(post.publishedAt),
-    readingTime: isHtmlMode
+    readingTime: isCardMode
       ? normalizeText(post.htmlCardReadingTime)
       : normalizeText(post.readingTime),
-    tags: isHtmlMode
+    tags: isCardMode
       ? [normalizeText(post.htmlCardTag)].filter((tag): tag is string => Boolean(tag))
       : (post.tags ?? [])
           .map((tag) => normalizeText(tag?.tag))
           .filter((tag): tag is string => Boolean(tag)),
-    coverImage: isHtmlMode ? normalizeMedia(post.htmlCardImage) : normalizeMedia(post.coverImage),
+    coverImage: isCardMode ? normalizeMedia(post.htmlCardImage) : normalizeMedia(post.coverImage),
   }
 }
 
@@ -2294,8 +2297,14 @@ async function readOfficialBlogPost(
 
   return {
     ...summary,
-    renderMode: post.renderMode === 'html' ? 'html' : 'template',
+    renderMode:
+      post.renderMode === 'html'
+        ? 'html'
+        : post.renderMode === 'markdown'
+          ? 'markdown'
+          : 'template',
     htmlContent: normalizeText(post.htmlContent),
+    markdownContent: normalizeText(post.markdownContent),
     ...normalizeSeoMeta({
       ...post.meta,
       description: post.meta?.description ?? post.htmlCardDescription,

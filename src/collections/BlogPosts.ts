@@ -1,11 +1,17 @@
-import type { CollectionConfig, TextFieldValidation } from 'payload'
+import type { CollectionBeforeValidateHook, CollectionConfig, TextFieldValidation } from 'payload'
 
-import { contentCreateAccess, contentUpdateAccess } from '@/access/cms'
+import {
+  CMS_ADMIN_ROLES,
+  contentCreateAccess,
+  contentUpdateAccess,
+  hasAnyCmsRole,
+} from '@/access/cms'
 import {
   createHtmlContentField,
+  createMarkdownContentField,
   createRenderModeField,
   HtmlRenderModeSiblingData,
-  isHtmlRenderMode,
+  isCardRenderMode,
   isTemplateRenderMode,
   htmlModeWriteAccess,
   withTemplateCondition,
@@ -27,11 +33,29 @@ function validateTemplateText(message: string): TextFieldValidation {
   return (value, { siblingData }) => {
     const renderMode = (siblingData as HtmlRenderModeSiblingData | undefined)?.renderMode
 
-    if (renderMode === 'html' || value?.trim()) {
+    if (renderMode === 'html' || renderMode === 'markdown' || value?.trim()) {
       return true
     }
 
     return message
+  }
+}
+
+/**
+ * 限制 HTML 模式写入权限：仅管理员可创建或切换到 HTML 模式。
+ * Markdown 与模板模式保持 content-editor 可写。
+ */
+function restrictHtmlModeToAdmin(): CollectionBeforeValidateHook {
+  return async ({ data, req }) => {
+    if (data?.renderMode !== 'html') {
+      return data
+    }
+
+    if (hasAnyCmsRole(req.user, CMS_ADMIN_ROLES)) {
+      return data
+    }
+
+    throw new Error('仅管理员可创建或切换到 HTML 模式；普通文章请使用 Markdown 或模板模式。')
   }
 }
 
@@ -63,8 +87,13 @@ export const BlogPosts: CollectionConfig = {
     update: contentUpdateAccess,
     delete: contentCreateAccess,
   },
+  hooks: {
+    beforeValidate: [restrictHtmlModeToAdmin()],
+  },
   fields: [
-    createRenderModeField('默认模板沿用当前文章结构；HTML 模式只需要 slug 与 HTML 内容。'),
+    createRenderModeField(
+      '默认模板沿用当前文章结构；Markdown 模式只需要 slug 与 Markdown 内容；HTML 模式仅管理员可用。',
+    ),
     {
       name: 'title',
       type: 'text',
@@ -86,6 +115,7 @@ export const BlogPosts: CollectionConfig = {
       },
     },
     createHtmlContentField(),
+    createMarkdownContentField(),
     {
       name: 'htmlCardImage',
       type: 'upload',
@@ -94,7 +124,7 @@ export const BlogPosts: CollectionConfig = {
       label: 'HTML 卡片图片',
       access: htmlModeWriteAccess,
       admin: {
-        condition: isHtmlRenderMode,
+        condition: isCardRenderMode,
         description: 'Blog 列表卡片顶部图片。',
       },
     },
@@ -105,7 +135,7 @@ export const BlogPosts: CollectionConfig = {
       label: 'HTML 卡片 Tag',
       access: htmlModeWriteAccess,
       admin: {
-        condition: isHtmlRenderMode,
+        condition: isCardRenderMode,
         description: 'Blog 列表卡片第一行左侧标签。',
       },
     },
@@ -116,7 +146,7 @@ export const BlogPosts: CollectionConfig = {
       label: 'HTML 卡片标题',
       access: htmlModeWriteAccess,
       admin: {
-        condition: isHtmlRenderMode,
+        condition: isCardRenderMode,
         description: 'Blog 列表卡片第二行标题；未填写时回退到 slug。',
       },
     },
@@ -127,7 +157,7 @@ export const BlogPosts: CollectionConfig = {
       label: 'HTML 卡片描述',
       access: htmlModeWriteAccess,
       admin: {
-        condition: isHtmlRenderMode,
+        condition: isCardRenderMode,
         description: 'Blog 列表卡片第三行描述。',
       },
     },
@@ -138,7 +168,7 @@ export const BlogPosts: CollectionConfig = {
       label: 'HTML 卡片阅读时间',
       access: htmlModeWriteAccess,
       admin: {
-        condition: isHtmlRenderMode,
+        condition: isCardRenderMode,
         description: 'Blog 列表卡片右下角阅读时间，例如 7 min read。',
       },
     },

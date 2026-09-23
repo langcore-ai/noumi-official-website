@@ -5,6 +5,10 @@
   color: #3b3f43;
   min-width: 0;
 }
+.prototype-page .section-title {
+  /* Headings must not create scrollbars when font metrics exceed the line box. */
+  overflow: visible;
+}
 .prototype-page summary {
   list-style: none;
 }
@@ -91,4 +95,23 @@
   .prototype-page *::after {
     transition-duration: 0s !important;
   }
+}
+
+/* ── Blog 列表（CMS 数据 + 原型标记）的运行时适配 ── */
+/* 分类筛选通过 hidden 属性隐藏卡片，需要覆盖 Webflow 的浮动列布局。 */
+.prototype-page .blog-collection-item[hidden] {
+  display: none;
+}
+/* 原型 tab 标记在 CMS 页面上改用 button，需要还原字体与指针。 */
+.prototype-page button.blog-tab-link {
+  font: inherit;
+  cursor: pointer;
+}
+/* 未上传卡片图时的占位，避免空图片区域塌陷。 */
+.prototype-page .blog-image-placeholder {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #fcfaf3 0%, #ece7da 100%);
 }

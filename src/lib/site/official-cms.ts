@@ -2210,9 +2210,11 @@ async function readOfficialBlogPosts(
   const { docs } = await payload.find({
     collection: 'blog-posts',
     depth: 1,
-    limit: 100,
+    // 列表一次读全量（pagination: false），上限必须高于文章总数：生产已有 106 篇，
+    // 旧的 limit: 100 会静默截断最新 6 篇。
+    limit: 1000,
     pagination: false,
-    // 列表卡片不需要 htmlContent 和正文 blocks，字段裁剪可显著降低 HTML 模式文章的 D1 读取体积。
+    // 列表卡片不需要 htmlContent 和正文 blocks，字段裁剪可显著降低文章列表的 D1 读取体积。
     select: {
       author: true,
       coverImage: true,

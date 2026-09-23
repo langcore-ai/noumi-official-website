@@ -66,7 +66,11 @@ export function readPid(name: string): number | null {
   }
 }
 
-export function startBackground(name: string, command: string[]): number {
+export function startBackground(
+  name: string,
+  command: string[],
+  extraEnv: Record<string, string> = {},
+): number {
   ensureLocalInfraDir()
   const logPath = join(localInfraDir, `${name}.log`)
   // 每次启动只保留本次运行日志，避免错误诊断被前一次构建输出干扰。
@@ -74,7 +78,7 @@ export function startBackground(name: string, command: string[]): number {
   const child = spawn(command[0], command.slice(1), {
     cwd: repositoryRoot,
     detached: true,
-    env: process.env,
+    env: { ...process.env, ...extraEnv },
     stdio: ['ignore', logFd, logFd],
   })
   child.unref()

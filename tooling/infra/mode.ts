@@ -172,7 +172,13 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
     }
   }
   writeManagedPort(target, port)
-  startBackground(target, commandFor(target, port))
+  // local 模式必须绑定本地 Wrangler/Miniflare D1/R2；否则 payload.config 会按
+  // wrangler.jsonc 的 remote binding 直连生产库，导致本地 Admin 登录/内容全部走线上数据。
+  startBackground(
+    target,
+    commandFor(target, port),
+    target === 'local' ? { OPEN_NEXT_LOCAL_BINDINGS: 'true' } : {},
+  )
   const spinner = clack.spinner()
   spinner.start(`等待 ${target} :${port} 就绪`)
   const interrupt = () => {

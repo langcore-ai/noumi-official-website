@@ -1,30 +1,84 @@
 /*
  * Blog 文章页（Markdown 模式）：沿用原型 blog-article.html 的排版语言。
- * 结构类名来自原型 CSS（banner-section-2 / blog-post-* / faq-*），这里只补两类规则：
+ * 结构类名来自原型 CSS（banner-section-2 / blog-post-* / faq-*），在此统一布局与排版：
  * 1) 原型本身的元素级默认值不适合正文（p 的 color 为透明、blockquote 是巨型引号版式）；
  * 2) 正文由 Markdown 渲染，需要把字号/字重映射到原型文章的刻度。
  */
 
+/* 所有文章区块共享一条内容边界，覆盖原型各断点的独立缩进。 */
+.prototype-page.blog-article .banner-section-2 {
+  width: calc(100% - 40px);
+}
+
+.prototype-page.blog-article .blog-post-banner-wrap,
+.prototype-page.blog-article .blog-post-section-2 {
+  width: 100%;
+  max-width: 1125px;
+  margin-inline: auto;
+}
+
+.prototype-page.blog-article .blog-post-title-wrap.blog-title-wrap-width,
+.prototype-page.blog-article .blog-post-author-area-2,
+.prototype-page.blog-article .small-container.small-container-width.small-containermaxw,
+.prototype-page.blog-article .regular-summary-2.regular-summary-limit {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+.prototype-page.blog-article .blog-post-title-2.blog-title-left,
+.prototype-page.blog-article .small-container.small-container-width.small-containermaxw,
+.prototype-page.blog-article .regular-summary-2.regular-summary-limit {
+  padding-inline: 0;
+}
+
+.prototype-page.blog-article .blog-category-wrap-2.blog-title-left {
+  margin-left: 0;
+}
+
+.prototype-page.blog-article .blog-post-image-area {
+  min-height: 0;
+  margin-top: 40px;
+}
+
+.prototype-page.blog-article .blog-post-image-wrap {
+  width: 100%;
+}
+
+.prototype-page.blog-article .blog-post-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.prototype-page.blog-article .blog-date-2 {
+  margin: 0;
+}
+
 .prototype-page.blog-article .blog-article-body {
   color: var(--font-color--black);
+  overflow-wrap: anywhere;
 }
 
 .prototype-page.blog-article .blog-article-lead {
   color: var(--font-color--black);
-  font-size: var(--_font-size---paragraph--default);
+  font-size: clamp(16px, 1.25vw, 18px);
   font-weight: var(--_typography---font-weight--lite);
-  line-height: var(--_font-size---paragraph--line-height--large);
-  margin-bottom: 20px;
+  line-height: 1.5;
+  margin: 0 0 20px;
 }
 
-/* ── 正文排版：对齐原型文章段落的 16px / 150% / 300 字重 ── */
+/* 正文字号不跟随原型标题变量在小屏缩小，保持至少 16px。 */
 .prototype-page.blog-article .blog-article-body p,
 .prototype-page.blog-article .blog-article-body li {
   color: var(--font-color--black);
-  font-size: var(--_font-size---heading--h7);
+  font-size: clamp(16px, 1.25vw, 18px);
   font-weight: var(--_typography---font-weight--lite);
-  line-height: var(--_font-size---paragraph--line-height--large);
-  margin-bottom: 10px;
+  line-height: 1.5;
+  margin: 0 0 16px;
 }
 
 .prototype-page.blog-article .blog-article-body h2,
@@ -41,13 +95,13 @@
 
 /* 原型文章正文用 heading(h5=25px) 与 heading-6(h6=20px) 两级小节标题。 */
 .prototype-page.blog-article .blog-article-body h2 {
-  font-size: var(--_font-size---heading--h5);
+  font-size: clamp(24px, 2vw, 28px);
   margin-top: 40px;
   margin-bottom: 20px;
 }
 
 .prototype-page.blog-article .blog-article-body h3 {
-  font-size: var(--_font-size---heading--h6);
+  font-size: clamp(20px, 1.6vw, 24px);
   margin-top: 30px;
   margin-bottom: 16px;
 }
@@ -55,14 +109,39 @@
 .prototype-page.blog-article .blog-article-body h4,
 .prototype-page.blog-article .blog-article-body h5,
 .prototype-page.blog-article .blog-article-body h6 {
-  font-size: var(--_font-size---heading--h7);
+  font-size: 18px;
   margin-top: 24px;
   margin-bottom: 12px;
 }
 
 .prototype-page.blog-article .blog-article-body ul,
 .prototype-page.blog-article .blog-article-body ol {
-  padding-left: 24px;
+  margin: 0 0 20px;
+  padding: 0 0 0 24px;
+  list-style-position: outside;
+}
+
+.prototype-page.blog-article .blog-article-body li {
+  margin: 0;
+  padding: 0;
+}
+
+.prototype-page.blog-article .blog-article-body li + li {
+  margin-top: 10px;
+}
+
+/* 松散 Markdown 列表中的 p 与紧凑列表共用缩进，不叠加段落尾距。 */
+.prototype-page.blog-article .blog-article-body li > p {
+  margin: 0;
+}
+
+.prototype-page.blog-article .blog-article-body li > p + p {
+  margin-top: 10px;
+}
+
+.prototype-page.blog-article .blog-article-body li > ul,
+.prototype-page.blog-article .blog-article-body li > ol {
+  margin: 10px 0 0;
 }
 
 /* 原型正文链接默认与正文同色，这里改用站点主色以便正文里可辨识。 */
@@ -90,13 +169,17 @@
   color: var(--font-color--black);
   font-size: var(--_font-size---heading--h7);
   font-weight: var(--_typography---font-weight--lite);
-  line-height: var(--_font-size---paragraph--line-height--large);
+  line-height: 1.5;
   margin: 20px 0;
   padding: 20px;
   text-align: left;
 }
 
-.prototype-page.blog-article .blog-article-body blockquote p:last-child {
+.prototype-page.blog-article .blog-article-body blockquote > :first-child {
+  margin-top: 0;
+}
+
+.prototype-page.blog-article .blog-article-body blockquote > :last-child {
   margin-bottom: 0;
 }
 

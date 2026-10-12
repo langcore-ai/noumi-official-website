@@ -1,5 +1,5 @@
 /**
- * 前台路由切换加载态。
+ * 前台内页路由切换加载态；首页直接输出内容，不经过骨架屏。
  * @returns 页面内容区骨架屏
  */
 export default function FrontendLoading() {

@@ -415,6 +415,8 @@
    * happens. This prevents the panel from jumping/reflowing on hover.
    */
   function lockStageHeight() {
+    // A lazy iframe can resize before its asynchronous content has arrived.
+    if (!CATEGORIES[state.catIndex]) return;
     var cases = CATEGORIES[state.catIndex].cases;
     var measurer = document.createElement("div");
     measurer.style.position = "absolute";

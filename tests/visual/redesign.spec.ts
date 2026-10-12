@@ -1,32 +1,22 @@
 import { expect, test } from '@playwright/test'
 
-test('homepage palette, geometry and continuous scroll activation', async ({ page }) => {
+test('homepage follows the new design and reserves the shared header height', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('.redesign-hero__content')).toHaveCSS('opacity', '1')
-  await expect(page.locator('.redesign-home')).toHaveCSS('background-color', 'rgb(245, 243, 238)')
-  await expect(page.locator('.redesign-hero__media')).toHaveCSS('width', '1200px')
-  await expect(page.locator('.redesign-hero__media')).toHaveCSS('height', '472px')
-  await expect(page.locator('.site-header')).toHaveCSS('position', 'relative')
+  await expect(page.locator('.redesign-home')).toHaveCSS('background-color', 'rgb(250, 249, 246)')
+  await expect(page.locator('.redesign-hero__media')).toHaveCSS('width', '1392px')
+  await expect(page.locator('.redesign-hero__media')).toHaveCSS('border-radius', '32px')
+  await expect(page.locator('.brand__wordmark')).toHaveText('Noumi.ai')
   const cards = page.locator('.redesign-feature')
-  await expect(cards.nth(0)).toHaveCSS('top', '70px')
-  await expect(cards.nth(1)).toHaveCSS('top', '80px')
-  await expect(cards.nth(2)).toHaveCSS('top', '90px')
-  for (const [progress, active] of [
-    [30, 0],
-    [50, 1],
-    [70, 2],
-  ] as const) {
-    await page.locator('.redesign-feature-stack').evaluate((area, value) => {
-      const rect = area.getBoundingClientRect()
-      const top = rect.top + scrollY
-      window.scrollTo({
-        top: top - innerHeight + (value / 100) * (innerHeight + rect.height * 0.5),
-        behavior: 'instant',
-      })
-    }, progress)
-    await expect(cards.nth(active)).toHaveClass(/is-active/)
-    await expect(cards.nth(active).locator('h3')).toHaveCSS('color', 'rgb(77, 114, 194)')
-  }
+  await expect(cards).toHaveCount(3)
+  await expect(cards.nth(0)).toContainText('Specialist-Level')
+  await expect(cards.nth(1)).toContainText('Knowledge')
+  await expect(cards.nth(2)).toContainText('privacy and security')
+  const header = await page.locator('header').boundingBox()
+  const hero = await page.locator('.redesign-hero__media').boundingBox()
+  expect(hero!.y - header!.height).toBe(20)
+  await cards.nth(1).scrollIntoViewIfNeeded()
+  await expect(cards.nth(1).locator('h3')).toHaveCSS('color', 'rgb(32, 33, 31)')
 })
 
 test('all gallery cases, local images, English copy and accessible lightbox', async ({ page }) => {

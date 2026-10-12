@@ -1,0 +1,76 @@
+// Optimized, content-addressed assets extracted from the approved homepage design.
+export const HOME_ASSETS = {
+  logo: '/assets/homepage/logo.e7ca9d2063.svg',
+  footerLogo: '/assets/homepage/footer-logo.d187494e53.svg',
+  poster: '/assets/homepage/hero-poster.fb78a8002a.webp',
+  video: '/assets/homepage/hero.38be41e688.mp4',
+  knowledge: '/assets/homepage/knowledge.5273de1444.webp',
+  knowledgeMobile: '/assets/homepage/knowledge-mobile.e586805dc8.webp',
+} as const
+
+export const HOME_DELIVERABLES = [
+  {
+    id: 'swimlane',
+    label: 'Swimlane',
+    icon: '/assets/homepage/swimlane-icon.059b75f7cd.webp',
+    preview: '/assets/homepage/swimlane-preview.ef49e6508d.webp',
+    mobile: '/assets/homepage/swimlane-mobile.73bd2f2d72.webp',
+    full: '/assets/homepage/swimlane-full.f8b785a5a3.webp',
+  },
+  {
+    id: 'flowchart',
+    label: 'Flowchart',
+    icon: '/assets/homepage/flowchart-icon.15da50ede7.webp',
+    preview: '/assets/homepage/flowchart-preview.5cfa90e7d4.webp',
+    mobile: '/assets/homepage/flowchart-mobile.b90e0944e8.webp',
+    full: '/assets/homepage/flowchart-full.6c890cdc0a.webp',
+  },
+  {
+    id: 'gantt',
+    label: 'Gantt Chart',
+    icon: '/assets/homepage/gantt-icon.d795e6ddc3.webp',
+    preview: '/assets/homepage/gantt-preview.e60a313953.webp',
+    mobile: '/assets/homepage/gantt-mobile.1d01e563e5.webp',
+    full: '/assets/homepage/gantt-full.ab00fe08ff.webp',
+  },
+  {
+    id: 'word',
+    label: 'Word Doc',
+    icon: '/assets/homepage/word-icon.e03ab7e460.webp',
+    preview: '/assets/homepage/word-preview.5ffe06df61.webp',
+    mobile: '/assets/homepage/word-mobile.5b97a4e6ea.webp',
+    full: '/assets/homepage/word-full.3b5249196e.webp',
+  },
+  {
+    id: 'powerpoint',
+    label: 'PowerPoint',
+    icon: '/assets/homepage/powerpoint-icon.d3dca3aaad.webp',
+    preview: '/assets/homepage/powerpoint-preview.53792f7ed0.webp',
+    mobile: '/assets/homepage/powerpoint-mobile.92d5aec46e.webp',
+    full: '/assets/homepage/powerpoint-full.4fa2bf5f18.webp',
+  },
+  {
+    id: 'excel',
+    label: 'Excel',
+    icon: '/assets/homepage/excel-icon.715254f158.webp',
+    preview: '/assets/homepage/excel-preview.2e0560e1a7.webp',
+    mobile: '/assets/homepage/excel-mobile.ae60014e5b.webp',
+    full: '/assets/homepage/excel-full.b5f0631300.webp',
+  },
+  {
+    id: 'prototype',
+    label: 'Prototype',
+    icon: '/assets/homepage/prototype-icon.7a38ab6bde.webp',
+    preview: '/assets/homepage/prototype-preview.276a6a30a5.webp',
+    mobile: '/assets/homepage/prototype-mobile.9a8de80ff2.webp',
+    full: '/assets/homepage/prototype-full.015330d7fa.webp',
+  },
+  {
+    id: 'brief',
+    label: 'Image',
+    icon: '/assets/homepage/brief-icon.91028b630e.webp',
+    preview: '/assets/homepage/brief-preview.b5c6b2f7d2.webp',
+    mobile: '/assets/homepage/brief-mobile.253d2e9534.webp',
+    full: '/assets/homepage/brief-full.1192d8bd5e.webp',
+  },
+] as const

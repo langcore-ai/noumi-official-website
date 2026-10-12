@@ -1,0 +1,255 @@
+/* Shared homepage-design chrome for every public route. */
+:root {
+  --noumi-paper: #faf9f6;
+  --noumi-lite: #faf9f6;
+  --bg-page: #faf9f6;
+  --cream: #faf9f6;
+}
+html,
+body,
+.site-header--home,
+.site-header--home.is-scrolled {
+  background: #faf9f6;
+}
+.page-shell {
+  --official-header-height: 70px;
+}
+.site-header--home .nav-row {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 32px;
+  width: calc(100% - 64px);
+  max-width: none;
+  margin-inline: auto;
+  min-height: 70px;
+  padding: 13px 0;
+}
+.site-header--home .brand {
+  position: static;
+  left: auto;
+  transform: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: start;
+  width: auto;
+  max-width: none;
+  text-decoration: none;
+}
+.site-header--home .brand__wordmark {
+  display: inline;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.site-header--home .brand__icon--img {
+  width: 30px;
+  height: 30px;
+}
+.site-header--home .site-nav {
+  display: flex;
+  width: auto;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 42px);
+}
+.site-header--home .site-nav a,
+.site-header--home .site-nav .site-nav__about {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  min-height: auto;
+  margin: 0;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--noumi-dark);
+  font-family: var(--ff-body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.site-header--home .site-nav .site-nav__about::after {
+  content: none;
+}
+.site-header--home .site-nav a:hover,
+.site-header--home .site-nav a[aria-current='page'] {
+  color: #2c33e2;
+}
+body a.noumi-modern-cta {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: auto;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid #20211f;
+  border-radius: 5px;
+  background: #20211f;
+  color: #fff;
+  font-family: var(--ff-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: none;
+  overflow: visible;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+  animation: none;
+}
+body a.noumi-modern-cta::before,
+body a.noumi-modern-cta::after {
+  content: none;
+}
+body a.noumi-modern-cta:hover {
+  background: #2c33e2;
+  border-color: #2c33e2;
+  color: #fff;
+  transform: none;
+  box-shadow: none;
+}
+.site-header--home .nav-row > .noumi-modern-cta {
+  justify-self: end;
+  margin: 0;
+}
+.noumi-modern-cta:focus-visible,
+.site-header--home a:focus-visible,
+#footer a:focus-visible {
+  outline: 2px solid #2c33e2;
+  outline-offset: 5px;
+}
+#footer.site-footer {
+  background: #10191d;
+  color: #f7f8f6;
+}
+#footer .footer-heading {
+  color: #fff;
+}
+#footer a,
+#footer .footer-note,
+#footer .footer-bottom {
+  color: #e9eeef;
+  opacity: 1;
+}
+#footer a:hover {
+  color: #fff;
+}
+#footer .brand--footer {
+  display: block;
+  width: auto;
+  max-width: 100%;
+}
+#footer .footer-prototype-logo {
+  display: block;
+  width: 190px;
+  height: auto;
+  max-width: 100%;
+  filter: none;
+  opacity: 1;
+}
+#footer .footer-note {
+  margin-top: 22px;
+}
+#footer .footer-social-area {
+  margin-top: 0;
+  gap: 14px;
+}
+#footer .footer-grid a.footer-social-link {
+  align-items: center;
+  border-bottom: 0;
+  padding: 0;
+  margin: 0;
+  min-height: 25.6px;
+  line-height: 1.6;
+}
+#footer .footer-social-link > span::after {
+  display: none;
+}
+#footer .footer-grid a.footer-free-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 40px;
+  margin: 20px 0 0;
+  padding: 9px 17px;
+  background: #f7f8f6;
+  border: 1px solid #f7f8f6;
+  border-radius: 5px;
+  color: #10191d;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+#footer .footer-grid a.footer-free-cta:hover {
+  background: #e9eeef;
+  color: #10191d;
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .site-header--home .nav-row {
+    gap: 20px;
+    width: calc(100% - 48px);
+  }
+  .site-header--home .site-nav {
+    gap: 20px;
+  }
+  .site-header--home .brand__wordmark {
+    font-size: 27px;
+  }
+  .site-header--home .nav-row > .noumi-modern-cta {
+    padding-inline: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .page-shell {
+    --official-header-height: 59px;
+  }
+  .site-header--home .nav-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 59px;
+    padding: 10px 0;
+  }
+  .site-header--home .site-nav,
+  .site-header--home .nav-row > .noumi-modern-cta {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .page-shell {
+    --official-header-height: 53px;
+  }
+  .site-header--home .nav-row {
+    width: calc(100% - 32px);
+    min-height: 53px;
+    padding: 10px 0;
+  }
+  .site-header--home .brand__wordmark {
+    font-size: 26px;
+  }
+  .site-header--home .brand__icon--img {
+    width: 28px;
+    height: 28px;
+  }
+}

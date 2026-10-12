@@ -393,9 +393,8 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   top: 0;
   z-index: 30;
 }
-.official-persistent-header .site-header,
-.official-persistent-header .site-header :is(a, button, label, span, p) {
-  font-weight: 700;
+.official-persistent-header .site-header {
+  font-weight: 400;
 }
 .site-header,
 .site-header--home {

@@ -1,14 +1,12 @@
 import Link from 'next/link'
 
-import type { OfficialUseCaseNavItem } from '@/lib/site/official-cms'
+import { HOME_ASSETS } from '@/lib/site/homepage-assets'
 import {
-  OFFICIAL_LOGO,
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
   OFFICIAL_PRODUCT_AUTH_URL,
 } from '@/lib/site/official-site'
 
 import { OfficialBetaBanner } from './OfficialBetaBanner'
-import { PrototypeButtonContent } from './PrototypeButtonContent'
 
 /** 官网主导航固定链接。 */
 const PRIMARY_NAV_ITEMS = [
@@ -43,14 +41,11 @@ function renderMobilePrimaryLinks(activeItem?: ActiveNavItem) {
 }
 
 /**
- * 首页头部
- * @param props use case 页签
- * @returns 首页头部
+ * 官网统一主导航
+ * @param props 当前激活的导航项
+ * @returns 全站头部
  */
-export function OfficialHomeHeader(props: {
-  activeItem?: ActiveNavItem
-  useCases: OfficialUseCaseNavItem[]
-}) {
+export function OfficialHomeHeader(props: { activeItem?: ActiveNavItem }) {
   const { activeItem } = props
 
   return (
@@ -58,8 +53,14 @@ export function OfficialHomeHeader(props: {
       <OfficialBetaBanner />
       <div className="container nav-row">
         <Link aria-label="Noumi home" className="brand" href="/">
-          <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
-          <span className="brand__wordmark">Noumi</span>
+          <img
+            alt="Noumi icon"
+            className="brand__icon brand__icon--img"
+            src={HOME_ASSETS.logo}
+            width={30}
+            height={30}
+          />
+          <span className="brand__wordmark">Noumi.ai</span>
         </Link>
 
         <nav aria-label="Primary" className="site-nav">
@@ -78,19 +79,19 @@ export function OfficialHomeHeader(props: {
             className="site-nav__about"
             href="/about"
           >
-            <PrototypeButtonContent>About Us</PrototypeButtonContent>
-          </Link>
-          <Link
-            className="button button--dark button--nav"
-            data-analytics-cta-id="home_header_try_free"
-            data-analytics-event="official_cta_clicked"
-            data-analytics-placement="header"
-            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
-            href={OFFICIAL_PRODUCT_AUTH_URL}
-          >
-            <PrototypeButtonContent>Try Noumi Free</PrototypeButtonContent>
+            About Us
           </Link>
         </nav>
+        <Link
+          className="button button--dark button--nav noumi-modern-cta"
+          data-analytics-cta-id="home_header_try_free"
+          data-analytics-event="official_cta_clicked"
+          data-analytics-placement="header"
+          data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+          href={OFFICIAL_PRODUCT_AUTH_URL}
+        >
+          Try Noumi Free
+        </Link>
 
         <div className="mobile-nav">
           <input
@@ -114,7 +115,7 @@ export function OfficialHomeHeader(props: {
                   About
                 </Link>
                 <Link
-                  className="mobile-nav__cta"
+                  className="mobile-nav__cta noumi-modern-cta"
                   data-analytics-cta-id="home_header_try_free"
                   data-analytics-event="official_cta_clicked"
                   data-analytics-placement="header"
@@ -122,115 +123,8 @@ export function OfficialHomeHeader(props: {
                   href={OFFICIAL_PRODUCT_AUTH_URL}
                 >
                   Try Noumi Free
-                  <span aria-hidden="true">↗</span>
                 </Link>
               </nav>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-  )
-}
-
-/**
- * Use case 页专属头部
- * @param props use case 页签与当前页 slug
- * @returns 头部
- */
-export function OfficialUseCaseHeader(props: {
-  activeSlug: string
-  useCases: OfficialUseCaseNavItem[]
-}) {
-  const { activeSlug, useCases } = props
-
-  return (
-    <header className="site-header site-header--use-case" data-official-nav id="nav">
-      <OfficialBetaBanner />
-      <div className="container nav-row">
-        <Link aria-label="Noumi home" className="brand" href="/">
-          <img alt="Noumi icon" className="brand__icon brand__icon--img" src={OFFICIAL_LOGO} />
-          <span className="brand__wordmark">Noumi</span>
-        </Link>
-
-        <nav aria-label="Use case navigation" className="site-nav site-nav--use-case">
-          {useCases.map((useCase) => (
-            <Link
-              aria-current={useCase.slug === activeSlug ? 'page' : undefined}
-              className={useCase.slug === activeSlug ? 'is-active' : undefined}
-              href={`/use-cases/${useCase.slug}`}
-              key={useCase.slug}
-            >
-              {useCase.label.replace(/^For\s+/i, '')}
-            </Link>
-          ))}
-        </nav>
-
-        <nav aria-label="Primary" className="site-nav">
-          {PRIMARY_NAV_ITEMS.map((item) => (
-            <Link
-              aria-current={item.href === '/use-cases' ? 'page' : undefined}
-              className={item.href === '/use-cases' ? 'is-active' : undefined}
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <Link
-            className="button button--dark button--nav"
-            data-analytics-cta-id="use_case_header_try_free"
-            data-analytics-event="official_cta_clicked"
-            data-analytics-placement="header"
-            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
-            href={OFFICIAL_PRODUCT_AUTH_URL}
-          >
-            Try Free
-            <span aria-hidden="true">→</span>
-          </Link>
-        </nav>
-
-        <div className="mobile-nav mobile-nav--use-case">
-          <input
-            aria-label="Toggle menu"
-            className="mobile-nav__toggle"
-            id="mobile-nav-use-case"
-            type="checkbox"
-          />
-          <label className="mobile-nav__summary" htmlFor="mobile-nav-use-case">
-            Menu
-          </label>
-          <div className="mobile-nav__panel">
-            <div className="mobile-nav__panel-inner">
-              <nav aria-label="Mobile primary navigation" className="mobile-nav__group">
-                {renderMobilePrimaryLinks('/use-cases')}
-                <Link
-                  className="mobile-nav__cta"
-                  data-analytics-cta-id="use_case_header_try_free"
-                  data-analytics-event="official_cta_clicked"
-                  data-analytics-placement="header"
-                  data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
-                  href={OFFICIAL_PRODUCT_AUTH_URL}
-                >
-                  Try Free
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </nav>
-              {useCases.length > 0 ? (
-                <nav aria-label="Mobile use case navigation" className="mobile-nav__group">
-                  <span className="mobile-nav__label">Use cases</span>
-                  {useCases.map((useCase) => (
-                    <Link
-                      aria-current={useCase.slug === activeSlug ? 'page' : undefined}
-                      className="mobile-nav__link"
-                      href={`/use-cases/${useCase.slug}`}
-                      key={useCase.slug}
-                    >
-                      {useCase.label.replace(/^For\s+/i, '')}
-                    </Link>
-                  ))}
-                </nav>
-              ) : null}
             </div>
           </div>
         </div>
@@ -241,7 +135,6 @@ export function OfficialUseCaseHeader(props: {
 
 /**
  * 官网统一页脚
- * @param props Features 与 Use Case 导航项
  * @returns 官网统一页脚
  */
 export function OfficialHomeFooter() {
@@ -251,15 +144,26 @@ export function OfficialHomeFooter() {
         <div>
           <Link aria-label="Noumi home" className="brand brand--footer" href="/">
             <img
-              alt="Noumi"
+              alt="Noumi.ai"
               className="footer-prototype-logo"
-              src="/assets/redesign/logo-white.png"
+              src={HOME_ASSETS.footerLogo}
+              width={190}
+              height={48}
             />
           </Link>
           <p className="footer-note">
-            Professional Agent that does the work, holds the full context, and delivers to your
-            standard.
+            A personal AI workspace built for Business &amp; Solutions professionals
           </p>
+          <Link
+            className="footer-free-cta"
+            href={OFFICIAL_PRODUCT_AUTH_URL}
+            data-analytics-cta-id="footer_try_free"
+            data-analytics-event="official_cta_clicked"
+            data-analytics-placement="footer"
+            data-analytics-target-path={OFFICIAL_PRODUCT_AUTH_TARGET_PATH}
+          >
+            Try Noumi Free
+          </Link>
         </div>
         <div>
           <h2 className="footer-heading">Product</h2>

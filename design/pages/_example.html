@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Example Section | Noumi</title>
+    <meta name="description" content="A minimal design draft example for the design/workbench branch." />
+    <style>
+      /* 只写这一段内容用到的样式；不要重定义站点级主题变量。 */
+      .dp-example {
+        background: var(--cream, #f5f3ee);
+        color: var(--ink, #3b3f43);
+        padding: 96px 24px;
+      }
+      .dp-example__inner {
+        max-width: 1140px;
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1.1fr 1fr;
+        align-items: center;
+      }
+      .dp-example__eyebrow {
+        color: var(--accent, #4d72c2);
+        font-family: var(--ff-display, Georgia, serif);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+      .dp-example__title {
+        font-family: var(--ff-display, Georgia, serif);
+        font-size: 44px;
+        line-height: 1.15;
+        margin: 0;
+      }
+      .dp-example__body {
+        font-family: var(--ff-body, system-ui, sans-serif);
+        font-size: 17px;
+        line-height: 1.7;
+        color: var(--ink-muted, #6e86a4);
+        margin: 0;
+      }
+      .dp-example__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        align-self: start;
+        background: var(--accent, #4d72c2);
+        color: #fff;
+        border-radius: 999px;
+        padding: 14px 28px;
+        font-family: var(--ff-body, system-ui, sans-serif);
+        font-size: 16px;
+        text-decoration: none;
+      }
+      .dp-example__media {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+        display: block;
+      }
+      @media (max-width: 760px) {
+        .dp-example {
+          padding: 56px 20px;
+        }
+        .dp-example__inner {
+          grid-template-columns: 1fr;
+        }
+        .dp-example__title {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      这是一个可直接照抄的最小例子。放在 design/pages/ 下表示"一个完整页面"；
+      文件名以 _ 开头，编译时会跳过，你想怎么改都行。
+      只写导航栏和页脚之间的内容，不要自己写导航栏、页脚、Cookie 弹窗。
+    -->
+    <section class="dp-example">
+      <div class="dp-example__inner">
+        <div>
+          <p class="dp-example__eyebrow">Example</p>
+          <h1 class="dp-example__title">替换成你的设计稿标题</h1>
+          <p class="dp-example__body">
+            正文说明。图片放在 design/assets/ 下，用相对路径引用，例如 ../assets/example.svg。
+            不要用外链图片、CDN 字体或任何 &lt;script&gt;。
+          </p>
+          <a class="dp-example__cta" href="/contact">占位按钮</a>
+        </div>
+        <img
+          class="dp-example__media"
+          src="../assets/example.svg"
+          alt="占位图，请替换为自己的素材"
+          loading="lazy"
+        />
+      </div>
+    </section>
+  </body>
+</html>

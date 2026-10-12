@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="占位图">
+  <rect width="640" height="400" rx="20" fill="#e5e1d6" />
+  <circle cx="240" cy="170" r="46" fill="#4d72c2" opacity="0.35" />
+  <circle cx="330" cy="215" r="70" fill="#4d72c2" opacity="0.2" />
+  <text x="320" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#6e86a4">替换为你的设计素材</text>
+</svg>

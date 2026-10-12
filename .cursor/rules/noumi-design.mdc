@@ -1,0 +1,19 @@
+---
+description: 开发 Noumi 官网设计稿时使用：产出 design/ 目录下的 HTML/CSS（整页/区块/片段），遵守站点设计 token、断点与禁止项。
+globs: design/**
+alwaysApply: false
+---
+
+# Noumi 官网设计稿
+
+**先读 `.agents/skills/noumi-design/SKILL.md`**，那是完整规范（产出位置、实测设计 token、字体、容器宽度、断点、交互、禁止项、自查清单）。提交流程见 `design/AGENTS.md`。
+
+要点速记：
+
+- 只改 `design/` 目录，其余文件一概不动。
+- 产物是渲染后的 HTML + CSS + 图片，不要交 `.vue` / `.jsx` / `.tsx`。
+- 只写导航栏与页脚之间的内容（`page-body` 内），不要写导航栏、页脚、Cookie 弹窗、`<script>`，也不要自己补 `padding-top`。
+- 颜色用 `--noumi-paper` `#f5f3ee` / `--noumi-lite` `#fcfaf3` / `--noumi-dark` `#3b3f43` / `--noumi-blue` `#4d72c2` / `--noumi-muted` `#6e86a4`；字体优先 `var(--ff-display)`（`Noto Serif SC`）与 `var(--ff-body)`（`Noto Sans SC`）；断点 960/760/600。
+- 容器照现有写法：`width: min(100% - 64px, 1140px); margin-inline: auto;`
+- 素材放 `design/assets/`，相对路径引用；不要外链。
+- 动效只写纯 CSS 并配 `prefers-reduced-motion` 降级；需要 JS 的在 PR 里说明，由我们实现。

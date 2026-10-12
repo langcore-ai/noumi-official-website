@@ -33,7 +33,16 @@ cd noumi-design
 
 （写成一行是故意的：Windows 的 PowerShell 不认 `\` 换行，复制粘贴会失败。）
 
+- 用 **GitHub CLI**：`gh repo clone langcore-ai/noumi-official-website noumi-design -- --branch design/workbench --single-branch --depth=1`
 - 用 **GitHub Desktop**：`File → Clone repository → URL` 填上面地址，克隆后切到 `design/workbench` 分支。
+- **已经克隆过产品仓库**（里面有 `src/`、`package.json`）：不要在那个目录里 `git switch` —— 切过去后工作区里的产品代码会消失（切回来会恢复，但很容易吓一跳）。改用 worktree，互不干扰：
+
+  ```bash
+  git fetch origin design/workbench:refs/remotes/origin/design/workbench
+  git worktree add -b design-wb ../noumi-design origin/design/workbench
+  ```
+
+  这样设计稿在旁边的 `../noumi-design` 里，产品仓库完全不动。
 - 只想看看不动手：直接在浏览器打开 <https://github.com/langcore-ai/noumi-official-website/tree/design/workbench>。
 - 克隆下来应该**只有十几个文件**（`design/`、`.agents/`、`tools/`、几个 md）。如果你看到 `src/`、`package.json`，说明分支选错了。
 
@@ -153,6 +162,8 @@ git push -u origin design/你的页面名
 | 找不到 `.agents` 目录 | 名字以点开头。macOS 的 Finder 默认隐藏，按 `Cmd+Shift+.` 显示；Windows 资源管理器默认就显示 |
 | 想拿到我们后来更新的说明 | 在克隆目录里执行 `git pull`（分支就是 `design/workbench`） |
 | `git switch` 报错不认识 | 你的 git 太老，把 `git switch -c xxx` 换成 `git checkout -b xxx` |
+| 在产品仓库里 `git switch design/workbench` 后 `src/` 不见了 | 预期行为（这是孤立分支）。切回 `main` 就恢复；建议改用第 1 节的 worktree 做法 |
+| 克隆很慢、`.git` 有 60MB+ | 漏了 `--single-branch`。加上它只要 ~140KB |
 | 提交时被要求填密钥 | 不需要任何密钥。请勿粘贴 `.env`、token 或内部数据 |
 | 图片太大推不上去 | 单次提交图片总量控制在 8MB 内，更大的先找我们 |
 | 不确定能不能这么做 | 直接开 PR 问，或在 PR 里 @ 我们 |

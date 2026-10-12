@@ -24,27 +24,17 @@
 
 ## 1. 把设计分支拿到本地
 
-⚠️ **最容易踩的坑**：直接 `git clone <仓库地址>` 拿到的是产品分支 `main`，里面有 735 个文件、一堆你不需要的代码。**必须指定分支**：
-
 ```bash
-git clone --single-branch --branch design/workbench https://github.com/langcore-ai/noumi-official-website.git noumi-design
+git clone https://github.com/langcore-ai/noumi-official-website.git noumi-design
 cd noumi-design
+git switch design/workbench
 ```
 
-（写成一行是故意的：Windows 的 PowerShell 不认 `\` 换行，复制粘贴会失败。）
+`git switch` 就是切换分支。切过去之后，这个目录里**只有设计稿**（十几个文件），`src/` 那些产品代码不会出现在你的工作区——这是正常的，你不需要它们。
 
-- 用 **GitHub CLI**：`gh repo clone langcore-ai/noumi-official-website noumi-design -- --branch design/workbench --single-branch --depth=1`
-- 用 **GitHub Desktop**：`File → Clone repository → URL` 填上面地址，克隆后切到 `design/workbench` 分支。
-- **已经克隆过产品仓库**（里面有 `src/`、`package.json`）：不要在那个目录里 `git switch` —— 切过去后工作区里的产品代码会消失（切回来会恢复，但很容易吓一跳）。改用 worktree，互不干扰：
+> 用 GitHub Desktop 或其他 Git 客户端也一样：正常克隆，然后把分支切到 `design/workbench`。
 
-  ```bash
-  git fetch origin design/workbench:refs/remotes/origin/design/workbench
-  git worktree add -b design-wb ../noumi-design origin/design/workbench
-  ```
-
-  这样设计稿在旁边的 `../noumi-design` 里，产品仓库完全不动。
-- 只想看看不动手：直接在浏览器打开 <https://github.com/langcore-ai/noumi-official-website/tree/design/workbench>。
-- 克隆下来应该**只有十几个文件**（`design/`、`.agents/`、`tools/`、几个 md）。如果你看到 `src/`、`package.json`，说明分支选错了。
+切完检查一下：`git ls-files | wc -l` 应该是 15 左右。如果里面还有 `src/`、`package.json`，说明还停在 `main` 上。
 
 目录长这样：
 
@@ -55,6 +45,10 @@ design/fragments/   你放"页面里一小块"的地方
 design/assets/      图片、图标、字体
 tools/              只读工具（拉参考样式用）
 ```
+
+想看看不动手：<https://github.com/langcore-ai/noumi-official-website/tree/design/workbench>
+
+想拿我们后来更新的说明：`git switch design/workbench && git pull`
 
 ---
 
@@ -130,7 +124,7 @@ bash tools/fetch-main-styles.sh
 ### 方式 B：命令行
 
 ```bash
-git switch -c design/你的页面名          # 从 design/workbench 拉一个新分支
+git switch -c design/你的页面名          # 从 design/workbench 拉一个新分支（第 1 节已经切过来了）
 # 把稿子放进 design/pages|sections|fragments，素材放进 design/assets
 git add design/
 git commit -m "design: 定价页 hero 改版"
@@ -155,15 +149,13 @@ git push -u origin design/你的页面名
 
 | 现象 | 原因 / 处理 |
 | --- | --- |
-| 克隆下来有一大堆代码 | 克隆的是 `main`。用第 1 节的命令，指定 `--branch design/workbench` |
+| 克隆下来有一大堆代码 | 还停在 `main`，执行 `git switch design/workbench` |
 | `bash: command not found` / 脚本跑不了 | Windows 用 Git Bash；或跳过第 2 节，直接看 GitHub 上的链接 |
 | 颜色/字体变量不生效，样式很丑 | 没挂站点样式表。按第 4 节把 5 个 `<link>` 加上 |
 | 字体变成 Times New Roman | 本地没有站点字体资源，正常现象，提交后线上是正常的 |
 | 找不到 `.agents` 目录 | 名字以点开头。macOS 的 Finder 默认隐藏，按 `Cmd+Shift+.` 显示；Windows 资源管理器默认就显示 |
-| 想拿到我们后来更新的说明 | 在克隆目录里执行 `git pull`（分支就是 `design/workbench`） |
+| 想拿到我们后来更新的说明 | `git switch design/workbench && git pull` |
 | `git switch` 报错不认识 | 你的 git 太老，把 `git switch -c xxx` 换成 `git checkout -b xxx` |
-| 在产品仓库里 `git switch design/workbench` 后 `src/` 不见了 | 预期行为（这是孤立分支）。切回 `main` 就恢复；建议改用第 1 节的 worktree 做法 |
-| 克隆很慢、`.git` 有 60MB+ | 漏了 `--single-branch`。加上它只要 ~140KB |
 | 提交时被要求填密钥 | 不需要任何密钥。请勿粘贴 `.env`、token 或内部数据 |
 | 图片太大推不上去 | 单次提交图片总量控制在 8MB 内，更大的先找我们 |
 | 不确定能不能这么做 | 直接开 PR 问，或在 PR 里 @ 我们 |

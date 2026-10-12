@@ -27,10 +27,11 @@
 ⚠️ **最容易踩的坑**：直接 `git clone <仓库地址>` 拿到的是产品分支 `main`，里面有 735 个文件、一堆你不需要的代码。**必须指定分支**：
 
 ```bash
-git clone --single-branch --branch design/workbench \
-  https://github.com/langcore-ai/noumi-official-website.git noumi-design
+git clone --single-branch --branch design/workbench https://github.com/langcore-ai/noumi-official-website.git noumi-design
 cd noumi-design
 ```
+
+（写成一行是故意的：Windows 的 PowerShell 不认 `\` 换行，复制粘贴会失败。）
 
 - 用 **GitHub Desktop**：`File → Clone repository → URL` 填上面地址，克隆后切到 `design/workbench` 分支。
 - 只想看看不动手：直接在浏览器打开 <https://github.com/langcore-ai/noumi-official-website/tree/design/workbench>。
@@ -149,7 +150,9 @@ git push -u origin design/你的页面名
 | `bash: command not found` / 脚本跑不了 | Windows 用 Git Bash；或跳过第 2 节，直接看 GitHub 上的链接 |
 | 颜色/字体变量不生效，样式很丑 | 没挂站点样式表。按第 4 节把 5 个 `<link>` 加上 |
 | 字体变成 Times New Roman | 本地没有站点字体资源，正常现象，提交后线上是正常的 |
-| 找不到 `.agents` 目录 | 那是隐藏目录（以点开头）。macOS 按 `Cmd+Shift+.` 显示，Windows 在资源管理器里开启"显示隐藏项目" |
+| 找不到 `.agents` 目录 | 名字以点开头。macOS 的 Finder 默认隐藏，按 `Cmd+Shift+.` 显示；Windows 资源管理器默认就显示 |
+| 想拿到我们后来更新的说明 | 在克隆目录里执行 `git pull`（分支就是 `design/workbench`） |
+| `git switch` 报错不认识 | 你的 git 太老，把 `git switch -c xxx` 换成 `git checkout -b xxx` |
 | 提交时被要求填密钥 | 不需要任何密钥。请勿粘贴 `.env`、token 或内部数据 |
 | 图片太大推不上去 | 单次提交图片总量控制在 8MB 内，更大的先找我们 |
 | 不确定能不能这么做 | 直接开 PR 问，或在 PR 里 @ 我们 |

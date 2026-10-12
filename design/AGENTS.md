@@ -25,7 +25,8 @@ graph LR
 - **推荐**：直接在 `github.com` 网页上操作。在你的分支页面里点 `Add file → Upload files`，把文件拖进去，填一句说明，提交。再点 `Compare & pull request`。
 - 也可以用你顺手的任何 Git 客户端。这不重要。
 - **你不需要安装** Node、Bun、pnpm 或任何项目依赖。你不需要 `.env`，不需要拿到任何密钥，也不要向我们索要密钥。
-- 你不需要看懂这个仓库里 `src/` 下面的代码。那是我们的事。
+- **这个分支里没有产品代码，也不需要你去碰产品代码。** 你只要产设计稿。
+- 也不要往本分支添加任何代码文件（`.js` / `.ts` / `.tsx` / `.vue` / `package.json` 等），或者新建工程脚手架。这里只放 HTML、CSS、图片和文档。
 
 ## 3. 交付单位：整页 / 区块 / 片段
 
@@ -55,12 +56,7 @@ graph LR
 
 ### 配色和字体请对齐现有站点
 
-不需要你凭空发明一套主题。站点的设计变量在：
-
-- `src/app/(frontend)/prototype-parity.css`（**配色以此为准**）
-- `src/app/(frontend)/official-base.css`（基础排版、间距）
-
-主要变量（实际生效值）：
+不需要你凭空发明一套主题。**本分支里没有站点的样式文件**，实际生效值已经整理在 skill 里（`.agents/skills/noumi-design/SKILL.md`），直接抄即可：
 
 ```css
 --noumi-paper: #f5f3ee;  /* 页面底色 */
@@ -77,6 +73,8 @@ graph LR
 
 字体优先用 `var(--ff-display)` / `var(--ff-body)`；需要英文时 `Inter` 与 `Funnel Display` 站点也已内置。**不要引入外部字体。**
 响应式断点用 `960px` / `760px` / `600px`。完整规范（含实测字号、容器宽度、自查清单）见 `.agents/skills/noumi-design/SKILL.md`。
+
+需要核对源码时，样式文件在产品仓库 `main` 分支上（见第 5 节链接），只读。
 
 ## 5. 参考现有界面
 
@@ -95,7 +93,7 @@ graph LR
 
 ## 6. 请不要做这些
 
-- 不要改动 `design/` 目录以外的任何文件。特别是 `src/`、`package.json`、`wrangler.jsonc`、`.github/`。这些改动会被自动检查挡下来。
+- 不要改动 `design/` 目录以外的任何文件——本分支上本来也没有别的文件。特别是不准在本分支新建工程脚手架、`package.json`、`src/`、`.github/`。
 - 不要提交 `<script>` 标签或任何可执行代码。纯 CSS 的 `:hover` / `transition` / `@keyframes` 可以写（务必配 `prefers-reduced-motion` 降级）；需要 JS 才能做的效果（滚动入场、指针跟随、轮播等）请在 PR 描述里说明"哪个元素、什么时机、动什么"，由我们实现。
 - 不要用外链资源（其他网站的图片、CDN、字体、视频链接）。图片请放进 `design/assets/`。
 - 不要写 `position: fixed` 的全屏覆盖层。
@@ -117,7 +115,8 @@ graph LR
 
 ## 给我们自己看的部分
 
-- 本分支从 `main` 拉出，需要**定期把 `main` 同步回来**，否则设计同学会对着过期的代码和失效的样式变量工作。
-- 抽查点：`design/**` 是否夹带了目录外的改动；图片体积；是否引入了 `<script>` 或外链资源；视觉效果是否真的能在站点壳层里成立。
-- 编译链路复用现有 `scripts/sync-prototype-pages.mjs` 的思路（剥离 script/style/link、去掉自带 header/footer、重写资源路径、CSS 加前缀隔离）。正式落地的产物放在 `src/lib/site/design/` 与 `public/assets/design/`，**线上只读编译进 main 的产物，不读本分支**。
-- 本分支不接生产密钥，不参与部署。设计稿的最坏影响范围是页面版式。
+- **本分支是孤立分支（orphan），与 `main` 没有共同历史、没有产品代码**，只有十几个文件。目的：vibecoding agent 打开仓库时看到的是纯设计上下文，不会被 `src/` 里 700 多个文件、Payload 规则、CI 配置带偏。
+- 因此**不需要把 `main` 同步进来**（没有代码可同步）。需要维护的只有：skill 里的设计 token / 字体 / 断点是否还和线上一致、示例页是否还成立、第 5 节的 `main` 链接是否失效。
+- 抽查点：`design/**` 是否夹带了代码文件或新脚手架；图片体积；是否引入 `<script>` 或外链资源；视觉是否能在站点壳层里成立。
+- 编译链路复用现有 `scripts/sync-prototype-pages.mjs` 的思路（剥离 script/style/link、去掉自带 header/footer、重写资源路径、CSS 加前缀隔离）。产物落在**产品仓库**的 `src/lib/site/design/` 与 `public/assets/design/`，**线上只读编译进 main 的产物，不读本分支**。
+- 本分支不接生产密钥、不参与部署，也不应配置任何 CI secret。设计稿的最坏影响范围是页面版式。

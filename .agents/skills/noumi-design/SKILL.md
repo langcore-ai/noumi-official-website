@@ -20,7 +20,7 @@ description: Author frontend design drafts for the Noumi official website (noumi
 - 素材放 `design/assets/`，用相对路径引用：`../assets/hero.svg`。
 - 文件名以 `_` 开头会被跳过，可以留练习稿。
 - **只做一张卡片、一个按钮也算合格交付**，不必为了"完整"补全整页。
-- 只改 `design/` 目录，别动 `src/`、`package.json`、`.github/`。
+- 只改 `design/` 目录。本分支上只有设计稿和文档，不要新建工程脚手架、`package.json`、`src/` 或 CI 配置。
 
 ## 2. 你的稿子会被插进哪里
 
@@ -104,7 +104,7 @@ description: Author frontend design drafts for the Noumi official website (noumi
 }
 ```
 
-需要 JS 才能做的效果（滚动入场、指针跟随、自动播放轮播、点击后加载视频等），**不要自己实现**，在 PR 描述里写清"哪个元素、在什么时机、动什么"，由我们在 `src/components/site/prototype/PrototypeEffects.tsx` 里实现——那里已经有现成的实现可复用，不需要新依赖。
+需要 JS 才能做的效果（滚动入场、指针跟随、自动播放轮播、点击后加载视频等），**不要自己实现**，在 PR 描述里写清"哪个元素、在什么时机、动什么"，由我们在产品仓库里实现——站点已经有现成的实现可复用，不需要新依赖。
 
 参考：现有原型页的滚动入场、`<details>` 展开折叠、标签切换（`role="tab"`）、轮播、图片跟随指针、视频点击后加载 YouTube iframe，都是这么做的。
 

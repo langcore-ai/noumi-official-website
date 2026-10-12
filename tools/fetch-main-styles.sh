@@ -23,8 +23,11 @@ paths=(
   "src/app/(frontend)/official-home.css"                  # 首页样式 + --noumi-* 变量定义
   "src/app/(frontend)/prototype-parity.css"               # 最终生效覆盖值（配色以此为准）
   "src/app/(frontend)/prototype-pages.css"                # 原型页适配
+  "src/app/(frontend)/styles.css"                         # 基础归一化
   "src/app/(frontend)/about/about.module.css"
+  "src/app/(frontend)/blog/[slug]/blog-article.css"
   "src/app/(frontend)/blog/[slug]/blog-post.module.css"
+  "src/app/(frontend)/blog/blog-index.css"
   "src/app/(frontend)/contact/contact.module.css"
   "src/app/(frontend)/faqs/faqs.module.css"
   "src/app/(frontend)/features/[slug]/feature-page.module.css"
@@ -34,6 +37,7 @@ paths=(
   "src/app/(frontend)/pricing/pricing.module.css"
   "src/app/(frontend)/use-cases/[slug]/use-case.module.css"
   "src/app/(frontend)/use-cases/use-cases.module.css"
+  "src/app/(frontend)/prototype-pages.generated.css"      # 原型页的原始 CSS（已加 .prototype-page 前缀）
   "src/components/site/SiteHeader.tsx"
   "src/components/site/SiteFooter.tsx"
   "src/components/site/official/OfficialPersistentChrome.tsx"

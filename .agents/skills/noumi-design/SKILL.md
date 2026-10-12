@@ -5,9 +5,34 @@ description: Author frontend design drafts for the Noumi official website (noumi
 
 # Noumi 官网设计稿开发
 
-你在 `design/workbench` 分支上做 Noumi 官网（<https://noumi.ai>）的设计稿。站点是 Next.js + Payload CMS 跑在 Cloudflare 上的动态站，**你只写 HTML/CSS**；导航栏、页脚、Cookie 弹窗、分析脚本、CMS 数据都由站点提供。
+你在 `design/workbench` 分支上做 Noumi 官网（<https://noumi.ai>）的设计稿。这个分支**只有设计稿和文档，没有产品代码**。站点是 Next.js + Payload CMS 跑在 Cloudflare 上的动态站，**你只写 HTML/CSS**；导航栏、页脚、Cookie 弹窗、分析脚本、CMS 数据都由站点提供。
 
-提交流程见仓库里的 `design/AGENTS.md`；本文件讲**怎么写才能落地**。文中数值都是实测计算值，可直接照着写。
+提交流程见 `design/AGENTS.md`；本文件讲**怎么写才能落地**。文中数值都是实测计算值，可直接照着写。
+
+## 0. 先理解现有样式机制（推荐先做）
+
+想让新稿子跟站点长得像一套东西，**读源码是最快的**，不要凭空造。本分支没有代码，用下面任一方式拿只读参考：
+
+```bash
+# 方式 A（推荐）：脚本按白名单拉一份只读快照到 .main-reference/
+bash tools/fetch-main-styles.sh
+```
+
+```bash
+# 方式 B：只取某个文件
+git fetch --depth=1 origin main
+git show origin/main:"src/app/(frontend)/prototype-parity.css"
+```
+
+也可以直接看 GitHub 上的 `main` 分支（第 8 节有链接）。**这些都只是只读参考**：不要切换分支、不要提交 `.main-reference/`、不要把整份现有 CSS 拷进 `design/`。
+
+**允许看的**（样式、DOM 结构、字体，够理解机制即可）：`src/app/(frontend)/**/*.css`、`src/components/site/Site{Header,Footer}.tsx`、`src/components/site/official/OfficialPersistentChrome.tsx`、`src/components/site/official/OfficialContentSections.tsx`、`src/lib/site/prototype/{pages.json,routes.json}`、`public/assets/fonts/fonts.css`。`tools/fetch-main-styles.sh` 里的白名单就是这个范围。
+
+**不用看也不该看的**：CMS collections/globals、`access/`、`lib/site/official-cms.ts`、`payload.config.ts`、`worker.ts`、`wrangler.jsonc`、迁移、`.github/`。这些和视觉无关，看了只会跑偏，也不要在 PR 里引用它们。
+
+**读的时候重点看**：命名习惯（`redesign-*` / `official-*` / `page-hero` 这类前缀怎么用）、设计变量怎么组合（`var(--noumi-blue)` 而非写死色值）、响应式怎么写（同一选择器在 960/760/600 各做什么）、间距与圆角的取值习惯（多用 20/25/30/50 这类 5 的倍数）、状态怎么写（`:hover` / `:focus-visible` / `[aria-current]`）。
+
+**不要做的事**：不要因为看到了机制就改写现有全局规则，不要新增 CSS 框架或预处理器，不要引入 `styles.css` / `official-*` 之外的新全局文件。
 
 ## 1. 产出放在哪
 
@@ -69,7 +94,7 @@ description: Author frontend design drafts for the Noumi official website (noumi
 
 写成 `var(--noumi-blue, #4d72c2)` 这种带兜底的形式，单独打开稿子也不会失色。
 
-字体：站点已内置，**不要引入外部字体**。
+字体：站点已内置，**不要引入外部字体**（可用族与字重见 `public/assets/fonts/fonts.css`）。
 
 - 当前生效：`--ff-display` = `'Noto Serif SC'`，`--ff-body` = `'Noto Sans SC'`（`prototype-parity.css` 覆盖了 `official-base.css` 的 `'Funnel Display'` / `'Inter'`）。
 - **首选 `var(--ff-display)` / `var(--ff-body)`**；硬写 `'Funnel Display'` 不会生效，因为 body 实际是 `'Noto Sans SC'`。
@@ -114,6 +139,7 @@ description: Author frontend design drafts for the Noumi official website (noumi
 - 外链资源：其他站点的图片、CDN、Google Fonts、外站视频
 - `position: fixed` 的全屏覆盖层；自己实现的导航栏 / 页脚 / Cookie 弹窗
 - 真实表单提交（`<form action=...>`）、真实登录框
+- 改动/覆盖现有全局样式（`.page-body`、`.site-header`、`.site-footer`、`:root` 等）
 - 真实密钥、内部数据、未公开用户信息
 
 ## 7. 自查清单
@@ -123,7 +149,8 @@ description: Author frontend design drafts for the Noumi official website (noumi
 - [ ] 标题从 `<h2>` 起（页面 `<h1>` 由站点提供），不跳级
 - [ ] 正文对比度 ≥ 4.5:1（`--noumi-muted` 只用于次要文字，别拿它当正文）
 - [ ] 链接和按钮有可见的 `:focus-visible` 样式
-- [ ] 颜色、字体全部来自第 3 节，没有新造色值
+- [ ] 颜色、字体全部来自第 3 节，或与 `main` 上现有取值一致
+- [ ] 类名没有和现有全局类冲突（新类加自己的前缀）
 - [ ] 动效有 `prefers-reduced-motion` 降级
 - [ ] 没有 `<script>`、外链资源、`position: fixed` 全屏层
 - [ ] 只改了 `design/` 目录
@@ -132,14 +159,13 @@ description: Author frontend design drafts for the Noumi official website (noumi
 
 - 线上效果：<https://noumi.ai>（`/features`、`/pricing`、`/faqs`、`/use-cases` 是设计稿编译产物，可直接对版）
 - **现成页面的真实 HTML**：<https://github.com/langcore-ai/noumi-official-website/blob/main/src/lib/site/prototype/pages.json>（24 个页面的标记与标题），要抄结构就抄这里
-- 样式来源（都在产品仓库的 `main` 分支上，本分支里没有这些文件）：
+- 样式来源（都在产品仓库 `main` 分支，本分支里没有；建议用第 0 节的脚本拉下来读）：
   - <https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/official-base.css>（基础排版）
   - <https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/official-home.css>（主题变量）
   - <https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/prototype-parity.css>（最终覆盖值，**配色以此为准**）
   - <https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/prototype-pages.css>（原型页适配）
 - 区块写法：<https://github.com/langcore-ai/noumi-official-website/blob/main/src/components/site/official/OfficialContentSections.tsx>
-- 导航与页脚（不用你写，知道长什么样即可）：<https://github.com/langcore-ai/noumi-official-website/blob/main/src/components/site/SiteHeader.tsx>、<https://github.com/langcore-ai/noumi-official-website/blob/main/src/components/site/SiteFooter.tsx>
 
-**本分支不含产品代码**：上面这些链接指向产品仓库的 `main` 分支，只读参考，不要试图在本分支里找到它们。
+**本分支不含产品代码**：上面这些都在产品仓库的 `main` 分支上，只读参考。
 
 用浏览器打开你写的 HTML 就能看效果；想看套上真实导航/页脚的样子，发 PR 后预览链接会贴在 PR 评论里。

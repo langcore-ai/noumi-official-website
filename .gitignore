@@ -5,3 +5,6 @@ Thumbs.db
 *.ai
 *.sketch
 *.zip
+
+# 只读参考快照（tools/fetch-main-styles.sh 生成），不要提交
+.main-reference/

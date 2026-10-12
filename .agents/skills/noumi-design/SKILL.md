@@ -34,6 +34,18 @@ git show origin/main:"src/app/(frontend)/prototype-parity.css"
 
 **不要做的事**：不要因为看到了机制就改写现有全局规则，不要新增 CSS 框架或预处理器，不要引入 `styles.css` / `official-*` 之外的新全局文件。
 
+**本地预览时怎么接上真实样式**：光写 `var(--noumi-blue)` 在裸 HTML 里是不生效的。把快照里的样式表按站点顺序挂到 `<head>` 里就能在本地看到真实效果：
+
+```html
+<link rel="stylesheet" href=".main-reference/src/app/(frontend)/styles.css" />
+<link rel="stylesheet" href=".main-reference/src/app/(frontend)/official-base.css" />
+<link rel="stylesheet" href=".main-reference/src/app/(frontend)/official-home.css" />
+<link rel="stylesheet" href=".main-reference/src/app/(frontend)/prototype-parity.css" />
+<link rel="stylesheet" href=".main-reference/src/app/(frontend)/prototype-pages.css" />
+```
+
+这**只用于你自己的本地预览**，不要写进提交的稿子里（提交的 HTML 里不要带这些 `<link>`）。注意字体是站点自带资源，本地预览可能回退到系统字体（例如 Times New Roman），属正常现象，不代表字体写错了。
+
 ## 1. 产出放在哪
 
 | 完成度 | 路径 | 说明 |

@@ -26,6 +26,7 @@ graph LR
 - 也可以用你顺手的任何 Git 客户端。这不重要。
 - **你不需要安装** Node、Bun、pnpm 或任何项目依赖。你不需要 `.env`，不需要拿到任何密钥，也不要向我们索要密钥。
 - **这个分支里没有产品代码，也不需要你去碰产品代码。** 你只要产设计稿。
+- **但可以读 `main` 分支的一部分源码**（样式、导航/页脚、既有页面 HTML、字体表）来对齐视觉逻辑，见第 5 节。
 - 也不要往本分支添加任何代码文件（`.js` / `.ts` / `.tsx` / `.vue` / `package.json` 等），或者新建工程脚手架。这里只放 HTML、CSS、图片和文档。
 
 ## 3. 交付单位：整页 / 区块 / 片段
@@ -80,7 +81,32 @@ graph LR
 
 想对齐已有页面，最省事的办法是**对着线上站点看**：<https://noumi.ai>
 
-只想找配色、字号、间距时，可以看产品仓库 `main` 分支上的样式文件（**本分支里没有这些文件，点链接去 GitHub 看，只读**）：
+### 建议先拉一份只读参考（推荐）
+
+**想让新稿子看起来和站点是一套东西，读现有样式是最快的办法。** 本分支没有代码，用这个脚本按白名单拉一份只读快照：
+
+```bash
+bash tools/fetch-main-styles.sh          # 输出到 .main-reference/（已在 .gitignore 里）
+```
+
+它会从产品仓库 `main` 分支取出样式文件、`SiteHeader`/`SiteFooter`、`pages.json`（24 个既有页面的真实 HTML）、字体表等，**只读、不提交**。也可以单独取一个文件：
+
+```bash
+git fetch --depth=1 origin main
+git show origin/main:"src/app/(frontend)/prototype-parity.css"
+```
+
+**允许看的范围**（视觉与 DOM，够理解机制）：`src/app/(frontend)/**/*.css`、`src/components/site/Site{Header,Footer}.tsx`、`src/components/site/official/OfficialPersistentChrome.tsx`、`src/components/site/official/OfficialContentSections.tsx`、`src/lib/site/prototype/*.json`、`public/assets/fonts/fonts.css`。
+
+**不用看、也别在 PR 里引用的**：CMS collections/globals、`access/`、`lib/site/official-cms.ts`、`payload.config.ts`、`worker.ts`、`wrangler.jsonc`、迁移、`.github/`。这些与视觉无关。
+
+**读的时候重点看**：类名前缀习惯（`redesign-*` / `official-*` / `page-hero`）、变量怎么组合（`var(--noumi-blue)` 而不是写死色值）、响应式写法（同一选择器在 960/760/600 各做什么）、间距/圆角取值习惯（多为 5 的倍数）、状态（`:hover` / `:focus-visible` / `[aria-current]`）。
+
+**注意边界**：参考快照是"现状"，不是可以照抄的模板——不要拷整份现有 CSS 进 `design/`，不要改写现有全局规则，不要新增 CSS 框架/预处理器，也不要新建全局样式文件。
+
+### 只想看具体文件时
+
+可以直接点 GitHub 上 `main` 分支的链接（**本分支里没有这些文件，只读**）：
 
 - [`official-base.css`](https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/official-base.css)：站点共享样式与设计变量
 - [`official-home.css`](https://github.com/langcore-ai/noumi-official-website/blob/main/src/app/(frontend)/official-home.css)：主题变量定义
@@ -94,6 +120,7 @@ graph LR
 ## 6. 请不要做这些
 
 - 不要改动 `design/` 目录以外的任何文件——本分支上本来也没有别的文件。特别是不准在本分支新建工程脚手架、`package.json`、`src/`、`.github/`。
+- 不要把 `.main-reference/` 或任何从 `main` 拉下来的文件提交上来（已在 `.gitignore` 里）；也不要把现有整份 CSS 拷进 `design/`，或改写已存在的全局规则（`.page-body` / `.site-header` / `.site-footer` / `:root`）。
 - 不要提交 `<script>` 标签或任何可执行代码。纯 CSS 的 `:hover` / `transition` / `@keyframes` 可以写（务必配 `prefers-reduced-motion` 降级）；需要 JS 才能做的效果（滚动入场、指针跟随、轮播等）请在 PR 描述里说明"哪个元素、什么时机、动什么"，由我们实现。
 - 不要用外链资源（其他网站的图片、CDN、字体、视频链接）。图片请放进 `design/assets/`。
 - 不要写 `position: fixed` 的全屏覆盖层。
@@ -104,6 +131,7 @@ graph LR
 ## 7. 怎么看效果
 
 - 只看视觉：在本地用浏览器打开你写的 HTML 就行，加个手机宽度对比一下。
+- 想让本地预览也带上站点的真实样式（变量、字体、间距），把 `tools/fetch-main-styles.sh` 拉下来的快照样式表按顺序临时挂到 `<head>` 里，具体见 skill 第 0 节——**这只是给你本地看的，不要提交进稿子**。
 - 想看**套上真实导航/页脚、在真实 URL 下**的效果：发 PR 后我们会把预览链接贴在 PR 评论里。
 - 预览链接只是给你看效果的，不会影响正式站点。
 
@@ -116,7 +144,7 @@ graph LR
 ## 给我们自己看的部分
 
 - **本分支是孤立分支（orphan），与 `main` 没有共同历史、没有产品代码**，只有十几个文件。目的：vibecoding agent 打开仓库时看到的是纯设计上下文，不会被 `src/` 里 700 多个文件、Payload 规则、CI 配置带偏。
-- 因此**不需要把 `main` 同步进来**（没有代码可同步）。需要维护的只有：skill 里的设计 token / 字体 / 断点是否还和线上一致、示例页是否还成立、第 5 节的 `main` 链接是否失效。
+- 因此**不需要把 `main` 同步进来**（没有代码可同步）。需要维护的：skill 里的设计 token / 字体 / 断点是否还和线上一致、示例页是否还成立、第 5 节的 `main` 链接是否失效、`tools/fetch-main-styles.sh` 白名单里的路径是否还存在（`main` 上文件改名就要同步改）。
 - 抽查点：`design/**` 是否夹带了代码文件或新脚手架；图片体积；是否引入 `<script>` 或外链资源；视觉是否能在站点壳层里成立。
 - 编译链路复用现有 `scripts/sync-prototype-pages.mjs` 的思路（剥离 script/style/link、去掉自带 header/footer、重写资源路径、CSS 加前缀隔离）。产物落在**产品仓库**的 `src/lib/site/design/` 与 `public/assets/design/`，**线上只读编译进 main 的产物，不读本分支**。
 - 本分支不接生产密钥、不参与部署，也不应配置任何 CI secret。设计稿的最坏影响范围是页面版式。

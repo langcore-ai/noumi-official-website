@@ -2,6 +2,7 @@
 
 非研发同学在这里做 `noumi.ai` 的前端设计稿。
 
+- **本地环境与提交（先看这个）**：[`SETUP.md`](SETUP.md)
 - 提交流程与交付格式：[`design/AGENTS.md`](design/AGENTS.md)
 - 写稿规范（设计 token / 字体 / 宽度 / 断点 / 禁止项）：[`.agents/skills/noumi-design/SKILL.md`](.agents/skills/noumi-design/SKILL.md)
 - 示例：`design/pages/_example.html`

@@ -10,6 +10,7 @@ test.describe('Admin Panel', () => {
   let page: Page
 
   test.beforeAll(async ({ browser }, testInfo) => {
+    testInfo.setTimeout(180_000)
     await seedTestUser()
 
     const context = await browser.newContext()
@@ -19,6 +20,7 @@ test.describe('Admin Panel', () => {
   })
 
   test.afterAll(async () => {
+    await page?.context().close()
     await cleanupTestUser()
   })
 

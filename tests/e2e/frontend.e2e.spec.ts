@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 test.describe('Frontend', () => {
   test('can go on homepage', async ({ page }) => {
@@ -8,6 +8,8 @@ test.describe('Frontend', () => {
 
     const heading = page.locator('h1').first()
 
-    await expect(heading).toContainText(/Effortless,\s*Trustworthy\s*Deliverables/)
+    await expect(heading).toContainText(
+      /Trustworthy\s*Deliverables\s*Securely in Your Noumi Workspace\./,
+    )
   })
 })

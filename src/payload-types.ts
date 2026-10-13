@@ -463,6 +463,18 @@ export interface BlogPost {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * 填写 JSON 对象或对象数组（支持 @graph），不要包含 <script> 标签。发布后输出到文章页面；留空不输出自定义数据。
+     */
+    structuredData?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -1304,6 +1316,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        structuredData?: T;
       };
   updatedAt?: T;
   createdAt?: T;

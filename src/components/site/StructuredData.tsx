@@ -8,7 +8,7 @@ export function StructuredData<T extends object>({ data }: { data: T }) {
     <script
       type="application/ld+json"
       // 这里直接输出 JSON-LD，避免前端再拼装字符串导致字段遗漏
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
     />
   )
 }

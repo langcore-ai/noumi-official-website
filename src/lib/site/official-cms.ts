@@ -548,6 +548,8 @@ export type OfficialBlogPostSummary = {
  * Blog 详情页视图
  */
 export type OfficialBlogPostView = OfficialBlogPostSummary & {
+  /** 编辑人员填写的 JSON-LD */
+  structuredData?: NonNullable<BlogPost['meta']>['structuredData']
   /** 前台渲染模式 */
   renderMode: 'html' | 'markdown' | 'template'
   /** HTML 模式源码 */
@@ -2321,6 +2323,7 @@ async function readOfficialBlogPost(
           : 'template',
     htmlContent: normalizeText(post.htmlContent),
     markdownContent: normalizeText(post.markdownContent),
+    structuredData: post.meta?.structuredData,
     ...normalizeSeoMeta({
       ...post.meta,
       description: post.meta?.description ?? post.htmlCardDescription,

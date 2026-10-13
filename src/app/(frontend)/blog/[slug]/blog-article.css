@@ -64,11 +64,16 @@
 }
 
 .prototype-page.blog-article .blog-article-lead {
+  background-color: var(--bg-color--lite-transparent);
+  border-left: 3px solid var(--bg-color--blue-transparent);
+  border-radius: 5px;
+  padding: 20px;
+  overflow-wrap: anywhere;
   color: var(--font-color--black);
   font-size: clamp(16px, 1.25vw, 18px);
   font-weight: var(--_typography---font-weight--lite);
   line-height: 1.5;
-  margin: 0 0 20px;
+  margin: 0 0 28px;
 }
 
 /* 正文字号不跟随原型标题变量在小屏缩小，保持至少 16px。 */

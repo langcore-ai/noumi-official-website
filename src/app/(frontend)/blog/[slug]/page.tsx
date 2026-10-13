@@ -1,3 +1,4 @@
+import { StructuredData } from '@/components/site/StructuredData'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -69,6 +70,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
   if (post.renderMode === 'html') {
     return (
       <div className="page-body">
+        {post.structuredData && typeof post.structuredData === 'object' ? (
+          <StructuredData data={post.structuredData} />
+        ) : null}
         <OfficialRawHtml html={post.htmlContent || ''} />
       </div>
     )
@@ -79,6 +83,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
 
     return (
       <div className="page-body">
+        {post.structuredData && typeof post.structuredData === 'object' ? (
+          <StructuredData data={post.structuredData} />
+        ) : null}
         <main className="prototype-page body-14 blog-article">
           <section className="banner-section-2">
             <div className="w-layout-blockcontainer regular-container w-container">
@@ -305,6 +312,9 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
 
   return (
     <div className={`${styles.blogPostPage} page-body`}>
+      {post.structuredData && typeof post.structuredData === 'object' ? (
+        <StructuredData data={post.structuredData} />
+      ) : null}
       <main className={styles.postWrap}>
         <Link className={`${styles.postBack} reveal`} href="/blog">
           ← Back to Blog

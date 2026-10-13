@@ -1,3 +1,4 @@
+import * as migration_20261013_100000_add_blog_structured_data from './20261013_100000_add_blog_structured_data'
 import * as migration_20260422_085454_initial from './20260422_085454_initial'
 import * as migration_20260422_180500_add_html_render_mode from './20260422_180500_add_html_render_mode'
 import * as migration_20260422_182200_add_blog_html_card_fields from './20260422_182200_add_blog_html_card_fields'
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260923_120000_add_blog_faq_items.up,
     down: migration_20260923_120000_add_blog_faq_items.down,
     name: '20260923_120000_add_blog_faq_items',
+  },
+  {
+    up: migration_20261013_100000_add_blog_structured_data.up,
+    down: migration_20261013_100000_add_blog_structured_data.down,
+    name: '20261013_100000_add_blog_structured_data',
   },
 ]

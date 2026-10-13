@@ -14,6 +14,7 @@ import { r2Storage } from '@payloadcms/storage-r2'
 import { en as enTranslations } from '@payloadcms/translations/languages/en'
 import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 
+import { addBlogStructuredData } from './fields/blogStructuredData'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
@@ -433,6 +434,7 @@ export default buildConfig({
       generateURL: ({ collectionConfig, doc }) => generateSeoURL(doc, collectionConfig?.slug),
       fields: ({ defaultFields }) => getSeoFields(defaultFields),
     }),
+    addBlogStructuredData,
     redirectsPlugin({
       // 当前仓库还没有页面内容集合，先降级为仅支持自定义 URL 的跳转管理
       collections: redirectTargetCollections,

@@ -130,8 +130,11 @@ export default function HomePage() {
                   are in our DNA.
                 </h3>
                 <p>
-                  Bring your sensitive project work into a workspace designed with privacy and
-                  security at its core.
+                  With end-to-end encryption in Noumi, your files and tasks are secured with an
+                  isolated container.
+                  <br />
+                  Only you and the person you shared with can have access to them, and no one else,
+                  not even Noumi.
                 </p>
               </div>
               <OfficialSecurityVisual />

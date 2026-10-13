@@ -14,7 +14,7 @@
   --w-bold: 700;
 
   /* Color */
-  --bg-lite: #fcfaf3;
+  --bg-lite: #faf9f6;
   --bg-secondary: #6e86a4;
   --accent: #4d72c2;
   --ink: #3b3f43;
@@ -115,63 +115,42 @@ body {
   }
 }
 
+/* Keep the embedded gallery CTA aligned with the shared header CTA. */
 .hero-cta {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 40px;
-  min-width: 173px;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
   margin-top: 22px;
-  background: var(--ink);
-  color: #f6f0e7;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: var(--w-bold);
-  line-height: 1.6;
-  text-decoration: none;
-  padding: 5px 15px;
-  border: 0;
+  padding: 0 20px;
+  border: 1px solid #20211f;
   border-radius: 5px;
+  background: #20211f;
+  color: #f6f0e7;
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-decoration: none;
   box-shadow: none;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-/* Match the shared header CTA, including its sliding arrow treatment. */
-.hero-cta .prototype-button-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  overflow: hidden;
-}
-
-.hero-cta .prototype-button-content > * {
-  flex-shrink: 0;
-  transition: transform 300ms linear;
-}
-
-.hero-cta .prototype-button-arrow {
-  width: 9px;
-  height: 13px;
-}
-
-.hero-cta .prototype-button-arrow--incoming {
-  position: absolute;
-  left: -40px;
-}
-
-.hero-cta:is(:hover, :focus-visible) .prototype-button-content > * {
-  transform: translateX(40px);
+.hero-cta:hover {
+  background: #2c33e2;
+  border-color: #2c33e2;
+  color: #f6f0e7;
 }
 
 .hero-cta:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-cta .prototype-button-content > * {
-    transition: none;
-  }
+  outline: 2px solid #2c33e2;
+  outline-offset: 5px;
 }
 
 .nx-ma {

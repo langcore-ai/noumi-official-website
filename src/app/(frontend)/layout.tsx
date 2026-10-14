@@ -25,7 +25,7 @@ export const dynamic = 'force-dynamic'
  */
 export async function generateMetadata() {
   return createOfficialMetadata({
-    title: 'AI Personal Assistant That Works Like a Colleague | Noumi',
+    title: 'Personal AI workspace built for Business & Solutions professionals | Noumi.ai',
     description:
       'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
     pathname: '/',

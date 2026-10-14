@@ -6,7 +6,7 @@
 
 官网代码：`src/components/site/official/OfficialUseCasesEmbed.tsx`；接入位置：`src/components/site/prototype/PrototypePage.tsx`。首页本地 gallery 的同域实现 `OfficialUseCasesShowcase.tsx` 与此协议不同，不要混用读取 DOM 的方式。
 
-2026-10-14 已确认外站发布 embed=1 布局与高度协议。外站目前仅允许 https://noumi.ai 和 https://www.noumi.ai，localhost 联调会停留 waiting；生产单层滚动仍需实际验收。官网无需为正常内容更新重新部署。
+2026-10-14 已确认外站发布 embed=1 布局与高度协议。外站目前仅允许 https://noumi.ai 和 https://www.noumi.ai，localhost 联调会停留 waiting；生产桌面和手机的 12 个案例已通过自动高度与单层滚动验证。官网无需为正常内容更新重新部署。
 
 ## 双方职责
 
@@ -51,3 +51,11 @@ height 为包含所需间距的实际内容高度，单位 CSS px。父侧接受
 - 外站未支持协议时应保持 waiting 和可滚动；错误 origin、source 或数据不得改变高度。
 
 本地模拟消息测试仅验证父侧协议行为，不能代替外站发布后的浏览器视觉验收。
+
+## 2026-10-14 生产验证记录
+
+- Cloudflare Worker：`noumi-official-website`；版本：`a4ce4b25-f9fb-4212-8fb7-0c0f11166bf6`；应用提交：`0905799`。
+- `https://noumi.ai/use-cases`：1440px 和 390px 宽度各遍历 12 个案例，24 次测量的 iframe 高度均等于子页内容高度向上取整，未发现可滚动的内部纵向容器。案例切换保留 embed=1，支持高度增减。
+- 两种宽度下，鼠标在 iframe 区域滚轮操作均使父网页滚动 400px。
+- 首页、博客、后台、Use Cases HTTP 检查均为 200。51 个集成测试、4 个 E2E、类型检查和 Cloudflare 构建通过。
+- 此轮未穷举所有弹窗、折叠内容及所有浏览器；这不属于全交互验收。

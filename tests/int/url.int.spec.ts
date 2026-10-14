@@ -12,9 +12,7 @@ describe('site URL normalization', () => {
     expect(normalizePreferredPathname('/blog/')).toBe('/blog')
     expect(normalizeSiteHref('/blog/?tag=ai#top')).toBe('/blog?tag=ai#top')
     expect(normalizeSiteHref('/blog/post-1/')).toBe('/blog/post-1')
-    expect(normalizeSiteHref('/assets/social/og-cover.webp')).toBe(
-      '/assets/social/og-cover.webp',
-    )
+    expect(normalizeSiteHref('/assets/social/og-cover.webp')).toBe('/assets/social/og-cover.webp')
     expect(normalizeSiteHref('#features')).toBe('#features')
     expect(normalizeSiteHref('mailto:official@noumi.ai')).toBe('mailto:official@noumi.ai')
   })
@@ -25,6 +23,24 @@ describe('site URL normalization', () => {
     expect(buildPreferredAbsoluteUrl('/blog/post-1/', 'https://noumi.ai')).toBe(
       'https://noumi.ai/blog/post-1',
     )
+  })
+
+  it('redirects retired solution URLs to the embedded overview without a slash hop', () => {
+    for (const pathname of [
+      '/use-cases/solutions-engineer',
+      '/use-cases/solutions-engineer/',
+      '/solution',
+      '/solution/',
+    ]) {
+      for (const method of ['GET', 'HEAD']) {
+        expect(getCanonicalRedirectPath({ method, pathname })).toBe('/use-cases')
+      }
+      expect(getCanonicalRedirectPath({ method: 'POST', pathname })).toBeNull()
+    }
+    expect(getCanonicalRedirectPath({ method: 'GET', pathname: '/use-cases' })).toBeNull()
+    expect(
+      getCanonicalRedirectPath({ method: 'GET', pathname: '/use-cases/product-manager' }),
+    ).toBeNull()
   })
 
   it('redirects only frontend GET and HEAD page paths with trailing slash', () => {

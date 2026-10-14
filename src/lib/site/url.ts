@@ -22,11 +22,7 @@ const FILE_EXTENSION_PATTERN = /\/[^/?#]+\.[^/?#]+$/
  * @returns 是否应跳过站内 URL 规范化
  */
 function isExternalOrSpecialHref(href: string): boolean {
-  return (
-    href.startsWith('#') ||
-    href.startsWith('//') ||
-    /^[a-z][a-z\d+.-]*:/i.test(href)
-  )
+  return href.startsWith('#') || href.startsWith('//') || /^[a-z][a-z\d+.-]*:/i.test(href)
 }
 
 /**
@@ -118,6 +114,13 @@ export function getCanonicalRedirectPath(request: {
   }
 
   const pathname = request.pathname
+
+  // Retired solutions URLs now lead directly to the embedded use-cases overview.
+  if (
+    ['/use-cases/solutions-engineer', '/solution'].includes(normalizePreferredPathname(pathname))
+  ) {
+    return '/use-cases'
+  }
 
   if (
     pathname === '/' ||

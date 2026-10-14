@@ -12,15 +12,6 @@ const interactions = rawMotion as unknown as {
 
 export type PrototypePageData = (typeof pages)['/features']
 export function getPrototypePage(route: string): PrototypePageData | undefined {
-  // Preserve the original overview at its new URL; /use-cases renders the embed.
-  if (route === '/use-cases/solutions-engineer') {
-    const overview = pages['/use-cases']
-    return {
-      ...overview,
-      route,
-      html: overview.html.replaceAll('href="/use-cases/solutions-engineer"', 'href="/use-cases"'),
-    }
-  }
   return (pages as Record<string, PrototypePageData>)[route]
 }
 export function prototypeMetadata(route: string) {

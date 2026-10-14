@@ -61,3 +61,9 @@ height 为包含所需间距的实际内容高度，单位 CSS px。父侧接受
 - 两种宽度下，鼠标在 iframe 区域滚轮操作均使父网页滚动 400px。
 - 首页、博客、后台、Use Cases HTTP 检查均为 200。51 个集成测试、4 个 E2E、类型检查和 Cloudflare 构建通过。
 - 此轮未穷举所有弹窗、折叠内容及所有浏览器；这不属于全交互验收。
+
+## 旧地址重定向的 Cloudflare 路由
+
+2026-10-14 排查确认：域名路由 `noumi.ai/use-cases/solutions-engineer*` 原先指向 `noumi-usecases-proxy`，其响应带 `x-usecase-mirror`，会绕过官网 Worker。现已将该单条路由改为 `noumi-official-website`（route ID：`10412de168c74e0d98070817b6aa9f50`）。其他 `case-*`、`assets/*`、`files/*` 反代路由保持不变。该规则在 Cloudflare zone 层管理，排查时不能只验证 workers.dev 地址。
+
+生产验证：`/use-cases/solutions-engineer`、`/solution` 及各自尾斜杠形式均返回 301 到 `/use-cases`；查询参数保留，目标返回 200 且包含 iframe。Worker 版本：`18bea9a9-dbf6-44d0-a421-65059a711589`。

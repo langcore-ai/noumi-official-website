@@ -1,6 +1,7 @@
 // @ts-ignore OpenNext 在构建后生成该入口，本地可能存在也可能不存在。
 import openNextWorker from './.open-next/worker.js'
 import { allowsHtmlSnapshot } from './src/lib/site/html-snapshot-policy'
+import { getCanonicalRedirectPath } from './src/lib/site/url'
 
 /** 快照刷新 Worker 环境变量。 */
 type SnapshotWorkerEnv = Cloudflare.Env & {
@@ -476,9 +477,15 @@ async function refreshOfficialSnapshotsFromCron(
 
 export default {
   /**
-   * 公开请求仍完全交给 OpenNext 生成的 Worker。
+   * 重定向先于快照，避免旧 HTML 绕过路由迁移；其余请求交给快照或 OpenNext。
    */
   async fetch(request: Request, env: SnapshotWorkerEnv, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url)
+    const redirectPath = getCanonicalRedirectPath({ method: request.method, pathname: url.pathname })
+    if (redirectPath) {
+      url.pathname = redirectPath
+      return Response.redirect(url.toString(), 301)
+    }
     const snapshotResponse = await readOfficialHtmlSnapshot(request, env)
 
     if (snapshotResponse) {

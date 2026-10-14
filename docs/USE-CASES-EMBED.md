@@ -4,7 +4,7 @@
 
 官网 `/use-cases` 的顶部介绍和角色网格被 iframe 替换，导航、FAQ 和其后内容保留。外站地址为 `https://noumi-twelve-use-cases.himihiroti.chatgpt.site/?embed=1`。
 
-`/use-cases/solutions-engineer` 和 `/solution`（含尾斜杠）通过 middleware 返回 301，直接跳转到 `/use-cases` iframe 页面；保留查询参数，不再展示旧汇总页。规则位于 `src/lib/site/url.ts`，仅处理 GET/HEAD。
+`/use-cases/solutions-engineer` 和 `/solution`（含尾斜杠）通过 Worker / middleware 返回 301，直接跳转到 `/use-cases` iframe 页面；保留查询参数，不再展示旧汇总页。规则位于 `src/lib/site/url.ts`，仅处理 GET/HEAD。生产 Worker 必须在读取 R2 HTML 快照前执行相同规则，避免旧快照绕过重定向。
 
 官网代码：`src/components/site/official/OfficialUseCasesEmbed.tsx`；接入位置：`src/components/site/prototype/PrototypePage.tsx`。首页本地 gallery 的同域实现 `OfficialUseCasesShowcase.tsx` 与此协议不同，不要混用读取 DOM 的方式。
 

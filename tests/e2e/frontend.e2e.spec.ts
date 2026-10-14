@@ -4,7 +4,9 @@ test.describe('Frontend', () => {
   test('can go on homepage', async ({ page }) => {
     await page.goto('http://localhost:3000')
 
-    await expect(page).toHaveTitle(/AI Personal Assistant That Works Like a Colleague \| Noumi/)
+    await expect(page).toHaveTitle(
+      /Personal AI workspace built for Business & Solutions professionals \| Noumi\.ai/,
+    )
 
     const heading = page.locator('h1').first()
 

@@ -1,10 +1,15 @@
 import { getPageMotion, getPrototypePage } from '@/lib/site/prototype/pages'
 import { PrototypeEffects } from './PrototypeEffects'
+import { OfficialUseCasesEmbed } from '../official/OfficialUseCasesEmbed'
 
 /** Only build-time reviewed local HTML is accepted, never CMS or request-supplied markup. */
 export function PrototypePage({ route }: { route: string }) {
   const page = getPrototypePage(route)
   if (!page) return null
+  const html =
+    route === '/use-cases'
+      ? page.html.slice(page.html.indexOf('<section class="regular-section bottom-space">'))
+      : page.html
   return (
     <div className="page-body">
       <noscript>
@@ -18,7 +23,8 @@ export function PrototypePage({ route }: { route: string }) {
         `}</style>
       </noscript>
       <main className={`prototype-page ${page.bodyClass}`} data-prototype-source={page.file}>
-        <div dangerouslySetInnerHTML={{ __html: page.html }} />
+        {route === '/use-cases' && <OfficialUseCasesEmbed />}
+        <div dangerouslySetInnerHTML={{ __html: html }} />
         <PrototypeEffects key={route} motion={getPageMotion(page)} />
       </main>
     </div>

@@ -1139,3 +1139,7 @@ For deeper exploration of specific topics, refer to the context files located in
 - GitHub: https://github.com/payloadcms/payload
 - Examples: https://github.com/payloadcms/payload/tree/main/examples
 - Templates: https://github.com/payloadcms/payload/tree/main/templates
+
+## Use Cases iframe 嵌入
+
+修改官网 Use Cases iframe、自动高度、内部滚动或嵌入通信协议前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的协议文档。官网只负责父网页，外部展示站点负责子网页适配。本地运行使用 `bun run mode:` 系列命令。

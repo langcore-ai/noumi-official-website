@@ -43,6 +43,7 @@ bun run mode:staging logs
 ## 账号与数据
 
 - 独立生成的密钥保存在 `.local/infra/local.secrets.json` 和 `staging.secrets.json`。
+- `mode:` 本地启动会将本地专用密钥写入已忽略的 `.dev.vars.local`，供 workerd 使用，不依赖正式 `.env`。
 - 首个测试管理员的邮箱和随机密码保存在 `.local/infra/local.admin.json` 和 `staging.admin.json`。
 - 上述文件权限为 `0600`，整个 `.local` 被 Git 忽略；终端不打印密码。
 - 首次部署前初始化管理员，避免公开空 CMS 的首用户注册入口。

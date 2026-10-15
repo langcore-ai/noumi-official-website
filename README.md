@@ -53,7 +53,7 @@ pnpm run dev
 说明：
 
 - `bun.lock` 是仓库唯一锁文件，因此依赖安装以 Bun 为可复现基线。
-- `package.json` 的部署、类型生成和测试聚合脚本会调用 pnpm，不能只安装 Bun。
+- 使用 `bun run mode:` 系列命令管理测试环境；首次运行先执行 `bun run mode:setup`。
 - Payload adapter 配置为 `push: false`，全新本地 D1 需要先执行 migration。
 - 本地 autosave 和 live preview 默认关闭，以降低 Miniflare/D1 锁竞争；按需在 `.env` 中开启。
 - `bun run mode:local up` 是打包运行模式：先 `next build`（`build:quick`，跳过 tsc/lint）再后台 `next start`，不做热加载；完整类型/lint/测试门禁用 `mode:local rebuild`；需要热更新时直接用 `pnpm run dev`。`mode:local` 由 `tooling/infra/mode.ts` 强制注入 `OPEN_NEXT_LOCAL_BINDINGS=true`，因此 D1/R2 始终是本地 Miniflare 模拟资源；若看到生产内容（例如 `/api/globals/about-page` 的 `updatedAt` 不是本地值），说明服务不是由 `mode:local` 启动的。

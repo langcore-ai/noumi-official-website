@@ -81,10 +81,21 @@ export function testSecrets(target: TestEnvironment): Record<string, string> {
 export function testEnv(target: TestEnvironment, port = 3000): NodeJS.ProcessEnv {
   const config = testConfig(target)
   const origin = target === 'local' ? `http://localhost:${port}` : 'https://staging.noumi.ai'
+  const secrets = testSecrets(target)
+  if (target === 'local') {
+    // workerd does not inherit arbitrary shell secrets. Supply its named dev-vars file.
+    writeFileSync(
+      join(repositoryRoot, '.dev.vars.local'),
+      Object.entries(secrets)
+        .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+        .join('\n') + '\n',
+      { mode: 0o600 },
+    )
+  }
   return {
     ...process.env,
     ...config.vars,
-    ...testSecrets(target),
+    ...secrets,
     CLOUDFLARE_ENV: target,
     CLOUDFLARE_ACCOUNT_ID: config.account_id || process.env.CLOUDFLARE_ACCOUNT_ID,
     NEXT_DEV_WRANGLER_ENV: target,

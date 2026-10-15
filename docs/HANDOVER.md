@@ -949,20 +949,11 @@ pnpm run deploy
 
 推荐 migration 采用 expand/contract：先增加 nullable/default-compatible 结构，部署兼容代码和回填，最后在后续版本收紧约束。不要让 migration 删除旧 Worker 仍会读取的字段。
 
-### 20.6 建立 staging 的正确方向
+### 20.6 staging 发布
 
-要创建 staging，必须先：
-
-1. 新建独立 Worker name。
-2. 新建独立 D1 database。
-3. 新建独立 R2 bucket，或至少明确隔离且接受共享风险；推荐独立。
-4. 在 `wrangler.jsonc` 增加真实 `env.staging`，完整声明 environment-specific vars/bindings。
-5. 用 `wrangler secret put ... --env staging` 写入 staging secrets。
-6. 配置 staging custom domain。
-7. 在 staging 运行 migration、seed、snapshot 和 smoke test。
-8. 再允许 `CLOUDFLARE_ENV=staging pnpm run deploy`。
-
-不要只取消注释示例并继续引用生产 D1/R2。
+独立测试资源和域名已配置。请使用 `bun run mode:staging deploy`，不要用原始 `deploy` 脚本替代测试发布入口。
+该入口校验目标资源、运行检查并构建，再备份测试 D1，通过 HTTPS 执行 Payload 迁移、初始化管理员、部署和验证。
+本地管理、凭据位置和故障恢复说明见 [TEST-ENVIRONMENTS.md](TEST-ENVIRONMENTS.md)。
 
 ## 21. 部署后验证
 

@@ -24,6 +24,7 @@ import { UseCasePages } from './collections/UseCasePages'
 import { FaqItems } from './collections/FaqItems'
 import { InviteRequests } from './collections/InviteRequests'
 import { AboutPage } from './globals/AboutPage'
+import { localR2Bucket } from './lib/site/local-r2'
 import { FaqPage } from './globals/FaqPage'
 import { FeaturesPage } from './globals/FeaturesPage'
 import { PrivacyPage } from './globals/PrivacyPage'
@@ -421,7 +422,10 @@ export default buildConfig({
   logger: isProduction ? cloudflareLogger : undefined,
   plugins: [
     r2Storage({
-      bucket: cloudflare.env.R2,
+      bucket:
+        process.env.OPEN_NEXT_LOCAL_BINDINGS === 'true'
+          ? localR2Bucket(cloudflare.env.R2)
+          : cloudflare.env.R2,
       collections: { media: true },
     }),
     seoPlugin({

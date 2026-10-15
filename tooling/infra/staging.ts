@@ -11,11 +11,17 @@ function step(args: string[], overrides: Partial<NodeJS.ProcessEnv> = {}) {
   if (code) throw new Error(`步骤失败 (${code}): ${args.join(' ')}`)
 }
 
-async function verify() {
+async function verify(expectedRevision?: string) {
   const health = await fetch(`${origin}/api/site/health`, { signal: AbortSignal.timeout(30_000) })
-  const data = (await health.json()) as { healthy?: boolean; environment?: string }
+  const data = (await health.json()) as {
+    healthy?: boolean
+    environment?: string
+    revision?: string
+  }
   if (!health.ok || !data.healthy || data.environment !== 'staging')
     throw new Error('staging 健康检查失败')
+  if (expectedRevision && data.revision !== expectedRevision)
+    throw new Error('staging 运行版本与本次构建不匹配')
   for (const path of ['/', '/admin', '/robots.txt']) {
     const response = await fetch(`${origin}${path}`, { signal: AbortSignal.timeout(30_000) })
     if (!response.ok || !response.headers.get('x-robots-tag')?.includes('noindex'))
@@ -37,12 +43,13 @@ async function main() {
   const dryRun = process.argv.includes('--dry-run')
   acquireBuildLock()
   env = testEnv('staging')
+  const revision = capture(['git', 'rev-parse', 'HEAD']) || 'unknown'
   if (readPid('local') || readPid('preview'))
     throw new Error('请先 bun run mode:stop，再构建 staging，避免覆盖本地运行产物。')
   step(['bunx', 'tsc', '--noEmit'])
   step(['bun', 'run', 'test:int'])
   step(['bun', 'run', 'build:cloudflare', '--env', 'staging'], {
-    NEXT_PUBLIC_BUILD_REVISION: capture(['git', 'rev-parse', '--short', 'HEAD']) || 'unknown',
+    NEXT_PUBLIC_BUILD_REVISION: revision.slice(0, 7),
   })
   step(['bunx', 'wrangler', 'deploy', '--env', 'staging', '--dry-run'])
   if (dryRun) return
@@ -82,11 +89,11 @@ async function main() {
     },
   )
   if (!response.ok) throw new Error(`测试快照刷新失败: HTTP ${response.status}`)
-  await verify()
+  await verify(revision.slice(0, 7))
   writeJson(join(localInfraDir, 'staging-release.json'), {
     deployedAt: new Date().toISOString(),
     origin,
-    revision: capture(['git', 'rev-parse', 'HEAD']),
+    revision,
   })
 }
 

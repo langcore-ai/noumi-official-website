@@ -60,3 +60,6 @@ backups/
 
 # Local Webflow design reference
 /prototype-webflow/
+
+# Wrangler local secrets
+.dev.vars*

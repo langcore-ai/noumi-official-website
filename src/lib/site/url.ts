@@ -1,5 +1,5 @@
 /** 站点首选访问地址 */
-export const PREFERRED_SITE_URL = 'https://noumi.ai'
+export const PREFERRED_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://noumi.ai'
 
 /** 不应参与前台 URL 规范化重定向的路径前缀 */
 const REDIRECT_EXCLUDED_PREFIXES = ['/api', '/admin', '/_next', '/assets']

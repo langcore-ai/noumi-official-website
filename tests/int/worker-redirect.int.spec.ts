@@ -18,3 +18,12 @@ it('redirects before reading stale HTML snapshots or invoking OpenNext', async (
   expect(response.headers.get('location')).toBe('https://noumi.ai/use-cases?from=old')
   expect(readSnapshot).not.toHaveBeenCalled()
 })
+
+it('marks staging redirects noindex without changing the production response', async () => {
+  const request = new Request('https://staging.noumi.ai/blog/')
+  const env = { APP_ENV: 'staging' } as Parameters<typeof worker.fetch>[1]
+  const response = await worker.fetch(request, env, {} as Parameters<typeof worker.fetch>[2])
+  expect(response.status).toBe(301)
+  expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow')
+  expect(response.headers.get('location')).toBe('https://staging.noumi.ai/blog')
+})

@@ -88,7 +88,9 @@ function createOfficialSnapshotCollectionDeleteHook(source: string): CollectionA
  * @returns Payload global afterChange hook
  */
 function createOfficialSnapshotGlobalChangeHook(source: string): GlobalAfterChangeHook {
-  return ({ doc, previousDoc }) => {
+  return ({ doc, previousDoc, context }) => {
+    // Bootstrap scripts refresh explicitly after all writes and before disposing bindings.
+    if (context.skipOfficialSnapshot) return doc
     if (shouldMarkOfficialSnapshotDirty(doc, previousDoc)) {
       scheduleOfficialSnapshotDirtyMarker(source, 'global-change')
     }

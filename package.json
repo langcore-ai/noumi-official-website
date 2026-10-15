@@ -28,7 +28,7 @@
     "devsafe": "rm -rf .next && rm -rf .open-next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "bun run generate:types:cloudflare && bun run generate:types:payload",
-    "generate:types:cloudflare": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "generate:types:cloudflare": "wrangler types --strict-vars=false --env-interface CloudflareEnv cloudflare-env.d.ts",
     "generate:types:payload": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "ii": "bun install --frozen-lockfile",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
@@ -37,7 +37,15 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "bun run test:int && bun run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
-    "test:int": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" vitest run --config ./vitest.config.mts"
+    "test:int": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-webstorage\" vitest run --config ./vitest.config.mts",
+    "mode:start": "bun tooling/infra/mode.ts local up",
+    "mode:restart": "bun tooling/infra/mode.ts reload",
+    "mode:health": "bun tooling/infra/mode.ts health",
+    "mode:logs": "bun tooling/infra/mode.ts logs",
+    "mode:build": "bun tooling/infra/mode.ts build",
+    "mode:help": "bun tooling/infra/help.ts",
+    "mode:staging": "bun tooling/infra/staging.ts",
+    "mode:setup": "bun tooling/infra/mode.ts setup"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.5",

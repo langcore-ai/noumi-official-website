@@ -1,12 +1,15 @@
+import { randomUUID } from 'node:crypto'
 import { createReadStream, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import * as clack from '@clack/prompts'
+import { testEnv } from './environment'
 
 import {
   localInfraDir,
+  capture,
+  readInstance,
   getLanIPv4Addresses,
   isPortAvailable,
-  probe,
   probeStatus,
   readLogTail,
   readPid,
@@ -44,13 +47,24 @@ function isManagedProcessGroupAlive(pid: number): boolean {
   }
 }
 
-const mode = process.argv[2] as Mode | 'status' | 'stop' | 'reload' | undefined
+const mode = process.argv[2]
 const action = process.argv[3] ?? 'status'
 
 function commandFor(target: Mode, port: number): string[] {
   return target === 'local'
     ? ['bun', 'run', 'start', '--hostname', '0.0.0.0', '--port', String(port)]
-    : ['bun', 'run', 'preview', '--ip', '0.0.0.0', '--port', String(port)]
+    : [
+        'bunx',
+        'opennextjs-cloudflare',
+        'preview',
+        '--env',
+        'local',
+        '--local',
+        '--ip',
+        '0.0.0.0',
+        '--port',
+        String(port),
+      ]
 }
 
 function defaultPortFor(target: Mode): number {
@@ -69,38 +83,63 @@ async function chooseAvailablePort(target: Mode): Promise<number | null> {
   return null
 }
 
+async function health(target: Mode): Promise<boolean> {
+  const instance = readInstance(target)
+  if (!readPid(target) || !instance) return false
+  try {
+    const response = await fetch(
+      `${urlFor(readManagedPort(target, defaultPortFor(target)))}api/site/health`,
+      { signal: AbortSignal.timeout(6000) },
+    )
+    const data = (await response.json()) as {
+      healthy: boolean
+      environment: string
+      instance: string
+    }
+    return (
+      response.ok &&
+      data.healthy &&
+      data.environment === 'local' &&
+      data.instance === instance.instance
+    )
+  } catch {
+    return false
+  }
+}
+
 async function status(): Promise<number> {
-  console.log(title('Noumi Website 开发模式'))
   for (const target of ['local', 'preview'] as const) {
     const pid = readPid(target)
+    const instance = readInstance(target)
     const port = readManagedPort(target, defaultPortFor(target))
-    const healthStatus = await probeStatus(urlFor(port), 6_000)
-    const responding = healthStatus !== null
-    const healthy = responding && healthStatus < 500
-    const managedReady = pid !== null && healthy
-    const state = managedReady
-      ? ('ok' as const)
-      : pid && healthStatus === null
-        ? ('warn' as const)
-        : pid
-          ? ('error' as const)
-          : responding
-            ? ('warn' as const)
-            : ('idle' as const)
-    const stateText = managedReady
-      ? success(`就绪 HTTP ${healthStatus}`)
-      : pid && healthStatus === null
-        ? warning('运行中，健康检查超时（可能正在编译）')
-        : pid
-          ? danger(`运行中但请求失败 HTTP ${healthStatus}`)
-          : responding
-            ? warning(`端口 ${port} 被外部进程占用`)
-            : muted('未就绪')
+    const ready = await health(target)
+    console.log(muted('─'.repeat(64)))
     console.log(
-      `  ${statusMark(state)} ${target.padEnd(8)} ${pid ? `PID ${pid}` : muted('未托管')}  :${port} ${stateText}`,
+      title(`Noumi 官网 · ${target === 'local' ? '本地测试' : 'Cloudflare 本地模拟'}`) +
+        `  ${statusMark(ready ? 'ok' : pid ? 'warn' : 'idle')} ${ready ? '运行正常' : pid ? '健康异常' : '已停止'}`,
     )
+    const row = (label: string, value: string) => console.log(`  ${label}  ${value}`)
+    row('访问地址', pid ? command(urlFor(port)) : '—')
+    row('管理后台', pid ? command(`${urlFor(port)}admin`) : '—')
+    if (pid)
+      for (const address of getLanIPv4Addresses()) row('局域网  ', command(urlFor(port, address)))
+    row('数据环境', 'LOCAL · 本地 D1 / R2')
+    row('健康检查', ready ? success('✓ 实例匹配 · 数据库 / 存储可用') : '— 未通过')
+    row('运行进程', pid ? `PID ${pid}` : '—')
+    row('构建版本', pid ? instance?.revision || 'unknown' : '—')
+    row('启动时间', pid ? instance?.startedAt || '—' : '—')
+    row('运行日志', join(localInfraDir, `${target}.log`))
   }
+  console.log(muted('─'.repeat(64)))
+  console.log('  云端测试  https://staging.noumi.ai（mode:staging status 检查）')
+  console.log('  mode:logs 查看日志 · mode:reload 重建 · mode:stop 停止')
   return 0
+}
+
+function setupLocal(): number {
+  const env = { ...testEnv('local'), NODE_ENV: 'production' as const }
+  const code = run(['bun', 'run', 'payload', 'migrate'], { env })
+  return code || run(['bunx', 'tsx', 'tooling/infra/seed.ts', 'local'], { env })
 }
 
 async function stopAndWait(target: Mode): Promise<boolean> {
@@ -139,7 +178,7 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
   const existingPid = readPid(target)
   if (existingPid) {
     const existingPort = readManagedPort(target, defaultPortFor(target))
-    const existingReady = await probe(urlFor(existingPort), 2_000)
+    const existingReady = await health(target)
     if (existingReady) {
       console.log(success(`● ${target} 已经运行：${urlFor(existingPort)}`))
       return 0
@@ -163,9 +202,16 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
   if (port !== defaultPortFor(target)) {
     console.log(warning(`● 端口 ${defaultPortFor(target)} 已被占用，自动切换到 ${port}`))
   }
-  if (target === 'local' && !options.skipBuild) {
+  const env = {
+    ...testEnv('local', port),
+    NEXT_PUBLIC_INSTANCE_ID: randomUUID(),
+    NEXT_PUBLIC_BUILD_REVISION: capture(['git', 'rev-parse', '--short', 'HEAD']) || 'unknown',
+  }
+  if (!options.skipBuild) {
     console.log(title('快速构建 Next.js 生产产物（跳过 tsc/lint）'))
-    const buildCode = run(['bun', 'run', 'build:quick'])
+    const buildCode = run(['bun', 'run', target === 'local' ? 'build:quick' : 'build:cloudflare'], {
+      env,
+    })
     if (buildCode !== 0) {
       console.error(danger('● 构建失败，未启动 local'))
       return buildCode
@@ -174,11 +220,7 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
   writeManagedPort(target, port)
   // local 模式必须绑定本地 Wrangler/Miniflare D1/R2；否则 payload.config 会按
   // wrangler.jsonc 的 remote binding 直连生产库，导致本地 Admin 登录/内容全部走线上数据。
-  startBackground(
-    target,
-    commandFor(target, port),
-    target === 'local' ? { OPEN_NEXT_LOCAL_BINDINGS: 'true' } : {},
-  )
+  startBackground(target, commandFor(target, port), env)
   const spinner = clack.spinner()
   spinner.start(`等待 ${target} :${port} 就绪`)
   const interrupt = () => {
@@ -192,12 +234,12 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
   while (Date.now() < deadline) {
     if (!readPid(target)) break
     healthStatus = await probeStatus(urlFor(port), 3_000)
-    if (healthStatus !== null) break
+    if (await health(target)) break
     await new Promise((resolve) => setTimeout(resolve, 1_000))
   }
   process.removeListener('SIGINT', interrupt)
 
-  if (healthStatus === null || healthStatus >= 500) {
+  if (!(await health(target))) {
     const reason =
       healthStatus === null ? '进程退出或就绪超时' : `健康检查返回 HTTP ${healthStatus}`
     spinner.stop(`${target} 启动失败`)
@@ -248,6 +290,13 @@ async function reload(): Promise<number> {
 }
 
 async function main(): Promise<number> {
+  if (mode === 'setup') return setupLocal()
+  if (mode === 'build') {
+    if (!(await stopAndWait('local')) || !(await stopAndWait('preview'))) return 1
+    return run(['bun', 'run', 'build'], { env: testEnv('local') })
+  }
+  if (mode === 'health') return (await health('local')) || (await health('preview')) ? 0 : 1
+  if (mode === 'logs') return logs(readPid('preview') ? 'preview' : 'local')
   if (mode === 'status') return status()
   if (mode === 'reload') return reload()
   if (mode === 'stop') {
@@ -272,13 +321,13 @@ async function main(): Promise<number> {
     // check:fast 里的 next build 会写 .next，先停掉 local 避免并发读写构建目录。
     if (!(await stopAndWait('local'))) return 1
     console.log(title('运行测试与生产构建检查'))
-    const checkCode = run(['bun', 'run', 'check:fast'])
+    const checkCode = run(['bun', 'run', 'check:fast'], { env: testEnv('local') })
     if (checkCode !== 0) {
       console.error(danger('● 检查失败，未启动旧产物'))
       return checkCode
     }
     // check:fast 已包含 next build，这里直接启动产物，避免重复构建。
-    return start(mode, { skipBuild: true })
+    return start(mode)
   }
   if (action === 'status' || action === 'ps') return status()
   if (action === 'logs') return logs(mode)

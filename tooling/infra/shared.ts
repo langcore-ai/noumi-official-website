@@ -1,20 +1,49 @@
 import { spawn, spawnSync } from 'node:child_process'
+import { randomUUID } from 'node:crypto'
 import {
   closeSync,
   existsSync,
   mkdirSync,
   openSync,
   readFileSync,
+  readlinkSync,
   rmSync,
   writeFileSync,
 } from 'node:fs'
 import { createServer } from 'node:net'
 import { networkInterfaces } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 export const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '../..')
 export const localInfraDir = join(repositoryRoot, '.local', 'infra')
+
+type ManagedInstance = {
+  pid: number
+  identity: string
+  instance: string
+  startedAt: string
+  revision: string
+}
+export function readInstance(name: string): ManagedInstance | null {
+  try {
+    return JSON.parse(
+      readFileSync(join(localInfraDir, `${name}.instance.json`), 'utf8'),
+    ) as ManagedInstance
+  } catch {
+    return null
+  }
+}
+
+function processIdentity(pid: number): string | null {
+  try {
+    if (readlinkSync(`/proc/${pid}/cwd`) !== resolve(repositoryRoot)) return null
+    const stat = readFileSync(`/proc/${pid}/stat`, 'utf8')
+    return stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19]
+  } catch {
+    return null
+  }
+}
 
 export type CommandOptions = {
   env?: NodeJS.ProcessEnv
@@ -60,7 +89,10 @@ export function readPid(name: string): number | null {
   if (!Number.isInteger(pid) || pid <= 0) return null
   try {
     process.kill(pid, 0)
-    return pid
+    const instance = readInstance(name)
+    return instance?.pid === pid && instance.identity && processIdentity(pid) === instance.identity
+      ? pid
+      : null
   } catch {
     return null
   }
@@ -75,16 +107,24 @@ export function startBackground(
   const logPath = join(localInfraDir, `${name}.log`)
   // 每次启动只保留本次运行日志，避免错误诊断被前一次构建输出干扰。
   const logFd = openSync(logPath, 'w', 0o600)
+  const instance = extraEnv.NEXT_PUBLIC_INSTANCE_ID || randomUUID()
   const child = spawn(command[0], command.slice(1), {
     cwd: repositoryRoot,
     detached: true,
-    env: { ...process.env, ...extraEnv },
+    env: { ...process.env, ...extraEnv, NOUMI_INSTANCE_ID: instance },
     stdio: ['ignore', logFd, logFd],
   })
   child.unref()
   closeSync(logFd)
   writeFileSync(join(localInfraDir, `${name}.pid`), `${child.pid}\n`)
   writeFileSync(join(localInfraDir, `${name}.command`), `${command.join(' ')}\n`)
+  writeJson(join(localInfraDir, `${name}.instance.json`), {
+    pid: child.pid,
+    identity: processIdentity(child.pid),
+    instance,
+    startedAt: new Date().toISOString(),
+    revision: extraEnv.NEXT_PUBLIC_BUILD_REVISION || 'unknown',
+  })
   console.log(`已启动 ${name}（PID ${child.pid}）`)
   console.log(`日志：${logPath}`)
   return child.pid ?? 0

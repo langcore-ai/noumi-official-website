@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   ...(process.env.QUICK_BUILD === 'true' ? { typescript: { ignoreBuildErrors: true } } : {}),
   // 重定向状态码由 middleware 控制为 301，避免 Next 内置 trailing slash 跳转返回 308。
   skipTrailingSlashRedirect: true,
+  async headers() {
+    return ['local', 'staging'].includes(process.env.NEXT_PUBLIC_APP_ENV || '')
+      ? [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
+      : []
+  },
   async redirects() {
     return Object.entries(prototypeRoutes).map(([file, destination]) => ({
       source: '/' + file,

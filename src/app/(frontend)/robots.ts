@@ -10,6 +10,12 @@ export const dynamic = 'force-dynamic'
  * @returns robots 配置
  */
 export default async function robots(): Promise<MetadataRoute.Robots> {
+  if (
+    process.env.NEXT_PUBLIC_APP_ENV === 'local' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+  ) {
+    return { rules: { userAgent: '*', disallow: '/' } }
+  }
   return {
     rules: {
       userAgent: '*',

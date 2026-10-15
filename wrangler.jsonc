@@ -57,39 +57,101 @@
     },
   ],
 
-  // Here's how to configure an additional environment
-  // It can be deployed with `CLOUDFLARE_ENV=staging pnpm run deploy`
-  // "env": {
-  //   "staging": {
-  //     "name": "my-app-staging",
-  //     "d1_databases": [
-  //       {
-  //         "binding": "D1",
-  //         "database_id": "DATABASE_ID",
-  //         "database_name": "my-app-staging",
-  //         "remote": true
-  //       }
-  //     ],
-  //     "services": [
-  //       // The service should match the "name" of your worker
-  //       // {
-  //       //   "binding": "WORKER_SELF_REFERENCE",
-  //       //   "service": "my-app-staging"
-  //       // },
-  //     ],
-  //     "r2_buckets": [
-  //       {
-  //         "binding": "R2",
-  //         "bucket_name": "my-app-staging"
-  //       }
-  //       // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
-  //       // {
-  //       //   "binding": "NEXT_INC_CACHE_R2_BUCKET",
-  //       //   "bucket_name": "<BUCKET_NAME>",
-  //       // },
-  //     ]
-  //   }
-  // }
+  "env": {
+    "local": {
+      "name": "noumi-official-website-local",
+      "vars": {
+        "APP_ENV": "local",
+        "NEXT_PUBLIC_APP_ENV": "local",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3000",
+        "NOUMI_PRODUCT_API_URL": "",
+        "NEXT_INC_CACHE_R2_PREFIX": "next-incremental-cache",
+        "OFFICIAL_CMS_REVALIDATE_SECONDS": "300",
+        "OFFICIAL_SNAPSHOT_R2_PREFIX": "official-site-snapshots",
+        "OFFICIAL_SNAPSHOT_REFRESH_SECONDS": "7200",
+        "OFFICIAL_SNAPSHOT_REFRESH_ORIGIN": "http://localhost:3000",
+        "POSTHOG_ENABLED": "false",
+        "POSTHOG_PROJECT_KEY": "",
+        "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
+        "POSTHOG_UI_HOST": "https://us.posthog.com",
+      },
+      "triggers": {
+        "crons": [],
+      },
+      "services": [],
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_id": "00000000-0000-0000-0000-000000000001",
+          "database_name": "noumi-official-website-local",
+          "remote": false,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "official-website-local-bucket",
+          "preview_bucket_name": "official-website-local-bucket",
+        },
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "official-website-local-bucket",
+          "preview_bucket_name": "official-website-local-bucket",
+        },
+      ],
+    },
+    "staging": {
+      "name": "noumi-official-website-staging",
+      "account_id": "ba736c2dd7270986b9d9d4cbc3e3a2fb",
+      "vars": {
+        "APP_ENV": "staging",
+        "NEXT_PUBLIC_APP_ENV": "staging",
+        "NEXT_PUBLIC_SITE_URL": "https://staging.noumi.ai",
+        "NOUMI_PRODUCT_API_URL": "",
+        "NEXT_INC_CACHE_R2_PREFIX": "next-incremental-cache",
+        "OFFICIAL_CMS_REVALIDATE_SECONDS": "300",
+        "OFFICIAL_SNAPSHOT_R2_PREFIX": "official-site-snapshots",
+        "OFFICIAL_SNAPSHOT_REFRESH_SECONDS": "7200",
+        "OFFICIAL_SNAPSHOT_REFRESH_ORIGIN": "https://staging.noumi.ai",
+        "POSTHOG_ENABLED": "false",
+        "POSTHOG_PROJECT_KEY": "",
+        "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
+        "POSTHOG_UI_HOST": "https://us.posthog.com",
+      },
+      "triggers": {
+        "crons": ["*/5 * * * *"],
+      },
+      "services": [],
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_id": "2cf5e2cf-7aa3-4ba9-ab17-e8ffe75be5be",
+          "database_name": "noumi-official-website-staging",
+          "remote": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "official-website-staging-bucket",
+          "preview_bucket_name": "official-website-staging-bucket",
+        },
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "official-website-staging-bucket",
+          "preview_bucket_name": "official-website-staging-bucket",
+        },
+      ],
+      "routes": [
+        {
+          "pattern": "staging.noumi.ai",
+          "custom_domain": true,
+        },
+      ],
+      "workers_dev": false,
+      "preview_urls": false,
+    },
+  },
   "observability": {
     "logs": {
       "enabled": true,

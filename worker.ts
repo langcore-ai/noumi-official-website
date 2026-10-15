@@ -475,13 +475,16 @@ async function refreshOfficialSnapshotsFromCron(
   await populateOfficialHtmlSnapshotsFromRefreshResponse(response.clone(), env, ctx)
 }
 
-export default {
+const handler = {
   /**
    * 重定向先于快照，避免旧 HTML 绕过路由迁移；其余请求交给快照或 OpenNext。
    */
   async fetch(request: Request, env: SnapshotWorkerEnv, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url)
-    const redirectPath = getCanonicalRedirectPath({ method: request.method, pathname: url.pathname })
+    const redirectPath = getCanonicalRedirectPath({
+      method: request.method,
+      pathname: url.pathname,
+    })
     if (redirectPath) {
       url.pathname = redirectPath
       return Response.redirect(url.toString(), 301)
@@ -508,5 +511,18 @@ export default {
    */
   scheduled(controller: ScheduledController, env: SnapshotWorkerEnv, ctx: ExecutionContext): void {
     ctx.waitUntil(refreshOfficialSnapshotsFromCron(controller, env, ctx))
+  },
+}
+
+// Apply environment headers after all response paths, including cached HTML.
+export default {
+  ...handler,
+  async fetch(request: Request, env: SnapshotWorkerEnv, ctx: ExecutionContext): Promise<Response> {
+    const response = await handler.fetch(request, env, ctx)
+    if (env.APP_ENV !== 'staging' && env.APP_ENV !== 'local') return response
+    const result = new Response(response.body, response)
+    result.headers.set('X-Robots-Tag', 'noindex, nofollow')
+    result.headers.set('X-Noumi-Environment', env.APP_ENV)
+    return result
   },
 }

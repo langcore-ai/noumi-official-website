@@ -2,6 +2,7 @@ const commandGroups = [
   {
     title: '环境准备',
     commands: [
+      ['bun run mode:help', '显示本地测试、云端测试和发布命令帮助'],
       ['bun run mode:setup', '迁移本地 D1 并初始化独立测试管理员（可重复执行）'],
       ['bun run mode:start', '构建并后台启动本地测试'],
       ['bun run mode:health', '检查本地实例身份、D1 和 R2'],
@@ -18,6 +19,7 @@ const commandGroups = [
       ['bun run mode:preview up', '构建并启动 OpenNext/Cloudflare 本地预览'],
       ['bun run mode:<local|preview> rebuild', '检查、重新构建并启动固定产物'],
       ['bun run mode:reload', '重新构建并重启当前运行的模式'],
+      ['bun run mode:restart', 'mode:reload 的别名，重新构建并重启当前模式'],
       ['bun run mode:<local|preview> stop', '停止指定模式'],
       ['bun run mode:<local|preview> restart', '重启指定模式'],
       ['bun run mode:<local|preview> logs', '查看指定模式日志'],
@@ -48,6 +50,10 @@ const commandGroups = [
 ] as const
 
 console.log(title('Noumi Official Website — 开发与发布帮助'))
+console.log('')
+console.log('首次本地使用：bun run mode:setup → bun run mode:start')
+console.log('修改代码后：bun run mode:reload')
+console.log('发布测试站：bun run mode:stop → bun run mode:staging deploy')
 console.log('')
 for (const group of commandGroups) {
   console.log(title(group.title))

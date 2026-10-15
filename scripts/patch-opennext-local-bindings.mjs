@@ -16,7 +16,7 @@ const PATCHED_PLATFORM_PROXY_SOURCE = `    const proxy = await getPlatformProxy(
         // OpenNext preview 的 --local 只会传给后续 Wrangler 命令；这里还需阻止
         // 启动前的环境读取根据 wrangler.jsonc 建立远程 binding proxy。
         remoteBindings:
-            process.env.OPEN_NEXT_LOCAL_BINDINGS === "true" ? false : options.remoteBindings,
+            (process.env.OPEN_NEXT_LOCAL_BINDINGS === "true" || process.env.APP_ENV === "staging") ? false : options.remoteBindings,
 `
 
 /**
@@ -24,9 +24,34 @@ const PATCHED_PLATFORM_PROXY_SOURCE = `    const proxy = await getPlatformProxy(
  * @returns {Promise<void>}
  */
 async function patchOpenNextLocalBindings() {
-  const currentSource = await readFile(OPENNEXT_HELPERS_PATH, 'utf8')
+  let currentSource = await readFile(OPENNEXT_HELPERS_PATH, 'utf8')
+  currentSource = currentSource.replace(
+    'process.env.OPEN_NEXT_LOCAL_BINDINGS === "true" ? false : options.remoteBindings,',
+    '(process.env.OPEN_NEXT_LOCAL_BINDINGS === "true" || process.env.APP_ENV === "staging") ? false : options.remoteBindings,',
+  )
+
+  // The deploy helper receives OpenNext config rather than Wrangler CLI options.
+  // Select our explicit environment and preserve the local origin's allocated port.
+  if (!currentSource.includes('options.environment ?? process.env.CLOUDFLARE_ENV')) {
+    if (!currentSource.includes(PLATFORM_PROXY_ANCHOR))
+      throw new Error('Unknown OpenNext proxy helper')
+    currentSource = currentSource.replace(
+      PLATFORM_PROXY_ANCHOR,
+      `${PLATFORM_PROXY_ANCHOR}        environment: options.environment ?? process.env.CLOUDFLARE_ENV,\n`,
+    )
+    currentSource = currentSource.replace(
+      'envVars[key] = value;',
+      `if (process.env.APP_ENV === "local" || process.env.APP_ENV === "staging") {
+                envVars[key] ??= value;
+            } else {
+                envVars[key] = value;
+            }`,
+    )
+    await writeFile(OPENNEXT_HELPERS_PATH, currentSource, 'utf8')
+  }
 
   if (currentSource.includes('process.env.OPEN_NEXT_LOCAL_BINDINGS')) {
+    await writeFile(OPENNEXT_HELPERS_PATH, currentSource, 'utf8')
     console.log('[patch-opennext-local-bindings] helper 已支持本地 binding 隔离，跳过')
     return
   }

@@ -6,6 +6,7 @@ import { ensureLocalInfraDir, localInfraDir, repositoryRoot } from './shared'
 
 export type TestEnvironment = 'local' | 'staging'
 type EnvironmentConfig = {
+  account_id?: string
   name: string
   vars: Record<string, string>
   d1_databases: { binding: string; database_id: string; database_name: string; remote?: boolean }[]
@@ -23,6 +24,8 @@ export function testConfig(target: TestEnvironment): EnvironmentConfig {
     env: Record<TestEnvironment, EnvironmentConfig>
   }
   const config = root.env[target]
+  if (target === 'staging' && config?.account_id !== 'ba736c2dd7270986b9d9d4cbc3e3a2fb')
+    throw new Error('staging 账户不匹配')
   if (!config || config.name !== `noumi-official-website-${target}`)
     throw new Error('测试 Worker 目标不匹配')
   const db = config.d1_databases
@@ -83,6 +86,7 @@ export function testEnv(target: TestEnvironment, port = 3000): NodeJS.ProcessEnv
     ...config.vars,
     ...testSecrets(target),
     CLOUDFLARE_ENV: target,
+    NEXT_DEV_WRANGLER_ENV: target,
     OPEN_NEXT_LOCAL_BINDINGS: target === 'local' ? 'true' : 'false',
     CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: 'false',
     NEXT_PUBLIC_SITE_URL: origin,

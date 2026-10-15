@@ -9,12 +9,17 @@ if (target !== 'local' && target !== 'staging') throw new Error('必须指定 lo
 testConfig(target)
 Object.assign(process.env, testEnv(target), { NODE_ENV: 'production' })
 const { getPlatformProxy } = await import('wrangler')
-const proxy = await getPlatformProxy({ environment: target, remoteBindings: target === 'staging' })
+const proxy = await getPlatformProxy({ environment: target, remoteBindings: false })
+if (target === 'staging') {
+  const { stagingD1 } = await import('./staging-d1')
+  proxy.env.D1 = stagingD1()
+}
 ;(globalThis as Record<symbol, unknown>)[Symbol.for('__cloudflare-context__')] = proxy
 const { getPayload } = await import('payload')
 const { default: config } = await import('../../src/payload.config')
 const payload = await getPayload({ config })
 try {
+  if (target === 'staging') await payload.db.migrate()
   // Intentional administrative bootstrap, restricted to validated test resources.
   const users = await payload.count({ collection: 'users' })
   if (users.totalDocs === 0) {

@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto'
-import { createReadStream, existsSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import * as clack from '@clack/prompts'
 import { testEnv } from './environment'
 
 import {
   localInfraDir,
+  acquireBuildLock,
   capture,
   readInstance,
   getLanIPv4Addresses,
@@ -172,7 +173,7 @@ async function stop(target: Mode): Promise<number> {
   return 0
 }
 
-async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promise<number> {
+async function start(target: Mode, options: { fullBuild?: boolean } = {}): Promise<number> {
   const other = target === 'local' ? 'preview' : 'local'
   if (!(await stopAndWait(other))) return 1
   const existingPid = readPid(target)
@@ -207,13 +208,22 @@ async function start(target: Mode, options: { skipBuild?: boolean } = {}): Promi
     NEXT_PUBLIC_INSTANCE_ID: randomUUID(),
     NEXT_PUBLIC_BUILD_REVISION: capture(['git', 'rev-parse', '--short', 'HEAD']) || 'unknown',
   }
-  if (!options.skipBuild) {
-    console.log(title('快速构建 Next.js 生产产物（跳过 tsc/lint）'))
-    const buildCode = run(['bun', 'run', target === 'local' ? 'build:quick' : 'build:cloudflare'], {
-      env,
-    })
+  {
+    console.log(
+      title(target === 'local' ? '构建本地 Next.js 产物' : '构建 Cloudflare 本地预览产物'),
+    )
+    const buildCode = run(
+      [
+        'bun',
+        'run',
+        target === 'local' ? (options.fullBuild ? 'build' : 'build:quick') : 'build:cloudflare',
+      ],
+      {
+        env,
+      },
+    )
     if (buildCode !== 0) {
-      console.error(danger('● 构建失败，未启动 local'))
+      console.error(danger(`● 构建失败，未启动 ${target}`))
       return buildCode
     }
   }
@@ -270,7 +280,7 @@ async function logs(target: Mode): Promise<number> {
     console.error(`暂无托管日志：${path}`)
     return 1
   }
-  createReadStream(path).pipe(process.stdout)
+  process.stdout.write(readFileSync(path, 'utf8'))
   return 0
 }
 
@@ -318,16 +328,17 @@ async function main(): Promise<number> {
   }
   if (action === 'rebuild') {
     if (!(await stopAndWait(mode))) return 1
-    // check:fast 里的 next build 会写 .next，先停掉 local 避免并发读写构建目录。
-    if (!(await stopAndWait('local'))) return 1
-    console.log(title('运行测试与生产构建检查'))
-    const checkCode = run(['bun', 'run', 'check:fast'], { env: testEnv('local') })
-    if (checkCode !== 0) {
-      console.error(danger('● 检查失败，未启动旧产物'))
-      return checkCode
+    if (!(await stopAndWait('local')) || !(await stopAndWait('preview'))) return 1
+    console.log(title('运行检查，然后重新构建'))
+    for (const args of [
+      ['bun', 'run', 'lint'],
+      ['bunx', 'tsc', '--noEmit'],
+      ['bun', 'run', 'test:int'],
+    ]) {
+      const code = run(args, { env: testEnv('local') })
+      if (code) return code
     }
-    // check:fast 已包含 next build，这里直接启动产物，避免重复构建。
-    return start(mode)
+    return start(mode, { fullBuild: true })
   }
   if (action === 'status' || action === 'ps') return status()
   if (action === 'logs') return logs(mode)
@@ -336,4 +347,9 @@ async function main(): Promise<number> {
 }
 
 process.chdir(repositoryRoot)
+if (
+  ['build', 'setup', 'reload'].includes(mode) ||
+  ['up', 'start', 'restart', 'rebuild'].includes(action)
+)
+  acquireBuildLock()
 process.exit(await main())

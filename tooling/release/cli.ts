@@ -88,7 +88,7 @@ function checkGit(): { branch: string; commit: string } {
 
 function checkEnvironment(): void {
   if (process.env.CLOUDFLARE_ENV) {
-    throw new Error(`CLOUDFLARE_ENV=${process.env.CLOUDFLARE_ENV}，但仓库没有命名 Cloudflare 环境`)
+    throw new Error(`release 仅用于顶层生产环境；测试部署请用 bun run mode:staging deploy`)
   }
   clack.log.info(`${label('Worker')}  ${target.workerName}`)
   clack.log.info(`${label('D1')}      ${target.databaseName} ${muted(`(${target.databaseId})`)}`)

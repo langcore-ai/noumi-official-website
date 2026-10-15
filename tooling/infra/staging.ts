@@ -1,10 +1,10 @@
 import { join } from 'node:path'
-import { capture, localInfraDir, run, writeJson } from './shared'
+import { acquireBuildLock, capture, localInfraDir, readPid, run, writeJson } from './shared'
 import { testConfig, testEnv, testSecrets } from './environment'
 
 const config = testConfig('staging')
 const origin = config.vars.NEXT_PUBLIC_SITE_URL
-const env = testEnv('staging')
+let env = process.env
 const action = process.argv[2] || 'status'
 function step(args: string[], overrides: Partial<NodeJS.ProcessEnv> = {}) {
   const code = run(args, { env: { ...env, ...overrides } })
@@ -35,6 +35,10 @@ async function main() {
   if (action !== 'deploy')
     throw new Error('用法: bun run mode:staging <deploy|status|health|logs> [--dry-run]')
   const dryRun = process.argv.includes('--dry-run')
+  acquireBuildLock()
+  env = testEnv('staging')
+  if (readPid('local') || readPid('preview'))
+    throw new Error('请先 bun run mode:stop，再构建 staging，避免覆盖本地运行产物。')
   step(['bunx', 'tsc', '--noEmit'])
   step(['bun', 'run', 'test:int'])
   step(['bun', 'run', 'build:cloudflare', '--env', 'staging'], {
@@ -55,7 +59,6 @@ async function main() {
     '--output',
     join(localInfraDir, `staging-before-${stamp}.sql`),
   ])
-  step(['bun', 'run', 'payload', 'migrate'], { NODE_ENV: 'production' })
   step(['bunx', 'tsx', 'tooling/infra/seed.ts', 'staging'])
   // Upload only this environment's independently generated secrets, never .env.
   step([

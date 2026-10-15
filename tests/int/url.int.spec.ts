@@ -18,7 +18,7 @@ describe('site URL normalization', () => {
   })
 
   it('normalizes absolute same-origin URLs and leaves external URLs untouched', () => {
-    expect(normalizeSiteHref('https://noumi.ai/blog/')).toBe('/blog')
+    expect(normalizeSiteHref('https://noumi.ai/blog/', 'https://noumi.ai')).toBe('/blog')
     expect(normalizeSiteHref('https://example.com/blog')).toBe('https://example.com/blog')
     expect(buildPreferredAbsoluteUrl('/blog/post-1/', 'https://noumi.ai')).toBe(
       'https://noumi.ai/blog/post-1',

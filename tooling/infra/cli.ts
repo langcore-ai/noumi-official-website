@@ -41,11 +41,13 @@ function doctor(): number {
     console.error(`  ${statusMark('error')} ${danger((error as Error).message)}`)
   }
 
-  if (process.env.CLOUDFLARE_ENV) {
+  if (process.env.CLOUDFLARE_ENV && !['local', 'staging'].includes(process.env.CLOUDFLARE_ENV)) {
     failed = true
-    console.error(danger(`  ● CLOUDFLARE_ENV=${process.env.CLOUDFLARE_ENV}；本仓库没有命名环境`))
+    console.error(danger(`  ● 未支持的环境：${process.env.CLOUDFLARE_ENV}`))
   } else {
-    console.log(`  ${statusMark('ok')} ${success('CLOUDFLARE_ENV 未设置（顶层环境）')}`)
+    console.log(
+      `  ${statusMark('ok')} ${success(`环境：${process.env.CLOUDFLARE_ENV || '顶层生产配置'}；测试入口自动选择 local / staging`)}`,
+    )
   }
 
   return failed ? 1 : 0

@@ -877,12 +877,12 @@ pnpm run generate:importmap
 
 ### 20.1 当前环境现实
 
-`wrangler.jsonc` 只有顶层配置。注释里的 staging 示例没有启用，也不存在 `env.production`。因此：
+`wrangler.jsonc` 顶层为生产，`env.local` 为本地模拟资源，`env.staging` 为独立云端测试资源。没有 `env.production`。
 
-- 当前顶层环境就是唯一可部署环境。
-- 不要设置 `CLOUDFLARE_ENV=production`；Wrangler 会寻找不存在的命名环境。
-- 部署前使用 `unset CLOUDFLARE_ENV`，或确保它是空字符串。
-- 在真正建立独立资源前，不要把 preview 当 staging。
+- 本地入口：`bun run mode:setup`，随后 `bun run mode:start`。
+- 云端测试：`bun run mode:staging deploy`，地址 `https://staging.noumi.ai`。
+- 生产仍使用原 `release` 流程，且不设置 `CLOUDFLARE_ENV`。
+- 测试资源、凭据和验证说明见 [TEST-ENVIRONMENTS.md](TEST-ENVIRONMENTS.md)。
 
 ### 20.2 部署脚本的真实顺序
 
@@ -1146,7 +1146,7 @@ Playwright 覆盖：
 | P1     | Raw HTML 可执行内联脚本、事件属性并污染全局 CSS                           | 继续限制角色；考虑 sanitizer/iframe/CSP 与安全测试  |
 | P1     | `/api/preview/exit` 的 path 规范化可能通过反斜杠编码形成外部跳转          | 修复 URL/path 校验并补测试                          |
 | P1     | Preview 响应回填路径未再次检查 preview cookie，可能污染公开 HTML snapshot | 在写入前统一校验 request preview 状态并补 E2E       |
-| P1     | 没有 staging；本地 OpenNext preview 无法验证真实远程 bindings 和生产数据  | 建独立 Cloudflare environment/resources             |
+| 已处理 | staging 使用独立 Worker/D1/R2，支持真实运行时验证 | 见 TEST-ENVIRONMENTS.md |
 | P1     | 部署先迁移 D1 后部署 Worker，无自动回滚                                   | 建 backup、expand/contract、health check 和发布流程 |
 | P1     | FAQ 小 HTML 没有 sanitizer，且 translator 可编辑部分来源                  | 限制标签/净化/权限                                  |
 | P2     | Snapshot 锁非原子、dirty 早于 HTML 完成清除、删除路由遗留 HTML            | 设计带 owner 的原子协调和 HTML manifest 清理        |

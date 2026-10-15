@@ -11,7 +11,8 @@ Noumi 官方网站与内容管理项目，基于 Next.js 15、React 19、Payload
 - D1 保存 Payload 数据；同一个 R2 bucket 保存 Payload 媒体、CMS JSON 快照、页面 HTML 快照和 OpenNext 增量缓存。
 - 前台 layout 保持动态渲染，公开流量由 Worker 层的 R2 HTML 快照提供伪静态加速。
 - Invite 已经是正式 Payload collection；当前公开 `/invite` 和 Try Free 按钮跳转产品站，公开 waitlist 提交暂时关闭，服务端同步接口仍保留。
-- 仓库当前只有 Cloudflare 顶层环境，没有可用的 `production` 或 `staging` 命名环境。
+- Cloudflare 顶层配置用于生产；`env.local` 使用本地模拟资源，`env.staging` 使用独立云端测试资源。没有 `env.production`。
+- 本地/云端测试的命令、凭据位置与部署流程见 [测试环境指南](docs/TEST-ENVIRONMENTS.md)。
 
 ## 前端历史说明
 

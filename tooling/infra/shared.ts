@@ -82,6 +82,26 @@ export function ensureLocalInfraDir(): void {
   mkdirSync(localInfraDir, { recursive: true })
 }
 
+/** Serialize builds/migrations so local and staging cannot reuse each other's output. */
+export function acquireBuildLock(): void {
+  ensureLocalInfraDir()
+  const path = join(localInfraDir, 'build.lock')
+  if (existsSync(path)) {
+    const owner = Number(readFileSync(path, 'utf8'))
+    let alive = false
+    try {
+      process.kill(owner, 0)
+      alive = true
+    } catch {
+      /* stale lock */
+    }
+    if (alive) throw new Error(`另一个构建/初始化正在运行 (PID ${owner})，请等待完成。`)
+    rmSync(path)
+  }
+  writeFileSync(path, String(process.pid), { flag: 'wx', mode: 0o600 })
+  process.once('exit', () => rmSync(path, { force: true }))
+}
+
 export function readPid(name: string): number | null {
   const path = join(localInfraDir, `${name}.pid`)
   if (!existsSync(path)) return null

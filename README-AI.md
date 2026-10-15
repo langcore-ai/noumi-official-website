@@ -15,7 +15,7 @@ Before changing production behavior, read [README.md](README.md), [docs/HANDOVER
 - Primary data: Payload CMS on D1.
 - Shared object storage: `official-website-bucket` through both `R2` and `NEXT_INC_CACHE_R2_BUCKET` bindings.
 - Dependency lock: `bun.lock`; project scripts still require pnpm 9/10.
-- Cloudflare config currently has only the top-level environment. There is no implemented named staging/production environment.
+- Cloudflare top-level config is production; named `local` and `staging` environments are isolated. There is no named `production`. See [test environments](docs/TEST-ENVIRONMENTS.md).
 
 ## Evolution
 
@@ -107,7 +107,7 @@ Any change to this path requires explicit security review and tests.
 
 ## Known Risks
 
-The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh, missing staging isolation, and limited test coverage.
+The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh,  and limited test coverage.
 
 ## Verification
 

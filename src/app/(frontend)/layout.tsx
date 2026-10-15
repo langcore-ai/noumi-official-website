@@ -39,30 +39,42 @@ export async function generateMetadata() {
  */
 export default async function FrontendLayout(props: { children: ReactNode }) {
   const { children } = props
+  const isTestEnvironment = ['local', 'staging'].includes(process.env.NEXT_PUBLIC_APP_ENV || '')
+  const content = (
+    <>
+      <OfficialPersistentChrome>{children}</OfficialPersistentChrome>
+      <OfficialGlobalEffects />
+      <CookieConsentBanner />
+    </>
+  )
 
   return (
     <html lang="en">
       <body>
-        <Script
-          id="noumi-official-google-tag-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: buildOfficialGoogleTagBootstrapScript(),
-          }}
-        />
-        <Script
-          async
-          id="noumi-official-google-tag"
-          src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
-            OFFICIAL_GOOGLE_TAG_ID,
-          )}`}
-          strategy="afterInteractive"
-        />
-        <OfficialAnalyticsProvider>
-          <OfficialPersistentChrome>{children}</OfficialPersistentChrome>
-          <OfficialGlobalEffects />
-          <CookieConsentBanner />
-        </OfficialAnalyticsProvider>
+        {!isTestEnvironment && (
+          <>
+            <Script
+              id="noumi-official-google-tag-init"
+              strategy="beforeInteractive"
+              dangerouslySetInnerHTML={{
+                __html: buildOfficialGoogleTagBootstrapScript(),
+              }}
+            />
+            <Script
+              async
+              id="noumi-official-google-tag"
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
+                OFFICIAL_GOOGLE_TAG_ID,
+              )}`}
+              strategy="afterInteractive"
+            />
+          </>
+        )}
+        {isTestEnvironment ? (
+          content
+        ) : (
+          <OfficialAnalyticsProvider>{content}</OfficialAnalyticsProvider>
+        )}
       </body>
     </html>
   )

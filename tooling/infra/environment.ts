@@ -86,6 +86,7 @@ export function testEnv(target: TestEnvironment, port = 3000): NodeJS.ProcessEnv
     ...config.vars,
     ...testSecrets(target),
     CLOUDFLARE_ENV: target,
+    CLOUDFLARE_ACCOUNT_ID: config.account_id || process.env.CLOUDFLARE_ACCOUNT_ID,
     NEXT_DEV_WRANGLER_ENV: target,
     OPEN_NEXT_LOCAL_BINDINGS: target === 'local' ? 'true' : 'false',
     CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: 'false',

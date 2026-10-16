@@ -9,8 +9,8 @@ export async function migratePreview(branch: string, env: NodeJS.ProcessEnv) {
   })
   const { getPlatformProxy } = await import('wrangler')
   const { stagingD1 } = await import('./staging-d1')
-  const proxy = await getPlatformProxy({ environment: 'staging', remoteBindings: false })
   const database = stagingD1()
+  const proxy = await getPlatformProxy({ environment: 'staging', remoteBindings: false })
   proxy.env.D1 = database
   ;(globalThis as Record<symbol, unknown>)[Symbol.for('__cloudflare-context__')] = proxy
   try {

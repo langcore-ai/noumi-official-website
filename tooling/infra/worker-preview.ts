@@ -58,6 +58,12 @@ async function main() {
   )
     throw new Error('请先 build:worker-preview 构建当前版本和配置')
   step(['bunx', 'wrangler', 'd1', 'time-travel', 'info', 'D1', '--config', configFile, '--json'])
+  // Resolve local OAuth before entering the tsx migration subprocess. Builds already injects its token.
+  if (!env.CLOUDFLARE_API_TOKEN) {
+    const credentials = capture(['bunx', 'wrangler', 'auth', 'token', '--json'], env)
+    if (!credentials) throw new Error('无法读取发布授权')
+    env.CLOUDFLARE_API_TOKEN = (JSON.parse(credentials) as { token: string }).token
+  }
   step(['bunx', 'tsx', 'tooling/infra/worker-preview.ts', 'migrate'])
   step(['bunx', 'opennextjs-cloudflare', 'populateCache', 'remote', '--config', configFile])
   step([

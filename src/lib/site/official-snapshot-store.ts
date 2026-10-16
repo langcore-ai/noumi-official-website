@@ -482,6 +482,8 @@ export async function requestOfficialSnapshotRefresh(reason: string): Promise<vo
     env = undefined
   }
 
+  if (env?.NOUMI_DISABLE_SNAPSHOTS === 'true') return
+
   const token = getOfficialSnapshotRefreshToken(env)
 
   if (!token) {

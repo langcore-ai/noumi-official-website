@@ -11,7 +11,9 @@ type RawResult = {
 /** CLI-only HTTPS transport; the deployed Worker continues to use native D1 bindings. */
 export function stagingD1(): D1Database {
   const config = testConfig('staging')
-  const credentials = capture(['bunx', 'wrangler', 'auth', 'token', '--json'])
+  const credentials = process.env.CLOUDFLARE_API_TOKEN
+    ? JSON.stringify({ token: process.env.CLOUDFLARE_API_TOKEN })
+    : capture(['bunx', 'wrangler', 'auth', 'token', '--json'])
   const token = credentials ? (JSON.parse(credentials) as { token?: string }).token : null
   if (!token) throw new Error('无法读取 Wrangler 登录，请先 wrangler login')
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${config.account_id}/d1/database/${config.d1_databases[0].database_id}/raw`

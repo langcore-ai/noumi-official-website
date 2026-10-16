@@ -45,7 +45,9 @@
     "mode:build": "bun tooling/infra/mode.ts build",
     "mode:help": "bun tooling/infra/help.ts",
     "mode:staging": "bun tooling/infra/staging.ts",
-    "mode:setup": "bun tooling/infra/mode.ts setup"
+    "mode:setup": "bun tooling/infra/mode.ts setup",
+    "build:staging": "bun tooling/infra/staging-builds.ts build",
+    "deploy:staging": "bun tooling/infra/staging-builds.ts deploy"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.5",

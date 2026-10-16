@@ -157,3 +157,5 @@ Payload 后台「网站管理」分组新增以下入口：
 沿用 `admin` / `content-editor` / `translator` 权限：管理员和内容编辑可新建/删除 SEO 与重定向，翻译角色可修改；菜单更新沿用内容更新权限。匿名访问只能读取发布态。SEO 和菜单发布沿用官网快照刷新机制；重定向由 Cloudflare Worker 在读取 HTML 快照前查询本地绑定的 D1，本地 Next 模式通过只读 API 使用相同规则。
 
 本地升级使用 `bun run mode:setup` 应用迁移，然后 `bun run mode:local rebuild`。生产发布必须先按现有流程应用数据库迁移，再发布应用；本次开发不会自动迁移生产数据。
+
+Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。云端使用 `build:staging` / `deploy:staging`；本机使用 `mode:staging`，不要混用。

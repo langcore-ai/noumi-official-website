@@ -4,7 +4,7 @@
 
 - 先检查当前分支、工作区和任务范围，保留已有修改。默认从 staging 创建 `agent/<task>` 功能分支，完成验证后合入 staging；main 用于已验收版本。
 - 本地使用 `bun run mode:setup`、`bun run mode:start` 和 `bun run mode:reload`。这是构建后运行，非热加载；不要自行改用顶层配置连接远程 D1。
-- staging 发布唯一日常入口为 `bun run mode:staging deploy`；`release` 和 `deploy:*` 属于生产流程。Git 分支名不会自动选择 Cloudflare 环境。
+- 本机 staging 发布入口为 `bun run mode:staging deploy`；`release` 和 `deploy:*` 属于生产流程。Git 分支名不会自动选择 Cloudflare 环境。
 - 发布前确认任务已授权发布、位于 staging、工作区干净、与团队共享版本一致，并持有现有 staging 密钥。当前发布脚本没有分支/脏工作区检查，须由操作者执行。已有授权不需要重复询问。
 - 不把 `.local`、`.dev.vars*`、真实密钥或管理员密码提交到 Git。跨机器发布须安全交接已有 staging 密钥，缺失时不要直接运行 deploy 生成并覆盖云端密钥。
 - 集合/字段修改同时提交迁移及生成类型；组件修改生成 import map。提交前执行与变更相关的检查，具体见 staging 流程。
@@ -1140,3 +1140,5 @@ For deeper exploration of specific topics, refer to the context files located in
 ## Use Cases iframe 嵌入
 
 修改官网 Use Cases iframe、自动高度、内部滚动或嵌入通信协议前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的协议文档。官网只负责父网页，外部展示站点负责子网页适配。本地运行使用 `bun run mode:` 系列命令。
+
+Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。云端使用 `build:staging` / `deploy:staging`；本机使用 `mode:staging`，不要混用。

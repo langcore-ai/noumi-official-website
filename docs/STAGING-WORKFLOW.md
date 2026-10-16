@@ -8,9 +8,9 @@
 - `staging`：集成并验证团队修改，发布到 `https://staging.noumi.ai`。
 - `main`：接收已验收版本；合并或推送本身不代表已发布生产。
 - Git 分支与 Cloudflare 环境独立：切到 staging 不会自动切换数据库。使用 `mode:` 命令显式选择本地或测试资源。
-- 仓库未配置 Git push 自动部署。当前发布通过本机命令执行；不要将提交、推送和云端部署混为一谈。
+- 已提供 Cloudflare Builds 自动部署入口，连接方法见 [Cloudflare Builds](CLOUDFLARE-BUILDS.md)。平台连接生效后，推送 staging 将触发部署；在控制台确认构建结果，不要把推送成功等同于发布成功。
 
-截至本文建立时，main 与 staging 已在本机同步，远端 staging 尚未建立。首次共享需由维护者推送 staging（`git push -u origin staging`）；新成员只有在远端分支存在后才能按下面流程开始。若 fetch 后找不到 `origin/staging`，联系维护者，不要擅自用旧 main 代替。
+远端 main 和 staging 已建立。新成员从 origin/staging 开始；若无法获取该分支，检查 GitHub 仓库权限。
 
 ## 开始开发
 
@@ -49,7 +49,9 @@ git diff --stat
 
 检查提交内容后提交功能分支，通过团队代码审查合入 staging，再从最新 staging 发布。不要用强推覆盖同事历史。发布测试站前协调其他使用者，共享 staging 只有一套内容与运行版本；本机锁不能防止两台机器同时发布。
 
-## 发布 staging
+## 本机手动发布 staging
+
+日常团队自动部署优先使用 [Cloudflare Builds](CLOUDFLARE-BUILDS.md)。以下流程供已有权限的维护者手动操作，不应与平台自动发布并行。
 
 前置条件：任务范围包含测试站发布；Cloudflare 账号拥有目标 Worker、D1、R2 及密钥操作权限；现有 staging 密钥已安全交接到本机 `.local/infra/staging.secrets.json`。可通过 `bunx wrangler login` 登录及 `bunx wrangler whoami` 检查身份。不要将登录令牌或密钥贴进日志、文档或聊天。
 

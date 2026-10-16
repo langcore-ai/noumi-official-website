@@ -43,3 +43,21 @@ it('does not replay an ambiguous write failure', async () => {
   ).rejects.toThrow('connection lost')
   expect(fetcher).toHaveBeenCalledTimes(1)
 })
+
+it('uses the platform build token without interactive login', async () => {
+  vi.stubEnv('CLOUDFLARE_API_TOKEN', 'platform-build-token')
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      success: true,
+      result: [{ success: true, results: { columns: ['n'], rows: [[1]] }, meta: {} }],
+    }),
+  )
+  vi.stubGlobal('fetch', fetcher)
+  try {
+    expect(await stagingD1().prepare('SELECT 1 AS n').first('n')).toBe(1)
+    const [, options] = fetcher.mock.calls[0] as unknown as [string, RequestInit]
+    expect(options.headers).toMatchObject({ Authorization: 'Bearer platform-build-token' })
+  } finally {
+    vi.unstubAllEnvs()
+  }
+})

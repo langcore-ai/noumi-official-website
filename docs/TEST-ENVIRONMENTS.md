@@ -40,7 +40,7 @@ bun run mode:staging logs
 
 发布入口会验证目标 Worker、D1、R2、域名和统计配置；运行类型检查、集成测试和完整 OpenNext 构建；通过 Wrangler dry run 后备份 staging D1，再通过 D1 HTTPS 接口执行原有 Payload 迁移及管理员初始化、上传独立密钥、部署、刷新快照和探测站点。备份位于 `.local/infra/staging-before-*.sql`。应用发布失败不会自动回滚数据库，应使用兼容迁移并按需恢复测试库。
 
-本轮采用手动命令发布，没有绑定 Git 推送自动部署。不要用原始 `deploy` / `deploy:database` 发布测试环境，它们属于既有生产流程。
+这里描述本机手动发布。Cloudflare Builds 自动部署入口及控制台连接步骤见 [自动部署指南](CLOUDFLARE-BUILDS.md)；是否已连接以控制台为准。不要用原始 `deploy` / `deploy:database` 发布测试环境，它们属于既有生产流程。
 
 ## 账号与数据
 

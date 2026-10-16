@@ -2,13 +2,15 @@
 
 正式站保持 `https://noumi.ai`；云端测试站为 `https://staging.noumi.ai`，后台为 `/admin`。
 
-| 环境 | Worker / D1 | R2 | 数据位置 |
-| --- | --- | --- | --- |
-| 本地 | noumi-official-website-local | official-website-local-bucket | `.wrangler/state` 本地模拟 |
-| 云端测试 | noumi-official-website-staging | official-website-staging-bucket | Cloudflare 独立测试资源 |
-| 生产 | noumi-official-website | official-website-bucket | 原有生产资源 |
+| 环境     | Worker / D1                    | R2                              | 数据位置                   |
+| -------- | ------------------------------ | ------------------------------- | -------------------------- |
+| 本地     | noumi-official-website-local   | official-website-local-bucket   | `.wrangler/state` 本地模拟 |
+| 云端测试 | noumi-official-website-staging | official-website-staging-bucket | Cloudflare 独立测试资源    |
+| 生产     | noumi-official-website         | official-website-bucket         | 原有生产资源               |
 
 本地 Next.js 与 OpenNext 预览使用相同的 `env.local` 和持久化目录。`NODE_ENV=production` 表示打包运行，不代表连接生产数据库。测试入口显式选择环境、覆盖测试配置与密钥，禁用正式统计和产品 API。站点外部产品登录链接仍指向产品站，不代表产品后端也已部署测试环境。
+
+分支协作、提交前检查及跨机器发布前置条件见 [staging 开发流程](STAGING-WORKFLOW.md)。Git 分支和 Cloudflare 环境是两个独立概念。
 
 ## 本地运行
 

@@ -4,17 +4,17 @@
 
 This repository is the Noumi public website and its Payload CMS runtime. It owns the public Next.js routes, Payload Admin/API, D1 schema and migrations, R2 media/cache/snapshots, and the Cloudflare Worker deployment wrapper.
 
-Before changing production behavior, read [README.md](README.md), [docs/HANDOVER.md](docs/HANDOVER.md), and [AGENTS.md](AGENTS.md).
+Start every development task with [docs/STAGING-WORKFLOW.md](docs/STAGING-WORKFLOW.md) and [docs/TEST-ENVIRONMENTS.md](docs/TEST-ENVIRONMENTS.md). Before changing production behavior, read [README.md](README.md), [docs/HANDOVER.md](docs/HANDOVER.md), and [AGENTS.md](AGENTS.md).
 
 ## Current Baseline
 
-- Human handover baseline: `main` at `411a8b2`, reviewed on 2026-08-13.
+- Historical human handover baseline: `411a8b2` (2026-08-13). For current behavior use this checkout; staging workflow and site management documentation updated 2026-10-16.
 - Canonical site: `https://noumi.ai`.
 - Product auth target: `https://www.noumi.ai/auth`.
 - Runtime: Next.js through OpenNext on Cloudflare Workers.
 - Primary data: Payload CMS on D1.
 - Shared object storage: `official-website-bucket` through both `R2` and `NEXT_INC_CACHE_R2_BUCKET` bindings.
-- Dependency lock: `bun.lock`; project scripts still require pnpm 9/10.
+- Dependency lock: `bun.lock`; use Bun project entrypoints; legacy tooling may still require pnpm.
 - Cloudflare top-level config is production; named `local` and `staging` environments are isolated. There is no named `production`. See [test environments](docs/TEST-ENVIRONMENTS.md).
 
 ## Evolution
@@ -61,16 +61,17 @@ docs/HANDOVER.md            Complete implementation and operations guide
 
 CMS-backed collections:
 
-- `users`, `media`, `blog-posts`, `feature-pages`, `use-case-pages`, `faq-items`, `friendly-links`, `invite-requests`.
+- `users`, `media`, `blog-posts`, `feature-pages`, `use-case-pages`, `faq-items`, `friendly-links`, `invite-requests`, `seo-configs`.
 - Redirects are added by the Payload redirects plugin.
 
 CMS globals:
 
-- `site-settings`, `features-page`, `use-cases-page`, `about-page`, `faq-page`, `privacy-page`, `terms-page`.
+- `site-settings`, `features-page`, `use-cases-page`, `about-page`, `faq-page`, `privacy-page`, `terms-page`, `menu-settings`.
 
 Important boundaries:
 
-- The existence of a CMS field does not mean the current frontend consumes it. `site-settings` navigation/footer fields are not wired into the active official chrome.
+- Published `seo-configs` override metadata by public path; empty fields retain page defaults. Published and enabled `menu-settings` control desktop/mobile navigation and footer. Historical `site-settings` navigation/footer fields do not control active chrome.
+- Redirects support published 301/302 rules, validated site paths and cycle prevention. Worker resolves them before HTML snapshots; local Next uses middleware. Relationship targets are resolved on save, so re-save a rule after changing the target slug.
 - Localized fields and Chinese dictionaries exist, but published CMS reads and snapshot keys are not locale-aware. Treat the current site as English-only.
 - Public publish state is Payload `_status`. The separate Blog `status` field is editorial metadata and does not control public access.
 - Invite is a permanent collection. The public form is currently disabled and `/invite` redirects to product auth; authenticated service sync remains.
@@ -93,7 +94,7 @@ Any change to this path requires explicit security review and tests.
 - `wrangler.jsonc` changes require regenerated `cloudflare-env.d.ts`; the generated file is not runtime truth.
 - Changes to frontend routes, CMS loaders, layouts, shared chrome, assets, or metadata can invalidate both JSON and HTML snapshots.
 - Changes to `worker.ts`, snapshot prefixes, or the shared R2 bucket can affect media and cache availability across the whole site.
-- Slug changes affect canonical URLs, sitemap entries, snapshots, navigation, and external links. The redirects plugin is present but no active frontend redirect consumption was found.
+- Slug changes affect canonical URLs, sitemap entries, snapshots, navigation, and external links. Published redirects are consumed by Worker and local middleware.
 - CSS refactors can cross route boundaries through `official-home.css` and pasted raw HTML styles.
 
 ## Operational Constraints
@@ -107,7 +108,7 @@ Any change to this path requires explicit security review and tests.
 
 ## Known Risks
 
-The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh,  and limited test coverage.
+The handover documents the full risk register. Highest-priority areas are raw HTML trust, preview redirect handling, possible preview HTML backfill, non-atomic snapshot locking/refresh, and limited test coverage.
 
 ## Verification
 

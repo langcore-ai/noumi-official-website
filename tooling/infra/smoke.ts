@@ -8,7 +8,7 @@ if (!['local', 'preview', 'staging'].includes(target))
   throw new Error('Specify local, preview or staging')
 const origin =
   target === 'staging'
-    ? 'https://staging.noumi.ai'
+    ? 'https://preview.staging.noumi.ai'
     : `http://localhost:${readManagedPort(target, target === 'local' ? 3000 : 8787)}`
 const credentialTarget = target === 'staging' ? 'staging' : 'local'
 const credentials = JSON.parse(

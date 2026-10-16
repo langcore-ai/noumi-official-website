@@ -57,6 +57,44 @@
     },
   ],
 
+  "previews": {
+    "vars": {
+      "APP_ENV": "staging",
+      "NEXT_PUBLIC_APP_ENV": "staging",
+      "NEXT_PUBLIC_SITE_URL": "https://preview.staging.noumi.ai",
+      "NOUMI_PRODUCT_API_URL": "",
+      "NEXT_INC_CACHE_R2_PREFIX": "next-incremental-cache",
+      "OFFICIAL_CMS_REVALIDATE_SECONDS": "300",
+      "OFFICIAL_SNAPSHOT_R2_PREFIX": "official-site-snapshots",
+      "OFFICIAL_SNAPSHOT_REFRESH_SECONDS": "7200",
+      "OFFICIAL_SNAPSHOT_REFRESH_ORIGIN": "https://preview.staging.noumi.ai",
+      "POSTHOG_ENABLED": "false",
+      "POSTHOG_PROJECT_KEY": "",
+      "POSTHOG_BROWSER_API_HOST": "https://e.noumi.ai",
+      "POSTHOG_UI_HOST": "https://us.posthog.com",
+      "NOUMI_DISABLE_SNAPSHOTS": "true",
+    },
+    "d1_databases": [
+      {
+        "binding": "D1",
+        "database_id": "2cf5e2cf-7aa3-4ba9-ab17-e8ffe75be5be",
+        "database_name": "noumi-official-website-staging",
+        "remote": true,
+      },
+    ],
+    "r2_buckets": [
+      {
+        "binding": "R2",
+        "bucket_name": "official-website-staging-bucket",
+        "preview_bucket_name": "official-website-staging-bucket",
+      },
+      {
+        "binding": "NEXT_INC_CACHE_R2_BUCKET",
+        "bucket_name": "official-website-staging-bucket",
+        "preview_bucket_name": "official-website-staging-bucket",
+      },
+    ],
+  },
   "env": {
     "local": {
       "name": "noumi-official-website-local",

@@ -121,4 +121,4 @@ pnpm exec prettier --check README.md README-AI.md docs/HANDOVER.md
 
 For code changes, select tests based on the impact matrix in [docs/HANDOVER.md](docs/HANDOVER.md); do not rely on the current homepage-only E2E coverage.
 
-Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。云端使用 `build:staging` / `deploy:staging`；本机使用 `mode:staging`，不要混用。
+Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。预览构建使用 `build:worker-preview` / `deploy:worker-preview`，开发者通过 GitHub 触发；本地模拟仍使用 `mode:start` / `mode:preview up`。

@@ -4,9 +4,9 @@
 
 - 先检查当前分支、工作区和任务范围，保留已有修改。默认从 staging 创建 `agent/<task>` 功能分支，完成验证后合入 staging；main 用于已验收版本。
 - 本地使用 `bun run mode:setup`、`bun run mode:start` 和 `bun run mode:reload`。这是构建后运行，非热加载；不要自行改用顶层配置连接远程 D1。
-- 本机 staging 发布入口为 `bun run mode:staging deploy`；`release` 和 `deploy:*` 属于生产流程。Git 分支名不会自动选择 Cloudflare 环境。
-- 发布前确认任务已授权发布、位于 staging、工作区干净、与团队共享版本一致，并持有现有 staging 密钥。当前发布脚本没有分支/脏工作区检查，须由操作者执行。已有授权不需要重复询问。
-- 不把 `.local`、`.dev.vars*`、真实密钥或管理员密码提交到 Git。跨机器发布须安全交接已有 staging 密钥，缺失时不要直接运行 deploy 生成并覆盖云端密钥。
+- 云端 staging 使用原 Worker 下的 Preview，开发者推送 GitHub 触发 Builds；构建/预览命令为 `build:worker-preview` / `deploy:worker-preview`，旧 `mode:staging deploy` 已禁用；`release`、`deploy`、`deploy:app` 和 `deploy:database` 属于生产流程。Git 分支名不会自动选择 Cloudflare 环境。
+- 发布前确认任务授权和 Git 提交。staging 对应 preview.staging.noumi.ai，其他分支使用独立名称，main 禁止执行预览入口。普通开发者不需要 Wrangler 登录，应用密钥由维护者一次性写入 Preview Base。已有授权不需要重复询问。
+- 不把 `.local`、`.dev.vars*`、真实密钥或管理员密码提交到 Git。不要把测试应用密钥分发给开发者；Preview 继承平台基础密钥。
 - 集合/字段修改同时提交迁移及生成类型；组件修改生成 import map。提交前执行与变更相关的检查，具体见 staging 流程。
 - SEO、重定向、菜单发布会影响页面快照；后台有字段不代表前台正在使用，需验证实际页面或 HTTP 响应。
 
@@ -1141,4 +1141,4 @@ For deeper exploration of specific topics, refer to the context files located in
 
 修改官网 Use Cases iframe、自动高度、内部滚动或嵌入通信协议前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的协议文档。官网只负责父网页，外部展示站点负责子网页适配。本地运行使用 `bun run mode:` 系列命令。
 
-Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。云端使用 `build:staging` / `deploy:staging`；本机使用 `mode:staging`，不要混用。
+Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。预览构建使用 `build:worker-preview` / `deploy:worker-preview`，开发者通过 GitHub 触发；本地模拟仍使用 `mode:start` / `mode:preview up`。

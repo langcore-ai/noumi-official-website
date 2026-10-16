@@ -37,10 +37,10 @@ const commandGroups = [
   {
     title: '发布运维',
     commands: [
-      ['bun run mode:staging deploy', '检查、构建、备份测试库并部署 staging.noumi.ai'],
-      ['bun run mode:staging deploy --dry-run', '构建并检查测试部署包，不写远程资源'],
+      ['bun run build:worker-preview', '维护者：构建原 Worker 下的分支预览'],
+      ['bun run deploy:worker-preview', '维护者：发布分支 Preview；日常通过 GitHub 自动发布'],
       ['bun run mode:staging status', '检查云端测试站、数据库、存储及 noindex'],
-      ['bun run mode:staging logs', '查看 staging Worker 实时日志'],
+
       ['bun run release', '交互式生产发布向导'],
       ['bun run release --dry-run --app-only', '预演仅应用发布，不写远程资源'],
       ['bun run release --dry-run --with-migrations', '预演 D1 备份、迁移和应用发布'],
@@ -53,7 +53,7 @@ console.log(title('Noumi Official Website — 开发与发布帮助'))
 console.log('')
 console.log('首次本地使用：bun run mode:setup → bun run mode:start')
 console.log('修改代码后：bun run mode:reload')
-console.log('发布测试站：bun run mode:stop → bun run mode:staging deploy')
+console.log('发布测试预览：推送分支，由 Cloudflare Builds 自动发布')
 console.log('')
 for (const group of commandGroups) {
   console.log(title(group.title))

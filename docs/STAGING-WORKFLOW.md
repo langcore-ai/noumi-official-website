@@ -5,7 +5,7 @@
 ## 分支与环境
 
 - `agent/<task>`：从最新 staging 创建的功能分支，用于单项开发。
-- `staging`：集成并验证团队修改，发布到 `https://staging.noumi.ai`。
+- `staging`：集成并验证团队修改，发布到 `https://preview.staging.noumi.ai`。
 - `main`：接收已验收版本；合并或推送本身不代表已发布生产。
 - Git 分支与 Cloudflare 环境独立：切到 staging 不会自动切换数据库。使用 `mode:` 命令显式选择本地或测试资源。
 - 已提供 Cloudflare Builds 自动部署入口，连接方法见 [Cloudflare Builds](CLOUDFLARE-BUILDS.md)。平台连接生效后，推送 staging 将触发部署；在控制台确认构建结果，不要把推送成功等同于发布成功。
@@ -49,51 +49,17 @@ git diff --stat
 
 检查提交内容后提交功能分支，通过团队代码审查合入 staging，再从最新 staging 发布。不要用强推覆盖同事历史。发布测试站前协调其他使用者，共享 staging 只有一套内容与运行版本；本机锁不能防止两台机器同时发布。
 
-## 本机手动发布 staging
+## 云端预览发布
 
-日常团队自动部署优先使用 [Cloudflare Builds](CLOUDFLARE-BUILDS.md)。以下流程供已有权限的维护者手动操作，不应与平台自动发布并行。
+开发者将验证后的代码合入 staging，Cloudflare Builds 自动运行 `build:worker-preview` 和 `deploy:worker-preview`。不需要登录 Wrangler 或持有部署密钥。固定验收地址为 https://preview.staging.noumi.ai。
 
-前置条件：任务范围包含测试站发布；Cloudflare 账号拥有目标 Worker、D1、R2 及密钥操作权限；现有 staging 密钥已安全交接到本机 `.local/infra/staging.secrets.json`。可通过 `bunx wrangler login` 登录及 `bunx wrangler whoami` 检查身份。不要将登录令牌或密钥贴进日志、文档或聊天。
+其他功能分支也可产生独立 Preview 地址，名称见构建日志。所有分支共用 staging 数据库；只有 staging 发布应用迁移，其他分支存在新迁移时须先合入 staging。命名、资源和控制台设置详见 [自动预览指南](CLOUDFLARE-BUILDS.md)。
 
-**已有测试站而本机没有密钥文件时，先向维护者获取现有文件。** 当前脚本会自动生成缺失文件，并在真实发布时上传覆盖远程密钥；dry run 也会在本机创建缺失文件。不要把新生成的文件当作共享测试站的正确密钥。CMS 验收需要现有管理员账号；删除本地管理员文件不会重置云端账号。
+维护者手动排查可使用同样两条命令，但需要平台权限，且不要与自动发布并行。旧 `mode:staging deploy` 已禁用，不会重新创建已删除的独立 Worker。
 
-```bash
-git switch staging
-git pull --ff-only origin staging
-git status --short
-git rev-parse HEAD
-git rev-parse origin/staging
-```
+## 验收
 
-确认工作区无输出且两个提交相同后执行：
-
-```bash
-bun run mode:stop
-bun run mode:staging deploy --dry-run
-bun run mode:staging deploy
-bun run mode:staging status
-```
-
-当前脚本不会自动拒绝错误分支、脏工作区或未推送提交，以上检查由操作者执行。发布版本标记来自 HEAD，未提交代码会使版本标记无法代表真实产物。停止本地模式是为了避免 staging 构建覆盖共享产物目录。
-
-目标由 `wrangler.jsonc` 的 `env.staging` 指定：
-
-| 资源             | 目标                              |
-| ---------------- | --------------------------------- |
-| Worker / D1 名称 | `noumi-official-website-staging`  |
-| R2               | `official-website-staging-bucket` |
-| 网站             | `https://staging.noumi.ai`        |
-| 后台             | `https://staging.noumi.ai/admin`  |
-
-`tooling/infra/staging.ts` 校验目标，执行类型检查、集成测试、OpenNext 构建、Wrangler dry run，随后导出测试库、执行迁移与初始化、上传密钥、部署 Worker、刷新快照并核对健康与版本。dry run 在远程备份和写入步骤之前结束，但仍会构建并修改本地产物。
-
-`release`、`deploy`、`deploy:database`、`deploy:app` 为生产流程入口，不能拿来替代 staging 发布命令。
-
-## 验收与故障处理
-
-- `/api/site/health` 应返回 `healthy: true`、`environment: staging`，revision 与发布提交前七位一致。
-- 检查官网、`/admin`、本次修改页面；测试站应带 noindex，robots 禁止抓取。
-- `bun run mode:staging logs` 查看实时日志。
-- 需要真实 CMS 写入验收时运行 `bunx tsx tooling/infra/smoke.ts staging`；它读取本机测试管理员文件并创建、清理测试数据，需要 Chromium。
-- 发布报告位于 `.local/infra/staging-release.json`，D1 备份位于 `.local/infra/staging-before-*.sql`；这些文件不进入 Git。
-- 发布不是原子的：数据库迁移先于 Worker 发布。失败后先确认哪个步骤完成，不要直接回退数据库、执行 reset/fresh 或清空 R2。Worker 回滚不会回滚 D1/R2，须依据备份和迁移兼容性制定恢复方案。
+- 检查 `/api/site/health` 的 environment 为 staging、healthy 为 true，revision 匹配提交前七位。
+- 检查官网、后台及本次修改功能；发布后通过 Preview 直接读取测试内容，无需等待旧 Cron 快照。
+- 查看原官网 Worker 下对应 Preview 的部署日志。没有平台权限时请维护者提供日志。
+- 自动构建失败不能视为发布成功。不要因预览失败而调用生产 `deploy:*` 或 `release`。

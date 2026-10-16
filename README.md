@@ -34,6 +34,8 @@ Noumi 官方网站与内容管理项目，基于 Next.js 15、React 19、Payload
 | Dependency lock | `bun.lock`                                       |
 | Script runner   | Bun（项目统一入口）；历史工具可能仍需 pnpm       |
 
+首次参与项目的同事请先阅读 [开发与预览上手指南](docs/GETTING-STARTED.md)，包含拉取仓库、本地运行、Cloudflare 本地预览及云端验收。
+
 ## 快速开始
 
 要求：Node.js `^18.20.2 || >=20.9.0`，建议使用当前 LTS；同时安装 Bun 和 pnpm 9/10。
@@ -158,4 +160,4 @@ Payload 后台「网站管理」分组新增以下入口：
 
 本地升级使用 `bun run mode:setup` 应用迁移，然后 `bun run mode:local rebuild`。生产发布必须先按现有流程应用数据库迁移，再发布应用；本次开发不会自动迁移生产数据。
 
-Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。云端使用 `build:staging` / `deploy:staging`；本机使用 `mode:staging`，不要混用。
+Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。预览构建使用 `build:worker-preview` / `deploy:worker-preview`，开发者通过 GitHub 触发；本地模拟仍使用 `mode:start` / `mode:preview up`。

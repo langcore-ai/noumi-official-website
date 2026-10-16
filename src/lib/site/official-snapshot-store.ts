@@ -11,6 +11,7 @@ const DEFAULT_OFFICIAL_SNAPSHOT_LOCK_SECONDS = 5 * 60
 
 /** 官网快照运行时环境。 */
 type OfficialSnapshotEnv = CloudflareContext['env'] & {
+  NOUMI_DISABLE_SNAPSHOTS?: string
   /** 定时/发布后刷新快照的站点 origin。 */
   OFFICIAL_SNAPSHOT_REFRESH_ORIGIN?: string
   /** 官网快照刷新间隔，单位秒；0 表示关闭自动 stale refresh。 */
@@ -135,7 +136,7 @@ async function getOfficialSnapshotRuntime(): Promise<OfficialSnapshotRuntime | n
     const env = cloudflare.env as OfficialSnapshotEnv
     const bucket = env.R2
 
-    if (!bucket) {
+    if (!bucket || env.NOUMI_DISABLE_SNAPSHOTS === 'true') {
       return null
     }
 

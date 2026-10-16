@@ -46,8 +46,10 @@
     "mode:help": "bun tooling/infra/help.ts",
     "mode:staging": "bun tooling/infra/staging.ts",
     "mode:setup": "bun tooling/infra/mode.ts setup",
-    "build:staging": "bun tooling/infra/staging-builds.ts build",
-    "deploy:staging": "bun tooling/infra/staging-builds.ts deploy"
+    "build:staging": "bun run build:worker-preview",
+    "deploy:staging": "bun run deploy:worker-preview",
+    "build:worker-preview": "bun tooling/infra/worker-preview.ts build",
+    "deploy:worker-preview": "bun tooling/infra/worker-preview.ts deploy"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.5",
@@ -105,7 +107,7 @@
     "typescript": "5.7.3",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18",
-    "wrangler": "^4.80.0"
+    "wrangler": "4.151.0"
   },
   "engines": {
     "bun": ">=1.3.0",

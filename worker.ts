@@ -6,6 +6,7 @@ import { getCanonicalRedirectPath } from './src/lib/site/url'
 
 /** 快照刷新 Worker 环境变量。 */
 type SnapshotWorkerEnv = Cloudflare.Env & {
+  NOUMI_DISABLE_SNAPSHOTS?: string
   /** 手动/定时刷新快照的独立 token。 */
   OFFICIAL_SNAPSHOT_REFRESH_TOKEN?: string
   /** 定时任务调用内部刷新 API 时使用的站点 origin。 */
@@ -514,6 +515,7 @@ const handler = {
     const headers = new Headers(request.headers)
     headers.set('x-noumi-routing-checked', '1')
     request = new Request(request, { headers })
+    if (env.NOUMI_DISABLE_SNAPSHOTS === 'true') return openNextWorker.fetch(request, env, ctx)
     const snapshotResponse = await readOfficialHtmlSnapshot(request, env)
 
     if (snapshotResponse) {

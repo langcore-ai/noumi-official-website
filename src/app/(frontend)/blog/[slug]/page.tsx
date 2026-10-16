@@ -1,3 +1,4 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import { StructuredData } from '@/components/site/StructuredData'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -5,7 +6,6 @@ import { notFound } from 'next/navigation'
 import { OfficialContentSections } from '@/components/site/official/OfficialContentSections'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialBlogPost } from '@/lib/site/official-cms'
-import { createOfficialMetadata } from '@/lib/site/official-site'
 import { renderMarkdownToHtml } from '@/lib/site/markdown'
 
 import './blog-article.css'
@@ -32,7 +32,7 @@ export async function generateMetadata(props: BlogPostPageProps) {
     return {}
   }
 
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt || post.lead || '',
     image: post.ogImage?.url,
@@ -66,12 +66,17 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
     notFound()
   }
 
+  const structuredData = await getManagedJsonLd(
+    `/blog/${slug}`,
+    typeof post.structuredData === 'object' ? post.structuredData : null,
+  )
+
   // HTML 模式保留原样渲染，作为迁移期间的回滚路径。
   if (post.renderMode === 'html') {
     return (
       <div className="page-body">
-        {post.structuredData && typeof post.structuredData === 'object' ? (
-          <StructuredData data={post.structuredData} />
+        {structuredData && typeof structuredData === 'object' ? (
+          <StructuredData data={structuredData} />
         ) : null}
         <OfficialRawHtml html={post.htmlContent || ''} />
       </div>
@@ -83,8 +88,8 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
 
     return (
       <div className="page-body">
-        {post.structuredData && typeof post.structuredData === 'object' ? (
-          <StructuredData data={post.structuredData} />
+        {structuredData && typeof structuredData === 'object' ? (
+          <StructuredData data={structuredData} />
         ) : null}
         <main className="prototype-page body-14 blog-article">
           <section className="banner-section-2">
@@ -312,8 +317,8 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
 
   return (
     <div className={`${styles.blogPostPage} page-body`}>
-      {post.structuredData && typeof post.structuredData === 'object' ? (
-        <StructuredData data={post.structuredData} />
+      {structuredData && typeof structuredData === 'object' ? (
+        <StructuredData data={structuredData} />
       ) : null}
       <main className={styles.postWrap}>
         <Link className={`${styles.postBack} reveal`} href="/blog">

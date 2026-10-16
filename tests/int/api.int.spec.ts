@@ -22,6 +22,8 @@ let payloadConfig: unknown
 
 describe('API', () => {
   beforeAll(async () => {
+    // The mode runner supplies local bindings; this test explicitly exercises the mocked production branch.
+    vi.stubEnv('OPEN_NEXT_LOCAL_BINDINGS', 'false')
     const { default: configPromise } = await import('@/payload.config')
     payloadConfig = await configPromise
   })
@@ -32,6 +34,7 @@ describe('API', () => {
 })
 
 afterAll(() => {
+  vi.unstubAllEnvs()
   if (previousNodeEnv === undefined) {
     delete testProcessEnv.NODE_ENV
     return

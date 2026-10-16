@@ -1,8 +1,9 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import Link from 'next/link'
 import { StructuredData } from '@/components/site/StructuredData'
 import { PrototypeButtonContent } from '@/components/site/official/PrototypeButtonContent'
 import { ABOUT_PAGE_JSON_LD } from '@/lib/site/json-ld'
-import { createOfficialMetadata, OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 import { AboutPrototypeEffects } from './AboutPrototypeEffects'
 import { AboutFaq } from './AboutFaq'
 import content from './prototype-content.json'
@@ -11,7 +12,7 @@ import styles from './about.module.css'
 const title = 'We build tools for the people who know their Craft'
 
 export function generateMetadata() {
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: title + ' - Noumi',
     description: content.intro[0],
     pathname: '/about',
@@ -29,18 +30,18 @@ function Kicker({ children }: { children: React.ReactNode }) {
 }
 
 /** Content snapshot deliberately follows about.html; legacy CMS records remain untouched. */
-export default function AboutPage() {
+export default async function AboutPage() {
   return (
     <div className="page-body">
       <StructuredData
-        data={{
+        data={await getManagedJsonLd('/about', {
           ...ABOUT_PAGE_JSON_LD,
           '@graph': ABOUT_PAGE_JSON_LD['@graph'].map((node) =>
             node['@type'] === 'AboutPage'
               ? { ...node, name: title, description: content.intro[0] }
               : node,
           ),
-        }}
+        })}
       />
       <AboutPrototypeEffects />
       <main className={styles.page} data-about-prototype>

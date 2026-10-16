@@ -143,3 +143,15 @@ README-AI.md                 # AI/代码代理导航
 - 不把来源不可信的 HTML 粘贴到 HTML 模式；该模式可执行内联脚本并影响全局 CSS。
 - 不清空 `official-website-bucket`；其中同时存在媒体和多类缓存/快照。
 - 不把 Worker 回滚等同于数据回滚；D1 与 R2 必须单独处理。
+
+## 网站管理：SEO、重定向与菜单
+
+Payload 后台「网站管理」分组新增以下入口：
+
+- **SEO 配置**（`/admin/collections/seo-configs`）：预置主要固定页面路径，也可添加任意公开页面路径。支持 Meta Title/Description/Keywords、独立 OG 标题/描述、上传或外部 URL 分享图、JSON-LD 覆盖、Canonical、noindex/nofollow。留空沿用页面原值；只有发布版本生效。当前官网为英文，前台读取英文配置。内容页已有 SEO 字段继续作为回退来源。
+- **重定向**（`/admin/collections/redirects`）：站内路径精确匹配，301/302，支持自定义路径和内容引用。引用目标在保存规则时解析；目标 slug 改动后需重新保存规则。路径自动补全 `/`，禁止系统路径、自跳转及循环。保存草稿不生效；取消发布即可停用。既有规则迁移为草稿，需审核后发布。请求保留查询参数，多级规则合并到最终路径；超过 16 级或运行时发现循环则忽略规则。现有 URL 规范化及构建期旧路径映射优先。
+- **菜单配置**（`/admin/globals/menu-settings`）：启用并发布后替换官网 Header、移动端导航和 Footer。支持排序、隐藏、子菜单、CTA、页脚说明、版权、联系方式与备案信息；关闭开关恢复原有官网菜单。启用后空列表表示不展示该区域。站点设置中的旧导航字段仅作历史数据保留。
+
+沿用 `admin` / `content-editor` / `translator` 权限：管理员和内容编辑可新建/删除 SEO 与重定向，翻译角色可修改；菜单更新沿用内容更新权限。匿名访问只能读取发布态。SEO 和菜单发布沿用官网快照刷新机制；重定向由 Cloudflare Worker 在读取 HTML 快照前查询本地绑定的 D1，本地 Next 模式通过只读 API 使用相同规则。
+
+本地升级使用 `bun run mode:setup` 应用迁移，然后 `bun run mode:local rebuild`。生产发布必须先按现有流程应用数据库迁移，再发布应用；本次开发不会自动迁移生产数据。

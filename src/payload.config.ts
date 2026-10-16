@@ -15,6 +15,11 @@ import { en as enTranslations } from '@payloadcms/translations/languages/en'
 import { zh as zhTranslations } from '@payloadcms/translations/languages/zh'
 
 import { addBlogStructuredData } from './fields/blogStructuredData'
+import { SeoConfigs } from './collections/SeoConfigs'
+import { MenuSettings } from './globals/MenuSettings'
+import { validateRedirect } from './collections/redirectOverrides'
+import { contentCreateAccess, contentUpdateAccess } from './access/cms'
+import { contentDocumentReadAccess, PUBLIC_COLLECTION_VERSIONS } from './lib/site/publishing'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
@@ -61,7 +66,7 @@ const isNextBuild =
 /** 是否为生产环境 */
 const isProduction = process.env.NODE_ENV === 'production'
 /** redirects 插件可引用的内部集合 */
-const redirectTargetCollections: string[] = [BlogPosts.slug, UseCasePages.slug]
+const redirectTargetCollections: string[] = [BlogPosts.slug, FeaturePages.slug, UseCasePages.slug]
 /** SEO 插件预览 URL 的兜底站点地址 */
 const defaultSeoSiteUrl = 'https://noumi.ai'
 /** SEO 插件 Meta Description 的推荐字符范围。 */
@@ -364,6 +369,7 @@ export default buildConfig({
   },
   collections: [
     Users,
+    withOfficialSnapshotCollectionHooks(SeoConfigs),
     withOfficialSnapshotCollectionHooks(Media),
     withOfficialSnapshotCollectionHooks(BlogPosts),
     withOfficialSnapshotCollectionHooks(FeaturePages),
@@ -374,6 +380,7 @@ export default buildConfig({
   ],
   globals: [
     withOfficialSnapshotGlobalHooks(SiteSettings),
+    withOfficialSnapshotGlobalHooks(MenuSettings),
     withOfficialSnapshotGlobalHooks(FeaturesPage),
     withOfficialSnapshotGlobalHooks(UseCasesPage),
     withOfficialSnapshotGlobalHooks(AboutPage),
@@ -443,7 +450,29 @@ export default buildConfig({
       // 当前仓库还没有页面内容集合，先降级为仅支持自定义 URL 的跳转管理
       collections: redirectTargetCollections,
       overrides: {
-        fields: ({ defaultFields }) => getRedirectFields(defaultFields),
+        labels: { singular: '重定向', plural: '重定向' },
+        admin: {
+          group: '网站管理',
+          defaultColumns: ['from', 'resolvedTarget', 'type', '_status'],
+          description: '仅已发布规则生效。填写站内路径，支持 301/302；禁止系统路径和循环跳转。',
+        },
+        access: {
+          read: contentDocumentReadAccess,
+          create: contentCreateAccess,
+          update: contentUpdateAccess,
+          delete: contentCreateAccess,
+        },
+        versions: PUBLIC_COLLECTION_VERSIONS,
+        hooks: { beforeValidate: [validateRedirect] },
+        fields: ({ defaultFields }) => [
+          ...getRedirectFields(defaultFields),
+          {
+            name: 'resolvedTarget',
+            type: 'text',
+            label: '解析后的目标路径',
+            admin: { readOnly: true },
+          },
+        ],
       },
       redirectTypes: ['301', '302'],
     }),

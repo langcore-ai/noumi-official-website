@@ -1,9 +1,10 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
 import { getOfficialBlogPosts } from '@/lib/site/official-cms'
 import { BLOG_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
-import { createOfficialMetadata, OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 
 import { BlogTabs } from './BlogTabs'
 import './blog-index.css'
@@ -14,7 +15,7 @@ import './blog-index.css'
 export async function generateMetadata() {
   const meta = OFFICIAL_JSON_LD_PAGE_META.blog
 
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: meta.title,
     description: meta.description,
     pathname: meta.pathname,
@@ -35,7 +36,7 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="page-body">
-      <StructuredData data={BLOG_PAGE_JSON_LD} />
+      <StructuredData data={await getManagedJsonLd('/blog', BLOG_PAGE_JSON_LD)} />
 
       <main className="prototype-page body-8 blog-index">
         <section className="banner-section">

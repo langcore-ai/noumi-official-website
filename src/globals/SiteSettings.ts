@@ -128,7 +128,7 @@ export const SiteSettings: GlobalConfig = {
       label: '导航链接',
       localized: true,
       admin: {
-        description: '顶部导航配置；前台会直接读取这里的内容。',
+        description: '旧版导航字段，仅保留历史数据。当前官网请使用「网站管理 → 菜单配置」。',
       },
       fields: [
         {
@@ -169,7 +169,7 @@ export const SiteSettings: GlobalConfig = {
       label: '页脚栏目',
       localized: true,
       admin: {
-        description: '页脚列配置；前台会直接读取这里的内容。',
+        description: '旧版页脚字段，仅保留历史数据。当前官网请使用「网站管理 → 菜单配置」。',
       },
       fields: [
         {

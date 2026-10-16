@@ -253,3 +253,9 @@ body a.noumi-modern-cta:hover {
     height: 28px;
   }
 }
+
+/* Published CMS submenus retain the existing header typography. */
+.managed-nav-group { position: relative; }
+.managed-nav-group summary { cursor: pointer; }
+.managed-nav-children { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.site-nav .managed-nav-children { position: absolute; top: 100%; left: 0; z-index: 30; min-width: 180px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 8px 24px #0001; }

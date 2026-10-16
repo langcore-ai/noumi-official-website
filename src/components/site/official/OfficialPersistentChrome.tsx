@@ -1,3 +1,4 @@
+import { getMenuSettings } from '@/lib/site/managed-settings'
 import type { ReactNode } from 'react'
 
 import { OfficialHomeFooter } from './OfficialHomeChrome'
@@ -8,14 +9,15 @@ import { OfficialPersistentHeader } from './OfficialPersistentHeader'
  * @param props 页面内容
  * @returns 带统一 header/footer 的页面壳层
  */
-export function OfficialPersistentChrome(props: { children: ReactNode }) {
+export async function OfficialPersistentChrome(props: { children: ReactNode }) {
   const { children } = props
+  const menu = await getMenuSettings()
 
   return (
     <div className="page-shell">
-      <OfficialPersistentHeader />
+      <OfficialPersistentHeader menu={menu} />
       {children}
-      <OfficialHomeFooter />
+      <OfficialHomeFooter menu={menu} />
     </div>
   )
 }

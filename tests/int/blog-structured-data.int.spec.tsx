@@ -9,6 +9,11 @@ import { getOfficialBlogPost } from '@/lib/site/official-cms'
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn() }) }))
 
+vi.mock('@/lib/site/managed-settings', () => ({
+  getManagedJsonLd: async (_path: string, fallback: object) => fallback,
+  createManagedMetadata: vi.fn(),
+}))
+
 vi.mock('@/lib/site/official-cms', () => ({ getOfficialBlogPost: vi.fn() }))
 
 const data = {

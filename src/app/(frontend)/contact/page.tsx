@@ -1,7 +1,7 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import { StructuredData } from '@/components/site/StructuredData'
 import Link from 'next/link'
 import { CONTACT_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
-import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './contact.module.css'
 
@@ -11,7 +11,7 @@ import styles from './contact.module.css'
 export async function generateMetadata() {
   const meta = OFFICIAL_JSON_LD_PAGE_META.contact
 
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: meta.title,
     description: meta.description,
     pathname: meta.pathname,
@@ -25,7 +25,7 @@ export async function generateMetadata() {
 export default async function ContactPage() {
   return (
     <div className="page-body">
-      <StructuredData data={CONTACT_PAGE_JSON_LD} />
+      <StructuredData data={await getManagedJsonLd('/contact', CONTACT_PAGE_JSON_LD)} />
 
       <main>
         <div className={styles.contactWrap}>

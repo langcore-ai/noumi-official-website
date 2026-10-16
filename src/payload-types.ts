@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    'seo-configs': SeoConfig;
     media: Media;
     'blog-posts': BlogPost;
     'feature-pages': FeaturePage;
@@ -85,6 +86,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    'seo-configs': SeoConfigsSelect<false> | SeoConfigsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
     'feature-pages': FeaturePagesSelect<false> | FeaturePagesSelect<true>;
@@ -105,6 +107,7 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'zh') | ('en' | 'zh')[];
   globals: {
     'site-settings': SiteSetting;
+    'menu-settings': MenuSetting;
     'features-page': FeaturesPage;
     'use-cases-page': UseCasesPage;
     'about-page': AboutPage;
@@ -114,6 +117,7 @@ export interface Config {
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'menu-settings': MenuSettingsSelect<false> | MenuSettingsSelect<true>;
     'features-page': FeaturesPageSelect<false> | FeaturesPageSelect<true>;
     'use-cases-page': UseCasesPageSelect<false> | UseCasesPageSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
@@ -183,6 +187,41 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * 按公开路径配置 SEO，覆盖固定页面、原型页面及内容页。空字段沿用页面原值；发布后生效。
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-configs".
+ */
+export interface SeoConfig {
+  id: number;
+  path: string;
+  title?: string | null;
+  description?: string | null;
+  keywords?: string | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImageUrl?: string | null;
+  /**
+   * 填写 JSON 对象或对象数组，发布后覆盖该页面默认 JSON-LD；留空沿用默认值。
+   */
+  jsonLd?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  image?: (number | null) | Media;
+  canonical?: string | null;
+  noIndex?: boolean | null;
+  noFollow?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -891,6 +930,8 @@ export interface InviteRequest {
   createdAt: string;
 }
 /**
+ * 仅已发布规则生效。填写站内路径，支持 301/302；禁止系统路径和循环跳转。
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -905,14 +946,20 @@ export interface Redirect {
           value: number | BlogPost;
         } | null)
       | ({
+          relationTo: 'feature-pages';
+          value: number | FeaturePage;
+        } | null)
+      | ({
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
         } | null);
     url?: string | null;
   };
   type: '301' | '302';
+  resolvedTarget?: string | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1035,6 +1082,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'seo-configs';
+        value: number | SeoConfig;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1126,6 +1177,27 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-configs_select".
+ */
+export interface SeoConfigsSelect<T extends boolean = true> {
+  path?: T;
+  title?: T;
+  description?: T;
+  keywords?: T;
+  ogTitle?: T;
+  ogDescription?: T;
+  ogImageUrl?: T;
+  jsonLd?: T;
+  image?: T;
+  canonical?: T;
+  noIndex?: T;
+  noFollow?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1632,8 +1704,10 @@ export interface RedirectsSelect<T extends boolean = true> {
         url?: T;
       };
   type?: T;
+  resolvedTarget?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1749,7 +1823,7 @@ export interface SiteSetting {
    */
   defaultOgImage?: (number | null) | Media;
   /**
-   * 顶部导航配置；前台会直接读取这里的内容。
+   * 旧版导航字段，仅保留历史数据。当前官网请使用「网站管理 → 菜单配置」。
    */
   navLinks?:
     | {
@@ -1766,7 +1840,7 @@ export interface SiteSetting {
       }[]
     | null;
   /**
-   * 页脚列配置；前台会直接读取这里的内容。
+   * 旧版页脚字段，仅保留历史数据。当前官网请使用「网站管理 → 菜单配置」。
    */
   footerColumns?:
     | {
@@ -1789,6 +1863,59 @@ export interface SiteSetting {
      */
     image?: (number | null) | Media;
   };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * 启用并发布后替换当前官网菜单。拖动条目调整顺序；支持桌面端和移动端。关闭开关保留官网默认内容。
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menu-settings".
+ */
+export interface MenuSetting {
+  id: number;
+  enabled?: boolean | null;
+  header?:
+    | {
+        label: string;
+        href: string;
+        hidden?: boolean | null;
+        children?:
+          | {
+              label: string;
+              href: string;
+              hidden?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  footer?:
+    | {
+        title: string;
+        hidden?: boolean | null;
+        links?:
+          | {
+              label: string;
+              href: string;
+              hidden?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  description?: string | null;
+  copyright?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  icp?: string | null;
+  publicSecurity?: string | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2447,6 +2574,57 @@ export interface SiteSettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menu-settings_select".
+ */
+export interface MenuSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  header?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        hidden?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              hidden?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  footer?:
+    | T
+    | {
+        title?: T;
+        hidden?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              hidden?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  ctaLabel?: T;
+  ctaHref?: T;
+  description?: T;
+  copyright?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  icp?: T;
+  publicSecurity?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "features-page_select".
  */
 export interface FeaturesPageSelect<T extends boolean = true> {
@@ -2930,6 +3108,10 @@ export interface TaskSchedulePublish {
     locale?: string | null;
     doc?:
       | ({
+          relationTo: 'seo-configs';
+          value: number | SeoConfig;
+        } | null)
+      | ({
           relationTo: 'blog-posts';
           value: number | BlogPost;
         } | null)
@@ -2940,10 +3122,15 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'use-case-pages';
           value: number | UseCasePage;
+        } | null)
+      | ({
+          relationTo: 'redirects';
+          value: number | Redirect;
         } | null);
     global?:
       | (
           | 'site-settings'
+          | 'menu-settings'
           | 'features-page'
           | 'use-cases-page'
           | 'about-page'

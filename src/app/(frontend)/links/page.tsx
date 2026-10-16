@@ -1,9 +1,9 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import Link from 'next/link'
 
 import { StructuredData } from '@/components/site/StructuredData'
 import { getOfficialFriendlyLinks, type OfficialFriendlyLinkView } from '@/lib/site/official-cms'
 import {
-  createOfficialMetadata,
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
   OFFICIAL_PRODUCT_AUTH_URL,
   OFFICIAL_SITE_URL,
@@ -23,7 +23,7 @@ const LINKS_PAGE_PATH = '/links'
  * links 页面 metadata
  */
 export async function generateMetadata() {
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: LINKS_PAGE_TITLE,
     description: LINKS_PAGE_DESCRIPTION,
     pathname: LINKS_PAGE_PATH,
@@ -135,7 +135,7 @@ export default async function LinksPage() {
 
   return (
     <div className={`page-body ${styles.linksPage}`}>
-      <StructuredData data={createLinksJsonLd(links)} />
+      <StructuredData data={await getManagedJsonLd('/links', createLinksJsonLd(links))} />
 
       <main>
         <section aria-labelledby="links-h1" className={styles.hero}>

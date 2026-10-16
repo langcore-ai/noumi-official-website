@@ -1,3 +1,4 @@
+import { createOfficialMetadata } from '@/lib/site/official-site'
 import type { ReactNode } from 'react'
 import Script from 'next/script'
 
@@ -6,7 +7,6 @@ import { CookieConsentBanner } from '@/components/site/CookieConsentBanner'
 import { OfficialGlobalEffects } from '@/components/site/official/OfficialGlobalEffects'
 import { OfficialPersistentChrome } from '@/components/site/official/OfficialPersistentChrome'
 import { buildOfficialGoogleTagBootstrapScript, OFFICIAL_GOOGLE_TAG_ID } from '@/lib/site/analytics'
-import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import './official-base.css'
 import './official-home.css'

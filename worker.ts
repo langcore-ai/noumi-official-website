@@ -1,5 +1,6 @@
 // @ts-ignore OpenNext 在构建后生成该入口，本地可能存在也可能不存在。
 import openNextWorker from './.open-next/worker.js'
+import { resolveManagedRedirect } from './src/lib/site/managed-routing'
 import { allowsHtmlSnapshot } from './src/lib/site/html-snapshot-policy'
 import { getCanonicalRedirectPath } from './src/lib/site/url'
 
@@ -369,6 +370,7 @@ async function renderOfficialHtmlSnapshotRoute(
     new Request(url, {
       headers: {
         [OFFICIAL_HTML_SNAPSHOT_BYPASS_HEADER]: '1',
+        'x-noumi-routing-checked': '1',
       },
       method: 'GET',
     }),
@@ -489,6 +491,29 @@ const handler = {
       url.pathname = redirectPath
       return Response.redirect(url.toString(), 301)
     }
+    if (
+      ['GET', 'HEAD'].includes(request.method) &&
+      !/^\/(api|admin|_next|assets|cdn-cgi)(\/|$)/.test(url.pathname)
+    ) {
+      try {
+        const rule = await resolveManagedRedirect(url.pathname, async (path) =>
+          env.D1.prepare(
+            'SELECT resolved_target AS target, type FROM redirects WHERE "from" = ? AND _status = ? LIMIT 1',
+          )
+            .bind(path, 'published')
+            .first<{ target: string; type: string }>(),
+        )
+        if (rule) {
+          url.pathname = rule.target
+          return Response.redirect(url.toString(), Number(rule.type))
+        }
+      } catch (error) {
+        console.error('Managed redirect lookup failed', error)
+      }
+    }
+    const headers = new Headers(request.headers)
+    headers.set('x-noumi-routing-checked', '1')
+    request = new Request(request, { headers })
     const snapshotResponse = await readOfficialHtmlSnapshot(request, env)
 
     if (snapshotResponse) {

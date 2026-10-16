@@ -1,12 +1,13 @@
+import { createManagedMetadata } from '@/lib/site/managed-settings'
 import { redirect } from 'next/navigation'
 
-import { createOfficialMetadata, OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 
 /**
  * Invite 页面 metadata
  */
 export async function generateMetadata() {
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: 'Request Early Access to Noumi — Join the First Wave',
     description:
       'Get early access to Noumi — the AI assistant that remembers your context and gets work done autonomously. Opening in waves. Leave your email to claim your spot.',

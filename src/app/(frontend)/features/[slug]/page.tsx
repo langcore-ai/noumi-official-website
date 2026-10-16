@@ -1,3 +1,4 @@
+import { createManagedMetadata } from '@/lib/site/managed-settings'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PrototypePage } from '@/components/site/prototype/PrototypePage'
@@ -5,7 +6,6 @@ import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
 
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialFeaturePage } from '@/lib/site/official-cms'
-import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './feature-page.module.css'
 
@@ -31,7 +31,7 @@ export async function generateMetadata(props: FeaturePageProps) {
     return {}
   }
 
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: page.metaTitle || page.heroTitle || page.navigationLabel,
     description: page.metaDescription || page.heroDescription || page.summary || '',
     image: page.ogImage?.url,

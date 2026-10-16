@@ -1,5 +1,7 @@
 'use client'
 
+import type { MenuSetting } from '@/payload-types'
+
 import { useEffect, useRef } from 'react'
 
 import { usePathname } from 'next/navigation'
@@ -39,7 +41,7 @@ function getActivePrimaryNavItem(pathname: string): ActiveNavItem | undefined {
  * 持久在线官网头部；高亮由客户端路径即时计算。
  * @returns 当前路由对应的头部
  */
-export function OfficialPersistentHeader() {
+export function OfficialPersistentHeader({ menu }: { menu?: MenuSetting | null }) {
   const pathname = usePathname() || '/'
   const headerWrapperRef = useRef<HTMLDivElement>(null)
 
@@ -74,7 +76,11 @@ export function OfficialPersistentHeader() {
 
   return (
     <div className="official-persistent-header" ref={headerWrapperRef}>
-      <OfficialHomeHeader activeItem={getActivePrimaryNavItem(pathname)} />
+      <OfficialHomeHeader
+        menu={menu}
+        pathname={pathname}
+        activeItem={getActivePrimaryNavItem(pathname)}
+      />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import 'server-only'
 import pages from './pages.json'
 import rawMotion from './interactions.json'
 import type { MotionEvent, MotionList, PageMotion } from './types'
-import { createOfficialMetadata } from '../official-site'
+import { createManagedMetadata } from '../managed-settings'
 
 // Widen the export before Object.values so TypeScript does not infer a union of hundreds of event shapes.
 const interactions = rawMotion as unknown as {
@@ -14,15 +14,15 @@ export type PrototypePageData = (typeof pages)['/features']
 export function getPrototypePage(route: string): PrototypePageData | undefined {
   return (pages as Record<string, PrototypePageData>)[route]
 }
-export function prototypeMetadata(route: string) {
+export async function prototypeMetadata(route: string) {
   const page = getPrototypePage(route)
   return page
     ? {
-        ...createOfficialMetadata({
+        ...(await createManagedMetadata({
           title: page.title,
           description: page.description,
           pathname: route,
-        }),
+        })),
         ...(page.template ||
         route.startsWith('/template-info/') ||
         ['/protected', '/not-found'].includes(route)

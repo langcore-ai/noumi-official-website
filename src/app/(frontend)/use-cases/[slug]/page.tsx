@@ -1,3 +1,4 @@
+import { createManagedMetadata } from '@/lib/site/managed-settings'
 import { notFound } from 'next/navigation'
 import { PrototypePage } from '@/components/site/prototype/PrototypePage'
 import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
@@ -6,7 +7,6 @@ import { OfficialContentSections } from '@/components/site/official/OfficialCont
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { OfficialUseCaseWorkflow } from '@/components/site/official/OfficialUseCaseWorkflow'
 import { getOfficialUseCasePage } from '@/lib/site/official-cms'
-import { createOfficialMetadata } from '@/lib/site/official-site'
 
 import styles from './use-case.module.css'
 
@@ -32,7 +32,7 @@ export async function generateMetadata(props: UseCasePageProps) {
     return {}
   }
 
-  return createOfficialMetadata({
+  return createManagedMetadata({
     title: page.metaTitle || page.heroTitle || page.navigationLabel,
     description: page.metaDescription || page.heroDescription || '',
     image: page.ogImage?.url,
@@ -68,7 +68,9 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
         <div className={`${styles.roleHeroText} reveal`}>
           {page.heroEyebrow ? <span className="sec-label">{page.heroEyebrow}</span> : null}
           {page.heroTitle ? <h1 id={`${page.slug}-h1`}>{page.heroTitle}</h1> : null}
-          {page.heroDescription ? <p className={styles.roleAdvantage}>{page.heroDescription}</p> : null}
+          {page.heroDescription ? (
+            <p className={styles.roleAdvantage}>{page.heroDescription}</p>
+          ) : null}
           {page.painPoints.length > 0 ? (
             <ul className={styles.painList}>
               {page.painPoints.map((point) => (
@@ -76,20 +78,34 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
               ))}
             </ul>
           ) : null}
-          {page.heroPrimaryCta ? <a className="btn-fill" href={page.heroPrimaryCta.href}>{page.heroPrimaryCta.label}</a> : null}
+          {page.heroPrimaryCta ? (
+            <a className="btn-fill" href={page.heroPrimaryCta.href}>
+              {page.heroPrimaryCta.label}
+            </a>
+          ) : null}
         </div>
-        <div aria-label={`${page.navigationLabel} preview`} className={`${styles.roleHeroVisual} reveal d2`} role="img">
+        <div
+          aria-label={`${page.navigationLabel} preview`}
+          className={`${styles.roleHeroVisual} reveal d2`}
+          role="img"
+        >
           <div className={`${styles.roleWindow} ${styles.windowBack}`}>
             <div className={styles.windowLabel}>Captured context</div>
             {page.painPoints.slice(0, 3).map((point) => (
-              <div className={styles.rawItem} key={point}>{point}</div>
+              <div className={styles.rawItem} key={point}>
+                {point}
+              </div>
             ))}
           </div>
           <div className={`${styles.roleWindow} ${styles.windowFront}`}>
             <div className={styles.windowLabel}>Noumi workspace</div>
-            <div className={styles.rawItem}>{page.heroLead || page.workflowDescription || page.heroDescription || ''}</div>
+            <div className={styles.rawItem}>
+              {page.heroLead || page.workflowDescription || page.heroDescription || ''}
+            </div>
             {page.workflowSteps.slice(0, 2).map((step) => (
-              <div className={styles.rawItem} key={step.title}>{step.title}</div>
+              <div className={styles.rawItem} key={step.title}>
+                {step.title}
+              </div>
             ))}
           </div>
         </div>
@@ -99,8 +115,12 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
         <section aria-labelledby={`${page.slug}-workflow-h2`} className={styles.workflowSection}>
           <div className={styles.workflowInner}>
             <div className={`${styles.workflowTitle} reveal`}>
-              {page.workflowEyebrow ? <span className="sec-label">{page.workflowEyebrow}</span> : null}
-              {page.workflowTitle ? <h2 id={`${page.slug}-workflow-h2`}>{page.workflowTitle}</h2> : null}
+              {page.workflowEyebrow ? (
+                <span className="sec-label">{page.workflowEyebrow}</span>
+              ) : null}
+              {page.workflowTitle ? (
+                <h2 id={`${page.slug}-workflow-h2`}>{page.workflowTitle}</h2>
+              ) : null}
               {page.workflowDescription ? <p>{page.workflowDescription}</p> : null}
             </div>
             <OfficialUseCaseWorkflow steps={page.workflowSteps} />
@@ -112,8 +132,12 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
         <section aria-labelledby={`${page.slug}-testimonials-h`} className={styles.testimonials}>
           <div className={styles.testimonialsInner}>
             <div className={`${styles.testimonialsHead} reveal`}>
-              {page.testimonialsEyebrow ? <span className="sec-label">{page.testimonialsEyebrow}</span> : null}
-              {page.testimonialsTitle ? <h2 id={`${page.slug}-testimonials-h`}>{page.testimonialsTitle}</h2> : null}
+              {page.testimonialsEyebrow ? (
+                <span className="sec-label">{page.testimonialsEyebrow}</span>
+              ) : null}
+              {page.testimonialsTitle ? (
+                <h2 id={`${page.slug}-testimonials-h`}>{page.testimonialsTitle}</h2>
+              ) : null}
               {page.testimonialsDescription ? <p>{page.testimonialsDescription}</p> : null}
             </div>
             <div className={styles.testimonialsGrid}>
@@ -142,9 +166,13 @@ export default async function UseCaseDetailPage(props: UseCasePageProps) {
       {page.ctaButton && page.ctaTitle ? (
         <section aria-labelledby={`${page.slug}-cta`} className="cta-band official-cta-band">
           {page.ctaEyebrow ? <span className="sec-label reveal">{page.ctaEyebrow}</span> : null}
-          <h2 className="reveal" id={`${page.slug}-cta`}>{page.ctaTitle}</h2>
+          <h2 className="reveal" id={`${page.slug}-cta`}>
+            {page.ctaTitle}
+          </h2>
           {page.ctaDescription ? <p className="reveal d1">{page.ctaDescription}</p> : null}
-          <a className="btn-cream official-cta-button reveal d2" href={page.ctaButton.href}>{page.ctaButton.label}</a>
+          <a className="btn-cream official-cta-button reveal d2" href={page.ctaButton.href}>
+            {page.ctaButton.label}
+          </a>
         </section>
       ) : null}
     </div>

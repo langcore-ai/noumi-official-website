@@ -1,3 +1,4 @@
+import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
 import Link from 'next/link'
 
 import { OfficialDeliverableShowcase } from '@/components/site/official/OfficialDeliverableShowcase'
@@ -29,10 +30,10 @@ function HomeCTA({ placement }: { placement: 'hero' | 'cta_band' }) {
 }
 
 /** Homepage based on the approved design; only interactive islands hydrate. */
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <>
-      <StructuredData data={HOME_JSON_LD} />
+      <StructuredData data={await getManagedJsonLd('/', HOME_JSON_LD)} />
       <link rel="preload" as="image" href={HOME_ASSETS.poster} fetchPriority="high" />
       <main className="redesign-home" id="top">
         <section className="redesign-hero">
@@ -160,4 +161,13 @@ export default function HomePage() {
       </main>
     </>
   )
+}
+
+export function generateMetadata() {
+  return createManagedMetadata({
+    pathname: '/',
+    title: 'Personal AI workspace built for Business & Solutions professionals | Noumi.ai',
+    description:
+      'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
+  })
 }

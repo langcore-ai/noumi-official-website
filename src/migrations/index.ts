@@ -1,3 +1,6 @@
+import * as seoStructured from './20261016_102000_seo_structured_data'
+import * as seoRoutes from './20261016_101000_seed_seo_routes'
+import * as siteManagement from './20261016_100000_site_management'
 import * as migration_20261013_100000_add_blog_structured_data from './20261013_100000_add_blog_structured_data'
 import * as migration_20260422_085454_initial from './20260422_085454_initial'
 import * as migration_20260422_180500_add_html_render_mode from './20260422_180500_add_html_render_mode'
@@ -90,4 +93,7 @@ export const migrations = [
     down: migration_20261013_100000_add_blog_structured_data.down,
     name: '20261013_100000_add_blog_structured_data',
   },
+  { up: siteManagement.up, down: siteManagement.down, name: '20261016_100000_site_management' },
+  { up: seoRoutes.up, down: seoRoutes.down, name: '20261016_101000_seed_seo_routes' },
+  { up: seoStructured.up, down: seoStructured.down, name: '20261016_102000_seo_structured_data' },
 ]

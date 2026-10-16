@@ -12,6 +12,12 @@
 
 远端 main 和 staging 已建立。新成员从 origin/staging 开始；若无法获取该分支，检查 GitHub 仓库权限。
 
+## 权限与部署责任
+
+开发者只需 GitHub 权限。安装依赖会安装项目内 Wrangler，不要求全局安装或登录，不索取个人 Cloudflare Token。`build:worker-preview` / `deploy:worker-preview` 是 CI 入口；普通开发者通过 Git 推送触发，维护者才在有权限的机器手动排障。
+
+2026-10-16 已验证 Preview 手动部署、健康接口及后台功能；自动 Builds 仍待维护者确认控制台配置并验证一次 Git 触发。Agent 应以本次构建结果和线上 revision 为准，不凭推送成功宣称部署完成。
+
 ## 开始开发
 
 检查工作区后再切分支；不要丢弃或混入其他任务的改动。
@@ -47,11 +53,11 @@ git diff --check
 git diff --stat
 ```
 
-检查提交内容后提交功能分支，通过团队代码审查合入 staging，再从最新 staging 发布。不要用强推覆盖同事历史。发布测试站前协调其他使用者，共享 staging 只有一套内容与运行版本；本机锁不能防止两台机器同时发布。
+检查提交内容后提交功能分支，通过团队代码审查合入 staging，由平台从合并后的 staging 提交发布。不要用强推覆盖同事历史。发布测试站前协调其他使用者，共享 staging 只有一套内容与运行版本；本机锁不能防止两台机器同时发布。
 
 ## 云端预览发布
 
-开发者将验证后的代码合入 staging，Cloudflare Builds 自动运行 `build:worker-preview` 和 `deploy:worker-preview`。不需要登录 Wrangler 或持有部署密钥。固定验收地址为 https://preview.staging.noumi.ai。
+维护者完成并验证 [控制台配置](CLOUDFLARE-BUILDS.md) 后，开发者将验证后的代码合入 staging，Cloudflare Builds 自动运行 `build:worker-preview` 和 `deploy:worker-preview`。不需要登录 Wrangler 或持有部署密钥。固定验收地址为 https://preview.staging.noumi.ai。
 
 其他功能分支也可产生独立 Preview 地址，名称见构建日志。所有分支共用 staging 数据库；只有 staging 发布应用迁移，其他分支存在新迁移时须先合入 staging。命名、资源和控制台设置详见 [自动预览指南](CLOUDFLARE-BUILDS.md)。
 
@@ -62,4 +68,5 @@ git diff --stat
 - 检查 `/api/site/health` 的 environment 为 staging、healthy 为 true，revision 匹配提交前七位。
 - 检查官网、后台及本次修改功能；发布后通过 Preview 直接读取测试内容，无需等待旧 Cron 快照。
 - 查看原官网 Worker 下对应 Preview 的部署日志。没有平台权限时请维护者提供日志。
+- 无法查看构建日志且线上 revision 未匹配时，报告“已推送，部署待确认”，交由维护者排查平台；不要求开发者登录 Wrangler。
 - 自动构建失败不能视为发布成功。不要因预览失败而调用生产 `deploy:*` 或 `release`。

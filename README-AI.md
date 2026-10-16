@@ -13,9 +13,15 @@ Start every development task with [docs/STAGING-WORKFLOW.md](docs/STAGING-WORKFL
 - Product auth target: `https://www.noumi.ai/auth`.
 - Runtime: Next.js through OpenNext on Cloudflare Workers.
 - Primary data: Payload CMS on D1.
-- Shared object storage: `official-website-bucket` through both `R2` and `NEXT_INC_CACHE_R2_BUCKET` bindings.
+- Production object storage: `official-website-bucket` through both `R2` and `NEXT_INC_CACHE_R2_BUCKET` bindings.
 - Dependency lock: `bun.lock`; use Bun project entrypoints; legacy tooling may still require pnpm.
-- Cloudflare top-level config is production; named `local` and `staging` environments are isolated. There is no named `production`. See [test environments](docs/TEST-ENVIRONMENTS.md).
+- Cloudflare top-level config is production. Local commands use `env.local`; cloud previews use `previews` and the generated test-only config. `env.staging` remains a migration/resource reference, not a standalone Worker deployment target. There is no named `production`. See [test environments](docs/TEST-ENVIRONMENTS.md).
+
+## Preview delivery
+
+Developers need GitHub access, Git, Node.js and Bun. Installing dependencies installs project-local Wrangler; do not require global Wrangler, `wrangler login`, or personal Cloudflare tokens. Push the authorized branch and let Cloudflare Builds execute the preview commands. A feature branch updates its own Preview; staging updates `https://preview.staging.noumi.ai`. Do not merge branches without task authorization.
+
+Verify the target health endpoint reports staging, healthy, and the expected commit revision. If logs are inaccessible and the revision does not match, report deployment as unconfirmed. As of 2026-10-16, manual deployment and runtime smoke checks passed; the Git-triggered Builds workflow still needs maintainer confirmation. See [Builds setup](docs/CLOUDFLARE-BUILDS.md).
 
 ## Evolution
 
@@ -56,6 +62,8 @@ docs/HANDOVER.md            Complete implementation and operations guide
 5. Relevant Payload changes mark snapshots dirty and request a refresh.
 6. The refresh API rebuilds JSON snapshots and returns public routes; `worker.ts` then rebuilds route HTML.
 7. Cloudflare Cron runs every five minutes but refreshes only when dirty, missing, or older than the effective stale interval.
+
+Cloud Preview sets `NOUMI_DISABLE_SNAPSHOTS=true`: it bypasses the above HTML/JSON snapshot flow and does not use Cron. Validate published CMS content directly.
 
 ## CMS Boundaries
 

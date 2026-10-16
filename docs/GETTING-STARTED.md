@@ -4,9 +4,15 @@
 
 日常开发不需要登录 Cloudflare，也不需要找别人索要部署 Token。本地后台账号由初始化命令生成；云端后台账号由维护者分配。
 
+你只需完成“拉取代码 → 本地修改与验证 → 推送功能分支 → PR 合入 staging”。云端构建由 Cloudflare 执行。
+
+**当前验收状态（2026-10-16）：** 固定预览站已发布，官网、后台登录、媒体上传和文章发布已实测通过。GitHub 推送自动发布仍需维护者确认控制台命令并验证首次自动构建；手动发布成功不等于自动发布已接通。
+
 ## 1. 准备工具与权限
 
 需要安装 Git、Node.js 和 Bun，并拥有 GitHub 仓库 `langcore-ai/noumi-official-website` 的读取权限。提交代码还需要对应写入权限，或通过团队允许的 Pull Request 流程提交。
+
+**不需要另外安装全局 Wrangler，也不需要执行 `wrangler login`。** 安装项目依赖时会自动安装项目使用的 Wrangler，本地模拟由 `mode:` 命令调用。GitHub 登录用于拉取和推送代码，与 Cloudflare 登录无关。
 
 当前依赖声明要求 Bun 至少 1.3.0，Node.js 为 `^18.20.2` 或 `>=20.9.0`。团队可统一使用 Node.js 22。在终端确认工具已安装：
 
@@ -132,13 +138,23 @@ git push -u origin HEAD
 
 提交说明换成实际改动内容。在 GitHub 创建 Pull Request，**目标分支选择 `staging`**，附上改动说明、本地验证结果和必要截图。经团队审查后合入 staging。
 
-平台连接完成后，推送功能分支可生成独立 Preview 地址，具体地址见构建输出；staging 使用固定地址。所有云端预览共用测试数据库和媒体，避免修改其他人的测试内容。
+维护者配置并验证自动构建后：
+
+| 你做的操作                  | 云端结果                                |
+| --------------------------- | --------------------------------------- |
+| 推送自己的功能分支          | 更新该分支的独立预览，不更新固定测试站  |
+| PR 合入 staging             | 更新 `https://preview.staging.noumi.ai` |
+| 只在本地修改代码或 CMS 内容 | 不更新云端                              |
+
+功能分支地址为 `https://branch-<分支简写>-<哈希>.staging.noumi.ai`，准确地址见构建输出；没有查看权限时请维护者提供。所有云端预览共用测试数据库和媒体，避免修改其他人的测试内容。若改动新增数据库迁移，功能分支预览会等待迁移先在 staging 应用，请通过 PR 与维护者协调。
 
 ## 7. 打开云端测试站
 
 - 官网：[https://preview.staging.noumi.ai](https://preview.staging.noumi.ai)
 - 后台：[https://preview.staging.noumi.ai/admin](https://preview.staging.noumi.ai/admin)
 - 健康与版本：[https://preview.staging.noumi.ai/api/site/health](https://preview.staging.noumi.ai/api/site/health)
+
+**请使用完整地址 `preview.staging.noumi.ai`。** `staging.noumi.ai` 只是预览基础域名，直接打开它目前可能进入正式站。
 
 **自动部署的前提：维护者已在 Cloudflare 完成 GitHub 连接，并验证首次构建成功。** 仓库已提供构建命令，但不能仅凭文档判断平台连接已启用。连接配置见 [Cloudflare Builds 指南](CLOUDFLARE-BUILDS.md)。
 
@@ -157,15 +173,21 @@ git push -u origin HEAD
 
 ## 8. 常见问题
 
-| 现象                         | 处理方式                                                      |
-| ---------------------------- | ------------------------------------------------------------- |
-| 拉取仓库提示没有权限         | 确认 GitHub 登录身份，联系维护者开通仓库权限                  |
-| 启动后打不开网页             | 等待构建完成，执行 `mode:status` 和 `mode:logs`，使用实际端口 |
-| 改完代码页面没变             | 执行 `mode:reload`，等待成功后刷新浏览器                      |
-| 切换分支后依赖或数据库报错   | 停止服务，重新安装锁定依赖，运行 `mode:setup` 后启动          |
-| 本地后台没有云端内容         | 正常，本地和云端数据独立，不自动同步                          |
-| 后台菜单或 SEO 保存后未生效  | 检查是否已发布；菜单还需勾选启用，再检查快照刷新              |
-| 已合入 staging，云端还是旧版 | 核对健康接口 revision，请维护者查看构建结果                   |
-| 自动构建出现权限错误         | 交给维护者处理平台部署权限，不要改用生产部署命令              |
+| 现象                         | 处理方式                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------- |
+| 拉取仓库提示没有权限         | 确认 GitHub 登录身份，联系维护者开通仓库权限                                      |
+| 启动后打不开网页             | 等待构建完成，执行 `mode:status` 和 `mode:logs`，使用实际端口                     |
+| 改完代码页面没变             | 执行 `mode:reload`，等待成功后刷新浏览器                                          |
+| 切换分支后依赖或数据库报错   | 停止服务，重新安装锁定依赖，运行 `mode:setup` 后启动                              |
+| 本地后台没有云端内容         | 正常，本地和云端数据独立，不自动同步                                              |
+| 后台菜单或 SEO 保存后未生效  | 检查是否已发布；菜单还需勾选启用，再核对预览地址和实际页面；云端 Preview 不用快照 |
+| 已合入 staging，云端还是旧版 | 核对健康接口 revision，请维护者查看构建结果                                       |
+| 自动构建出现权限错误         | 交给维护者处理平台部署权限，不要改用生产部署命令                                  |
+
+如果需要让 Agent 帮你提交并发布预览，可以这样说：
+
+> 阅读 AGENTS.md 和 docs/STAGING-WORKFLOW.md，完成本次修改并验证，提交和推送当前功能分支。通过 Cloudflare Builds 更新该分支预览，核对线上 revision；如果无法确认部署，请明确说明。不要合并 staging，不要在本机登录 Wrangler。
+
+维护者只需一次性配置 GitHub 连接、预览构建命令和有效的平台权限，详见 [Cloudflare Builds 指南](CLOUDFLARE-BUILDS.md)。普通开发者不需要复制维护者的密钥文件，也不需要在本机运行 `build:worker-preview` / `deploy:worker-preview`。
 
 日常开发使用 `mode:`；同事不需要在本机执行 `deploy`、`deploy:database` 或 `release`。这些涉及生产或运维，避免为解决预览问题而运行。

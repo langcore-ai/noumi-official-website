@@ -10,6 +10,15 @@
 - 集合/字段修改同时提交迁移及生成类型；组件修改生成 import map。提交前执行与变更相关的检查，具体见 staging 流程。
 - SEO、重定向、菜单发布会影响页面快照；后台有字段不代表前台正在使用，需验证实际页面或 HTTP 响应。
 
+## staging 任务的执行约定
+
+- 日常开发只需要 GitHub 权限和 Git、Node.js、Bun。`bun install --frozen-lockfile` 会安装项目内 Wrangler；无需全局安装、`wrangler login` 或向用户索取 Cloudflare Token。
+- 用户要求“更新云端预览”时，在已有提交/推送授权范围内完成检查并推送对应分支，由 Cloudflare Builds 发布。不要默认在开发者机器执行 `deploy:worker-preview`；该入口交给 CI，维护者才用它手动排障。
+- 功能分支推送更新自己的 Preview；只有 staging 推送更新固定地址 `https://preview.staging.noumi.ai`。未经合并授权，不为更新固定地址而自行合并功能分支。
+- 推送后核对构建结果和目标地址 `/api/site/health`：`healthy=true`、`environment=staging`、`revision` 等于目标提交前七位。不能读取构建日志时，可读取健康接口；版本未匹配则报告“已推送，部署待确认”，不要宣称部署成功，也不要让用户通过本机登录绕过 CI。
+- 控制台一次性配置由维护者负责，见 [Cloudflare Builds](docs/CLOUDFLARE-BUILDS.md)。2026-10-16 已验证手动 Preview 发布及线上功能；Git 自动构建链路仍待控制台确认，不能将历史手动验收当成自动发布验证。
+- `staging.noumi.ai` 是 Preview 基础域名，不是验收地址；不要修改或删除现有 `*.noumi.ai` DNS。全部分支 Preview 共用测试 CMS 数据，功能分支不会应用新迁移。
+
 # Payload CMS Development Rules
 
 You are an expert Payload CMS developer. When working with Payload projects, follow these rules:

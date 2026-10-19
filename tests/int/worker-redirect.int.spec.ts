@@ -1,6 +1,7 @@
 import { expect, it, vi } from 'vitest'
 
-vi.mock('../../.open-next/worker.js', () => ({ default: { fetch: vi.fn() } }))
+const openNext = vi.hoisted(() => ({ fetch: vi.fn() }))
+vi.mock('../../.open-next/worker.js', () => ({ default: openNext }))
 import worker from '../../worker'
 
 it('redirects before reading stale HTML snapshots or invoking OpenNext', async () => {
@@ -52,7 +53,6 @@ it('applies published CMS redirects before snapshot reads and preserves query pa
 })
 
 it('serves Preview pages directly without stale snapshot reads or writes', async () => {
-  const { default: openNext } = await import('../../.open-next/worker.js')
   vi.mocked(openNext.fetch).mockResolvedValueOnce(new Response('Fresh Preview'))
   const get = vi.fn()
   const put = vi.fn()

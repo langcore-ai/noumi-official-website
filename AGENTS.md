@@ -1146,8 +1146,8 @@ For deeper exploration of specific topics, refer to the context files located in
 - Examples: https://github.com/payloadcms/payload/tree/main/examples
 - Templates: https://github.com/payloadcms/payload/tree/main/templates
 
-## Use Cases iframe 嵌入
+## Use Cases 原生页面
 
-修改官网 Use Cases iframe、自动高度、内部滚动或嵌入通信协议前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的协议文档。官网只负责父网页，外部展示站点负责子网页适配。本地运行使用 `bun run mode:` 系列命令。
+修改官网 Use Cases、内部滚动或预览浮窗前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的说明。该目录名称为历史沿用；Use Cases 已改为仓库内原生页面，不再依赖 iframe 或外部展示站点。本地运行使用 `bun run mode:` 系列命令。当前恢复版本先供用户本地确认，确认前不得提交新 PR 或发布恢复内容。
 
 Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。预览构建使用 `build:worker-preview` / `deploy:worker-preview`，开发者通过 GitHub 触发；本地模拟仍使用 `mode:start` / `mode:preview up`。

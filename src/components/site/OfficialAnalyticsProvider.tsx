@@ -26,6 +26,7 @@ import {
   type OfficialAnalyticsProperties,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
+import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 
 /** Landing page 视图仅在一个会话内记一次。 */
@@ -136,8 +137,11 @@ function readInitialAnalyticsConsent() {
  * @param props.children 前台页面节点
  * @returns 包裹后的前台页面
  */
-export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
-  const { children } = props
+export function OfficialAnalyticsProvider(props: {
+  children: ReactNode
+  statisticsEnabled?: boolean
+}) {
+  const { children, statisticsEnabled = true } = props
   const pathname = usePathname()
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
   const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(readInitialAnalyticsConsent)
@@ -147,6 +151,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   const hasAnalyticsConsentRef = useRef(hasAnalyticsConsent)
 
   useEffect(() => {
+    if (!statisticsEnabled) return
     let canceled = false
 
     void loadOfficialAnalyticsConfig()
@@ -169,7 +174,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
     return () => {
       canceled = true
     }
-  }, [])
+  }, [statisticsEnabled])
 
   useEffect(() => {
     const syncConsent = () => {
@@ -221,6 +226,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   }, [analyticsConfig, hasAnalyticsConsent])
 
   useEffect(() => {
+    if (!statisticsEnabled) return
     const gtag = ensureOfficialGoogleTag()
     const consentPayload = buildOfficialGoogleTagConsentPayload(hasAnalyticsConsent)
     const googleWindow = window as GoogleTagWindow
@@ -241,7 +247,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
     }
 
     gtag('consent', 'update', consentPayload)
-  }, [hasAnalyticsConsent])
+  }, [hasAnalyticsConsent, statisticsEnabled])
 
   useEffect(() => {
     const pageViewKey = `${hasAnalyticsConsent ? 'granted' : 'denied'}:${pathname}`
@@ -249,6 +255,7 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
       return
     }
 
+    if (!statisticsEnabled) return
     const gtag = ensureOfficialGoogleTag()
     googleTagPageViewKeyRef.current = pageViewKey
     gtag(
@@ -260,10 +267,11 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
         title: document.title,
       }),
     )
-  }, [hasAnalyticsConsent, pathname])
+  }, [hasAnalyticsConsent, pathname, statisticsEnabled])
 
   const capture = useCallback(
     (eventName: OfficialAnalyticsEventName, properties: OfficialAnalyticsProperties = {}) => {
+      trackOfficialReplay(eventName, properties)
       if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
         return
       }
@@ -306,10 +314,6 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
   }, [capture, pathname])
 
   useEffect(() => {
-    if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
-      return
-    }
-
     const captureActive = () => {
       if (document.visibilityState !== 'visible') {
         return
@@ -363,6 +367,8 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
       ) {
         return
       }
+
+      if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) return
 
       const attributionParams = buildOfficialOutboundAttributionParams({
         anonymousDistinctId: posthog.get_distinct_id(),

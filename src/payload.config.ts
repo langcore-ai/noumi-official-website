@@ -350,6 +350,16 @@ async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      afterNavLinks: ['/components/admin/replay/ReplayNav'],
+      views: {
+        visitReplays: {
+          Component: '/components/admin/replay/ReplayView',
+          path: '/visit-replays',
+          exact: true,
+        },
+      },
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

@@ -120,6 +120,17 @@ The handover documents the full risk register. Highest-priority areas are raw HT
 
 ## Verification
 
+### Website visit replay
+
+- `/admin/visit-replays` is an admin-only Payload custom view. Every `/api/site/replay/*` read endpoint independently checks the authenticated user's current database role; `/config` exposes only the public capture settings.
+- `src/lib/site/replay/` owns the rrweb Cloud recorder, privacy rules, event whitelist and bounded Cloud reads. `OfficialReplayController` mounts only in the public, non-draft layout. It starts after analytics Cookie consent, stops on withdrawal, and groups activity into visits with a 30-minute idle boundary.
+- Replay receives the existing website business events through `OfficialAnalyticsProvider.capture`, independently of PostHog availability. Replay page views have one owner in the recorder. Keep PostHog session recording disabled.
+- Production uses `RRWEB_PUBLIC_KEY`, `RRWEB_SECRET_KEY`, `RRWEB_SCOPE`. Local/staging use only `RRWEB_TEST_PUBLIC_KEY`, `RRWEB_TEST_SECRET_KEY`, `RRWEB_TEST_SCOPE`. Use separate website/test Cloud projects and scopes; keys are not CMS fields or tracked configuration. Config is read at runtime with no-store so HTML snapshots cannot freeze capture settings.
+- Visits are filtered by `app=noumi-official` and configured scope; anonymous visitor IDs are filters for administrators, not visitor access credentials. Recording reads validate the same metadata before returning DOM or short-lived player URLs. Signed URLs are bearer links; there is no public replay route or sharing UI.
+- Lists load metadata only. Timeline extraction and the player load on demand, with limits inherited from neo-noumi: 20 recordings per visit, 16 MiB decompressed per recording, 2000 timeline events; partial results are marked incomplete. There is no D1 event table or durable delivery queue.
+- Passwords, OTP/private regions are blocked and known credential formats redacted. Normal page text/inputs remain visible. Images, video/audio, canvas and iframe interiors are excluded. Do not silently relax these rules to improve visual fidelity.
+- Capture is off without valid keys/scope. Real Cloud ingestion/playback requires configured test keys and a consenting test visit; mocked tests do not establish live delivery. Local full validation uses `bun run mode:start` / `mode:reload`.
+
 For documentation-only changes:
 
 ```bash

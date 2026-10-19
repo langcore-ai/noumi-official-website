@@ -2,6 +2,8 @@ import { createOfficialMetadata } from '@/lib/site/official-site'
 import type { ReactNode } from 'react'
 import Script from 'next/script'
 
+import { draftMode } from 'next/headers'
+import { OfficialReplayController } from '@/components/site/OfficialReplayController'
 import { OfficialAnalyticsProvider } from '@/components/site/OfficialAnalyticsProvider'
 import { CookieConsentBanner } from '@/components/site/CookieConsentBanner'
 import { OfficialGlobalEffects } from '@/components/site/official/OfficialGlobalEffects'
@@ -39,6 +41,7 @@ export async function generateMetadata() {
  */
 export default async function FrontendLayout(props: { children: ReactNode }) {
   const { children } = props
+  const isDraft = (await draftMode()).isEnabled
   const isTestEnvironment = ['local', 'staging'].includes(process.env.NEXT_PUBLIC_APP_ENV || '')
   const content = (
     <>
@@ -70,11 +73,10 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
             />
           </>
         )}
-        {isTestEnvironment ? (
-          content
-        ) : (
-          <OfficialAnalyticsProvider>{content}</OfficialAnalyticsProvider>
-        )}
+        <OfficialAnalyticsProvider statisticsEnabled={!isTestEnvironment}>
+          {!isDraft && <OfficialReplayController />}
+          {content}
+        </OfficialAnalyticsProvider>
       </body>
     </html>
   )

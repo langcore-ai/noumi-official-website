@@ -1,0 +1,207 @@
+.official-replay {
+  padding: var(--base);
+  color: var(--theme-text);
+}
+.official-replay h1,
+.official-replay h2,
+.official-replay h3 {
+  margin: 0 0 calc(var(--base) * 0.5);
+}
+.official-replay p {
+  margin: calc(var(--base) * 0.5) 0;
+}
+.official-replay__header,
+.official-replay__filter,
+.official-replay__actions,
+.official-replay__segments {
+  display: flex;
+  gap: calc(var(--base) * 0.5);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--base);
+}
+.official-replay__header {
+  justify-content: space-between;
+}
+.official-replay__filter {
+  align-items: flex-end;
+}
+.official-replay__filter label {
+  display: grid;
+  gap: 6px;
+  min-width: min(100%, 320px);
+}
+.official-replay input,
+.official-replay button {
+  font: inherit;
+  color: var(--theme-text);
+  background: var(--theme-input-bg);
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: var(--style-radius-s);
+  padding: 9px 12px;
+  min-height: 40px;
+}
+.official-replay button {
+  cursor: pointer;
+}
+.official-replay button:hover {
+  background: var(--theme-elevation-100);
+}
+.official-replay button[aria-pressed='true'],
+.official-replay button[aria-current='step'] {
+  background: var(--theme-elevation-150);
+  border-color: var(--theme-elevation-600);
+}
+.official-replay button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.official-replay button:focus-visible,
+.official-replay a:focus-visible,
+.official-replay input:focus-visible {
+  outline: 2px solid var(--theme-elevation-800);
+  outline-offset: 2px;
+}
+.official-replay__layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-s);
+}
+.official-replay__visits {
+  padding: var(--base);
+  border-right: 1px solid var(--theme-elevation-150);
+}
+.official-replay__visit {
+  width: 100%;
+  text-align: left;
+  display: grid;
+  gap: 6px;
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+}
+.official-replay__visit span,
+.official-replay__meta,
+.official-replay__header p {
+  color: var(--theme-elevation-600);
+}
+.official-replay__detail {
+  padding: var(--base);
+  min-width: 0;
+}
+.official-replay__meta {
+  overflow-wrap: anywhere;
+}
+.official-replay__empty {
+  padding-block: calc(var(--base) * 3);
+  text-align: center;
+}
+.official-replay__player-panel {
+  margin-block: var(--base);
+}
+.official-replay__player {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--theme-elevation-150);
+}
+.official-replay__player .rr-player {
+  box-shadow: none;
+  max-width: 100%;
+  background: var(--theme-elevation-50);
+}
+.official-replay__player .rr-controller {
+  background: var(--theme-elevation-50);
+  color: var(--theme-text);
+}
+.official-replay__player .rr-controller button {
+  min-height: 28px;
+  padding: 2px 4px;
+}
+.official-replay__player .rr-controller svg {
+  fill: currentColor;
+}
+.official-replay__timeline {
+  list-style: none;
+  padding: 0;
+}
+.official-replay__timeline button {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--base);
+  width: 100%;
+  text-align: left;
+  margin-block: 6px;
+}
+.official-replay__timeline button > span {
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+.official-replay__timeline time {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.official-replay__notice {
+  color: var(--theme-warning-700);
+}
+.official-replay [role='alert'] {
+  color: var(--theme-error-700);
+}
+.official-replay__back {
+  display: none;
+}
+@media (max-width: 900px) {
+  .official-replay__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .official-replay__visits {
+    border-right: 0;
+  }
+  .official-replay__detail {
+    display: none;
+  }
+  .official-replay__layout--selected .official-replay__visits {
+    display: none;
+  }
+  .official-replay__layout--selected .official-replay__detail {
+    display: block;
+  }
+  .official-replay__back {
+    display: inline-block;
+    margin-bottom: var(--base);
+  }
+}
+
+/* rrweb 的 Svelte 控制条有自身选择器；只覆盖外部播放器，不影响 iframe 内录制页面。 */
+.official-replay__player.official-replay__player.official-replay__player .rr-controller {
+  background: var(--theme-elevation-50);
+  color: var(--theme-text);
+}
+.official-replay__player.official-replay__player.official-replay__player .rr-timeline__time {
+  color: var(--theme-text);
+}
+.official-replay__player.official-replay__player.official-replay__player .rr-progress {
+  background: var(--theme-elevation-200);
+}
+.official-replay__player.official-replay__player.official-replay__player .rr-progress__step,
+.official-replay__player.official-replay__player.official-replay__player .rr-progress__handler,
+.official-replay__player.official-replay__player.official-replay__player
+  .rr-controller__btns
+  button.active {
+  background: var(--theme-elevation-800);
+  color: var(--theme-bg);
+}
+.official-replay__player.official-replay__player.official-replay__player
+  .switch
+  input[type='checkbox']:checked
+  + label::before {
+  background: var(--theme-elevation-800);
+}
+
+.official-replay__player.official-replay__player.official-replay__player .rr-progress {
+  border-top-color: var(--theme-elevation-50);
+  border-bottom-color: var(--theme-elevation-50);
+}
+.official-replay__player.official-replay__player.official-replay__player .rr-controller__btns {
+  color: var(--theme-text);
+}

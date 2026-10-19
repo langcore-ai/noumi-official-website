@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { OfficialUseCasesEmbed } from '@/components/site/official/OfficialUseCasesEmbed'
 
-const origin = 'https://noumi-twelve-use-cases.himihiroti.chatgpt.site'
+const origin = window.location.origin
 let notify: (entries: { contentRect: { width: number } }[]) => void
 const disconnect = vi.fn()
 beforeEach(() => {
@@ -45,6 +45,7 @@ function send(
 it('keeps scrolling until a trusted valid height, supports shrinking and resets on reload', () => {
   const { container } = render(<OfficialUseCasesEmbed />)
   const frame = container.querySelector('iframe')!
+  expect(frame.getAttribute('src')).toBe('/assets/se-use-cases/index.html?embed=1')
   expect(frame.getAttribute('scrolling')).toBe('auto')
   send(frame, 1200, 'https://untrusted.test')
   send(frame, 1200, origin, window)

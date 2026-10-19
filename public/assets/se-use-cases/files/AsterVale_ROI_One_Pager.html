@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AsterVale ROI and pilot decision brief: first-year economic return, cost, break-even conditions and rollout criteria.">
+<title>AsterVale | ROI &amp; Pilot Decision</title>
+<style>
+  :root{--ink:#172b43;--muted:#5d7085;--blue:#3155ce;--blue-wash:#eaf0ff;--teal:#087a6b;--teal-wash:#e4f2ee;--paper:#f5f7fa;--rule:#cbd5df;--amber:#9a6100;--amber-wash:#fff3dc;--white:#fff}
+  *{box-sizing:border-box}
+  html{background:#e8edf2;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  body{margin:0;padding:26px 18px}
+  .sheet{max-width:1180px;margin:0 auto;background:var(--white);padding:34px 42px 26px;box-shadow:0 15px 48px rgba(23,43,67,.12);border-top:5px solid var(--blue)}
+  .mast{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:15px;border-bottom:1px solid var(--rule);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .mast strong{color:var(--ink);font-size:12px;letter-spacing:.12em}
+  .mast .date{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:500;letter-spacing:.02em;text-transform:none}
+  .intro{display:grid;grid-template-columns:1.55fr .8fr;gap:28px;align-items:end;padding:23px 0 18px}
+  .eyebrow{margin:0 0 8px;color:var(--blue);font:700 10px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase}
+  h1{max-width:720px;margin:0;font:500 clamp(30px,3.7vw,48px)/1.02 Georgia,'Times New Roman',serif;letter-spacing:-.035em}
+  .lede{max-width:700px;margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+  .status{justify-self:end;max-width:245px;padding:11px 13px;border-left:3px solid var(--amber);background:var(--amber-wash);color:#704900;font-size:10px;line-height:1.45}
+  .status b{display:block;margin-bottom:3px;letter-spacing:.08em;text-transform:uppercase}
+  .ledger{display:grid;grid-template-columns:1.04fr .96fr;border:1px solid var(--rule);background:var(--paper)}
+  .hero-value{padding:20px 24px 18px;background:var(--blue-wash);border-right:1px solid var(--rule)}
+  .micro{color:var(--muted);font:700 9px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.13em;text-transform:uppercase}
+  .big{margin:6px 0 1px;color:var(--blue);font:500 clamp(40px,5vw,62px)/.98 Georgia,'Times New Roman',serif;letter-spacing:-.05em;white-space:nowrap}
+  .descriptor{font-size:13px;font-weight:700}
+  .calc{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+  .cashbook{display:grid;grid-template-columns:1fr 1fr;align-content:center}
+  .book-line{padding:14px 16px;border-bottom:1px solid var(--rule)}
+  .book-line:nth-child(odd){border-right:1px solid var(--rule)}
+  .book-line:nth-last-child(-n+2){border-bottom:0}
+  .book-line .label{display:block;margin-bottom:5px;color:var(--muted);font:700 9px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+  .book-line .amount{display:block;font:700 21px/1.05 Georgia,'Times New Roman',serif;font-variant-numeric:tabular-nums}
+  .book-line.non-cash .amount{color:var(--blue)}
+  .book-line.cash .amount{color:var(--teal)}
+  .book-line small{display:block;margin-top:4px;color:var(--muted);font-size:9px;line-height:1.3}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:21px 0 8px}
+  h2{margin:0;font:700 11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.11em;text-transform:uppercase}
+  .section-head p{margin:0;color:var(--muted);font-size:10px}
+  .scenario-wrap{border-top:2px solid var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:middle}
+  th:first-child,td:first-child{text-align:left}
+  thead th{color:var(--muted);font:700 9px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}
+  thead th.plan{color:var(--blue);background:var(--blue-wash)}
+  thead th.down{color:var(--teal);background:var(--teal-wash)}
+  tbody tr.key{font-weight:700;background:#f7f9fb}
+  tbody tr.key td:nth-child(2){color:var(--blue)}
+  tbody tr.key td:nth-child(3){color:var(--teal)}
+  .assumption-note{margin:8px 0 0;color:var(--muted);font-size:9px;line-height:1.45}
+  .lower{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:15px}
+  .cost-panel,.timing-panel{padding:13px 15px;border-top:2px solid var(--teal);background:#f6f8f9}
+  .panel-title{margin:0 0 8px;font:700 9px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .cost-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .cost-cell{border-left:1px solid var(--rule);padding-left:9px}
+  .cost-cell:first-child{border-left:0;padding-left:0}
+  .cost-cell b{display:block;margin-bottom:3px;font:700 17px Georgia,'Times New Roman',serif;font-variant-numeric:tabular-nums}
+  .cost-cell span{display:block;color:var(--muted);font-size:9px;line-height:1.35}
+  .timing-panel{border-color:var(--blue)}
+  .ramp{display:flex;gap:3px;align-items:end;height:30px;margin:7px 0 4px}
+  .ramp i{display:block;flex:1;background:#8da4ee;border-top:2px solid var(--blue);height:var(--h)}
+  .ramp i.full{background:#4b66cf}
+  .ramp-labels{display:flex;justify-content:space-between;color:var(--muted);font:9px ui-monospace,SFMono-Regular,Consolas,monospace}
+  .timing-panel p{margin:8px 0 0;color:var(--muted);font-size:9px;line-height:1.4}
+  .conclusion{display:flex;justify-content:space-between;gap:18px;margin-top:14px;padding:10px 13px;background:var(--ink);color:#fff}
+  .conclusion strong{font:700 10px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+  .conclusion span{max-width:75%;font-size:10px;line-height:1.4;color:#e0e8f1}
+  footer{display:flex;justify-content:space-between;gap:20px;padding-top:10px;color:var(--muted);font-size:8px;line-height:1.45}
+  footer p{margin:0;max-width:75%} footer .ref{text-align:right;white-space:nowrap}
+  .panel-note{margin:9px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+  .pilot-decision{margin:13px 0 0;font-size:13px;line-height:1.55;color:var(--ink)}
+  .lede{font-size:14px;line-height:1.55}.calc{font-size:12px;line-height:1.5}
+  .assumption-note{font-size:11px;line-height:1.5}.book-line small,.cost-cell span,.timing-panel p{font-size:10px;line-height:1.45}
+  .conclusion{align-items:flex-start}.conclusion strong{min-width:160px}.conclusion span{font-size:12px;line-height:1.5}
+  footer{font-size:10px;line-height:1.5}
+  @media(max-width:760px){body{padding:0}.sheet{padding:23px 18px;box-shadow:none}.mast{align-items:flex-start}.mast .date{text-align:right}.intro{grid-template-columns:1fr;gap:12px}.status{justify-self:start;max-width:none}.ledger{grid-template-columns:1fr}.hero-value{border-right:0;border-bottom:1px solid var(--rule)}.cashbook{min-height:145px}.section-head{align-items:flex-start;flex-direction:column;gap:4px}.lower{grid-template-columns:1fr}.conclusion{flex-direction:column;gap:5px}.conclusion span{max-width:none}footer{flex-direction:column}footer p{max-width:none}footer .ref{text-align:left;white-space:normal}table{font-size:10px}th,td{padding:7px 5px}}
+  @media print{@page{size:A4 landscape;margin:8mm}html,body{background:#fff}body{padding:0}.sheet{max-width:none;margin:0;padding:7mm 8mm 5mm;box-shadow:none;border-top-width:3px}.intro{padding:4mm 0 3mm;gap:8mm}h1{font-size:30pt}.lede{font-size:9pt;margin-top:2mm}.status{font-size:7pt;padding:2mm 3mm}.hero-value{padding:4mm 5mm}.big{font-size:40pt}.descriptor{font-size:9pt}.calc{font-size:7pt;margin-top:2mm}.book-line{padding:3mm 4mm}.book-line .amount{font-size:15pt}.book-line small{font-size:6.8pt}.section-head{margin:4mm 0 1.5mm}h2{font-size:7pt}.section-head p{font-size:6.5pt}table{font-size:7.5pt}th,td{padding:1.8mm 2.5mm}thead th{font-size:6.5pt}.assumption-note{font-size:6.2pt;margin-top:1.5mm}.lower{gap:4mm;margin-top:3mm}.cost-panel,.timing-panel{padding:2.5mm 3mm}.panel-title{font-size:6.5pt;margin-bottom:1.5mm}.cost-cell b{font-size:12pt}.cost-cell span,.timing-panel p{font-size:6.5pt}.ramp{height:6mm;margin:1mm 0}.ramp-labels{font-size:6pt}.conclusion{margin-top:3mm;padding:2mm 3mm}.conclusion strong,.conclusion span{font-size:7pt}footer{font-size:7pt;padding-top:2mm;gap:4mm}.panel-note{font-size:7pt;margin-top:2mm}.pilot-decision{font-size:8pt;line-height:1.45;margin-top:2.5mm}}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <div class="mast"><strong>AsterVale Advisory</strong><span>ROI &amp; pilot decision · 60-user scope</span><span class="date">Model date · 08 Oct 2026</span></div>
+  <section class="intro" aria-labelledby="headline">
+    <div><p class="eyebrow">Recommendation · validate before rollout</p><h1 id="headline">Validate value in a pilot.<br>Expand when the evidence supports it.</h1><p class="lede">Proceed with the planned 12-user pilot before committing to 60 users. The planning estimate yields <strong>$33,622 in Year 1 net economic benefit and 30.3% ROI</strong>; the conservative case is negative. Rollout depends on accepted quality, usable capacity and a refreshed investment case.</p></div>
+    <aside class="status"><b>Pricing basis · confirmation required</b>Costs use supplied quote AV-Q-2026-041 v1.0, dated 14 Oct 2026, after this brief’s 08 Oct date. Procurement must confirm its issue status and applicable terms before any purchase commitment.</aside>
+  </section>
+  <section class="ledger" aria-label="Planning return, capacity value and cash exposure">
+    <div class="hero-value"><div class="micro">Planning estimate · Year 1 net economic benefit</div><div class="big">+$33,622</div><div class="descriptor">30.3% economic ROI · after total economic cost</div><p class="calc">$144,442 in estimated capacity value less $110,820 in economic cost. Assumes 35% less preparation time, 70% adoption and 100% productive use of released time. Benefits remain subject to pilot validation.</p></div>
+    <div class="cashbook">
+      <div class="book-line non-cash"><span class="label">Capacity value · non-cash</span><span class="amount">$144,442</span><small>Planning case, Year 1 after ramp</small></div>
+      <div class="book-line cash"><span class="label">Documented cash savings modeled</span><span class="amount">$0</span><small>No paid-spend reduction is evidenced</small></div>
+      <div class="book-line cash"><span class="label">Supplier fees · Year 1</span><span class="amount">$79,200</span><small>Estimated vendor cash outflow, before tax</small></div>
+      <div class="book-line non-cash"><span class="label">Internal capacity cost · Year 1</span><span class="amount">$31,620</span><small>Valued staff time; not supplier cash</small></div>
+    </div>
+  </section>
+  <div class="section-head"><h2>Returns depend on adoption and usable time</h2><p>Year 1 · 1 Dec 2026–30 Nov 2027 · USD before tax</p></div>
+  <div class="scenario-wrap"><table aria-label="Planning and conservative sensitivity"><thead><tr><th>Measure</th><th class="plan">Planning estimate</th><th class="down">Conservative estimate</th></tr></thead><tbody>
+    <tr><td>Time reduction / steady-state adoption</td><td>35% / 70%</td><td>20% / 50%</td></tr>
+    <tr><td>Productive use of released time</td><td>100%</td><td>75%</td></tr>
+    <tr class="key"><td>Year 1 released hours</td><td>1,699 h</td><td>694 h</td></tr>
+    <tr class="key"><td>Year 1 capacity value · non-cash</td><td>$144,442</td><td>$44,217</td></tr>
+    <tr><td>Steady-state annual capacity value</td><td>$203,918/yr</td><td>$62,424/yr</td></tr>
+    <tr class="key"><td>Year 1 net economic benefit / ROI</td><td>+$33,622 / 30.3%</td><td>−$66,603 / −60.1%</td></tr>
+  </tbody></table></div>
+  <p class="assumption-note">Baseline: 816 eligible preparation hours/month across the 60-user scope, with no overlap between the three work categories. Both cases apply the same benefit ramp and $85/hour staff-cost basis; savings factors apply once. Steady-state annual value excludes the ramp. No cash savings or additional economic overlap are evidenced; both are modeled at $0.</p>
+  <section class="lower">
+    <div class="cost-panel"><h2 class="panel-title">First-year cost ledger · before tax</h2><div class="cost-grid"><div class="cost-cell"><b>$79,200</b><span>Estimated vendor cash fees<br>$69,600 subscription + support; $9,600 implementation</span></div><div class="cost-cell"><b>$31,620</b><span>Allocated internal capacity<br>96 setup h + 180 training h + 8 admin h/month, at $85/h</span></div><div class="cost-cell"><b>$110,820</b><span>Total economic cost<br>Vendor fees plus valued internal effort</span></div></div><p class="panel-note">$14,180 below the $125,000 evaluation ceiling before tax. Additional usage, integration or migration charges require separate costing; budget headroom does not establish investment approval.</p></div>
+    <div class="timing-panel"><h2 class="panel-title">Benefits ramp after implementation</h2><div class="ramp" role="img" aria-label="0 percent in December and January, 25 percent February, 50 percent March, 75 percent April, then 100 percent from May"><i style="--h:4px"></i><i style="--h:4px"></i><i style="--h:9px"></i><i style="--h:15px"></i><i style="--h:22px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i><i class="full" style="--h:30px"></i></div><div class="ramp-labels"><span>Dec ’26 · 0%</span><span>Feb · 25%</span><span>May · 100%</span><span>Nov ’27</span></div><p>Planning assumption: 1 Dec start, six-week implementation, no benefit in months 1–2, then 25% / 50% / 75% / 100% of steady-state benefit. Update the ramp to reflect measured readiness and expected rollout adoption.</p></div>
+  </section>
+  <div class="conclusion"><strong>Economic break-even · 76.7%</strong><span>At 35% time reduction and 70% adoption, at least 76.7% of released time must be put to productive use to cover Year 1 costs. At 75% productive use, net economic benefit falls to −$2,488. Cash payback is not established.</span></div>
+  <p class="pilot-decision"><strong>Rollout decision:</strong> Jonah and Rachel validate ten pilot work packages, counting failed tasks and review effort and checking accuracy, source traceability and editable outputs. Elena and Victor assess adoption and productive use, then refresh the model. Expand when quality is accepted, the refreshed economic case is positive and security, contract and budget approvals are recorded; otherwise revise scope or extend validation.</p>
+  <footer><p>Planning estimates, not measured results or a supplier guarantee. The 12-user pilot cannot establish adoption across 60 users. Capacity value is not cash savings; no headcount reduction is authorized. Taxes and additional paid services are excluded and must be assessed before commitment.</p><p class="ref">Sources: Opportunity Brief v1.1, section 6 ·<br>AV-Q-2026-041 v1.0 · ROI Calculation Template<br>Model assumptions: benefit ramp and productive use shown above</p></footer>
+</main>
+</body>
+</html>

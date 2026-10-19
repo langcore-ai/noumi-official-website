@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const showcasePath = '/assets/se-use-cases/index.html?embed=1'
+const origin = 'https://noumi-twelve-use-cases.himihiroti.chatgpt.site'
 
-/** Repository-owned gallery and sizing protocol: docs/USE-CASES-EMBED.md. */
+/** Cross-origin protocol and ownership: docs/USE-CASES-EMBED.md. */
 export function OfficialUseCasesEmbed() {
   const frame = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState<number>()
@@ -12,7 +12,6 @@ export function OfficialUseCasesEmbed() {
   useEffect(() => {
     const element = frame.current
     if (!element) return
-    const origin = window.location.origin
     let retry: ReturnType<typeof setInterval> | undefined
     const stopRetry = () => clearInterval(retry)
     const measure = () =>
@@ -60,7 +59,7 @@ export function OfficialUseCasesEmbed() {
   return (
     <iframe
       ref={frame}
-      src={showcasePath}
+      src={`${origin}/?embed=1`}
       title="What you can deliver with Noumi"
       width="100%"
       scrolling={height === undefined ? 'auto' : 'no'}

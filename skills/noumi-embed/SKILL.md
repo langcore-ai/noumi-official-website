@@ -1,13 +1,13 @@
 ---
 name: noumi-embed
-description: 维护 Noumi 官网 Use Cases 跨域 iframe、自动高度和滚动行为；涉及嵌入协议或双方联调时使用。
+description: 维护 Noumi 官网原生 Use Cases 展示；名称保留作旧 iframe 工作流的入口。
 ---
 
-先阅读仓库根目录的 `docs/USE-CASES-EMBED.md`，其中包含双方职责、消息协议及验收方法。
+先阅读 `docs/USE-CASES-EMBED.md`。该页面已按用户要求移除 iframe，原协议已退役。
 
-- 官网实现位于 `src/components/site/official/OfficialUseCasesEmbed.tsx`。此仓库只负责父页面，不默认修改或发布外部展示站点。
-- 保持 origin 和 source 双重校验。未收到有效高度时保留滚动兜底，不用强制隐藏滚动条冒充自动高度。
-- 不能读取跨域 DOM；父侧只因宽度变化请求测量，避免因设置高度产生反馈循环。
-- 协议改动同步更新文档，并说明对子站点的兼容性影响。外站尚未适配时，模拟消息测试不能替代真实联调。
-- 本地预览使用 `bun run mode:status`，已有模式用 `bun run mode:reload`，无模式用 `bun run mode:local up`。不要另启 `next dev`。
-- 修改组件后执行 `bunx tsc --noEmit`、`bun run generate:importmap` 和针对性的协议测试。
+- 实现为 `src/components/site/official/OfficialUseCasesGallery.tsx` 和同级 `use-cases/`。
+- 保留已认可的 440px 文件区、自适应回复区、原位偏好卡片和真正的大图 modal。
+- 样式及 DOM 查询限定在 gallery，不污染官网导航、FAQ 和其他页面。
+- 本地预览用 `bun run mode:status`、`mode:reload` 或 `mode:start`，不要另启 next dev。
+- 修改后运行类型检查、importmap、相关测试及实际浏览器复测。
+- 提交/发布依用户当次授权；不要恢复外部站点依赖或 iframe 高度协议。

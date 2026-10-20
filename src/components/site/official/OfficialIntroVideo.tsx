@@ -8,7 +8,7 @@ export function OfficialIntroVideo() {
         </h2>
         <div className="redesign-intro-video__frame">
           <video
-            aria-label="Meet Noumi: product introduction film"
+            aria-label="Meet Noumi: Your Secure Workspace for Requirements, Proposals, Decks and More"
             controls
             playsInline
             preload="none"

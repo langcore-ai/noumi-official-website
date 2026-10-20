@@ -30,12 +30,12 @@ The Use Cases heading has no independent grow/slide binding in the export: only 
 - Hero a-5/a-6 target `.home-button-text-wrap`, which is absent from the actual homepage button. The button remains visible; the previously invented vertical arrow swap is removed.
 - Footer link underline grows from 0 to 100% in 300ms; colors retain the existing prototype palette.
 - Feature a-95 scroll keyframes remain 37–40 / 57–60 / 77–80 with the final e-1387 end offset and smoothing. Arrow entrance translation is isolated from scroll rotation/color, including the initial-vs-active arrow layers.
-- The original looping hero video is retained.
+- The homepage hero uses a high-quality static WebP background image; it is preloaded and does not download or play a background video.
 
 ## Reliability and verification
 
 Animations are progressive Web Animations API enhancements, initialized in a layout effect. Without JavaScript, text is visible. Reduced-motion preference skips entrance animations; toggling it during an animation reveals all pending content immediately. Focusing a hidden descendant also reveals its ancestors. Completed animations release their transforms; observers and animations are cleaned up on route changes.
 
-`tests/visual/motion.spec.ts` checks delays, keyframes, subtitle expansion, footer staggering, single-play behavior, horizontal button motion, clipping, route cleanup, reduced motion and no-JavaScript visibility. Run it with the existing `playwright.visual.config.ts` against a running preview; the complete suite also checks all existing layout and gallery behavior.
+`tests/visual/motion.spec.ts` checks the static hero image, navigation, reduced-motion behavior and no-JavaScript visibility. Run it with the existing `playwright.visual.config.ts` against a running preview; the complete suite also checks all existing layout and gallery behavior.
 
 Verified 2026-09-09: TypeScript and 31 integration tests passed, import-map generation required no changes, OpenNext production build passed, and all 13 browser tests passed against the LAN Worker preview at port 8787. The first development run exposed an incorrect identity-transform assertion and navigation interruptions during hot reload; the assertion was corrected and the full suite rerun against the fixed production build. Final homepage and CTA screenshots were visually inspected.

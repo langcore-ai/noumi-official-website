@@ -3,7 +3,7 @@ export function OfficialIntroVideo() {
   return (
     <section aria-labelledby="intro-video-title" className="redesign-intro-video" id="intro-video">
       <div className="redesign-shell">
-        <h2 className="redesign-intro-video__title" id="intro-video-title">
+        <h2 className="redesign-intro-video__title home-key-message" id="intro-video-title">
           Meet Noumi: a secure AI workspace for Business &amp; Solutions professionals
         </h2>
         <div className="redesign-intro-video__frame">

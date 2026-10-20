@@ -66,9 +66,10 @@ export default async function HomePage() {
         <OfficialIntroVideo />
         <section className="redesign-features" id="features">
           <div className="redesign-shell redesign-section-heading redesign-section-heading--tagline">
-            <p className="noumi-workspace-description">
-              It helps you turn requirements into a more compelling solution, with less rework and
-              fewer gaps.
+            <p className="noumi-workspace-description home-key-message">
+              It helps you turn requirements into a more compelling solution,
+              <br />
+              with less rework and fewer gaps
             </p>
           </div>
           <div className="redesign-shell redesign-feature-stack">
@@ -114,7 +115,7 @@ export default async function HomePage() {
             </article>
             <article className="redesign-feature security-feature" id="security">
               <div className="redesign-feature__copy">
-                <h3>
+                <h3 className="home-key-message">
                   At Noumi,
                   <br />
                   <span className="security-title-line">

@@ -2,13 +2,13 @@ import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-sett
 import Link from 'next/link'
 
 import { OfficialDeliverableShowcase } from '@/components/site/official/OfficialDeliverableShowcase'
-import { OfficialHeroVideo } from '@/components/site/official/OfficialHeroVideo'
+import { OfficialHeroImage } from '@/components/site/official/OfficialHeroImage'
 import { OfficialIntroVideo } from '@/components/site/official/OfficialIntroVideo'
 import { OfficialSecurityVisual } from '@/components/site/official/OfficialSecurityVisual'
 import { OfficialUseCasesShowcase } from '@/components/site/official/OfficialUseCasesShowcase'
 import { StructuredData } from '@/components/site/StructuredData'
 import { HOME_ASSETS } from '@/lib/site/homepage-assets'
-import { HOME_JSON_LD } from '@/lib/site/json-ld'
+import { HOME_INTRO_VIDEO_JSON_LD, HOME_JSON_LD } from '@/lib/site/json-ld'
 import {
   OFFICIAL_PRODUCT_AUTH_TARGET_PATH,
   OFFICIAL_PRODUCT_AUTH_URL,
@@ -35,12 +35,13 @@ export default async function HomePage() {
   return (
     <>
       <StructuredData data={await getManagedJsonLd('/', HOME_JSON_LD)} />
-      <link rel="preload" as="image" href={HOME_ASSETS.poster} fetchPriority="high" />
+      <StructuredData data={HOME_INTRO_VIDEO_JSON_LD} />
+      <link rel="preload" as="image" href={HOME_ASSETS.heroImage} fetchPriority="high" />
       <main className="redesign-home" id="top">
         <section className="redesign-hero">
           <div className="redesign-shell">
             <div className="redesign-hero__media">
-              <OfficialHeroVideo />
+              <OfficialHeroImage />
               <div className="redesign-hero__content">
                 <h1>
                   <span className="redesign-hero__title-main">
@@ -163,5 +164,6 @@ export function generateMetadata() {
     title: 'Personal AI workspace built for Business & Solutions professionals | Noumi.ai',
     description:
       'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
+    image: '/assets/intro-video/noumi-se-film-poster.jpg',
   })
 }

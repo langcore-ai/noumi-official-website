@@ -1846,7 +1846,7 @@ body {
   background: #26354b;
 }
 
-.redesign-hero__video,
+.redesign-hero__image,
 .redesign-hero__shade {
   position: absolute;
   inset: 0;
@@ -1854,7 +1854,7 @@ body {
   height: 100%;
 }
 
-.redesign-hero__video {
+.redesign-hero__image {
   object-fit: cover;
 }
 
@@ -2809,9 +2809,8 @@ body {
   animation: noumi-hero-reveal 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.redesign-hero__video {
+.redesign-hero__image {
   object-fit: cover;
-  animation: noumi-hero-drift 14s ease-in-out infinite alternate;
 }
 
 .redesign-hero__shade {
@@ -3000,16 +2999,6 @@ body {
   }
 }
 
-@keyframes noumi-hero-drift {
-  from {
-    transform: scale(1.002);
-  }
-
-  to {
-    transform: scale(1.018);
-  }
-}
-
 @media (max-width: 900px) {
   .site-header--home .nav-row {
     min-height: 74px;
@@ -3076,7 +3065,7 @@ body {
     min-height: 610px;
   }
 
-  .redesign-hero__video {
+  .redesign-hero__image {
     object-position: 62% center;
   }
 

@@ -2,8 +2,7 @@
 export const HOME_ASSETS = {
   logo: '/assets/homepage/logo.e7ca9d2063.svg',
   footerLogo: '/assets/homepage/footer-logo.d187494e53.svg',
-  poster: '/assets/homepage/hero-poster.fb78a8002a.webp',
-  video: '/assets/homepage/hero.38be41e688.mp4',
+  heroImage: '/assets/homepage/hero-static.dc60f55a09.webp',
   knowledge: '/assets/homepage/knowledge.5273de1444.webp',
   knowledgeMobile: '/assets/homepage/knowledge-mobile.e586805dc8.webp',
 } as const

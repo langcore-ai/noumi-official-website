@@ -167,6 +167,27 @@ export const HOME_JSON_LD = {
   ],
 } satisfies JsonLdObject
 
+/** 首页介绍视频结构化数据；与站点图谱分开输出，避免 CMS 页面覆盖时丢失视频信息。 */
+export const HOME_INTRO_VIDEO_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: 'Meet Noumi: Your Secure Workspace for Requirements, Proposals, Decks and More',
+  description:
+    'Meet Noumi: a secure AI workspace for Business & Solutions professionals. It helps you turn requirements into a more compelling solution, with less rework and fewer gaps.',
+  uploadDate: '2026-10-19',
+  thumbnailUrl: `${OFFICIAL_SITE_URL}/assets/intro-video/noumi-se-film-poster.jpg`,
+  contentUrl: `${OFFICIAL_SITE_URL}/assets/intro-video/noumi-se-film-1080p.mp4`,
+  duration: 'PT2M13S',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Noumi',
+    logo: {
+      '@type': 'ImageObject',
+      url: OFFICIAL_LOGO_URL,
+    },
+  },
+} satisfies JsonLdObject
+
 /** Features 聚合页 WebPage + BreadcrumbList + ItemList 结构化数据。 */
 export const FEATURES_PAGE_JSON_LD = {
   '@context': 'https://schema.org',

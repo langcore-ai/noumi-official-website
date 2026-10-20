@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { OfficialDeliverableShowcase } from '@/components/site/official/OfficialDeliverableShowcase'
 import { OfficialHeroVideo } from '@/components/site/official/OfficialHeroVideo'
+import { OfficialIntroVideo } from '@/components/site/official/OfficialIntroVideo'
 import { OfficialSecurityVisual } from '@/components/site/official/OfficialSecurityVisual'
 import { OfficialUseCasesShowcase } from '@/components/site/official/OfficialUseCasesShowcase'
 import { StructuredData } from '@/components/site/StructuredData'
@@ -62,17 +63,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+        <OfficialIntroVideo />
         <section className="redesign-features" id="features">
-          <div className="redesign-shell redesign-section-heading">
-            <h2 className="noumi-workspace-heading">
-              Noumi is a personal AI workspace
-              <br />
-              built for{' '}
-              <span className="noumi-audience-highlight">
-                Business &amp; Solutions professionals
-              </span>
-              .
-            </h2>
+          <div className="redesign-shell redesign-section-heading redesign-section-heading--tagline">
             <p className="noumi-workspace-description">
               It helps you turn requirements into a more compelling solution, with less rework and
               fewer gaps.

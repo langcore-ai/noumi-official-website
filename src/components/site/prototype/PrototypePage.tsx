@@ -7,10 +7,15 @@ export function PrototypePage({ route }: { route: string }) {
   const page = getPrototypePage(route)
   if (!page) return null
   const nativeUseCases = route === '/use-cases'
-  const html =
+  const pageHtml =
     route === '/use-cases'
       ? page.html.slice(page.html.indexOf('<section class="regular-section bottom-space">'))
       : page.html
+  // Reviewed legacy templates supplied their own closing band; the layout now owns it.
+  const html = pageHtml.replace(
+    /<section\b[^>]*class="[^"]*\bcta-section\b[^"]*"[^>]*>[\s\S]*?<\/section>/gi,
+    '',
+  )
   return (
     <div className="page-body">
       <noscript>

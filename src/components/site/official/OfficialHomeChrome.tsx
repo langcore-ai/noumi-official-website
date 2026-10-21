@@ -126,7 +126,7 @@ export function OfficialHomeHeader(props: {
               ))}
               <Link
                 aria-current={activeItem === '/about' ? 'page' : undefined}
-                className="site-nav__about"
+                className={activeItem === '/about' ? 'site-nav__about is-active' : 'site-nav__about'}
                 href="/about"
               >
                 About Us

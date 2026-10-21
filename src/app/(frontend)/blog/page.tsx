@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { StructuredData } from '@/components/site/StructuredData'
 import { getOfficialBlogPosts } from '@/lib/site/official-cms'
 import { BLOG_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
-import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 
 import { BlogTabs } from './BlogTabs'
 import './blog-index.css'
@@ -145,56 +144,6 @@ export default async function BlogIndexPage() {
                 ) : null}
               </div>
             </BlogTabs>
-          </div>
-        </section>
-
-        <section className="cta-section">
-          <div className="cta-whole-area">
-            <div className="w-layout-blockcontainer medium-container w-container">
-              <div className="cta-area">
-                <div className="cta-wrap">
-                  <div className="cta-title-wrap">
-                    <h2 className="cta-title">Get Started Today</h2>
-                    <div className="cta-content-wrap">
-                      <p className="cta-content">Get to know me. I&apos;ll get to know you.</p>
-                    </div>
-                    <div className="cta-button-area">
-                      <div className="cta-button-wrap">
-                        <Link
-                          className="primary-button w-inline-block"
-                          data-analytics-cta-id="blog_band_try_free"
-                          data-analytics-event="official_cta_clicked"
-                          data-analytics-placement="cta_band"
-                          href={OFFICIAL_PRODUCT_AUTH_URL}
-                        >
-                          <div className="button-text-wrap">
-                            <div className="button-text">
-                              <div>Join Waitlist</div>
-                            </div>
-                            <div className="button-arrow-wrap">
-                              <img
-                                alt="Button Arrow"
-                                className="button-arrow"
-                                loading="lazy"
-                                src="/assets/prototype/images/button-arrow.svg"
-                              />
-                            </div>
-                            <div className="button-arrow-wrap two">
-                              <img
-                                alt="Button Arrow"
-                                className="button-arrow"
-                                loading="lazy"
-                                src="/assets/prototype/images/button-arrow.svg"
-                              />
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
       </main>

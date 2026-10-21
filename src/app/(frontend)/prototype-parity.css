@@ -59,11 +59,6 @@ body {
   width: 148px;
   justify-content: space-between;
 }
-.site-header--home .site-nav .site-nav__about[aria-current='page'] {
-  min-height: 40px;
-  border-radius: 5px;
-  background: rgba(110, 134, 164, 0.16);
-}
 .site-header--home .site-nav .button--nav {
   min-width: 173px;
   width: max-content;

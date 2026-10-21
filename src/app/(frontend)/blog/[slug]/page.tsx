@@ -260,56 +260,6 @@ export default async function BlogPostPage(props: BlogPostPageProps) {
               </div>
             </section>
           ) : null}
-
-          <section className="cta-section">
-            <div className="cta-whole-area">
-              <div className="w-layout-blockcontainer medium-container w-container">
-                <div className="cta-area">
-                  <div className="cta-wrap">
-                    <div className="cta-title-wrap">
-                      <h2 className="cta-title">Get Started Today</h2>
-                      <div className="cta-content-wrap">
-                        <p className="cta-content">Get to know me. I&apos;ll get to know you.</p>
-                      </div>
-                      <div className="cta-button-area">
-                        <div className="cta-button-wrap">
-                          <Link
-                            className="primary-button w-inline-block"
-                            data-analytics-cta-id="blog_article_band_try_free"
-                            data-analytics-event="official_cta_clicked"
-                            data-analytics-placement="cta_band"
-                            href="https://www.noumi.ai/auth"
-                          >
-                            <div className="button-text-wrap">
-                              <div className="button-text">
-                                <div>Join Waitlist</div>
-                              </div>
-                              <div className="button-arrow-wrap">
-                                <img
-                                  alt="Button Arrow"
-                                  className="button-arrow"
-                                  loading="lazy"
-                                  src="/assets/prototype/images/button-arrow.svg"
-                                />
-                              </div>
-                              <div className="button-arrow-wrap two">
-                                <img
-                                  alt="Button Arrow"
-                                  className="button-arrow"
-                                  loading="lazy"
-                                  src="/assets/prototype/images/button-arrow.svg"
-                                />
-                              </div>
-                            </div>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
         </main>
       </div>
     )

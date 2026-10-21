@@ -1,13 +1,11 @@
 .page {
-  color: #3b3f43;
-  background: #f5f3ee;
+  color: #20211f;
+  background: #faf9f6;
+  padding-bottom: 72px;
 }
 .page h1,
 .page h2,
 .page h3 {
-  font-family: var(--ff-display);
-  font-weight: 500;
-  letter-spacing: 0;
   margin: 0;
 }
 .page p {
@@ -18,67 +16,68 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-block: 25px;
-  color: #4d72c2;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.08rem;
-  line-height: 19.6px;
+  margin: 0 0 28px;
+  color: #656a66;
+  font: 500 12px/1.4 var(--ff-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 .hero {
-  max-width: 1200px;
+  max-width: 1040px;
   margin: auto;
-  padding: 39px 20px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  padding: 100px 32px 48px;
   text-align: center;
 }
 .hero h1 {
-  font-size: 38px;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-transform: capitalize;
+  font-family: 'Noto Serif SC', Georgia, serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 .hero em {
-  color: #4d72c2;
+  color: #6268ee;
+  font-style: normal;
 }
 .intro {
-  max-width: 1200px;
-  margin: 25px auto 0;
-  padding: 63px 0 18px 18px;
-  text-align: left;
-  font-size: 16px;
+  box-sizing: border-box;
+  width: calc(100% - 64px);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 64px);
+  border-radius: 28px;
+  background: #fff;
+  color: #656a66;
+  font: 400 clamp(16px, 1.4vw, 19px)/1.75 var(--ff-body);
+}
+.intro p:first-child {
+  color: #20211f;
+  font-size: clamp(19px, 1.8vw, 24px);
   line-height: 1.6;
 }
 .intro p + p {
-  margin-top: 25px;
+  margin-top: 24px;
 }
 .team {
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-top: 119px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 96px 32px 0;
 }
 .teamHeading {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  text-align: center;
 }
 .teamGrid {
-  max-width: 1164px;
-  margin: 18px auto 0;
-  padding: 0 18px;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 30px;
+  gap: 18px;
+  margin: 12px 0 64px;
 }
 .member {
   min-width: 0;
-  padding: 45px;
-  border: 1px solid #d2d5dc;
-  border-radius: 5px;
-  background: #fcfaf3;
+  padding: 14px 14px 24px;
+  border-radius: 20px;
+  background: #fff;
 }
 .member > a {
   display: block;
@@ -88,6 +87,8 @@
 .portrait {
   position: relative;
   overflow: hidden;
+  border-radius: 12px;
+  background: #f1f0ec;
 }
 .portrait img {
   display: block;
@@ -95,123 +96,128 @@
   height: auto;
   aspect-ratio: 1;
   object-fit: cover;
+  transition: transform 220ms ease;
+}
+.member a:hover .portrait img {
+  transform: scale(1.025);
+}
+.member a:focus-visible {
+  outline: 2px solid #6268ee;
+  outline-offset: 5px;
+  border-radius: 12px;
 }
 .overlay {
-  position: absolute;
-  inset: auto 0 0;
-  height: 0;
-  background: #fcfaf3;
-  pointer-events: none;
+  display: none;
 }
 .memberCaption {
-  text-align: center;
-  margin-top: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  text-align: left;
+  margin-top: 20px;
 }
 .memberCaption h3 {
-  font-size: 18px;
-  line-height: 1.4;
-  text-transform: capitalize;
+  font: 500 clamp(16px, 1.4vw, 20px)/1.35 var(--ff-body);
+  letter-spacing: -0.02em;
 }
 .memberCaption p {
-  align-self: center;
-  color: #86898e;
-  font-size: 14px;
-  line-height: 1;
-  white-space: nowrap;
+  margin-top: 8px;
+  color: #656a66;
+  font: 400 13px/1.5 var(--ff-body);
+  overflow-wrap: anywhere;
 }
 .recruitment {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: start;
-  gap: 18px;
-  margin: 16px;
-  padding: 16px;
-  border-radius: 5px;
-  background: #fcfaf3;
+  align-items: center;
+  gap: 48px;
+  padding: clamp(28px, 4vw, 60px);
+  border: 1px solid #1e2b31;
+  border-radius: 28px;
+  background: #10191d;
+  color: #f7f8f6;
 }
 .recruitment h2 {
-  font-size: 30px;
-  line-height: 1.4;
+  font:
+    600 clamp(28px, 3.2vw, 44px)/1.25 'Noto Serif SC',
+    Georgia,
+    serif;
+  letter-spacing: -0.01em;
 }
 .recruitmentCopy {
-  max-width: 500px;
-  margin-top: 25px;
-  font-size: 16px;
-  line-height: 1.6;
+  margin-top: 28px;
+  color: #c0c9cd;
+  font: 400 16px/1.75 var(--ff-body);
+}
+.recruitmentCopy p + p {
+  margin-top: 18px;
 }
 .teamPhoto {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 5px;
+  border-radius: 18px;
 }
 .email {
   margin-top: 30px;
 }
 .email h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  color: #c0c9cd;
+  font: 400 13px/1.4 var(--ff-body);
 }
 .email a {
-  color: #4d72c2;
-  font-size: 20px;
+  color: #b7bbff;
+  font: 500 clamp(16px, 2vw, 22px)/1.5 var(--ff-body);
+  overflow-wrap: anywhere;
 }
 .faqSection {
-  max-width: 1200px;
-  margin: 25px auto 0;
-  padding: 65px 20px 18px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 96px 32px 0;
 }
 .faqHeading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
-  gap: 20px;
 }
 .faqHeading h2 {
-  font-size: 30px;
-  line-height: 1.4;
+  font:
+    600 clamp(28px, 3.2vw, 44px)/1.25 'Noto Serif SC',
+    Georgia,
+    serif;
+  letter-spacing: -0.01em;
 }
 .faqList {
-  max-width: 1000px;
-  margin: 50px auto 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
+  margin: 40px auto 0;
 }
 .faqItem {
-  border: 1px solid #6e86a429;
-  border-radius: 5px;
-  background: #fcfaf3;
   overflow: hidden;
-  transition: background 300ms linear;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: #fff;
+  transition: border-color 180ms ease;
 }
 .faqItem[open] {
-  background: #eaebfe;
+  border-color: #dcded9;
 }
 .faqItem summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 30px;
+  padding: 24px 28px;
   cursor: pointer;
-  font: 500 16px/1.4 var(--ff-body);
   list-style: none;
-  transition: color 300ms linear;
+  font: 500 17px/1.5 var(--ff-body);
 }
 .faqItem summary::-webkit-details-marker {
   display: none;
 }
 .faqItem summary:focus-visible {
-  outline: 2px solid #4d72c2;
+  outline: 2px solid #6268ee;
   outline-offset: -4px;
 }
 .faqItem[open] summary {
-  color: #4d72c2;
+  color: #6268ee;
 }
 .faqIcon {
   position: relative;
@@ -224,9 +230,7 @@
   content: '';
   position: absolute;
   background: currentColor;
-  transition:
-    transform 300ms linear,
-    opacity 300ms linear;
+  transition: transform 180ms ease;
 }
 .faqIcon::before {
   height: 2px;
@@ -238,152 +242,71 @@
   height: 14px;
   left: 6px;
 }
-.faqItem[open] .faqIcon::before {
-  transform: rotate(90deg);
-}
 .faqItem[open] .faqIcon::after {
-  opacity: 0;
+  transform: rotate(90deg);
 }
 .answer {
   overflow: hidden;
 }
 .answer p {
-  padding: 0 30px 30px;
-  color: #4d72c2;
-  font-size: 14px;
-  line-height: 25px;
+  padding: 0 28px 26px;
+  color: #656a66;
+  font: 400 16px/1.75 var(--ff-body);
 }
 .answer a {
   color: inherit;
   text-decoration: underline;
 }
-@media (min-width: 992px) and (max-width: 1439px) {
-  .memberCaption h3 {
-    font-size: 16px;
-  }
-}
-@media (max-width: 1279px) {
-  .member {
-    padding: 30px;
-  }
+@media (max-width: 1000px) {
   .teamGrid {
-    gap: 20px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .hero h1 {
-    font-size: 32px;
-  }
-  .memberCaption h3 {
-    font-size: 20px;
+  .recruitment {
+    gap: 28px;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 700px) {
   .hero {
-    max-width: 650px;
-  }
-  .hero h1 {
-    font-size: 28px;
-    line-height: 1.5;
+    padding: 64px 24px 32px;
   }
   .intro {
-    max-width: 728px;
+    width: calc(100% - 24px);
+    border-radius: 20px;
+  }
+  .team {
+    padding: 64px 12px 0;
   }
   .teamGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 728px;
+    gap: 12px;
+    margin-bottom: 40px;
   }
   .member {
-    padding: 25px;
-  }
-  .memberCaption h3 {
-    font-size: 12px;
-  }
-  .recruitment h2,
-  .faqHeading h2 {
-    font-size: 26px;
-  }
-  .faqItem summary {
-    padding: 20px;
-  }
-  .answer p {
-    padding: 0 20px 20px;
-  }
-}
-@media (max-width: 767px) {
-  .hero {
-    max-width: 500px;
-  }
-  .hero h1 {
-    font-size: 30px;
-    line-height: 1.1;
-  }
-  .intro {
-    font-size: 14px;
-    padding: 35px 22px 18px;
-    line-height: 1.6;
-  }
-  .intro p + p {
-    margin-top: 18px;
-  }
-  .teamGrid {
-    max-width: 80%;
-  }
-  .member {
-    padding: 20px;
+    padding: 10px 10px 20px;
+    border-radius: 16px;
   }
   .recruitment {
     grid-template-columns: 1fr;
-    margin-inline: 20px;
-    padding: 20px;
-  }
-  .recruitmentCopy {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .teamPhoto {
-    display: none;
+    border-radius: 20px;
   }
   .faqSection {
-    padding-top: 40px;
-  }
-}
-@media (max-width: 479px) {
-  .team {
-    padding-top: 25px;
-  }
-  .hero {
-    max-width: 390px;
-    padding: 42px 31px 0;
-  }
-  .hero h1 {
-    font-size: 30px;
-  }
-  .teamGrid {
-    max-width: calc(100% - 20px);
-    padding-inline: 11px;
-  }
-  .member {
-    padding: 15px;
-  }
-  .memberCaption {
-    margin-top: 15px;
-    gap: 10px;
-  }
-  .faqList {
-    gap: 15px;
-    margin-top: 18px;
+    padding: 64px 12px 0;
   }
   .faqItem summary {
-    font-size: 18px;
-    padding-block: 15px;
+    padding: 20px;
+    font-size: 16px;
   }
   .answer p {
-    font-size: 14px;
-    line-height: 1.5;
+    padding: 0 20px 22px;
+    font-size: 15px;
+  }
+  .page {
+    padding-bottom: 40px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .portrait img,
   .faqItem,
-  .faqItem summary,
   .faqIcon::before,
   .faqIcon::after {
     transition: none;

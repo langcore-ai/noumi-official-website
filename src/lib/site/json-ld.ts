@@ -175,7 +175,7 @@ export const HOME_INTRO_VIDEO_JSON_LD = {
   description:
     'Meet Noumi: a secure AI workspace for Business & Solutions professionals. It helps you turn requirements into a more compelling solution, with less rework and fewer gaps.',
   uploadDate: '2026-10-19',
-  thumbnailUrl: `${OFFICIAL_SITE_URL}/assets/intro-video/noumi-se-film-poster.jpg`,
+  thumbnailUrl: `${OFFICIAL_SITE_URL}/assets/intro-video/noumi-se-film-poster-02s.jpg`,
   contentUrl: `${OFFICIAL_SITE_URL}/assets/intro-video/noumi-se-film-1080p.mp4`,
   duration: 'PT2M13S',
   publisher: {

@@ -259,3 +259,32 @@ body a.noumi-modern-cta:hover {
 .managed-nav-group summary { cursor: pointer; }
 .managed-nav-children { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
 .site-nav .managed-nav-children { position: absolute; top: 100%; left: 0; z-index: 30; min-width: 180px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 8px 24px #0001; }
+
+/* All public page canvases share the homepage paper; cards retain their own fills. */
+.page-shell,
+.page-shell .page-body,
+.page-shell .native-use-cases-page,
+.page-shell .se-gallery,
+.page-shell .prototype-page,
+.page-shell .prototype-page > section,
+.page-shell .prototype-page > div > section {
+  background-color: var(--noumi-paper);
+}
+
+/* Section labels are text-only across the public website. */
+.page-shell .redesign-kicker__mark,
+.page-shell .subtitle-arrow-wrap,
+.page-shell .subtitle-arrow,
+.page-shell .subtitle-arrow-2,
+.page-shell .sec-label::before,
+.page-shell .sec-label::after {
+  display: none !important;
+}
+
+/* Shared campaign heading scale; the embedded gallery uses the same values. */
+:root {
+  --noumi-heading-font: 'Noto Serif SC', Georgia, serif;
+  --noumi-heading-size: clamp(28px, 4vw, 44px);
+  --noumi-heading-weight: 600;
+  --noumi-heading-tracking: -0.01em;
+}

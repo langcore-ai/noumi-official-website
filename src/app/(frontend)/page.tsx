@@ -45,19 +45,14 @@ export default async function HomePage() {
               <div className="redesign-hero__content">
                 <h1>
                   <span className="redesign-hero__title-main">
-                    Trustworthy
-                    <br />
-                    Deliverables
-                  </span>
-                  <span className="redesign-hero__title-small">
-                    <span className="hero-security-emphasis">Securely</span> in Your Noumi
-                    Workspace.
+                    <span className="hero-slogan-lead">From complex requirements to</span>
+                    <span className="hero-slogan-result">Deliverables you can trust.</span>
                   </span>
                 </h1>
                 <p className="redesign-hero__copy">
-                  Claude alternative designed for business and
+                  The secure AI workspace for business, sales
                   <br />
-                  solution professionals
+                  and solution professionals.
                 </p>
                 <HomeCTA placement="hero" />
               </div>
@@ -66,13 +61,6 @@ export default async function HomePage() {
         </section>
         <OfficialIntroVideo />
         <section className="redesign-features" id="features">
-          <div className="redesign-shell redesign-section-heading redesign-section-heading--tagline">
-            <p className="noumi-workspace-description home-key-message">
-              It helps you turn requirements into a more compelling solution,
-              <br />
-              with less rework and fewer gaps
-            </p>
-          </div>
           <div className="redesign-shell redesign-feature-stack">
             <article className="redesign-feature expertise-showcase" id="expertise">
               <div className="redesign-feature__copy">
@@ -116,7 +104,7 @@ export default async function HomePage() {
             </article>
             <article className="redesign-feature security-feature" id="security">
               <div className="redesign-feature__copy">
-                <h3 className="home-key-message">
+                <h3>
                   At Noumi,
                   <br />
                   <span className="security-title-line">
@@ -142,17 +130,6 @@ export default async function HomePage() {
             <OfficialUseCasesShowcase />
           </div>
         </section>
-        <section className="redesign-final-cta" id="final-cta">
-          <div className="redesign-shell redesign-final-cta__card">
-            <div>
-              <h2>Complex requirements? Deliver with Noumi.</h2>
-              <p>Turn complex project work into deliverables you can confidently share.</p>
-            </div>
-            <div className="redesign-final-cta__button">
-              <HomeCTA placement="cta_band" />
-            </div>
-          </div>
-        </section>
       </main>
     </>
   )
@@ -164,6 +141,6 @@ export function generateMetadata() {
     title: 'Personal AI workspace built for Business & Solutions professionals | Noumi.ai',
     description:
       'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
-    image: '/assets/intro-video/noumi-se-film-poster.jpg',
+    image: '/assets/intro-video/noumi-se-film-poster-02s.jpg',
   })
 }

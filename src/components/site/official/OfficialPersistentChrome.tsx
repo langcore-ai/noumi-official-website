@@ -1,6 +1,7 @@
 import { getMenuSettings } from '@/lib/site/managed-settings'
 import type { ReactNode } from 'react'
 
+import { OfficialFinalCTA } from './OfficialFinalCTA'
 import { OfficialHomeFooter } from './OfficialHomeChrome'
 import { OfficialPersistentHeader } from './OfficialPersistentHeader'
 
@@ -17,6 +18,7 @@ export async function OfficialPersistentChrome(props: { children: ReactNode }) {
     <div className="page-shell">
       <OfficialPersistentHeader menu={menu} />
       {children}
+      <OfficialFinalCTA />
       <OfficialHomeFooter menu={menu} />
     </div>
   )

@@ -1,10 +1,6 @@
 import { createManagedMetadata, getManagedJsonLd } from '@/lib/site/managed-settings'
-import Link from 'next/link'
 import { StructuredData } from '@/components/site/StructuredData'
-import { PrototypeButtonContent } from '@/components/site/official/PrototypeButtonContent'
 import { ABOUT_PAGE_JSON_LD } from '@/lib/site/json-ld'
-import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
-import { AboutPrototypeEffects } from './AboutPrototypeEffects'
 import { AboutFaq } from './AboutFaq'
 import content from './prototype-content.json'
 import styles from './about.module.css'
@@ -43,7 +39,6 @@ export default async function AboutPage() {
           ),
         })}
       />
-      <AboutPrototypeEffects />
       <main className={styles.page} data-about-prototype>
         <section className={styles.hero} data-about-motion="hero">
           <Kicker>Company Info</Kicker>
@@ -52,9 +47,21 @@ export default async function AboutPage() {
           </h1>
         </section>
         <section className={styles.intro} data-about-motion="intro" aria-label="Our approach">
-          {content.intro.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+          {content.intro.map((paragraph, index) => {
+            const emphasized = "the people who've spent years earning their judgment."
+            return (
+              <p key={paragraph}>
+                {index === 0 && paragraph.endsWith(emphasized) ? (
+                  <>
+                    {paragraph.slice(0, -emphasized.length)}
+                    <u>{emphasized}</u>
+                  </>
+                ) : (
+                  paragraph
+                )}
+              </p>
+            )
+          })}
         </section>
         <section className={styles.team} id="team" aria-label="Core Crew">
           <div className={styles.teamHeading} data-about-motion="crew">
@@ -128,25 +135,6 @@ export default async function AboutPage() {
             <h2 id="about-faq-title">Frequently Asked Questions</h2>
           </div>
           <AboutFaq />
-        </section>
-        <section className="redesign-final-cta" aria-labelledby="about-cta">
-          <div className="redesign-shell redesign-final-cta__card">
-            <div>
-              <h2 id="about-cta">Get Started Today</h2>
-              <p>Get to know me. I&apos;ll get to know you.</p>
-            </div>
-            <div className="redesign-final-cta__button">
-              <Link
-                className="redesign-button redesign-button--dark redesign-button--animated"
-                href={OFFICIAL_PRODUCT_AUTH_URL}
-                data-analytics-event="official_cta_clicked"
-                data-analytics-cta-id="about_band_try_free"
-                data-analytics-placement="cta_band"
-              >
-                <PrototypeButtonContent>Join Waitlist</PrototypeButtonContent>
-              </Link>
-            </div>
-          </div>
         </section>
       </main>
     </div>

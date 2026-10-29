@@ -1,4 +1,5 @@
 import { readStoredConsent } from '../consent'
+import { readSharedVisitorId } from '../shared-visitor'
 import {
   maskProductReplayText,
   PRODUCT_REPLAY_PRIVATE_SELECTOR,
@@ -108,11 +109,27 @@ export class OfficialRecorder {
         /* 禁止访问 storage 时仍可录制当前页。 */
       }
     }
+    // 同意后才读取或创建共享访客 Cookie，接续当前站点已有身份。
+    const previousAnonymousId = this.anonymousId
+    this.anonymousId = readSharedVisitorId(this.anonymousId) as ReturnType<typeof crypto.randomUUID>
+    if (previousAnonymousId !== this.anonymousId) this.visitId = ''
+    try {
+      write(localStorage, REPLAY_IDENTITY_KEY, this.anonymousId)
+    } catch {
+      /* 存储受限。 */
+    }
     this.observePage()
   }
 
   private ensureRecording() {
     if (!this.allowed() || document.hidden) return false
+    const sharedVisitor = readSharedVisitorId(this.anonymousId)
+    if (sharedVisitor !== this.anonymousId) {
+      this.stop()
+      this.anonymousId = sharedVisitor as ReturnType<typeof crypto.randomUUID>
+      this.visitId = ''
+      this.page = ''
+    }
     const now = Date.now()
     if (!this.visitId || now - this.lastActivity > REPLAY_IDLE_MS) {
       this.client.stop(true)
@@ -138,6 +155,7 @@ export class OfficialRecorder {
           app: REPLAY_APP,
           scope: this.config.scope,
           anonymous_id: this.anonymousId,
+          visitor_id: this.anonymousId,
           visit_id: this.visitId,
           last_page: location.pathname,
         },

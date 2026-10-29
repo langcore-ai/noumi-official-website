@@ -21,7 +21,11 @@ export default function ReplayView(props: AdminViewServerProps) {
       req={req}
       visibleEntities={visibleEntities}
     >
-      <ReplayDashboard />
+      <ReplayDashboard
+        initialVisitor={
+          typeof props.searchParams?.visitor === 'string' ? props.searchParams.visitor : ''
+        }
+      />
     </DefaultTemplate>
   )
 }

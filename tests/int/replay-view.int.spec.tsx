@@ -23,7 +23,9 @@ vi.mock('@payloadcms/next/templates', () => ({
   ),
 }))
 vi.mock('@/components/admin/replay/ReplayDashboard', () => ({
-  ReplayDashboard: () => <h1>Visit replays</h1>,
+  ReplayDashboard: ({ initialVisitor }: { initialVisitor?: string }) => (
+    <h1 data-visitor={initialVisitor}>Visit replays</h1>
+  ),
 }))
 vi.mock('next/navigation', () => ({
   notFound: () => {
@@ -35,6 +37,7 @@ afterEach(cleanup)
 it('preserves collection navigation using permissions supplied in Payload initPageResult', () => {
   // Match Payload Root: permissions are provided inside initPageResult, not at the top level.
   const props = {
+    searchParams: { visitor: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' },
     initPageResult: {
       req: { user: { roles: ['admin'] } },
       permissions: { collections: { users: { read: true } } },
@@ -45,7 +48,9 @@ it('preserves collection navigation using permissions supplied in Payload initPa
   expect(screen.getByRole('link', { name: 'Users' }).getAttribute('href')).toBe(
     '/admin/collections/users',
   )
-  expect(screen.getByRole('heading', { name: 'Visit replays' })).toBeTruthy()
+  expect(screen.getByRole('heading', { name: 'Visit replays' }).getAttribute('data-visitor')).toBe(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  )
 })
 it('still rejects non-admin access to the replay view', () => {
   const props = {

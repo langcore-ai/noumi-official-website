@@ -22,9 +22,15 @@ const eventLabels: Record<string, string> = {
 }
 const date = (timestamp: number) => new Date(timestamp).toLocaleString()
 
-export function ReplayDashboard() {
-  const [input, setInput] = useState('')
-  const [filter, setFilter] = useState('')
+export function ReplayDashboard({ initialVisitor = '' }: { initialVisitor?: string } = {}) {
+  const [input, setInput] = useState(() =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      initialVisitor,
+    )
+      ? initialVisitor
+      : '',
+  )
+  const [filter, setFilter] = useState(input)
   const [revision, setRevision] = useState(0)
   return (
     <div className="official-replay">

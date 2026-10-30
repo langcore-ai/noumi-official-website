@@ -1,6 +1,7 @@
 'use client'
 
 import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
+import { clearSharedVisitorId } from './shared-visitor'
 
 export { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
 
@@ -121,5 +122,6 @@ export function writeStoredConsent(locale: boolean, productLogin: boolean, analy
   }
 
   persistStoredConsent(consent)
+  if (!analytics) clearSharedVisitorId()
   dispatchConsentChanged()
 }

@@ -26,6 +26,7 @@ import {
   type OfficialAnalyticsProperties,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
+import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 
@@ -85,7 +86,7 @@ function sanitizeBrowserEvent(payload: CaptureResult | null): CaptureResult | nu
   }
 
   const sanitizedProperties = sanitizeOfficialBrowserEventProperties(
-    payload.properties as Record<string, unknown>,
+    { ...payload.properties, visitor_id: readSharedVisitorId() } as Record<string, unknown>,
     window.location.origin,
   )
 
@@ -291,7 +292,7 @@ export function OfficialAnalyticsProvider(props: {
   )
 
   useEffect(() => {
-    if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
+    if (!analyticsConfig?.enabled || !hasAnalyticsConsent || !sdkBootstrappedRef.current) {
       return
     }
 
@@ -311,7 +312,7 @@ export function OfficialAnalyticsProvider(props: {
         }),
       )
     }
-  }, [capture, pathname])
+  }, [analyticsConfig, hasAnalyticsConsent, capture, pathname])
 
   useEffect(() => {
     const captureActive = () => {
@@ -372,6 +373,7 @@ export function OfficialAnalyticsProvider(props: {
 
       const attributionParams = buildOfficialOutboundAttributionParams({
         anonymousDistinctId: posthog.get_distinct_id(),
+        visitorId: readSharedVisitorId(),
         baseUrl: window.location.origin,
         ctaId: analyticsElement.dataset.analyticsCtaId,
         landingPage: window.location.pathname,

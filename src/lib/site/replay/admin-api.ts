@@ -1,7 +1,6 @@
 import 'server-only'
 import { z } from 'zod'
-import { CMS_ADMIN_ROLES, hasAnyCmsRole } from '@/access/cms'
-import { getSitePayloadClient } from '@/lib/site/payload-client'
+import { denyNonSiteAdmin } from '../admin-access'
 import { readReplayConfig } from './config'
 import {
   assertRecordingScope,
@@ -20,12 +19,8 @@ function json(body: unknown, status = 200) {
 /** 所有 Cloud 读取均由此入口校验当前数据库中的管理员角色。 */
 export async function replayAdminRequest(request: Request, path: string[]): Promise<Response> {
   try {
-    const payload = await getSitePayloadClient()
-    const { user } = await payload.auth({ headers: request.headers })
-    if (!user) return json({ error: 'unauthorized' }, 401)
-    // 不依赖前端菜单或 JWT 中可能已经过期的角色。
-    const current = await payload.findByID({ collection: 'users', id: user.id, depth: 0 })
-    if (!hasAnyCmsRole(current, CMS_ADMIN_ROLES)) return json({ error: 'forbidden' }, 403)
+    const denied = await denyNonSiteAdmin(request)
+    if (denied) return denied
     const config = await readReplayConfig()
     const url = new URL(request.url)
     if (path.length === 1 && path[0] === 'visits') {

@@ -1,8 +1,10 @@
+import Link from 'next/link'
 import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { notFound } from 'next/navigation'
 import { CMS_ADMIN_ROLES, hasAnyCmsRole } from '@/access/cms'
 import { ReplayDashboard } from './ReplayDashboard'
+import { ConversionDashboard } from './ConversionDashboard'
 
 /** Payload 自定义页面同样限制管理员，不只依赖 API 鉴权。 */
 export default function ReplayView(props: AdminViewServerProps) {
@@ -21,11 +23,20 @@ export default function ReplayView(props: AdminViewServerProps) {
       req={req}
       visibleEntities={visibleEntities}
     >
-      <ReplayDashboard
-        initialVisitor={
-          typeof props.searchParams?.visitor === 'string' ? props.searchParams.visitor : ''
-        }
-      />
+      <nav className="official-replay official-replay__actions" aria-label="Journey navigation">
+        <Link href="/admin/visit-replays?view=conversions">Visitors and conversions</Link>
+        <Link href="/admin/visit-replays?view=replays">Website replays</Link>
+      </nav>
+      {props.searchParams?.view === 'conversions' ||
+      (!props.searchParams?.view && !props.searchParams?.visitor) ? (
+        <ConversionDashboard />
+      ) : (
+        <ReplayDashboard
+          initialVisitor={
+            typeof props.searchParams?.visitor === 'string' ? props.searchParams.visitor : ''
+          }
+        />
+      )}
     </DefaultTemplate>
   )
 }

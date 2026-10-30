@@ -205,3 +205,47 @@
 .official-replay__player.official-replay__player.official-replay__player .rr-controller__btns {
   color: var(--theme-text);
 }
+
+.official-conversion__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--base);
+  margin: var(--base) 0;
+}
+.official-conversion__metrics section,
+.official-conversion__detail {
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: var(--style-radius-s);
+  padding: var(--base);
+}
+.official-conversion__metrics h2 {
+  font-size: 1rem;
+  font-weight: normal;
+}
+.official-conversion__metrics strong {
+  font-size: 2rem;
+}
+.official-conversion__table {
+  overflow-x: auto;
+  margin: var(--base) 0;
+}
+.official-conversion table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.official-conversion th,
+.official-conversion td {
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-elevation-200);
+  vertical-align: top;
+  text-align: left;
+}
+.official-conversion td code {
+  overflow-wrap: anywhere;
+}
+.official-conversion li {
+  margin-bottom: 12px;
+}
+.official-conversion__detail {
+  overflow-wrap: anywhere;
+}

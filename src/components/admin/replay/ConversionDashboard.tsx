@@ -242,8 +242,10 @@ export function ConversionDashboard() {
                       ) : null}
                       {row.accounts.map((a) => (
                         <div key={a.id}>
+                          {/* 关联冲突只排除确定转化，不改变各账号真实的创建时间分类。 */}
                           <p>
-                            {row.registeredInWindow
+                            {Date.parse(a.createdAt) >= Date.parse(row.firstSeenAt) &&
+                            Date.parse(a.createdAt) < Date.parse(`${data.to}T00:00:00Z`) + 86400000
                               ? 'Created in this conversion window'
                               : 'Existing account'}
                           </p>

@@ -292,7 +292,7 @@ export function OfficialAnalyticsProvider(props: {
   )
 
   useEffect(() => {
-    if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
+    if (!analyticsConfig?.enabled || !hasAnalyticsConsent || !sdkBootstrappedRef.current) {
       return
     }
 
@@ -312,7 +312,7 @@ export function OfficialAnalyticsProvider(props: {
         }),
       )
     }
-  }, [capture, pathname])
+  }, [analyticsConfig, hasAnalyticsConsent, capture, pathname])
 
   useEffect(() => {
     const captureActive = () => {

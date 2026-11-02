@@ -11,6 +11,7 @@ export default function ReplayView(props: AdminViewServerProps) {
   // Payload 自定义视图的权限和 locale 由 initPageResult 提供，顶层并未传入。
   const { req, visibleEntities, permissions, locale } = props.initPageResult
   if (!hasAnyCmsRole(req.user, CMS_ADMIN_ROLES)) notFound()
+  const visitor = typeof props.searchParams?.visitor === 'string' ? props.searchParams.visitor : ''
   return (
     <DefaultTemplate
       i18n={props.i18n}
@@ -31,11 +32,7 @@ export default function ReplayView(props: AdminViewServerProps) {
       (!props.searchParams?.view && !props.searchParams?.visitor) ? (
         <ConversionDashboard />
       ) : (
-        <ReplayDashboard
-          initialVisitor={
-            typeof props.searchParams?.visitor === 'string' ? props.searchParams.visitor : ''
-          }
-        />
+        <ReplayDashboard key={visitor} initialVisitor={visitor} />
       )}
     </DefaultTemplate>
   )

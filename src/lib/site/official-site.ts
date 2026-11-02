@@ -16,7 +16,8 @@ export const OFFICIAL_SITE_URL = PREFERRED_SITE_URL
  * 产品侧登录/注册入口。
  * 官网 waitlist 暂停期间，原先进入 waitlist 的 CTA 统一跳转到这里。
  */
-export const OFFICIAL_PRODUCT_AUTH_URL = 'https://www.noumi.ai/auth'
+export const OFFICIAL_PRODUCT_AUTH_URL =
+  process.env.NEXT_PUBLIC_NOUMI_PRODUCT_AUTH_URL?.trim() || 'https://www.noumi.ai/auth'
 
 /**
  * 埋点使用的产品登录/注册路径。

@@ -1,4 +1,5 @@
 import { readStoredConsent } from '../consent'
+import { readSharedVisitorId } from '../shared-visitor'
 import {
   maskProductReplayText,
   PRODUCT_REPLAY_PRIVATE_SELECTOR,
@@ -40,7 +41,7 @@ function write(storage: Storage, key: string, value: unknown) {
 
 /** 一个挂载周期只有一个 recorder owner；没有后台队列或业务重试。 */
 export class OfficialRecorder {
-  private anonymousId = crypto.randomUUID()
+  private anonymousId = ''
   private visitId = ''
   private lastActivity = 0
   private recording = false
@@ -85,16 +86,15 @@ export class OfficialRecorder {
     }
     if (!this.consent) {
       this.consent = true
+      this.anonymousId = readSharedVisitorId()
       try {
-        const identity = read(localStorage, REPLAY_IDENTITY_KEY)
-        if (typeof identity === 'string' && /^[0-9a-f-]{36}$/i.test(identity))
-          this.anonymousId = identity as ReturnType<typeof crypto.randomUUID>
         const visit = read(sessionStorage, REPLAY_VISIT_KEY) as {
           id?: string
           activity?: number
           scope?: string
         } | null
         if (
+          read(localStorage, REPLAY_IDENTITY_KEY) === this.anonymousId &&
           visit?.scope === this.config.scope &&
           typeof visit.id === 'string' &&
           /^[0-9a-f-]{36}$/i.test(visit.id) &&
@@ -103,16 +103,31 @@ export class OfficialRecorder {
           this.visitId = visit.id
           this.lastActivity = visit.activity
         }
-        write(localStorage, REPLAY_IDENTITY_KEY, this.anonymousId)
       } catch {
         /* 禁止访问 storage 时仍可录制当前页。 */
       }
+    }
+    // 同意后才读取或创建共享访客 Cookie，接续当前站点已有身份。
+    const previousAnonymousId = this.anonymousId
+    this.anonymousId = readSharedVisitorId()
+    if (previousAnonymousId !== this.anonymousId) this.visitId = ''
+    try {
+      write(localStorage, REPLAY_IDENTITY_KEY, this.anonymousId)
+    } catch {
+      /* 存储受限。 */
     }
     this.observePage()
   }
 
   private ensureRecording() {
     if (!this.allowed() || document.hidden) return false
+    const sharedVisitor = readSharedVisitorId()
+    if (sharedVisitor !== this.anonymousId) {
+      this.stop()
+      this.anonymousId = sharedVisitor
+      this.visitId = ''
+      this.page = ''
+    }
     const now = Date.now()
     if (!this.visitId || now - this.lastActivity > REPLAY_IDLE_MS) {
       this.client.stop(true)
@@ -138,6 +153,7 @@ export class OfficialRecorder {
           app: REPLAY_APP,
           scope: this.config.scope,
           anonymous_id: this.anonymousId,
+          visitor_id: this.anonymousId,
           visit_id: this.visitId,
           last_page: location.pathname,
         },

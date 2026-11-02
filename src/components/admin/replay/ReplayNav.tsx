@@ -9,7 +9,7 @@ export default function ReplayNav() {
   if (!hasAnyCmsRole(user, CMS_ADMIN_ROLES)) return null
   return (
     <Link className="nav__link" href="/admin/visit-replays">
-      Visit replays
+      Visitors and conversions
     </Link>
   )
 }

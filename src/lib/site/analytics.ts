@@ -60,6 +60,7 @@ export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
 export type OfficialAnalyticsEventName = (typeof OFFICIAL_ANALYTICS_EVENT_NAMES)[number]
 
 const ANALYTICS_TEXT_KEYS = new Set([
+  'visitor_id',
   'action',
   'app_surface',
   'cta_id',
@@ -401,6 +402,7 @@ export function buildOfficialLandingSourceProperties(options: {
  */
 export function buildOfficialOutboundAttributionParams(options: {
   anonymousDistinctId?: string | null
+  visitorId?: string
   baseUrl: string
   ctaId?: string | null
   landingPage: string
@@ -449,6 +451,13 @@ export function buildOfficialOutboundAttributionParams(options: {
   if (anonymousDistinctId) {
     params.set('posthog_anonymous_distinct_id', anonymousDistinctId)
   }
+  if (
+    options.visitorId &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      options.visitorId,
+    )
+  )
+    params.set('visitor_id', options.visitorId)
   params.set('source_surface', 'official')
 
   return params

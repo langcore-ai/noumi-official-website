@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { clearSharedVisitorId, readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { OfficialRecorder } from '@/lib/site/replay/recorder'
 import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from '@/lib/site/consent'
-import { REPLAY_IDLE_MS, REPLAY_VISIT_KEY, replayRoute } from '@/lib/site/replay/shared'
+import {
+  REPLAY_IDLE_MS,
+  REPLAY_IDENTITY_KEY,
+  REPLAY_VISIT_KEY,
+  replayRoute,
+} from '@/lib/site/replay/shared'
 import { maskProductReplayText, sanitizeProductReplay } from '@/lib/site/replay/privacy'
 
 const client = {
@@ -22,6 +28,7 @@ beforeEach(() => {
   vi.useFakeTimers()
   vi.setSystemTime(new Date('2026-10-19T00:00:00Z'))
   vi.clearAllMocks()
+  clearSharedVisitorId()
   localStorage.clear()
   sessionStorage.clear()
   history.replaceState(null, '', '/')
@@ -39,6 +46,45 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 describe('website replay lifecycle', () => {
+  it.each(['analytics-first', 'replay-first'])(
+    'preserves a legacy visitor when %s initializes',
+    (order) => {
+      const legacy = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
+      localStorage.setItem(REPLAY_IDENTITY_KEY, JSON.stringify(legacy))
+      consent(true)
+      let analyticsVisitor = ''
+      if (order === 'analytics-first') analyticsVisitor = readSharedVisitorId()
+      recorder.sync()
+      if (order === 'replay-first') analyticsVisitor = readSharedVisitorId()
+      expect(analyticsVisitor).toBe(legacy)
+      expect(client.start.mock.calls.at(-1)?.[0].meta).toMatchObject({
+        anonymous_id: legacy,
+        visitor_id: legacy,
+      })
+      expect(JSON.parse(localStorage.getItem(REPLAY_IDENTITY_KEY)!)).toBe(legacy)
+    },
+  )
+  it('keeps the visit on reload but discards it when the shared identity changes', () => {
+    consent(true)
+    recorder.sync()
+    const firstVisit = JSON.parse(sessionStorage.getItem(REPLAY_VISIT_KEY)!).id
+    recorder.dispose()
+    recorder = new OfficialRecorder(
+      client as unknown as typeof import('@rrweb/browser-client'),
+      config,
+    )
+    recorder.sync()
+    expect(JSON.parse(sessionStorage.getItem(REPLAY_VISIT_KEY)!).id).toBe(firstVisit)
+    recorder.dispose()
+    document.cookie =
+      'noumi_visitor_id_preview=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb; Path=/; Secure'
+    recorder = new OfficialRecorder(
+      client as unknown as typeof import('@rrweb/browser-client'),
+      config,
+    )
+    recorder.sync()
+    expect(JSON.parse(sessionStorage.getItem(REPLAY_VISIT_KEY)!).id).not.toBe(firstVisit)
+  })
   it('records only after consent and stops on withdrawal; re-consent creates a new visit', () => {
     recorder.sync()
     expect(client.start).not.toHaveBeenCalled()
@@ -89,6 +135,30 @@ describe('website replay lifecycle', () => {
     recorder.event('official_cta_clicked', {})
     expect(fetch).toHaveBeenCalledTimes(2)
     expect(client.stop).toHaveBeenLastCalledWith(true)
+  })
+  it('reuses the product visitor Cookie across visits and splits when the product rotates it', () => {
+    const visitor = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
+    document.cookie = `noumi_visitor_id_preview=${visitor}; Path=/; Secure`
+    consent(true)
+    recorder.sync()
+    expect(client.start.mock.calls.at(-1)?.[0].meta).toMatchObject({
+      anonymous_id: visitor,
+      visitor_id: visitor,
+    })
+    const firstVisit = JSON.parse(sessionStorage.getItem(REPLAY_VISIT_KEY)!).id
+    recorder.dispose()
+    sessionStorage.removeItem(REPLAY_VISIT_KEY)
+    recorder = new OfficialRecorder(
+      client as unknown as typeof import('@rrweb/browser-client'),
+      config,
+    )
+    recorder.sync()
+    expect(client.start.mock.calls.at(-1)?.[0].meta.anonymous_id).toBe(visitor)
+    expect(JSON.parse(sessionStorage.getItem(REPLAY_VISIT_KEY)!).id).not.toBe(firstVisit)
+    const next = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
+    document.cookie = `noumi_visitor_id_preview=${next}; Path=/; Secure`
+    recorder.observePage()
+    expect(client.start.mock.calls.at(-1)?.[0].meta.anonymous_id).toBe(next)
   })
   it('masks credentials and strips signed resource URLs from snapshots', () => {
     const input = document.createElement('input')

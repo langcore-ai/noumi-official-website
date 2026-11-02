@@ -1,3 +1,5 @@
+import { REPLAY_IDENTITY_KEY } from './replay/shared'
+
 /** 官网与产品仅共享观测 ID；它不授予账号或回放读取权限。 */
 const VISITOR_COOKIE = 'noumi_visitor_id'
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu
@@ -23,7 +25,7 @@ function saveVisitorId(id: string) {
 }
 
 /** 优先读取父域 Cookie；仅首次升级时接续当前站点已有的匿名 ID。 */
-export function readSharedVisitorId(legacyId?: string): string {
+export function readSharedVisitorId(): string {
   if (typeof window === 'undefined' || !window.location) return ''
   try {
     const { name } = cookieSettings()
@@ -36,12 +38,19 @@ export function readSharedVisitorId(legacyId?: string): string {
   } catch {
     /* 存储受限不影响业务。 */
   }
+  // 所有采集入口都先接续旧回放身份，避免初始化顺序决定访客 ID。
+  let legacyId: unknown
+  try {
+    legacyId = JSON.parse(localStorage.getItem(REPLAY_IDENTITY_KEY) ?? 'null')
+  } catch {
+    /* 旧值损坏或存储受限时生成新身份，不影响页面。 */
+  }
   const query = new URLSearchParams(location.search)
   const linked = query.get('source_surface') === 'official' ? query.get('visitor_id') : null
   return saveVisitorId(
     fallbackId ||
       (linked && UUID.test(linked) ? linked : undefined) ||
-      (legacyId && UUID.test(legacyId) ? legacyId : crypto.randomUUID()),
+      (typeof legacyId === 'string' && UUID.test(legacyId) ? legacyId : crypto.randomUUID()),
   )
 }
 

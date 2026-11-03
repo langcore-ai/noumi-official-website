@@ -16,8 +16,8 @@
     "mode:stop": "bun tooling/infra/mode.ts stop",
     "release": "bun tooling/release/cli.ts",
     "prebuild": "node ./scripts/patch-opennext-env-shim.mjs && node ./scripts/patch-opennext-local-bindings.mjs",
-    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
-    "build:quick": "cross-env QUICK_BUILD=true NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --no-lint",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --webpack",
+    "build:quick": "cross-env QUICK_BUILD=true NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --webpack",
     "build:cloudflare": "bun run prebuild && opennextjs-cloudflare build",
     "check:fast": "prettier --check package.json tooling && eslint . && tsc --noEmit && bun run test:int && bun run build",
     "check:full": "bun run check:fast && bun run test:e2e && bun run build:cloudflare",
@@ -69,7 +69,7 @@
     "graphql": "^16.8.1",
     "jose": "^5.10.0",
     "marked": "^18.0.14",
-    "next": "15.4.11",
+    "next": "16.4.4",
     "payload": "^3.81.0",
     "posthog-js": "^1.372.1",
     "react": "^19.2.1",
@@ -98,7 +98,7 @@
     "@types/turndown": "^5.0.6",
     "@vitejs/plugin-react": "4.5.2",
     "eslint": "^9.16.0",
-    "eslint-config-next": "15.4.11",
+    "eslint-config-next": "16.4.4",
     "jsdom": "28.0.0",
     "parse5": "8.0.0",
     "picocolors": "^1.1.1",
@@ -115,7 +115,7 @@
   },
   "engines": {
     "bun": ">=1.3.0",
-    "node": "^18.20.2 || >=20.9.0",
+    "node": ">=20.9.0",
     "pnpm": "^9 || ^10 || ^11"
   },
   "pnpm": {

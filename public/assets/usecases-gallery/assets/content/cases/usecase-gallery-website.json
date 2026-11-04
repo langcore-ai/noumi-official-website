@@ -15,12 +15,11 @@
     { "kind": "image", "name": { "en": "UI-font-color.png", "zh": "UI-font-color.png" }, "ext": "PNG", "src": "ui-font-color.png" }
   ],
   "reply": {
-    "en": "Built the full interactive gallery framework, view live result : https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/\n\n==👀 ✍️ Author's note: Yep, the page you’re browsing right now was built with Noumi from the requirements and design references above.==",
-    "zh": "已搭建好完整的交互式画廊框架，查看上线结果：https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/\n\n==👀 ✍️ 作者按：没错，你现在正在浏览的这个页面，就是 Noumi 根据以上需求和设计参考搭建出来的。=="
+    "en": "Built the full interactive gallery framework, view live result : https://noumi.ai/#use-cases\n\n==👀 ✍️ Author's note: Yep, the page you're browsing right now was built with Noumi Lightsystem from the requirements prompts and design references above.==",
+    "zh": "已搭建好完整的交互式画廊框架，查看上线结果：https://noumi.ai/#use-cases\n\n==👀 ✍️ 作者按：没错，你现在正在浏览的这个页面，就是 Noumi Lightsystem 根据以上需求提示词和设计参考搭建出来的。=="
   },
   "duration": "16m 05s",
   "outputAttachments": [
-    { "kind": "link", "label": { "en": "Live Gallery Website", "zh": "上线的画廊网站" }, "url": "https://www.noumi.ai/agent/taoyang-bc/light-systems/noumi-usecases/" },
     { "kind": "image", "caption": { "en": "The finished interactive gallery — this very page", "zh": "最终成品——交互式画廊，也就是你正在浏览的这个页面" }, "src": "gallery-website-live.jpg" }
   ]
 }

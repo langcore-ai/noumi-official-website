@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { runInNewContext } from 'node:vm'
 
 import {
   buildOfficialGoogleTagBootstrapScript,
@@ -14,6 +15,19 @@ import {
 } from '@/lib/site/analytics'
 
 describe('official analytics helpers', () => {
+  it('initializes consent before starting GTM and preserves the shared data layer', () => {
+    const existingEvent = { event: 'existing' }
+    const browser = { dataLayer: [existingEvent] as unknown[] }
+    runInNewContext(buildOfficialGoogleTagBootstrapScript(), { window: browser })
+    expect(browser.dataLayer[0]).toBe(existingEvent)
+    const commands = browser.dataLayer
+      .slice(1, 4)
+      .map((entry) => Array.from(entry as ArrayLike<unknown>))
+    expect(commands[0]).toMatchObject(['consent', 'default', { analytics_storage: 'denied' }])
+    expect(commands[1][0]).toBe('js')
+    expect(browser.dataLayer[4]).toMatchObject({ event: 'gtm.js', 'gtm.start': expect.any(Number) })
+  })
+
   it('uses the official GA4 measurement id', () => {
     expect(OFFICIAL_GOOGLE_TAG_ID).toBe('G-TJBXDRBMVM')
   })

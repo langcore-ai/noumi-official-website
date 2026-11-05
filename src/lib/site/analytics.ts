@@ -541,6 +541,7 @@ window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); 
   });
   window.gtag('js', new Date());
   window.gtag('config', ${googleTagId}, { send_page_view: false });
+  window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
   window[${bootstrapFlag}] = true;
 })();
 `.trim()

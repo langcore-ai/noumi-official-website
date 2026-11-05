@@ -65,6 +65,12 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
             />
             <Script
               async
+              id="noumi-official-gtm"
+              src="https://www.googletagmanager.com/gtm.js?id=GTM-NFXRLW7R"
+              strategy="afterInteractive"
+            />
+            <Script
+              async
               id="noumi-official-google-tag"
               src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
                 OFFICIAL_GOOGLE_TAG_ID,

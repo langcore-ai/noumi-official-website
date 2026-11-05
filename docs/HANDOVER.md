@@ -957,6 +957,8 @@ pnpm run deploy
 
 ## 21. 部署后验证
 
+生产官网公共布局加载 GTM 容器 `GTM-NFXRLW7R`。GTM 与现有 GA4 共用 `dataLayer` 和 `gtag` 初始化，先设置 Cookie Consent 默认状态，再入队 `gtm.js` 启动事件。本地和 staging 不加载此容器。容器中的标签仍需在 GTM 后台发布，避免与网站直接发送的 GA4 页面事件重复。
+
 ### 21.1 基础 Smoke Test
 
 ```bash

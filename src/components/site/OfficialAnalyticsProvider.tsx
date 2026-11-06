@@ -28,6 +28,7 @@ import {
 } from '@/lib/site/analytics'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
+import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 
 /** Landing page 视图仅在一个会话内记一次。 */
@@ -39,7 +40,7 @@ type GoogleTagCommand = [command: string, ...args: unknown[]]
 
 type GoogleTagWindow = Window &
   typeof globalThis & {
-    dataLayer?: GoogleTagCommand[]
+    dataLayer?: (GoogleTagCommand | Record<string, unknown>)[]
     gtag?: (...args: GoogleTagCommand) => void
     [OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG]?: boolean
   }
@@ -269,6 +270,21 @@ export function OfficialAnalyticsProvider(props: {
       }),
     )
   }, [hasAnalyticsConsent, pathname, statisticsEnabled])
+
+  // GTM owns GA4 click delivery; this listener is independent of PostHog.
+  useEffect(() => {
+    if (!statisticsEnabled) return
+    const handleTryFreeClick = (event: MouseEvent) => {
+      if (!hasAnalyticsConsentRef.current) return
+      const payload = getTryFreeClickPayload(event.target)
+      if (!payload) return
+      const googleWindow = window as GoogleTagWindow
+      googleWindow.dataLayer = googleWindow.dataLayer || []
+      googleWindow.dataLayer.push({ event: 'try_free_click', ...payload })
+    }
+    document.addEventListener('click', handleTryFreeClick, true)
+    return () => document.removeEventListener('click', handleTryFreeClick, true)
+  }, [statisticsEnabled])
 
   const capture = useCallback(
     (eventName: OfficialAnalyticsEventName, properties: OfficialAnalyticsProperties = {}) => {

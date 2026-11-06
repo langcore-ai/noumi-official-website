@@ -125,10 +125,11 @@ describe('official analytics helpers', () => {
       buildOfficialGoogleTagPageViewPayload({
         baseUrl: 'https://www.noumi.ai',
         pathname: '/invite/?email=user@example.com#top',
+        search: '?utm_source=newsletter&utm_medium=email&email=user@example.com',
         title: ' Invite Noumi ',
       }),
     ).toEqual({
-      page_location: 'https://www.noumi.ai/invite',
+      page_location: 'https://www.noumi.ai/invite?utm_source=newsletter&utm_medium=email',
       page_path: '/invite',
       page_title: 'Invite Noumi',
     })

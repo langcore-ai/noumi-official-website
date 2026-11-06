@@ -1,3 +1,4 @@
+import { getAnalyticsManagementConfig } from '@/lib/site/analytics-management.server'
 import { createOfficialMetadata } from '@/lib/site/official-site'
 import type { ReactNode } from 'react'
 import Script from 'next/script'
@@ -40,6 +41,9 @@ export async function generateMetadata() {
 export default async function FrontendLayout(props: { children: ReactNode }) {
   const { children } = props
   const isTestEnvironment = ['local', 'staging'].includes(process.env.NEXT_PUBLIC_APP_ENV || '')
+  const { gtmContainerId } = isTestEnvironment
+    ? { gtmContainerId: null }
+    : await getAnalyticsManagementConfig()
   const content = (
     <>
       <OfficialPersistentChrome>{children}</OfficialPersistentChrome>
@@ -73,7 +77,9 @@ export default async function FrontendLayout(props: { children: ReactNode }) {
         {isTestEnvironment ? (
           content
         ) : (
-          <OfficialAnalyticsProvider>{content}</OfficialAnalyticsProvider>
+          <OfficialAnalyticsProvider gtmContainerId={gtmContainerId}>
+            {content}
+          </OfficialAnalyticsProvider>
         )}
       </body>
     </html>

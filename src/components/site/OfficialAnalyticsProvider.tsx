@@ -26,6 +26,7 @@ import {
   type OfficialAnalyticsProperties,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
+import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 
 /** Landing page 视图仅在一个会话内记一次。 */
@@ -37,7 +38,7 @@ type GoogleTagCommand = [command: string, ...args: unknown[]]
 
 type GoogleTagWindow = Window &
   typeof globalThis & {
-    dataLayer?: GoogleTagCommand[]
+    dataLayer?: (GoogleTagCommand | Record<string, unknown>)[]
     gtag?: (...args: GoogleTagCommand) => void
     [OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG]?: boolean
   }
@@ -136,8 +137,11 @@ function readInitialAnalyticsConsent() {
  * @param props.children 前台页面节点
  * @returns 包裹后的前台页面
  */
-export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
-  const { children } = props
+export function OfficialAnalyticsProvider(props: {
+  children: ReactNode
+  gtmContainerId?: string | null
+}) {
+  const { children, gtmContainerId } = props
   const pathname = usePathname()
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
   const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(readInitialAnalyticsConsent)
@@ -261,6 +265,33 @@ export function OfficialAnalyticsProvider(props: { children: ReactNode }) {
       }),
     )
   }, [hasAnalyticsConsent, pathname])
+
+  // GA4 clicks must not depend on PostHog configuration or SDK initialization.
+  useEffect(() => {
+    const googleWindow = window as GoogleTagWindow
+    if (gtmContainerId && !document.getElementById('noumi-official-gtm')) {
+      googleWindow.dataLayer = googleWindow.dataLayer || []
+      googleWindow.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+      const script = document.createElement('script')
+      script.id = 'noumi-official-gtm'
+      script.async = true
+      script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmContainerId)}`
+      document.head.appendChild(script)
+    }
+    const handleTryFreeClick = (event: MouseEvent) => {
+      if (!hasAnalyticsConsentRef.current) return
+      const payload = getTryFreeClickPayload(event.target)
+      if (!payload) return
+      if (gtmContainerId) {
+        googleWindow.dataLayer = googleWindow.dataLayer || []
+        googleWindow.dataLayer.push({ event: 'try_free_click', ...payload })
+      } else {
+        ensureOfficialGoogleTag()('event', 'try_free_click', payload)
+      }
+    }
+    document.addEventListener('click', handleTryFreeClick, true)
+    return () => document.removeEventListener('click', handleTryFreeClick, true)
+  }, [gtmContainerId])
 
   const capture = useCallback(
     (eventName: OfficialAnalyticsEventName, properties: OfficialAnalyticsProperties = {}) => {

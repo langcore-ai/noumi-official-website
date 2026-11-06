@@ -350,6 +350,17 @@ async function getCloudflareContextForPayload(): Promise<CloudflareContext> {
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      afterNavLinks: ['/components/admin/AnalyticsNavLink#AnalyticsNavLink'],
+      views: {
+        analytics: {
+          Component: '/components/admin/AnalyticsView#AnalyticsView',
+          path: '/analytics',
+          exact: true,
+          meta: { title: '数据分析' },
+        },
+      },
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

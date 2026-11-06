@@ -578,6 +578,9 @@ curl -sS -X POST \
 ### 14.1 Analytics
 
 - GA4 ID `G-TJBXDRBMVM` 写在源码中。
+- 生产 GTM 容器为 `GTM-NFXRLW7R`。免费试用点击在同意 analytics 后向 dataLayer 发送 `try_free_click`，由 GTM 自定义事件标签发送至 GA4，不额外直发同名 GA4 事件。
+- 点击参数包括去掉 query/hash 的 `page_location`、`page_path`、`page_title`、`button_text`、`button_location`、`cta_id`；当前页面在点击时读取。现有 CTA 标记与标准 Try Noumi Free 文案均可识别，自定义按钮可使用 `data-track-action="try_free"` 和 `data-track-location`。
+- local/staging 不发送正式点击统计；PostHog 是否启用不影响生产 GTM 点击事件。GTM 预览验证通过后，仍需在容器中发布事件标签，网站代码上线不会自动发布 GTM 工作区。
 - Google tag script 会加载；初始 consent 为 denied，用户同意后更新 Consent Mode。
 - PostHog 只有在 `POSTHOG_ENABLED=true`、配置 project key 且用户同意 analytics 后初始化。
 - PostHog browser host 默认 `https://e.noumi.ai`，UI host 默认 `https://us.posthog.com`。
@@ -1139,7 +1142,7 @@ Playwright 覆盖：
 | P1     | Raw HTML 可执行内联脚本、事件属性并污染全局 CSS                           | 继续限制角色；考虑 sanitizer/iframe/CSP 与安全测试  |
 | P1     | `/api/preview/exit` 的 path 规范化可能通过反斜杠编码形成外部跳转          | 修复 URL/path 校验并补测试                          |
 | P1     | Preview 响应回填路径未再次检查 preview cookie，可能污染公开 HTML snapshot | 在写入前统一校验 request preview 状态并补 E2E       |
-| 已处理 | staging 使用独立 Worker/D1/R2，支持真实运行时验证 | 见 TEST-ENVIRONMENTS.md |
+| 已处理 | staging 使用独立 Worker/D1/R2，支持真实运行时验证                         | 见 TEST-ENVIRONMENTS.md                             |
 | P1     | 部署先迁移 D1 后部署 Worker，无自动回滚                                   | 建 backup、expand/contract、health check 和发布流程 |
 | P1     | FAQ 小 HTML 没有 sanitizer，且 translator 可编辑部分来源                  | 限制标签/净化/权限                                  |
 | P2     | Snapshot 锁非原子、dirty 早于 HTML 完成清除、删除路由遗留 HTML            | 设计带 owner 的原子协调和 HTML manifest 清理        |

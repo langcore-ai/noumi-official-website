@@ -351,8 +351,17 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     components: {
-      afterNavLinks: ['/components/admin/replay/ReplayNav'],
+      afterNavLinks: [
+        '/components/admin/replay/ReplayNav',
+        '/components/admin/AnalyticsNavLink#AnalyticsNavLink',
+      ],
       views: {
+        analytics: {
+          Component: '/components/admin/AnalyticsView#AnalyticsView',
+          path: '/analytics',
+          exact: true,
+          meta: { title: '数据分析' },
+        },
         visitReplays: {
           Component: '/components/admin/replay/ReplayView',
           path: '/visit-replays',

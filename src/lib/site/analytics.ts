@@ -33,6 +33,14 @@ export type OfficialGoogleTagPageViewPayload = {
   page_title?: string
 }
 
+const GOOGLE_TAG_CAMPAIGN_KEYS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+] as const
+
 /** GA4 consent mode 支持的授权值。 */
 export type OfficialGoogleTagConsentValue = 'denied' | 'granted'
 
@@ -473,10 +481,19 @@ export function buildOfficialOutboundAttributionParams(options: {
 export function buildOfficialGoogleTagPageViewPayload(input: {
   baseUrl: string
   pathname: string
+  search?: string
   title?: string | null
 }): OfficialGoogleTagPageViewPayload {
   const pagePath = normalizePathLike(input.pathname, input.baseUrl) || '/'
-  const pageLocation = new URL(pagePath, input.baseUrl).toString()
+  const pageLocationUrl = new URL(pagePath, input.baseUrl)
+  const searchParams = new URLSearchParams(input.search || '')
+  for (const key of GOOGLE_TAG_CAMPAIGN_KEYS) {
+    const value = searchParams.get(key)?.trim()
+    if (value) {
+      pageLocationUrl.searchParams.set(key, normalizeTextValue(value, TEXT_VALUE_MAX_LENGTH))
+    }
+  }
+  const pageLocation = pageLocationUrl.toString()
   const pageTitle = normalizeTextValue(input.title, POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH)
   const payload: OfficialGoogleTagPageViewPayload = {
     page_location: pageLocation,

@@ -252,7 +252,8 @@ export function OfficialAnalyticsProvider(props: {
   }, [hasAnalyticsConsent, statisticsEnabled])
 
   useEffect(() => {
-    const pageViewKey = `${hasAnalyticsConsent ? 'granted' : 'denied'}:${pathname}`
+    const search = window.location.search
+    const pageViewKey = `${hasAnalyticsConsent ? 'granted' : 'denied'}:${pathname}:${search}`
     if (googleTagPageViewKeyRef.current === pageViewKey) {
       return
     }
@@ -266,6 +267,7 @@ export function OfficialAnalyticsProvider(props: {
       buildOfficialGoogleTagPageViewPayload({
         baseUrl: window.location.origin,
         pathname,
+        search,
         title: document.title,
       }),
     )

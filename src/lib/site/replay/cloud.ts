@@ -55,7 +55,8 @@ async function readCloudJson(
   try {
     const response = await fetch(`${CLOUD_ORIGIN}${path}`, {
       headers: { authorization: `Bearer ${key}` },
-      redirect: 'error',
+      // Workers rejects redirect: 'error'; manual + !response.ok still blocks redirects.
+      redirect: 'manual',
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(20_000)])
         : AbortSignal.timeout(20_000),

@@ -44,7 +44,8 @@ export async function conversionAdminRequest(request: Request): Promise<Response
     }
     const response = await fetch(`${origin.origin}/_internal/visitor-conversions?${query}`, {
       headers: { authorization: `Bearer ${token}` },
-      redirect: 'error',
+      // Workers rejects redirect: 'error'; manual + !response.ok still blocks redirects.
+      redirect: 'manual',
       cache: 'no-store',
       signal: AbortSignal.any([request.signal, AbortSignal.timeout(60000)]),
     })

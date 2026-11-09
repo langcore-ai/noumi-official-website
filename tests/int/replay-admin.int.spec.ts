@@ -61,6 +61,14 @@ it('queries scoped metadata and groups recordings without claiming a total count
   expect(url.searchParams.get('metadata[app]')).toBe('noumi-official')
   expect(url.searchParams.get('metadata[scope]')).toBe('test')
 })
+it('rejects upstream redirects instead of following them', async () => {
+  vi.mocked(fetch).mockResolvedValueOnce(
+    new Response(null, { status: 302, headers: { location: 'https://attacker.test/' } }),
+  )
+  await expect(listProductVisits('key', 'test', 0, '')).rejects.toMatchObject({
+    code: 'analytics_cloud_unavailable',
+  })
+})
 it('loads metadata without downloading DOM; reports partial timeline failures', async () => {
   vi.mocked(fetch).mockImplementation(async (url) =>
     String(url).includes('/events')

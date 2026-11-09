@@ -41,7 +41,15 @@ it('uses only the fixed readonly endpoint and server token, never client credent
   const headers = new Headers(init?.headers)
   expect(headers.get('authorization')).toBe('Bearer service-only-key')
   expect(headers.has('cookie')).toBe(false)
-  expect(init?.redirect).toBe('error')
+  expect(init?.redirect).toBe('manual')
+})
+it('rejects upstream redirects instead of following them', async () => {
+  vi.mocked(fetch).mockResolvedValueOnce(
+    new Response(null, { status: 302, headers: { location: 'https://attacker.test/' } }),
+  )
+  const response = await conversionAdminRequest(request())
+  expect(response.status).toBe(502)
+  expect(await response.json()).toEqual({ error: 'conversion_unavailable' })
 })
 it('distinguishes configuration, limits and unavailable sources rather than returning zero metrics', async () => {
   vi.stubEnv('VISITOR_CONVERSION_SERVICE_TOKEN', '')

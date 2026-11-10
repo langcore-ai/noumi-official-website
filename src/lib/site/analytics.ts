@@ -1,10 +1,7 @@
 import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
 
-/** 官网分析配置的默认 PostHog UI 地址。 */
-export const OFFICIAL_ANALYTICS_DEFAULT_UI_HOST = 'https://us.posthog.com'
-
-/** 官网分析配置的默认代理采集地址。 */
-export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://e.noumi.ai'
+/** 官网分析配置的默认 PostHog ingest 地址。 */
+export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://us.i.posthog.com'
 
 /** 官网 GA4 Measurement ID。 */
 export const OFFICIAL_GOOGLE_TAG_ID = 'G-TJBXDRBMVM'
@@ -12,12 +9,9 @@ export const OFFICIAL_GOOGLE_TAG_ID = 'G-TJBXDRBMVM'
 /** window 上标记 GA4 初始化是否已完成的字段名。 */
 export const OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG = 'noumiOfficialGoogleTagBootstrapped'
 
-/** PostHog 浏览器可见配置。 */
+/** 官网浏览器可见的 PostHog 配置；project key 与 host 只保留在服务端。 */
 export type PublicOfficialAnalyticsConfig = {
   enabled: boolean
-  projectKey: string | null
-  apiHost: string | null
-  uiHost: string | null
 }
 
 /** 官网分析属性值类型。 */
@@ -52,20 +46,32 @@ export type OfficialGoogleTagConsentPayload = {
   analytics_storage: OfficialGoogleTagConsentValue
 }
 
-/** 可上报的官网埋点事件名。 */
-export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
+/** 浏览器允许上报的官网埋点事件名。 */
+export const OFFICIAL_CLIENT_EVENT_NAMES = [
   '$pageview',
-  'app_active',
   'landing_page_viewed',
-  'official_page_viewed',
   'official_cta_clicked',
   'official_invite_lookup_completed',
-  'official_invite_request_submitted',
   'official_product_auth_redirected',
+] as const
+
+/** 只能由服务端在业务成功后上报的官网埋点事件名。 */
+export const OFFICIAL_SERVER_EVENT_NAMES = ['official_invite_request_submitted'] as const
+
+/** 官网可上报的全部埋点事件名。 */
+export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
+  ...OFFICIAL_CLIENT_EVENT_NAMES,
+  ...OFFICIAL_SERVER_EVENT_NAMES,
 ] as const
 
 /** 可上报的官网埋点事件名类型。 */
 export type OfficialAnalyticsEventName = (typeof OFFICIAL_ANALYTICS_EVENT_NAMES)[number]
+
+/** 浏览器可上报的官网埋点事件名类型。 */
+export type OfficialClientEventName = (typeof OFFICIAL_CLIENT_EVENT_NAMES)[number]
+
+/** 服务端可上报的官网埋点事件名类型。 */
+export type OfficialServerEventName = (typeof OFFICIAL_SERVER_EVENT_NAMES)[number]
 
 const ANALYTICS_TEXT_KEYS = new Set([
   'visitor_id',
@@ -93,39 +99,30 @@ const ANALYTICS_PATH_KEYS = new Set([
 
 const ANALYTICS_ORIGIN_KEYS = new Set(['first_touch_referrer_origin', 'referrer_origin'])
 
-const POSTHOG_SYSTEM_TEXT_KEYS = new Set(['token', 'distinct_id'])
-
-const POSTHOG_SYSTEM_URL_KEYS = new Set([
-  '$current_url',
-  '$initial_current_url',
-  '$initial_referrer',
-  '$referrer',
-])
-
 const TEXT_VALUE_MAX_LENGTH = 96
 
 const PATH_VALUE_MAX_LENGTH = 160
 
 const DISTINCT_ID_VALUE_MAX_LENGTH = 160
 
-const POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH = 300
+const PAGE_TITLE_VALUE_MAX_LENGTH = 300
 
 /**
- * 判断事件名是否属于当前允许上报的埋点集合。
+ * 判断事件名是否属于浏览器允许上报的埋点集合。
+ * @param value 待判断的事件名
+ * @returns 是否为受支持的客户端事件名
+ */
+export function isOfficialClientEventName(value: string): value is OfficialClientEventName {
+  return (OFFICIAL_CLIENT_EVENT_NAMES as readonly string[]).includes(value)
+}
+
+/**
+ * 判断事件名是否属于官网埋点集合。
  * @param value 待判断的事件名
  * @returns 是否为受支持事件名
  */
 export function isOfficialAnalyticsEventName(value: string): value is OfficialAnalyticsEventName {
   return (OFFICIAL_ANALYTICS_EVENT_NAMES as readonly string[]).includes(value)
-}
-
-/**
- * 读取并规范化布尔型环境变量。
- * @param value 原始环境变量
- * @returns 布尔结果
- */
-function readBooleanEnv(value: string | null | undefined): boolean {
-  return /^(1|true|yes|on)$/i.test(value?.trim() || '')
 }
 
 /**
@@ -149,6 +146,63 @@ function normalizeTextValue(value: unknown, maxLength: number): string {
  */
 function isTrackableUrlLike(value: string): boolean {
   return value.startsWith('/') || /^https?:\/\//i.test(value)
+}
+
+const OFFICIAL_STATIC_PAGE_PATHS = new Set([
+  '/',
+  '/about',
+  '/auth',
+  '/blog',
+  '/contact',
+  '/faqs',
+  '/features',
+  '/invite',
+  '/links',
+  '/pricing',
+  '/privacy',
+  '/terms',
+  '/use-cases',
+])
+
+const OFFICIAL_DYNAMIC_PAGE_PATH = /^\/(?:blog|features|use-cases)\/[a-z0-9][a-z0-9-]{0,95}$/
+
+/**
+ * 规范化官网公开页面路径，拒绝 query/hash、动态私有路径和原型路径。
+ *
+ * @param value 原始 pathname
+ * @returns 公开路径模板；未知路径返回 `/other`
+ */
+export function normalizeOfficialPagePath(value: string): string {
+  const rawPath = value.split(/[?#]/, 1)[0]?.trim() || ''
+  if (
+    !rawPath.startsWith('/') ||
+    rawPath.length > PATH_VALUE_MAX_LENGTH ||
+    rawPath.includes('..')
+  ) {
+    return '/other'
+  }
+
+  const normalizedPath = rawPath.replace(/\/{2,}/g, '/').replace(/\/+$/, '') || '/'
+  if (OFFICIAL_STATIC_PAGE_PATHS.has(normalizedPath)) {
+    return normalizedPath
+  }
+  if (OFFICIAL_DYNAMIC_PAGE_PATH.test(normalizedPath)) {
+    return normalizedPath
+  }
+  return '/other'
+}
+
+/**
+ * 将官网路径归入稳定的功能分组，避免下游按动态 slug 聚合。
+ *
+ * @param value 原始 pathname
+ * @returns 功能分组
+ */
+export function officialPageGroup(value: string): string {
+  const pagePath = normalizeOfficialPagePath(value)
+  if (pagePath === '/') return 'home'
+  if (pagePath === '/privacy' || pagePath === '/terms') return 'legal'
+  return pagePath.split('/')[1] || 'other'
 }
 
 /**
@@ -203,60 +257,6 @@ function normalizeOriginLike(value: string, baseUrl: string): string {
 }
 
 /**
- * 规范化 PostHog SDK 自动属性里的完整 URL。
- * 只去掉 query/hash，保留 origin 和 path，避免泄露参数同时保留 PostHog 页面归因能力。
- *
- * @param value 原始 URL 或路径
- * @param baseUrl 用于解析相对路径的基准 URL
- * @returns 不含 query/hash 的完整 URL；非法值返回空串
- */
-function normalizeUrlWithoutSearch(value: string, baseUrl: string): string {
-  const trimmedValue = value.trim()
-  if (!trimmedValue || !isTrackableUrlLike(trimmedValue)) {
-    return ''
-  }
-
-  try {
-    const parsedUrl = new URL(trimmedValue, baseUrl)
-    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      return ''
-    }
-
-    parsedUrl.search = ''
-    parsedUrl.hash = ''
-    return parsedUrl.toString().slice(0, POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH)
-  } catch {
-    return ''
-  }
-}
-
-/**
- * 规范化 host 或 URL，允许传入裸域名或完整 URL。
- * @param value 原始 host/url
- * @param fallback 兜底地址
- * @returns 规范化后的 origin；非法值返回兜底
- */
-function normalizeHostUrl(value: string, fallback: string): string {
-  const trimmedValue = value.trim()
-  if (!trimmedValue) {
-    return fallback
-  }
-
-  const withScheme = /^https?:\/\//i.test(trimmedValue) ? trimmedValue : `https://${trimmedValue}`
-
-  try {
-    const parsedUrl = new URL(withScheme)
-    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      return fallback
-    }
-
-    return parsedUrl.origin
-  } catch {
-    return fallback
-  }
-}
-
-/**
  * 规范化并裁剪官网分析属性，避免敏感值和超长值进入 PostHog。
  * @param properties 原始属性
  * @param baseUrl 解析相对路径时使用的基准 URL
@@ -307,57 +307,6 @@ export function sanitizeOfficialAnalyticsProperties(
 
     if (typeof value === 'number' || typeof value === 'boolean' || value === null) {
       sanitizedProperties[key] = value as OfficialAnalyticsPrimitive
-    }
-  }
-
-  return sanitizedProperties
-}
-
-/**
- * 清洗 PostHog 浏览器 SDK 即将发送的属性。
- *
- * 业务属性仍走官网 allowlist；同时保留 SDK 必需的 token、distinct_id 与 `$` 系统属性。
- * PostHog 的 `/e/` 端点依赖 `properties.token` 识别项目，误删会导致 401。
- *
- * @param properties PostHog SDK 组装后的原始属性
- * @param baseUrl 解析相对路径时使用的基准 URL
- * @returns 可发送给 PostHog 的属性集合
- */
-export function sanitizeOfficialBrowserEventProperties(
-  properties: Record<string, unknown>,
-  baseUrl: string,
-): OfficialAnalyticsProperties {
-  const sanitizedProperties = sanitizeOfficialAnalyticsProperties(properties, baseUrl)
-
-  for (const [key, value] of Object.entries(properties)) {
-    if (value === undefined) {
-      continue
-    }
-
-    if (POSTHOG_SYSTEM_URL_KEYS.has(key)) {
-      if (typeof value !== 'string') {
-        continue
-      }
-
-      const normalizedUrl = normalizeUrlWithoutSearch(value, baseUrl)
-      if (normalizedUrl) {
-        sanitizedProperties[key] = normalizedUrl
-      }
-      continue
-    }
-
-    if (POSTHOG_SYSTEM_TEXT_KEYS.has(key) || key.startsWith('$')) {
-      if (typeof value === 'string') {
-        const normalizedText = normalizeTextValue(value, POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH)
-        if (normalizedText) {
-          sanitizedProperties[key] = normalizedText
-        }
-        continue
-      }
-
-      if (typeof value === 'number' || typeof value === 'boolean' || value === null) {
-        sanitizedProperties[key] = value as OfficialAnalyticsPrimitive
-      }
     }
   }
 
@@ -494,7 +443,7 @@ export function buildOfficialGoogleTagPageViewPayload(input: {
     }
   }
   const pageLocation = pageLocationUrl.toString()
-  const pageTitle = normalizeTextValue(input.title, POSTHOG_SYSTEM_TEXT_VALUE_MAX_LENGTH)
+  const pageTitle = normalizeTextValue(input.title, PAGE_TITLE_VALUE_MAX_LENGTH)
   const payload: OfficialGoogleTagPageViewPayload = {
     page_location: pageLocation,
     page_path: pagePath,
@@ -565,40 +514,17 @@ window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); 
 }
 
 /**
- * 解析 PostHog 浏览器侧公开配置。
+ * 解析浏览器可见的开关；project key 与 ingest host 只保留在服务端。
  * @param input 原始环境配置
- * @returns 可直接暴露给浏览器的配置；缺少关键项时返回关闭状态
+ * @returns 浏览器可见配置
  */
 export function buildPublicOfficialAnalyticsConfig(input: {
-  apiHost?: string | null
   enabledEnv?: string | null
   projectKey?: string | null
-  uiHost?: string | null
 }): PublicOfficialAnalyticsConfig {
-  const enabled = readBooleanEnv(input.enabledEnv)
-  const projectKey = input.projectKey?.trim() || ''
-  if (!enabled || !projectKey) {
-    return {
-      enabled: false,
-      projectKey: null,
-      apiHost: null,
-      uiHost: null,
-    }
-  }
-
-  const apiHost = normalizeHostUrl(
-    input.apiHost || OFFICIAL_ANALYTICS_DEFAULT_API_HOST,
-    OFFICIAL_ANALYTICS_DEFAULT_API_HOST,
-  )
-  const uiHost = normalizeHostUrl(
-    input.uiHost || OFFICIAL_ANALYTICS_DEFAULT_UI_HOST,
-    OFFICIAL_ANALYTICS_DEFAULT_UI_HOST,
-  )
-
   return {
-    enabled: true,
-    projectKey,
-    apiHost,
-    uiHost,
+    enabled:
+      /^(1|true|yes|on)$/i.test(input.enabledEnv?.trim() || '') &&
+      Boolean(input.projectKey?.trim()),
   }
 }

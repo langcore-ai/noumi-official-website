@@ -1,7 +1,6 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import posthog, { type CaptureResult } from 'posthog-js'
 import {
   createContext,
   useCallback,
@@ -17,15 +16,22 @@ import {
   buildOfficialGoogleTagPageViewPayload,
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
-  isOfficialAnalyticsEventName,
+  isOfficialClientEventName,
+  normalizeOfficialPagePath,
+  officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
-  sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
-  type OfficialAnalyticsEventName,
   type OfficialAnalyticsProperties,
+  type OfficialClientEventName,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
+import {
+  readOfficialAnonymousId,
+  readOfficialBrowserSession,
+  rotateOfficialAnonymousId,
+  touchOfficialBrowserSession,
+} from '@/lib/site/analytics-identity'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
@@ -33,7 +39,15 @@ import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/conse
 
 /** Landing page 视图仅在一个会话内记一次。 */
 const LANDING_PAGE_VIEWED_SESSION_KEY = 'noumi:official:landing_page_viewed'
-const ACTIVE_HEARTBEAT_SECONDS = 60
+
+/** 事件上报接口路径与自定义请求头，服务端据此拒绝跨站简单请求。 */
+const ANALYTICS_EVENTS_ENDPOINT = '/api/site/analytics/events'
+const ANALYTICS_REQUEST_HEADER = 'x-noumi-analytics'
+
+/** 小批量合并窗口与单批上限，与接口 20 条上限保持一致。 */
+const FLUSH_DELAY_MS = 50
+const MAX_BATCH_SIZE = 20
+
 const GOOGLE_TAG_SCRIPT_ID = 'noumi-official-google-tag'
 
 type GoogleTagCommand = [command: string, ...args: unknown[]]
@@ -45,6 +59,14 @@ type GoogleTagWindow = Window &
     [OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG]?: boolean
   }
 
+type QueuedEvent = {
+  anonymousId: string
+  event: OfficialClientEventName
+  eventId: string
+  occurredAt: string
+  properties: OfficialAnalyticsProperties
+}
+
 /** 官网埋点上下文。 */
 type OfficialAnalyticsContextValue = {
   /**
@@ -52,7 +74,7 @@ type OfficialAnalyticsContextValue = {
    * @param eventName 埋点事件名
    * @param properties 允许的属性
    */
-  capture: (eventName: OfficialAnalyticsEventName, properties?: OfficialAnalyticsProperties) => void
+  capture: (eventName: OfficialClientEventName, properties?: OfficialAnalyticsProperties) => void
 }
 
 const OfficialAnalyticsContext = createContext<OfficialAnalyticsContextValue>({
@@ -60,8 +82,8 @@ const OfficialAnalyticsContext = createContext<OfficialAnalyticsContextValue>({
 })
 
 /**
- * 读取官网公开埋点配置。
- * @returns PostHog 浏览器公开配置；失败时返回关闭状态
+ * 读取官网公开埋点开关。
+ * @returns 埋点开关；失败时返回关闭状态
  */
 async function loadOfficialAnalyticsConfig(): Promise<PublicOfficialAnalyticsConfig> {
   const response = await fetch('/api/site/analytics/config', {
@@ -74,27 +96,6 @@ async function loadOfficialAnalyticsConfig(): Promise<PublicOfficialAnalyticsCon
   }
 
   return (await response.json()) as PublicOfficialAnalyticsConfig
-}
-
-/**
- * 清洗浏览器级别的 PostHog payload，去掉 query/hash 与不允许的值。
- * @param payload 即将发送的事件
- * @returns 清洗后的 payload；返回 null 时会丢弃事件
- */
-function sanitizeBrowserEvent(payload: CaptureResult | null): CaptureResult | null {
-  if (!payload?.properties) {
-    return payload
-  }
-
-  const sanitizedProperties = sanitizeOfficialBrowserEventProperties(
-    { ...payload.properties, visitor_id: readSharedVisitorId() } as Record<string, unknown>,
-    window.location.origin,
-  )
-
-  return {
-    ...payload,
-    properties: sanitizedProperties,
-  }
 }
 
 /**
@@ -134,9 +135,40 @@ function readInitialAnalyticsConsent() {
 }
 
 /**
- * 提供官网分析上下文与 PostHog 生命周期管理。
+ * 追加 `first_touch_*` 归因参数；已有参数不覆盖。
+ * @param url 外跳链接
+ * @param search 当前地址栏 query
+ * @returns 追加归因后的链接
+ */
+function buildAttributedOutboundUrl(
+  url: URL,
+  input: { ctaId?: string | null; search: string },
+): URL {
+  const params = buildOfficialOutboundAttributionParams({
+    anonymousDistinctId: readOfficialAnonymousId(),
+    visitorId: readSharedVisitorId(),
+    baseUrl: window.location.origin,
+    ctaId: input.ctaId,
+    landingPage: window.location.pathname,
+    referrer: document.referrer,
+    search: input.search,
+  })
+
+  for (const [key, value] of params) {
+    if (!url.searchParams.has(key)) {
+      url.searchParams.set(key, value)
+    }
+  }
+
+  return url
+}
+
+/**
+ * 提供官网分析上下文与同源事件中继。
+ * 浏览器不持有 PostHog project key 或 ingest host，所有事件经官网接口转发。
  *
  * @param props.children 前台页面节点
+ * @param props.statisticsEnabled 是否启用浏览器统计
  * @returns 包裹后的前台页面
  */
 export function OfficialAnalyticsProvider(props: {
@@ -147,10 +179,13 @@ export function OfficialAnalyticsProvider(props: {
   const pathname = usePathname()
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
   const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(readInitialAnalyticsConsent)
-  const sdkBootstrappedRef = useRef(false)
   const googleTagBootstrappedRef = useRef(false)
   const googleTagPageViewKeyRef = useRef<string | null>(null)
   const hasAnalyticsConsentRef = useRef(hasAnalyticsConsent)
+  const enabledRef = useRef(false)
+  const queueRef = useRef<QueuedEvent[]>([])
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastPageViewKeyRef = useRef('')
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -159,17 +194,14 @@ export function OfficialAnalyticsProvider(props: {
     void loadOfficialAnalyticsConfig()
       .then((config) => {
         if (!canceled) {
+          enabledRef.current = config.enabled
           setAnalyticsConfig(config)
         }
       })
       .catch(() => {
         if (!canceled) {
-          setAnalyticsConfig({
-            enabled: false,
-            projectKey: null,
-            apiHost: null,
-            uiHost: null,
-          })
+          enabledRef.current = false
+          setAnalyticsConfig({ enabled: false })
         }
       })
 
@@ -184,6 +216,15 @@ export function OfficialAnalyticsProvider(props: {
       const nextHasAnalyticsConsent = storedConsent?.analytics === true
       hasAnalyticsConsentRef.current = nextHasAnalyticsConsent
       setHasAnalyticsConsent(nextHasAnalyticsConsent)
+
+      if (!nextHasAnalyticsConsent) {
+        queueRef.current = []
+        if (flushTimerRef.current) {
+          clearTimeout(flushTimerRef.current)
+          flushTimerRef.current = null
+        }
+        rotateOfficialAnonymousId()
+      }
     }
 
     syncConsent()
@@ -196,36 +237,74 @@ export function OfficialAnalyticsProvider(props: {
     }
   }, [])
 
-  useEffect(() => {
-    if (!analyticsConfig?.enabled || !analyticsConfig.projectKey || !analyticsConfig.apiHost) {
+  /**
+   * 立即把队列提交到同源事件接口。
+   * 失败只记录一次警告，不重试，避免拖慢页面。
+   */
+  const flush = useCallback(() => {
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current)
+      flushTimerRef.current = null
+    }
+    const events = queueRef.current.splice(0, MAX_BATCH_SIZE)
+    if (events.length === 0) {
       return
     }
 
-    if (!hasAnalyticsConsent) {
-      if (sdkBootstrappedRef.current) {
-        posthog.opt_out_capturing()
-      }
-      return
-    }
-
-    if (!sdkBootstrappedRef.current) {
-      posthog.init(analyticsConfig.projectKey, {
-        api_host: analyticsConfig.apiHost,
-        autocapture: false,
-        before_send: sanitizeBrowserEvent,
-        capture_pageleave: true,
-        capture_pageview: 'history_change',
-        cross_subdomain_cookie: true,
-        disable_session_recording: true,
-        person_profiles: 'identified_only',
-        ui_host: analyticsConfig.uiHost ?? undefined,
+    void fetch(ANALYTICS_EVENTS_ENDPOINT, {
+      method: 'POST',
+      credentials: 'same-origin',
+      keepalive: true,
+      headers: { 'content-type': 'application/json', [ANALYTICS_REQUEST_HEADER]: '1' },
+      body: JSON.stringify({ events }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.warn('official analytics relay rejected events', response.status)
+        }
       })
-      sdkBootstrappedRef.current = true
-      return
-    }
+      .catch(() => {
+        console.warn('official analytics relay unreachable')
+      })
+  }, [])
 
-    posthog.opt_in_capturing()
-  }, [analyticsConfig, hasAnalyticsConsent])
+  const capture = useCallback(
+    (eventName: OfficialClientEventName, properties: OfficialAnalyticsProperties = {}) => {
+      trackOfficialReplay(eventName, properties)
+      if (
+        !statisticsEnabled ||
+        !enabledRef.current ||
+        !hasAnalyticsConsentRef.current ||
+        !isOfficialClientEventName(eventName)
+      ) {
+        return
+      }
+
+      const occurredAt = Date.now()
+      const pagePath = normalizeOfficialPagePath(pathname)
+      queueRef.current.push({
+        anonymousId: readOfficialAnonymousId(),
+        event: eventName,
+        eventId: crypto.randomUUID(),
+        occurredAt: new Date(occurredAt).toISOString(),
+        properties: {
+          ...sanitizeOfficialAnalyticsProperties(
+            { ...properties, page_path: pagePath },
+            window.location.origin,
+          ),
+          page_group: officialPageGroup(pagePath),
+          ...touchOfficialBrowserSession(occurredAt),
+        },
+      })
+
+      if (queueRef.current.length >= MAX_BATCH_SIZE) {
+        flush()
+        return
+      }
+      flushTimerRef.current ??= setTimeout(flush, FLUSH_DELAY_MS)
+    },
+    [flush, pathname, statisticsEnabled],
+  )
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -273,7 +352,7 @@ export function OfficialAnalyticsProvider(props: {
     )
   }, [hasAnalyticsConsent, pathname, statisticsEnabled])
 
-  // GTM owns GA4 click delivery; this listener is independent of PostHog.
+  // GTM owns GA4 click delivery; this listener is independent of the relay.
   useEffect(() => {
     if (!statisticsEnabled) return
     const handleTryFreeClick = (event: MouseEvent) => {
@@ -288,36 +367,17 @@ export function OfficialAnalyticsProvider(props: {
     return () => document.removeEventListener('click', handleTryFreeClick, true)
   }, [statisticsEnabled])
 
-  const capture = useCallback(
-    (eventName: OfficialAnalyticsEventName, properties: OfficialAnalyticsProperties = {}) => {
-      trackOfficialReplay(eventName, properties)
-      if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) {
-        return
-      }
-
-      posthog.capture(
-        eventName,
-        sanitizeOfficialAnalyticsProperties(
-          {
-            ...properties,
-            page_path: pathname,
-          },
-          window.location.origin,
-        ),
-      )
-    },
-    [pathname],
-  )
-
   useEffect(() => {
-    if (!analyticsConfig?.enabled || !hasAnalyticsConsent || !sdkBootstrappedRef.current) {
+    if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
       return
     }
 
-    capture('official_page_viewed', {})
-    capture('app_active', {
-      app_surface: 'official',
-    })
+    const session = readOfficialBrowserSession()
+    const pageViewKey = `${session.$session_id}:${pathname}`
+    if (lastPageViewKeyRef.current !== pageViewKey) {
+      lastPageViewKeyRef.current = pageViewKey
+      capture('$pageview', {})
+    }
 
     if (!sessionStorage.getItem(LANDING_PAGE_VIEWED_SESSION_KEY)) {
       sessionStorage.setItem(LANDING_PAGE_VIEWED_SESSION_KEY, '1')
@@ -330,23 +390,10 @@ export function OfficialAnalyticsProvider(props: {
         }),
       )
     }
-  }, [analyticsConfig, hasAnalyticsConsent, capture, pathname])
+  }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
 
   useEffect(() => {
-    const captureActive = () => {
-      if (document.visibilityState !== 'visible') {
-        return
-      }
-
-      capture('app_active', {
-        active_seconds: ACTIVE_HEARTBEAT_SECONDS,
-        app_surface: 'official',
-        heartbeat_interval_seconds: ACTIVE_HEARTBEAT_SECONDS,
-      })
-    }
-
-    captureActive()
-    const interval = window.setInterval(captureActive, ACTIVE_HEARTBEAT_SECONDS * 1000)
+    if (!statisticsEnabled) return
 
     const handleClick = (event: MouseEvent) => {
       const target = event.target
@@ -360,7 +407,7 @@ export function OfficialAnalyticsProvider(props: {
       }
 
       const analyticsEventName = analyticsElement.dataset.analyticsEvent || ''
-      if (!isOfficialAnalyticsEventName(analyticsEventName)) {
+      if (!isOfficialClientEventName(analyticsEventName)) {
         return
       }
 
@@ -387,35 +434,25 @@ export function OfficialAnalyticsProvider(props: {
         return
       }
 
-      if (!sdkBootstrappedRef.current || !hasAnalyticsConsentRef.current) return
+      if (!enabledRef.current || !hasAnalyticsConsentRef.current) return
 
-      const attributionParams = buildOfficialOutboundAttributionParams({
-        anonymousDistinctId: posthog.get_distinct_id(),
-        visitorId: readSharedVisitorId(),
-        baseUrl: window.location.origin,
+      link.href = buildAttributedOutboundUrl(new URL(link.href, window.location.origin), {
         ctaId: analyticsElement.dataset.analyticsCtaId,
-        landingPage: window.location.pathname,
-        referrer: document.referrer,
         search: window.location.search,
-      })
-      const nextUrl = new URL(link.href, window.location.origin)
-      for (const [key, value] of attributionParams) {
-        if (!nextUrl.searchParams.has(key)) {
-          nextUrl.searchParams.set(key, value)
-        }
-      }
-      link.href = nextUrl.toString()
+      }).toString()
     }
 
     document.addEventListener('click', handleClick, true)
-    document.addEventListener('visibilitychange', captureActive)
+    return () => document.removeEventListener('click', handleClick, true)
+  }, [capture, statisticsEnabled])
 
+  useEffect(() => {
     return () => {
-      document.removeEventListener('click', handleClick, true)
-      document.removeEventListener('visibilitychange', captureActive)
-      window.clearInterval(interval)
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current)
+      }
     }
-  }, [capture, hasAnalyticsConsent])
+  }, [])
 
   const contextValue = {
     capture,

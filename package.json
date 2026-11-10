@@ -71,7 +71,6 @@
     "marked": "^18.0.14",
     "next": "16.4.4",
     "payload": "^3.81.0",
-    "posthog-js": "^1.372.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "rehype-autolink-headings": "^7.1.0",

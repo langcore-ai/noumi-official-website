@@ -7,6 +7,10 @@ import {
   updateInviteRequestsStatus,
 } from '@/lib/site/invite-requests'
 import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
+import {
+  buildPostHogServerConfig,
+  captureOfficialServerEvent,
+} from '@/lib/site/analytics-events.server'
 import { getSitePayloadClient } from '@/lib/site/payload-client'
 import { lookupProductInviteApplicant } from '@/lib/site/product-invite-lookup'
 
@@ -164,12 +168,27 @@ export async function POST(request: Request) {
   const headers = request.headers
   const payload = await getSitePayloadClient()
 
-  await recordInviteRequest(payload, {
+  const record = await recordInviteRequest(payload, {
     email,
     ipAddress: getRequestIpAddress(headers),
     sourcePath: sourcePath || headers.get('referer') || '',
     userAgent: headers.get('user-agent') ?? '',
   })
+
+  // 只有数据库写入成功后才记录已提交事实；统计失败不回写业务结果。
+  const analyticsConfig = buildPostHogServerConfig({
+    apiHost: process.env.POSTHOG_API_HOST,
+    enabledEnv: process.env.POSTHOG_ENABLED,
+    projectKey: process.env.POSTHOG_PROJECT_KEY,
+  })
+  const anonymousId = headers.get('x-noumi-analytics-anonymous-id')?.trim() || ''
+  await captureOfficialServerEvent(analyticsConfig, {
+    anonymousId,
+    event: 'official_invite_request_submitted',
+    eventId: `invite-submitted:${String(record?.id ?? email)}`,
+    occurredAt: new Date(),
+    properties: { outcome: 'created', page_path: '/invite' },
+  }).catch(() => false)
 
   return NextResponse.json({ ok: true })
 }

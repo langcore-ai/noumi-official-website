@@ -8,9 +8,10 @@ import {
   buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   buildPublicOfficialAnalyticsConfig,
+  normalizeOfficialPagePath,
+  officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
-  sanitizeOfficialBrowserEventProperties,
   sanitizeOfficialAnalyticsProperties,
 } from '@/lib/site/analytics'
 
@@ -43,34 +44,28 @@ describe('official analytics helpers', () => {
     expect(script).toContain(OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG)
   })
 
-  it('normalizes public config with bare hosts and defaults', () => {
+  it('exposes only the enabled flag to the browser', () => {
     expect(
-      buildPublicOfficialAnalyticsConfig({
-        apiHost: 'e.noumi.ai',
-        enabledEnv: 'true',
-        projectKey: 'phc_test_key',
-        uiHost: 'https://us.posthog.com/dashboard/',
-      }),
-    ).toEqual({
-      apiHost: 'https://e.noumi.ai',
-      enabled: true,
-      projectKey: 'phc_test_key',
-      uiHost: 'https://us.posthog.com',
+      buildPublicOfficialAnalyticsConfig({ enabledEnv: 'true', projectKey: 'phc_test_key' }),
+    ).toEqual({ enabled: true })
+    expect(
+      buildPublicOfficialAnalyticsConfig({ enabledEnv: 'false', projectKey: 'phc_test_key' }),
+    ).toEqual({ enabled: false })
+    expect(buildPublicOfficialAnalyticsConfig({ enabledEnv: 'true', projectKey: '  ' })).toEqual({
+      enabled: false,
     })
   })
 
-  it('returns a disabled config when analytics is off', () => {
-    expect(
-      buildPublicOfficialAnalyticsConfig({
-        enabledEnv: 'false',
-        projectKey: 'phc_test_key',
-      }),
-    ).toEqual({
-      apiHost: null,
-      enabled: false,
-      projectKey: null,
-      uiHost: null,
-    })
+  it('normalizes official page paths and rejects private routes', () => {
+    expect(normalizeOfficialPagePath('/pricing/?utm_source=x#top')).toBe('/pricing')
+    expect(normalizeOfficialPagePath('/blog/some-post')).toBe('/blog/some-post')
+    expect(normalizeOfficialPagePath('//features//')).toBe('/features')
+    expect(normalizeOfficialPagePath('/admin')).toBe('/other')
+    expect(normalizeOfficialPagePath('/blog/../../etc')).toBe('/other')
+    expect(normalizeOfficialPagePath('/blog/Some_Post')).toBe('/other')
+    expect(officialPageGroup('/privacy')).toBe('legal')
+    expect(officialPageGroup('/use-cases/foo')).toBe('use-cases')
+    expect(officialPageGroup('/')).toBe('home')
   })
 
   it('drops unsafe properties and keeps only the allowlist', () => {
@@ -91,32 +86,6 @@ describe('official analytics helpers', () => {
       page_path: '/invite',
       referrer_origin: 'https://example.com',
       target_path: '/auth',
-    })
-  })
-
-  it('keeps PostHog SDK required fields when sanitizing browser payloads', () => {
-    expect(
-      sanitizeOfficialBrowserEventProperties(
-        {
-          $browser: 'Firefox',
-          $current_url: 'https://www.noumi.ai/invite?email=user@example.com#top',
-          $initial_referrer: 'https://google.com/search?q=noumi',
-          $lib: 'web',
-          distinct_id: 'visitor-123',
-          email: 'user@example.com',
-          page_path: '/invite?token=secret',
-          token: 'phc_test_key',
-        },
-        'https://www.noumi.ai',
-      ),
-    ).toEqual({
-      $browser: 'Firefox',
-      $current_url: 'https://www.noumi.ai/invite',
-      $initial_referrer: 'https://google.com/search',
-      $lib: 'web',
-      distinct_id: 'visitor-123',
-      page_path: '/invite',
-      token: 'phc_test_key',
     })
   })
 

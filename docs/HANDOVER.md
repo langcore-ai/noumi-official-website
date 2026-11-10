@@ -564,7 +564,8 @@ curl -sS -X POST \
 | `/api/graphql-playground`             | 以 Payload 配置为准    | GraphQL playground                 |
 | `/api/preview`                        | Preview secret         | 开启 draft mode                    |
 | `/api/preview/exit`                   | 无                     | 退出 draft mode                    |
-| `/api/site/analytics/config`          | 公开                   | 浏览器 PostHog 配置                |
+| `/api/site/analytics/config`          | 公开                   | PostHog 开关（不含 key/host）      |
+| `/api/site/analytics/events` POST     | 公开 + 同源/同意校验   | 浏览器事件中继到 PostHog           |
 | `/api/site/invite-requests` POST      | 公开                   | 当前返回产品 auth，不写入          |
 | `/api/site/invite-requests` GET/PATCH | Bearer token           | 产品服务同步 Invite                |
 | `/api/site/invite-requests/lookup`    | 公开                   | 当前返回产品 auth                  |
@@ -582,9 +583,11 @@ curl -sS -X POST \
 - 点击参数包括去掉 query/hash 的 `page_location`、`page_path`、`page_title`、`button_text`、`button_location`、`cta_id`；当前页面在点击时读取。现有 CTA 标记与标准 Try Noumi Free 文案均可识别，自定义按钮可使用 `data-track-action="try_free"` 和 `data-track-location`。
 - local/staging 不发送正式点击统计；PostHog 是否启用不影响生产 GTM 点击事件。GTM 预览验证通过后，仍需在容器中发布事件标签，网站代码上线不会自动发布 GTM 工作区。
 - Google tag script 会加载；初始 consent 为 denied，用户同意后更新 Consent Mode。
-- PostHog 只有在 `POSTHOG_ENABLED=true`、配置 project key 且用户同意 analytics 后初始化。
-- PostHog browser host 默认 `https://e.noumi.ai`，UI host 默认 `https://us.posthog.com`。
-- 公开 analytics config API 会把 PostHog project key 发送给浏览器，因此它不是私有 API secret。
+- PostHog 采用同源中继：浏览器只请求 `GET /api/site/analytics/config` 拿开关，事件经 `POST /api/site/analytics/events` 由 Worker 转发到 PostHog `/batch/`。浏览器端不再加载 `posthog-js`。
+- `POSTHOG_PROJECT_KEY` 与 `POSTHOG_API_HOST` 只存在于 Worker 运行时；公开 config API 只返回 `{ enabled }`。
+- 事件接口要求同源 Origin、`x-noumi-analytics: 1` 请求头和 `noumi_analytics_consent=1` cookie；body ≤ 16KB、批量 ≤ 20、事件时间 ±30 分钟。
+- 浏览器事件白名单：`$pageview`、`landing_page_viewed`、`official_cta_clicked`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`official_invite_request_submitted` 只由服务端在写入成功后发送。
+- 详细契约见 [POSTHOG-SERVER-RELAY.md](POSTHOG-SERVER-RELAY.md)。
 
 ### 14.2 Consent
 
@@ -722,21 +725,20 @@ Secret 值不会从 Cloudflare 读回。离项时通过公司密码管理器安�
 
 ### 16.2 普通配置
 
-| 名称                                | 当前生产配置/默认         | 用途                              |
-| ----------------------------------- | ------------------------- | --------------------------------- |
-| `NOUMI_PRODUCT_API_URL`             | `https://www.noumi.ai`    | 产品 Invite API origin            |
-| `NEXT_INC_CACHE_R2_PREFIX`          | `next-incremental-cache`  | OpenNext R2 cache 前缀            |
-| `OFFICIAL_CMS_REVALIDATE_SECONDS`   | `300`                     | 发布态 CMS Next cache 秒数        |
-| `OFFICIAL_SNAPSHOT_R2_PREFIX`       | `official-site-snapshots` | JSON/HTML snapshot 前缀           |
-| `OFFICIAL_SNAPSHOT_REFRESH_SECONDS` | `7200` in Wrangler        | stale 间隔；R2 settings 可覆盖    |
-| `OFFICIAL_SNAPSHOT_REFRESH_ORIGIN`  | `https://noumi.ai`        | Cron/内部 HTML 渲染 origin        |
-| `POSTHOG_ENABLED`                   | `true` in Wrangler        | 是否允许 consent 后初始化 PostHog |
-| `POSTHOG_PROJECT_KEY`               | 仓库未提供值              | 浏览器可见的 PostHog project key  |
-| `POSTHOG_BROWSER_API_HOST`          | `https://e.noumi.ai`      | 浏览器 ingestion/proxy host       |
-| `POSTHOG_UI_HOST`                   | `https://us.posthog.com`  | PostHog UI host                   |
-| `PAYLOAD_LOG_LEVEL`                 | `info` fallback           | 生产 Payload logger level         |
-| `PAYLOAD_ENABLE_DEV_AUTOSAVE`       | `false` fallback          | 仅本地开发开关                    |
-| `PAYLOAD_ENABLE_DEV_LIVE_PREVIEW`   | `false` fallback          | 仅本地开发开关                    |
+| 名称                                | 当前生产配置/默认          | 用途                            |
+| ----------------------------------- | -------------------------- | ------------------------------- |
+| `NOUMI_PRODUCT_API_URL`             | `https://www.noumi.ai`     | 产品 Invite API origin          |
+| `NEXT_INC_CACHE_R2_PREFIX`          | `next-incremental-cache`   | OpenNext R2 cache 前缀          |
+| `OFFICIAL_CMS_REVALIDATE_SECONDS`   | `300`                      | 发布态 CMS Next cache 秒数      |
+| `OFFICIAL_SNAPSHOT_R2_PREFIX`       | `official-site-snapshots`  | JSON/HTML snapshot 前缀         |
+| `OFFICIAL_SNAPSHOT_REFRESH_SECONDS` | `7200` in Wrangler         | stale 间隔；R2 settings 可覆盖  |
+| `OFFICIAL_SNAPSHOT_REFRESH_ORIGIN`  | `https://noumi.ai`         | Cron/内部 HTML 渲染 origin      |
+| `POSTHOG_ENABLED`                   | `true` in Wrangler         | 是否允许 consent 后上报 PostHog |
+| `POSTHOG_PROJECT_KEY`               | 仓库未提供值               | Worker 侧 PostHog project key   |
+| `POSTHOG_API_HOST`                  | `https://us.i.posthog.com` | 服务端 ingest origin            |
+| `PAYLOAD_LOG_LEVEL`                 | `info` fallback            | 生产 Payload logger level       |
+| `PAYLOAD_ENABLE_DEV_AUTOSAVE`       | `false` fallback           | 仅本地开发开关                  |
+| `PAYLOAD_ENABLE_DEV_LIVE_PREVIEW`   | `false` fallback           | 仅本地开发开关                  |
 
 `CLOUDFLARE_ENV` 是 CLI 环境选择器，不是 Worker 业务变量。当前顶层配置应保持 unset/空值；只有真正添加 `[env.<name>]` 后才能设为命名环境。
 
@@ -792,7 +794,6 @@ Secret 值不会从 Cloudflare 读回。离项时通过公司密码管理器安�
 
 - `noumi.ai` 的 Worker custom domain 或 route。
 - DNS records、SSL/TLS mode、redirect rules、WAF/rate limit。
-- `e.noumi.ai` PostHog proxy/DNS 的真实配置。
 - Worker 当前 deployment/version。
 - D1 Time Travel 可用窗口与备份策略。
 - R2 lifecycle/versioning/备份策略。
@@ -1081,11 +1082,12 @@ Media 与 snapshot/cache 同 bucket，但 media 不是可丢弃缓存。Snapshot
 
 ### PostHog 没有事件
 
-1. 检查公开 analytics config API。
-2. 检查 `POSTHOG_ENABLED` 和 project key。
-3. 确认用户已同意 analytics。
-4. 检查 `e.noumi.ai` DNS/proxy、CORS 和网络请求。
-5. 不要把 GA4 Consent Mode 行为与 PostHog 初始化条件混为一谈。
+1. 检查 `GET /api/site/analytics/config` 是否返回 `{"enabled":true}`。
+2. 检查 Worker 的 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_API_HOST`。
+3. 确认用户已同意 analytics，且请求带 `noumi_analytics_consent=1` cookie 与 `x-noumi-analytics: 1`。
+4. 检查 `POST /api/site/analytics/events` 的响应码：403 为 Origin/header/consent 拒绝，429 为限流，400 为 schema 或时间窗口拒绝。
+5. 检查 Worker 日志中的 `relay_delivery_failed`，确认 `POSTHOG_API_HOST/batch/` 可达且 key 正确。
+6. 不要把 GA4 Consent Mode 行为与 PostHog 中继条件混为一谈。
 
 ## 24. 测试与验证现状
 
@@ -1175,7 +1177,7 @@ Playwright 覆盖：
 - `PAYLOAD_SECRET` 原值安全转交；不能随意轮换，否则现有 session/token 受影响。
 - Preview、snapshot、waitlist token 安全转交。
 - GA4 property `G-TJBXDRBMVM` 权限转交。
-- PostHog project、`e.noumi.ai` proxy 和 billing 权限转交。
+- PostHog project、project key 与 billing 权限转交。
 - Google Form owner 权限转交。
 - 产品服务 Invite API/token owner 转交。
 - 域名注册商、Cloudflare DNS、邮箱账号转交。

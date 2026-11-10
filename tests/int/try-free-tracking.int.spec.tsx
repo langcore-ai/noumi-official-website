@@ -10,7 +10,6 @@ import {
   COOKIE_CONSENT_VERSION,
 } from '@/lib/site/consent'
 vi.mock('next/navigation', () => ({ usePathname: () => window.location.pathname }))
-vi.mock('posthog-js', () => ({ default: { init: vi.fn(), capture: vi.fn() } }))
 vi.mock('@/lib/site/replay/recorder', () => ({ trackOfficialReplay: vi.fn() }))
 const google = window as typeof window & {
   dataLayer?: unknown[]
@@ -32,17 +31,10 @@ beforeEach(() => {
   window.history.replaceState(null, '', '/')
   vi.stubGlobal(
     'fetch',
-    vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        json: async (): Promise<PublicOfficialAnalyticsConfig> => ({
-          enabled: false,
-          projectKey: null,
-          apiHost: null,
-          uiHost: null,
-        }),
-      }),
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async (): Promise<PublicOfficialAnalyticsConfig> => ({ enabled: false }),
+    }),
   )
 })
 afterEach(() => {

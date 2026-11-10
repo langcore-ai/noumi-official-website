@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { useOfficialAnalytics } from '@/components/site/OfficialAnalyticsProvider'
+import { readOfficialAnonymousId } from '@/lib/site/analytics-identity'
 
 type InviteLookupAction = 'idle' | 'login' | 'register' | 'duplicate' | 'request'
 
@@ -157,6 +158,7 @@ export function OfficialInviteRequestForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-noumi-analytics-anonymous-id': readOfficialAnonymousId(),
         },
         body: JSON.stringify({
           email: normalizedEmail,
@@ -195,10 +197,7 @@ export function OfficialInviteRequestForm() {
         return
       }
 
-      capture('official_invite_request_submitted', {
-        outcome: 'created',
-        source_path: '/invite',
-      })
+      // Submitted-only fact is emitted by the server after the write succeeds.
       setSubmitted(true)
       setEmail('')
       setLookupResult(null)

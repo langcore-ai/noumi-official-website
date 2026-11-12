@@ -1,9 +1,15 @@
-import { PrototypePage } from '@/components/site/prototype/PrototypePage'
-import { prototypeMetadata } from '@/lib/site/prototype/pages'
+import './pricing-layout.css'
+import { PricingPlans } from './PricingPlans'
+import { createManagedMetadata } from '@/lib/site/managed-settings'
 
 export function generateMetadata() {
-  return prototypeMetadata('/pricing')
+  return createManagedMetadata({
+    title: 'Plans & Pricing | Noumi',
+    description:
+      'Compare Noumi Basic, Pro, Max and Enterprise plans with monthly or yearly billing.',
+    pathname: '/pricing',
+  })
 }
 export default function Page() {
-  return <PrototypePage route="/pricing" />
+  return <PricingPlans />
 }

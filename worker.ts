@@ -41,6 +41,90 @@ const HTML_SNAPSHOT_FILE_PATTERN = /\/[^/?#]+\.[^/?#]+$/
 const NEXT_STATIC_ASSET_PATTERN = /["'](\/_next\/static\/[^"']+\.(?:css|js)(?:\?[^"']*)?)["']/g
 /** 单次命中最多校验的静态资源数量，避免快照读取路径产生过多额外请求。 */
 const MAX_HTML_SNAPSHOT_ASSET_CHECKS = 4
+/** 快照进入当前 colo 边缘缓存的有效期；小于快照刷新间隔，发布后最多陈旧这么久。 */
+const OFFICIAL_HTML_EDGE_CACHE_SECONDS = 60
+/** 快照命中响应缓存头；同一条头同时驱动浏览器与边缘缓存有效期（边缘只认 s-maxage）。 */
+const OFFICIAL_HTML_SNAPSHOT_CACHE_CONTROL = `public, max-age=0, s-maxage=${OFFICIAL_HTML_EDGE_CACHE_SECONDS}, stale-while-revalidate=300`
+
+/**
+ * 生成 HTML 边缘缓存 key；只按 pathname 归一，query 已在读取前排除。
+ * @param request 当前请求
+ * @returns 缓存 key 请求
+ */
+function createOfficialHtmlEdgeCacheKey(request: Request): Request {
+  const url = new URL(request.url)
+
+  return new Request(new URL(url.pathname, url.origin).toString(), { method: 'GET' })
+}
+
+/**
+ * 判断值是否具备 Cache API 方法；Workers 提供 caches.default，DOM 类型声明里没有。
+ * @param value 待检查值
+ * @returns 是否为可用 Cache
+ */
+function isCacheLike(value: unknown): value is Cache {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  return (
+    'match' in value &&
+    typeof value.match === 'function' &&
+    'put' in value &&
+    typeof value.put === 'function' &&
+    'delete' in value &&
+    typeof value.delete === 'function'
+  )
+}
+
+/**
+ * 读取当前 colo 的 Cache API；本地测试环境没有该实现时返回 null。
+ * @returns Cache 实例或 null
+ */
+function getOfficialHtmlEdgeCache(): Cache | null {
+  if (typeof caches === 'undefined' || !('default' in caches)) {
+    return null
+  }
+
+  return isCacheLike(caches.default) ? caches.default : null
+}
+
+/**
+ * 读取边缘缓存的 HTML 快照；仍未失效时不再重复读 R2 快照与静态资源校验。
+ * @param request 当前请求
+ * @param env Worker 环境变量
+ * @returns 命中时返回响应，否则返回 null
+ */
+async function readOfficialHtmlEdgeCache(
+  request: Request,
+  env: SnapshotWorkerEnv,
+): Promise<Response | null> {
+  if (request.method !== 'GET' || !canReadOfficialHtmlSnapshot(request)) {
+    return null
+  }
+
+  const cache = getOfficialHtmlEdgeCache()
+
+  if (!cache) {
+    return null
+  }
+
+  const cacheKey = createOfficialHtmlEdgeCacheKey(request)
+  const cached = await cache.match(cacheKey)
+
+  if (!cached) {
+    return null
+  }
+
+  // 发布后 dirty marker 立即出现：清掉本 colo 的缓存，避免继续返回旧页面。
+  if (await hasOfficialSnapshotDirtyMarker(env)) {
+    await cache.delete(cacheKey)
+
+    return null
+  }
+
+  return cached
+}
 
 /**
  * 读取快照刷新 token。
@@ -283,7 +367,7 @@ async function readOfficialHtmlSnapshot(
   }
 
   const headers = new Headers({
-    'cache-control': 'public, max-age=0, s-maxage=3600',
+    'cache-control': OFFICIAL_HTML_SNAPSHOT_CACHE_CONTROL,
     'content-type': object.httpMetadata?.contentType || 'text/html; charset=utf-8',
     [OFFICIAL_HTML_SNAPSHOT_HEADER]: 'hit',
   })
@@ -516,9 +600,21 @@ const handler = {
     headers.set('x-noumi-routing-checked', '1')
     request = new Request(request, { headers })
     if (env.NOUMI_DISABLE_SNAPSHOTS === 'true') return openNextWorker.fetch(request, env, ctx)
+    const edgeCachedResponse = await readOfficialHtmlEdgeCache(request, env)
+
+    if (edgeCachedResponse) {
+      return edgeCachedResponse
+    }
+
     const snapshotResponse = await readOfficialHtmlSnapshot(request, env)
 
     if (snapshotResponse) {
+      const cache = getOfficialHtmlEdgeCache()
+
+      if (cache && request.method === 'GET') {
+        ctx.waitUntil(cache.put(createOfficialHtmlEdgeCacheKey(request), snapshotResponse.clone()))
+      }
+
       return snapshotResponse
     }
 

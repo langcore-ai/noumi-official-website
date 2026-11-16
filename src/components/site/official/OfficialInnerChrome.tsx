@@ -15,7 +15,9 @@ import {
 function renderUseCaseLinks(useCases: OfficialUseCaseNavItem[]) {
   return useCases.map((useCase) => (
     <li key={useCase.slug}>
-      <Link href={`/use-cases/${useCase.slug}`}>{useCase.label}</Link>
+      <Link href={`/use-cases/${useCase.slug}`} prefetch={false}>
+        {useCase.label}
+      </Link>
     </li>
   ))
 }
@@ -119,13 +121,19 @@ export function OfficialInnerFooter(props: { useCases: OfficialUseCaseNavItem[] 
             <h4>Company</h4>
             <ul>
               <li>
-                <Link href="/about">About</Link>
+                <Link href="/about" prefetch={false}>
+                  About
+                </Link>
               </li>
               <li>
-                <Link href="/contact">Contact</Link>
+                <Link href="/contact" prefetch={false}>
+                  Contact
+                </Link>
               </li>
               <li>
-                <Link href="/pricing">Pricing</Link>
+                <Link href="/pricing" prefetch={false}>
+                  Pricing
+                </Link>
               </li>
             </ul>
           </div>
@@ -133,13 +141,19 @@ export function OfficialInnerFooter(props: { useCases: OfficialUseCaseNavItem[] 
             <h4>Resources</h4>
             <ul>
               <li>
-                <Link href="/blog">Blog</Link>
+                <Link href="/blog" prefetch={false}>
+                  Blog
+                </Link>
               </li>
               <li>
-                <Link href="/faqs">FAQ</Link>
+                <Link href="/faqs" prefetch={false}>
+                  FAQ
+                </Link>
               </li>
               <li>
-                <Link href="/links">Links</Link>
+                <Link href="/links" prefetch={false}>
+                  Links
+                </Link>
               </li>
             </ul>
           </div>
@@ -147,10 +161,14 @@ export function OfficialInnerFooter(props: { useCases: OfficialUseCaseNavItem[] 
             <h4>Legal</h4>
             <ul>
               <li>
-                <Link href="/privacy">Privacy</Link>
+                <Link href="/privacy" prefetch={false}>
+                  Privacy
+                </Link>
               </li>
               <li>
-                <Link href="/terms">Terms of Service</Link>
+                <Link href="/terms" prefetch={false}>
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>

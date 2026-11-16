@@ -1,3 +1,10 @@
+# Cloudflare Workers static assets header rules.
+# Rules apply in file order and matching rules accumulate: put the broad rule
+# first, then detach and re-set Cache-Control in the narrower one, otherwise the
+# values are joined and RFC 9111 makes the first max-age win.
+# https://developers.cloudflare.com/workers/static-assets/headers/
+
+# Next.js build output: content addressed by build hash.
 /_next/static/*
   Cache-Control: public,max-age=31536000,immutable
 
@@ -16,5 +23,15 @@
 /apple-touch-icon.png
   Cache-Control: public,max-age=86400,stale-while-revalidate=604800
 
+# Everything else under /assets keeps a stable filename: fonts, gallery JS/CSS,
+# gallery JSON, prototype media, video, uploads. A cached copy is served
+# immediately and refreshed in the background, so content edits converge within
+# five minutes while a repeat visit never waits on a conditional request.
+/assets/*
+  Cache-Control: public,max-age=300,stale-while-revalidate=604800
+
+# Homepage assets carry a content hash in the filename, so replacing content
+# always produces a new URL.
 /assets/homepage/*
+  ! Cache-Control
   Cache-Control: public,max-age=31536000,immutable

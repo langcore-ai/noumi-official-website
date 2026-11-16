@@ -126,7 +126,9 @@ export function OfficialHomeHeader(props: {
               ))}
               <Link
                 aria-current={activeItem === '/about' ? 'page' : undefined}
-                className={activeItem === '/about' ? 'site-nav__about is-active' : 'site-nav__about'}
+                className={
+                  activeItem === '/about' ? 'site-nav__about is-active' : 'site-nav__about'
+                }
                 href="/about"
               >
                 About Us
@@ -236,7 +238,7 @@ export function OfficialHomeFooter({ menu }: { menu?: MenuSetting | null } = {})
                 {(column.links || [])
                   .filter((link) => !link.hidden && safeHref(link.href))
                   .map((link) => (
-                    <Link href={link.href} key={link.id || link.href}>
+                    <Link href={link.href} key={link.id || link.href} prefetch={false}>
                       {link.label}
                     </Link>
                   ))}
@@ -246,19 +248,39 @@ export function OfficialHomeFooter({ menu }: { menu?: MenuSetting | null } = {})
           <>
             <div>
               <h2 className="footer-heading">Product</h2>
-              <Link href="/">Home</Link>
-              <Link href="/about">About</Link>
-              <Link href="/features">Features</Link>
-              <Link href="/use-cases">Use Cases</Link>
-              <Link href="/blog">Blog</Link>
-              <Link href="/pricing">Pricing</Link>
+              <Link href="/" prefetch={false}>
+                Home
+              </Link>
+              <Link href="/about" prefetch={false}>
+                About
+              </Link>
+              <Link href="/features" prefetch={false}>
+                Features
+              </Link>
+              <Link href="/use-cases" prefetch={false}>
+                Use Cases
+              </Link>
+              <Link href="/blog" prefetch={false}>
+                Blog
+              </Link>
+              <Link href="/pricing" prefetch={false}>
+                Pricing
+              </Link>
             </div>
             <div>
               <h2 className="footer-heading">Resources</h2>
-              <Link href="/faqs">FAQ</Link>
-              <Link href="/terms">Terms &amp; Conditions</Link>
-              <Link href="/privacy">Privacy</Link>
-              <Link href="/links">Links</Link>
+              <Link href="/faqs" prefetch={false}>
+                FAQ
+              </Link>
+              <Link href="/terms" prefetch={false}>
+                Terms &amp; Conditions
+              </Link>
+              <Link href="/privacy" prefetch={false}>
+                Privacy
+              </Link>
+              <Link href="/links" prefetch={false}>
+                Links
+              </Link>
             </div>
           </>
         )}

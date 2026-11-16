@@ -15,7 +15,9 @@ import {
 function renderUseCaseLinks(useCases: OfficialUseCaseNavItem[]) {
   return useCases.map((useCase) => (
     <li key={useCase.slug}>
-      <Link href={`/use-cases/${useCase.slug}`}>{useCase.label}</Link>
+      <Link href={`/use-cases/${useCase.slug}`} prefetch={false}>
+        {useCase.label}
+      </Link>
     </li>
   ))
 }

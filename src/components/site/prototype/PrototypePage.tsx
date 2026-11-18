@@ -34,7 +34,9 @@ export function PrototypePage({ route }: { route: string }) {
       >
         {route === '/use-cases' && <OfficialUseCasesGallery />}
         <div
-          className={nativeUseCases ? `prototype-page ${page.bodyClass}` : undefined}
+          className={
+            nativeUseCases ? `prototype-page native-use-cases-faq ${page.bodyClass}` : undefined
+          }
           dangerouslySetInnerHTML={{ __html: html }}
         />
         <PrototypeEffects key={route} motion={getPageMotion(page)} />

@@ -7,7 +7,7 @@
 }
 .se-gallery {
   margin: 0;
-  background: #f3f3f0;
+  background: var(--noumi-paper, #faf9f6);
   color: #292d30;
   font:
     14px/1.5 -apple-system,
@@ -1698,10 +1698,10 @@
   --masthead-height: 180px;
 }
 .se-gallery {
-  background: #f5f4ee;
+  background: var(--noumi-paper, #faf9f6);
 }
 .se-gallery .showcase-shell {
-  background: #fcfaf3;
+  background: var(--noumi-paper, #faf9f6);
   width: calc(100% - 48px);
   max-width: 1200px;
   margin: 24px auto 40px;
@@ -1948,62 +1948,7 @@
 }
 
 .se-gallery .hero-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 40px;
-  min-width: 173px;
   margin-top: 22px;
-  background: var(--ink);
-  color: #f6f0e7;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: var(--w-bold);
-  line-height: 1.6;
-  text-decoration: none;
-  padding: 5px 15px;
-  border: 0;
-  border-radius: 5px;
-  box-shadow: none;
-}
-
-/* Match the shared header CTA, including its sliding arrow treatment. */
-.se-gallery .hero-cta .prototype-button-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  overflow: hidden;
-}
-
-.se-gallery .hero-cta .prototype-button-content > * {
-  flex-shrink: 0;
-  transition: transform 300ms linear;
-}
-
-.se-gallery .hero-cta .prototype-button-arrow {
-  width: 9px;
-  height: 13px;
-}
-
-.se-gallery .hero-cta .prototype-button-arrow--incoming {
-  position: absolute;
-  left: -40px;
-}
-
-.se-gallery .hero-cta:is(:hover, :focus-visible) .prototype-button-content > * {
-  transform: translateX(40px);
-}
-
-.se-gallery .hero-cta:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .se-gallery .hero-cta .prototype-button-content > * {
-    transition: none;
-  }
 }
 
 .se-gallery .nx-ma {

@@ -400,3 +400,153 @@ body a.noumi-modern-cta:hover {
   width: 264px;
   height: 16px;
 }
+
+/* Use Cases FAQ follows the About page's typography and accordion design. */
+.native-use-cases-faq > .regular-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 96px 32px 72px;
+  color: #20211f;
+}
+.native-use-cases-faq .regular-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+.native-use-cases-faq .section-title-area {
+  display: block;
+  margin: 0 0 40px;
+  text-align: center;
+}
+.native-use-cases-faq .section-title-wrap {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+}
+.native-use-cases-faq .subtitle-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 28px;
+}
+.native-use-cases-faq .subtitle {
+  margin: 0;
+  color: #656a66;
+  font: 500 12px/1.4 var(--ff-body);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.native-use-cases-faq h2.section-title {
+  margin: 0;
+  color: #20211f;
+  font:
+    600 clamp(28px, 3.2vw, 44px)/1.25 'Noto Serif SC',
+    Georgia,
+    serif;
+  letter-spacing: -0.01em;
+}
+.native-use-cases-faq .faq-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+.native-use-cases-faq details.faq {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: none;
+  transition: border-color 180ms ease;
+}
+.native-use-cases-faq details.faq[open] {
+  border-color: #dcded9;
+}
+.native-use-cases-faq .faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 24px 28px;
+  color: #20211f;
+  font: 500 17px/1.5 var(--ff-body);
+  cursor: pointer;
+  list-style: none;
+  white-space: normal;
+  background: transparent;
+}
+.native-use-cases-faq .faq-question > div:first-child {
+  color: inherit;
+  font: inherit;
+}
+.native-use-cases-faq details.faq[open] .faq-question {
+  color: #6268ee;
+}
+.native-use-cases-faq .faq-question:focus-visible {
+  outline: 2px solid #6268ee;
+  outline-offset: -4px;
+}
+.native-use-cases-faq .faq-icon-wrap {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.native-use-cases-faq .faq-horizontal-line {
+  position: absolute;
+  width: 14px;
+  height: 2px;
+  top: 6px;
+  left: 0;
+  background: currentColor;
+}
+.native-use-cases-faq .faq-vertical-line {
+  position: absolute;
+  width: 2px;
+  height: 14px;
+  left: 6px;
+  top: 0;
+  background: currentColor;
+}
+.native-use-cases-faq .faq-answer-wrap {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+.native-use-cases-faq .faq-answer {
+  margin: 0;
+  padding: 0 28px 26px;
+  color: #656a66;
+  font: 400 16px/1.75 var(--ff-body);
+}
+.native-use-cases-faq .faq-answer a {
+  color: inherit;
+  text-decoration: underline;
+}
+@media (max-width: 600px) {
+  .native-use-cases-faq > .regular-section {
+    padding: 64px 12px 40px;
+  }
+  .native-use-cases-faq .faq-question {
+    padding: 20px;
+    font-size: 16px;
+  }
+  .native-use-cases-faq .faq-answer {
+    padding: 0 20px 22px;
+    font-size: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .native-use-cases-faq details.faq {
+    transition: none;
+  }
+}

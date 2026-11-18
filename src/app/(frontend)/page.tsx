@@ -50,7 +50,9 @@ export default async function HomePage() {
                   </span>
                 </h1>
                 <p className="redesign-hero__copy">
-                  The secure AI teammate for presales and solution consultants.
+                  The secure AI teammate for presales and
+                  <br />
+                  solution consultants.
                 </p>
                 <HomeCTA placement="hero" />
               </div>

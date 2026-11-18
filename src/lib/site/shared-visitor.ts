@@ -1,3 +1,4 @@
+import { createBrowserUuid } from './browser-uuid'
 import { REPLAY_IDENTITY_KEY } from './replay/shared'
 
 /** 官网与产品仅共享观测 ID；它不授予账号或回放读取权限。 */
@@ -50,7 +51,7 @@ export function readSharedVisitorId(): string {
   return saveVisitorId(
     fallbackId ||
       (linked && UUID.test(linked) ? linked : undefined) ||
-      (typeof legacyId === 'string' && UUID.test(legacyId) ? legacyId : crypto.randomUUID()),
+      (typeof legacyId === 'string' && UUID.test(legacyId) ? legacyId : createBrowserUuid()),
   )
 }
 

@@ -1,0 +1,132 @@
+{
+  "eyebrow": "Security & Compliance",
+  "title": "Secure by design",
+  "intro": "At Noumi, ensuring the security and integrity of user data is paramount. We are SOC 2 Type II compliant, with the audit carried out by an independent firm. We are committed to safeguarding all sensitive information with robust security measures. As part of the SOC 2 process, we were benchmarked against five trust principles: security, availability, processing integrity, confidentiality and privacy.",
+  "groups": [
+    {
+      "id": "infrastructure",
+      "title": "Infrastructure",
+      "items": [
+        {
+          "id": "architecture",
+          "title": "System Architecture",
+          "paragraphs": [
+            "Noumi.ai's infrastructure is built on a multi-tier architecture, enabling us to scale based on user needs. Each tier operates independently and interacts with strict security checks. We use application load balancers to provide increased fault tolerance and availability. Our cloud infrastructure is isolated with dedicated VPCs that are separate for production and staging environments."
+          ]
+        },
+        {
+          "id": "dr",
+          "title": "Failover and Disaster Recovery",
+          "paragraphs": [
+            "Designed for resilience, our services include redundant systems with failover capabilities and are distributed across multiple availability zones housed in separate data centers to mitigate the risk of single points of failure."
+          ]
+        },
+        {
+          "id": "datacenters",
+          "title": "Data Centers",
+          "paragraphs": [
+            "The Noumi platform runs on Google Cloud across three regions. Workflows and data residency follow the same regional allocation: accounts in Asia Pacific are hosted in Singapore, accounts in the European Union are hosted in Frankfurt, and accounts in all other locations are hosted in Los Angeles, United States. Each account's workflows run and its workspace data resides within its assigned region.",
+            "Google Cloud provides the underlying physical, network and hypervisor security, and maintains independent certifications including SOC 1, SOC 2, SOC 3, ISO/IEC 27001, ISO/IEC 27017 and ISO/IEC 27018. Noumi applies platform-level data isolation and access management on top of that infrastructure."
+          ]
+        },
+        {
+          "id": "vuln",
+          "title": "Vulnerability Management",
+          "paragraphs": [
+            "We conduct regular scans and penetration tests to identify and proactively address vulnerabilities, and maintain up-to-date security practices. Access keys are rotated periodically for added security."
+          ]
+        },
+        {
+          "id": "firewall",
+          "title": "Firewall",
+          "paragraphs": [
+            "Direct Internet access is blocked by robust firewalls that protect our servers."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "title": "Data Management",
+      "items": [
+        {
+          "id": "isolation",
+          "title": "Data Isolation",
+          "paragraphs": [
+            "Noumi.ai stores user data securely with explicit and strict tenant isolation by design. Access to datastores is tightly controlled, with keys securely managed away from our codebase. Each workspace is logically isolated and reachable only through the account that owns it."
+          ]
+        },
+        {
+          "id": "logs",
+          "title": "Logs",
+          "paragraphs": [
+            "All logs are encrypted and stored securely, with sensitive information scrubbed to prevent exposure."
+          ]
+        },
+        {
+          "id": "usage",
+          "title": "Data Usage",
+          "paragraphs": [
+            "Noumi.ai does not use any user data, whether obtained through connected integrations or provided by users through any other channel, to train, fine-tune, or otherwise improve generalized or non-personalized AI and/or ML models."
+          ]
+        },
+        {
+          "id": "zdr",
+          "title": "Zero Data Retention (ZDR)",
+          "paragraphs": [
+            "Noumi.ai operates under enterprise agreements with leading AI model providers, including OpenAI and Anthropic, ensuring zero data retention. This provides our users with an additional layer of protection when handling sensitive client requirement files, proposals and quotes, and other critical documents."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "encryption",
+      "title": "Encryption",
+      "items": [
+        {
+          "id": "data-encryption",
+          "title": "Data Encryption",
+          "paragraphs": [
+            "Data is encrypted at rest in Google Cloud via industry-standard encryption (AES-256) and in transit between clients, Google Cloud, and vendors via industry-standard encryption (TLS 1.2+)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "policies",
+      "title": "Policies and Compliance",
+      "items": [
+        {
+          "id": "security-policies",
+          "title": "Security Policies",
+          "paragraphs": [
+            "Noumi maintains a comprehensive set of updated security policies accessible to all staff members."
+          ]
+        },
+        {
+          "id": "incident",
+          "title": "Incident Response",
+          "paragraphs": [
+            "A clear protocol is in place for swiftly addressing and mitigating security incidents."
+          ]
+        },
+        {
+          "id": "training",
+          "title": "Employee Training and Vetting",
+          "paragraphs": [
+            "We conduct thorough background checks in compliance with local laws and provide regular security training to our staff."
+          ]
+        },
+        {
+          "id": "confidentiality",
+          "title": "Confidentiality and Disclosure",
+          "paragraphs": [
+            "All staff are bound by confidentiality agreements. We encourage reporting of security concerns directly to our team for prompt and responsible resolution."
+          ]
+        }
+      ]
+    }
+  ],
+  "contactText": "For more details or documents are available on request at",
+  "email": "official@noumi.ai"
+}

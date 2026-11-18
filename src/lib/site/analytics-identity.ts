@@ -1,4 +1,5 @@
 'use client'
+import { createBrowserUuid } from './browser-uuid'
 
 import { readSharedVisitorId } from './shared-visitor'
 
@@ -57,11 +58,11 @@ export function readOfficialAnonymousId(): string {
     if (isAnonymousId(stored)) {
       return stored
     }
-    const created = crypto.randomUUID()
+    const created = createBrowserUuid()
     window.localStorage.setItem(ANONYMOUS_ID_STORAGE_KEY, created)
     return created
   } catch {
-    return (fallbackAnonymousId ||= crypto.randomUUID())
+    return (fallbackAnonymousId ||= createBrowserUuid())
   }
 }
 
@@ -69,7 +70,7 @@ export function readOfficialAnonymousId(): string {
  * 轮换匿名观测 ID 并清空浏览会话；撤回同意或切换身份时调用。
  */
 export function rotateOfficialAnonymousId() {
-  const created = crypto.randomUUID()
+  const created = createBrowserUuid()
   fallbackAnonymousId = created
   currentSession = undefined
   windowId = ''
@@ -88,7 +89,7 @@ export function rotateOfficialAnonymousId() {
  * @returns 浏览会话与窗口标识
  */
 export function readOfficialBrowserSession(at = Date.now()) {
-  windowId ||= crypto.randomUUID()
+  windowId ||= createBrowserUuid()
   const stored = readStoredSession()
   if (
     !stored ||
@@ -96,7 +97,7 @@ export function readOfficialBrowserSession(at = Date.now()) {
     at - stored.lastAt >= SESSION_IDLE_MS ||
     at - stored.startedAt >= SESSION_MAX_MS
   ) {
-    currentSession = { id: crypto.randomUUID(), lastAt: at, startedAt: at }
+    currentSession = { id: createBrowserUuid(), lastAt: at, startedAt: at }
     persistSession(currentSession)
   } else {
     currentSession = stored

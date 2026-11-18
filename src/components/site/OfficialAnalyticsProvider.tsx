@@ -1,4 +1,5 @@
 'use client'
+import { createBrowserUuid } from '@/lib/site/browser-uuid'
 
 import { usePathname } from 'next/navigation'
 import {
@@ -285,7 +286,7 @@ export function OfficialAnalyticsProvider(props: {
       queueRef.current.push({
         anonymousId: readOfficialAnonymousId(),
         event: eventName,
-        eventId: crypto.randomUUID(),
+        eventId: createBrowserUuid(),
         occurredAt: new Date(occurredAt).toISOString(),
         properties: {
           ...sanitizeOfficialAnalyticsProperties(

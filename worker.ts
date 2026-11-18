@@ -42,10 +42,17 @@ const HTML_SNAPSHOT_FILE_PATTERN = /\/[^/?#]+\.[^/?#]+$/
 const NEXT_STATIC_ASSET_PATTERN = /["'](\/_next\/static\/[^"']+\.(?:css|js)(?:\?[^"']*)?)["']/g
 /** 单次命中最多校验的静态资源数量，避免快照读取路径产生过多额外请求。 */
 const MAX_HTML_SNAPSHOT_ASSET_CHECKS = 4
-/** 快照进入当前 colo 边缘缓存的有效期；小于快照刷新间隔，发布后最多陈旧这么久。 */
-const OFFICIAL_HTML_EDGE_CACHE_SECONDS = 60
-/** 快照命中响应缓存头；同一条头同时驱动浏览器与边缘缓存有效期（边缘只认 s-maxage）。 */
-const OFFICIAL_HTML_SNAPSHOT_CACHE_CONTROL = `public, max-age=0, s-maxage=${OFFICIAL_HTML_EDGE_CACHE_SECONDS}, stale-while-revalidate=300`
+/**
+ * 快照进入当前 colo 边缘缓存的有效期。
+ * 与 `s-maxage` 一致；发布时 dirty marker 会立即清除本 colo 缓存，因此可以放心拉长。
+ */
+const OFFICIAL_HTML_EDGE_CACHE_SECONDS = 300
+/**
+ * 快照命中响应缓存头。
+ * - 浏览器 `max-age=60`：回访/前进后退直接复用，不再等 TTFB。
+ * - 发布通过 dirty marker 立即失效，最长陈旧不超过 `stale-while-revalidate`。
+ */
+const OFFICIAL_HTML_SNAPSHOT_CACHE_CONTROL = `public, max-age=60, s-maxage=${OFFICIAL_HTML_EDGE_CACHE_SECONDS}, stale-while-revalidate=86400`
 
 /**
  * 生成 HTML 边缘缓存 key；只按 pathname 归一，query 已在读取前排除。
@@ -283,6 +290,45 @@ function extractNextStaticAssetPaths(html: string): string[] {
 }
 
 /**
+ * 校验单个 Next 静态资源是否存在于当前部署。
+ * @param request 当前请求
+ * @param env Worker 环境变量
+ * @param assetPath 资源路径
+ * @returns 是否可以安全引用
+ */
+async function isOfficialStaticAssetAvailable(
+  request: Request,
+  env: SnapshotWorkerEnv,
+  assetPath: string,
+): Promise<boolean> {
+  try {
+    const response = await env.ASSETS.fetch(
+      new Request(new URL(assetPath, request.url), {
+        method: 'HEAD',
+      }),
+    )
+
+    if (!response.ok) {
+      console.warn('[official-snapshot] skipped stale HTML snapshot because asset is missing', {
+        assetPath,
+        status: response.status,
+      })
+
+      return false
+    }
+  } catch (error) {
+    console.warn('[official-snapshot] skipped asset compatibility check', {
+      assetPath,
+      error,
+    })
+
+    return true
+  }
+
+  return true
+}
+
+/**
  * 判断 HTML 快照引用的静态资源是否仍存在于当前部署。
  * @param request 当前请求
  * @param env Worker 环境变量
@@ -300,33 +346,11 @@ async function isOfficialHtmlSnapshotAssetCompatible(
     return true
   }
 
-  for (const assetPath of assetPaths) {
-    try {
-      const response = await env.ASSETS.fetch(
-        new Request(new URL(assetPath, request.url), {
-          method: 'HEAD',
-        }),
-      )
+  const verdicts = await Promise.all(
+    assetPaths.map((assetPath) => isOfficialStaticAssetAvailable(request, env, assetPath)),
+  )
 
-      if (!response.ok) {
-        console.warn('[official-snapshot] skipped stale HTML snapshot because asset is missing', {
-          assetPath,
-          status: response.status,
-        })
-
-        return false
-      }
-    } catch (error) {
-      console.warn('[official-snapshot] skipped asset compatibility check', {
-        assetPath,
-        error,
-      })
-
-      return true
-    }
-  }
-
-  return true
+  return verdicts.every(Boolean)
 }
 
 /**
@@ -350,13 +374,17 @@ async function readOfficialHtmlSnapshot(
   request: Request,
   env: SnapshotWorkerEnv,
 ): Promise<Response | null> {
-  if (!canReadOfficialHtmlSnapshot(request) || (await hasOfficialSnapshotDirtyMarker(env))) {
+  if (!canReadOfficialHtmlSnapshot(request)) {
     return null
   }
 
-  const object = await env.R2.get(createOfficialHtmlSnapshotKey(env, new URL(request.url).pathname))
+  // dirty marker 与快照正文并行读取，避免两次串行 RTT。
+  const [dirty, object] = await Promise.all([
+    hasOfficialSnapshotDirtyMarker(env),
+    env.R2.get(createOfficialHtmlSnapshotKey(env, new URL(request.url).pathname)),
+  ])
 
-  if (!object) {
+  if (dirty || !object) {
     return null
   }
 
@@ -563,6 +591,22 @@ async function refreshOfficialSnapshotsFromCron(
   await populateOfficialHtmlSnapshotsFromRefreshResponse(response.clone(), env, ctx)
 }
 
+/**
+ * 构造托管重定向的 D1 查询函数。
+ * @param env Worker 环境变量
+ * @returns 单跳查询函数
+ */
+function lookupManagedRedirectRule(
+  env: SnapshotWorkerEnv,
+): (path: string) => Promise<{ target: string; type: string } | null> {
+  return async (path) =>
+    env.D1.prepare(
+      'SELECT resolved_target AS target, type FROM redirects WHERE "from" = ? AND _status = ? LIMIT 1',
+    )
+      .bind(path, 'published')
+      .first<{ target: string; type: string }>()
+}
+
 const handler = {
   /**
    * 重定向先于快照，避免旧 HTML 绕过路由迁移；其余请求交给快照或 OpenNext。
@@ -584,31 +628,35 @@ const handler = {
       url.pathname = redirectPath
       return Response.redirect(url.toString(), 301)
     }
-    if (
-      ['GET', 'HEAD'].includes(request.method) &&
-      !/^\/(api|admin|_next|assets|cdn-cgi)(\/|$)/.test(url.pathname)
-    ) {
-      try {
-        const rule = await resolveManagedRedirect(url.pathname, async (path) =>
-          env.D1.prepare(
-            'SELECT resolved_target AS target, type FROM redirects WHERE "from" = ? AND _status = ? LIMIT 1',
-          )
-            .bind(path, 'published')
-            .first<{ target: string; type: string }>(),
-        )
-        if (rule) {
-          url.pathname = rule.target
-          return Response.redirect(url.toString(), Number(rule.type))
-        }
-      } catch (error) {
-        console.error('Managed redirect lookup failed', error)
-      }
-    }
     const headers = new Headers(request.headers)
     headers.set('x-noumi-routing-checked', '1')
     request = new Request(request, { headers })
     if (env.NOUMI_DISABLE_SNAPSHOTS === 'true') return openNextWorker.fetch(request, env, ctx)
-    const edgeCachedResponse = await readOfficialHtmlEdgeCache(request, env)
+
+    // 边缘缓存与托管重定向并行查询：重定向仍然优先于缓存命中，
+    // 这样新增规则能立即生效，而不必等本 colo 的 60s/300s 缓存过期。
+    const shouldResolveManagedRedirect =
+      ['GET', 'HEAD'].includes(request.method) &&
+      !/^\/(api|admin|_next|assets|cdn-cgi)(\/|$)/.test(url.pathname)
+
+    const [edgeCachedResponse, redirectRule] = await Promise.all([
+      readOfficialHtmlEdgeCache(request, env),
+      shouldResolveManagedRedirect
+        ? resolveManagedRedirect(url.pathname, lookupManagedRedirectRule(env)).catch(
+            (error): null => {
+              console.error('Managed redirect lookup failed', error)
+
+              return null
+            },
+          )
+        : Promise.resolve(null),
+    ])
+
+    if (redirectRule) {
+      url.pathname = redirectRule.target
+
+      return Response.redirect(url.toString(), Number(redirectRule.type))
+    }
 
     if (edgeCachedResponse) {
       return edgeCachedResponse

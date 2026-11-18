@@ -19,6 +19,7 @@ import {
   buildOfficialOutboundAttributionParams,
   isOfficialClientEventName,
   normalizeOfficialPagePath,
+  readOfficialDevice,
   officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
@@ -34,6 +35,7 @@ import {
   touchOfficialBrowserSession,
 } from '@/lib/site/analytics-identity'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
+import { readDeviceFingerprint } from '@/lib/site/device-fingerprint'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
@@ -187,6 +189,8 @@ export function OfficialAnalyticsProvider(props: {
   const queueRef = useRef<QueuedEvent[]>([])
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPageViewKeyRef = useRef('')
+  // 指纹只在 consent 后采集一次;事件照常上报,采集完成前的事件不带 device_fp。
+  const fingerprintRef = useRef('')
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -220,6 +224,7 @@ export function OfficialAnalyticsProvider(props: {
 
       if (!nextHasAnalyticsConsent) {
         queueRef.current = []
+        fingerprintRef.current = ''
         if (flushTimerRef.current) {
           clearTimeout(flushTimerRef.current)
           flushTimerRef.current = null
@@ -290,7 +295,12 @@ export function OfficialAnalyticsProvider(props: {
         occurredAt: new Date(occurredAt).toISOString(),
         properties: {
           ...sanitizeOfficialAnalyticsProperties(
-            { ...properties, page_path: pagePath },
+            {
+              ...properties,
+              device: readOfficialDevice(),
+              device_fp: fingerprintRef.current || undefined,
+              page_path: pagePath,
+            },
             window.location.origin,
           ),
           page_group: officialPageGroup(pagePath),
@@ -369,6 +379,21 @@ export function OfficialAnalyticsProvider(props: {
   }, [statisticsEnabled])
 
   useEffect(() => {
+    if (!statisticsEnabled || !hasAnalyticsConsent) return
+    let canceled = false
+
+    void readDeviceFingerprint().then((fingerprint) => {
+      if (!canceled && fingerprint) {
+        fingerprintRef.current = fingerprint
+      }
+    })
+
+    return () => {
+      canceled = true
+    }
+  }, [hasAnalyticsConsent, statisticsEnabled])
+
+  useEffect(() => {
     if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
       return
     }
@@ -390,6 +415,54 @@ export function OfficialAnalyticsProvider(props: {
           search: window.location.search,
         }),
       )
+    }
+  }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
+
+  useEffect(() => {
+    if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
+      return
+    }
+
+    /** 单次页面停留事件的上限，避免长时间挂机页面拉高均值。 */
+    const MAX_PAGE_ENGAGEMENT_MS = 30 * 60 * 1000
+    let activeMs = 0
+    let activeSince: number | null = null
+
+    const flushPageEngagement = (reason: string) => {
+      if (activeSince !== null) {
+        activeMs += Date.now() - activeSince
+        activeSince = null
+      }
+      const durationMs = Math.min(activeMs, MAX_PAGE_ENGAGEMENT_MS)
+      if (durationMs < 1000) {
+        activeMs = 0
+        return
+      }
+      capture('official_page_engagement', {
+        duration_ms: durationMs,
+        status: reason,
+      })
+      activeMs = 0
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        flushPageEngagement('background')
+      } else {
+        activeSince = Date.now()
+      }
+    }
+    const handlePageHide = () => {
+      flushPageEngagement('pagehide')
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pagehide', handlePageHide)
+    return () => {
+      // 客户端路由切换时上报上一页停留，再重置计时。
+      flushPageEngagement('navigate')
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pagehide', handlePageHide)
     }
   }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
 

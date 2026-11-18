@@ -11,7 +11,7 @@ test.describe('Frontend', () => {
     const heading = page.locator('h1').first()
 
     await expect(heading).toContainText(
-      /Trustworthy\s*Deliverables\s*Securely in Your Noumi Workspace\./,
+      /From complex requirements to\s*Deliverables you can trust\./,
     )
   })
 })

@@ -262,7 +262,8 @@
       pill.innerHTML =
         '<span class="pill-icon">' + cat.icon + "</span><span>" + t(cat.label) + "</span>";
       pill.addEventListener("click", function () {
-        if (i === state.catIndex) return;
+        updateGalleryUrl("use-case-category", cat.id);
+        if (i === state.catIndex && state.caseIndex === 0) return;
         state.catIndex = i;
         state.caseIndex = 0;
         setActivePill(i);
@@ -375,7 +376,10 @@
     });
 
     item.addEventListener("keydown", function (evt) {
-      if (evt.key === "ArrowDown") {
+      if (evt.key === "Enter" || evt.key === " ") {
+        evt.preventDefault();
+        item.click();
+      } else if (evt.key === "ArrowDown") {
         evt.preventDefault();
         focusItemAt(Math.min(index + 1, total - 1));
       } else if (evt.key === "ArrowUp") {
@@ -387,6 +391,7 @@
     // Click always works, in both hover and degraded (touch) modes.
     item.addEventListener("click", function () {
       selectCase(index);
+      updateGalleryUrl("use-case", CATEGORIES[state.catIndex].cases[index].id);
     });
   }
 
@@ -1071,6 +1076,47 @@
     });
   }
 
+  // The homepage embeds this gallery in a same-origin frame.
+  function galleryPage() {
+    return window.frameElement ? window.parent : window;
+  }
+
+  function updateGalleryUrl(key, id) {
+    var page = galleryPage();
+    var url = new URL(page.location.href);
+    url.searchParams.delete("use-case-category");
+    url.searchParams.delete("use-case");
+    url.searchParams.set(key, id);
+    if (page !== window) url.hash = "use-cases";
+    if (url.href !== page.location.href) {
+      page.history.replaceState(page.history.state, "", url.href);
+    }
+  }
+
+  function selectLinkedCase() {
+    var params = new URL(galleryPage().location.href).searchParams;
+    var caseId = params.get("use-case");
+    var categoryId = params.get("use-case-category");
+    if (!caseId) {
+      var categoryIndex = CATEGORIES.findIndex(function (category) {
+        return category.id === categoryId;
+      });
+      if (categoryIndex !== -1) state.catIndex = categoryIndex;
+      return;
+    }
+
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      var caseIndex = CATEGORIES[i].cases.findIndex(function (item) {
+        return item.id === caseId;
+      });
+      if (caseIndex !== -1) {
+        state.catIndex = i;
+        state.caseIndex = caseIndex;
+        return;
+      }
+    }
+  }
+
   function init() {
     cacheEls();
     document.documentElement.setAttribute("lang", state.lang === "zh" ? "zh-CN" : "en");
@@ -1078,6 +1124,7 @@
     bindGlobalEvents();
     loadContent()
       .then(function () {
+        selectLinkedCase();
         renderAll(false);
       })
       .catch(function (err) {

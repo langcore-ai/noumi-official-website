@@ -35,6 +35,8 @@ export const officialEventPropertiesSchema = z
   .object({
     action: label.optional(),
     cta_id: label.optional(),
+    device: label.optional(),
+    duration_ms: z.number().int().min(0).max(24 * 60 * 60 * 1000).optional(),
     outcome: label.optional(),
     page_group: label.optional(),
     page_path: pathValue.optional(),

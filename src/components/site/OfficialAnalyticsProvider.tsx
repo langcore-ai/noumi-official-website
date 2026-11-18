@@ -18,6 +18,7 @@ import {
   buildOfficialOutboundAttributionParams,
   isOfficialClientEventName,
   normalizeOfficialPagePath,
+  readOfficialDevice,
   officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
@@ -289,7 +290,7 @@ export function OfficialAnalyticsProvider(props: {
         occurredAt: new Date(occurredAt).toISOString(),
         properties: {
           ...sanitizeOfficialAnalyticsProperties(
-            { ...properties, page_path: pagePath },
+            { ...properties, device: readOfficialDevice(), page_path: pagePath },
             window.location.origin,
           ),
           page_group: officialPageGroup(pagePath),
@@ -389,6 +390,54 @@ export function OfficialAnalyticsProvider(props: {
           search: window.location.search,
         }),
       )
+    }
+  }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
+
+  useEffect(() => {
+    if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
+      return
+    }
+
+    /** 单次页面停留事件的上限，避免长时间挂机页面拉高均值。 */
+    const MAX_PAGE_ENGAGEMENT_MS = 30 * 60 * 1000
+    let activeMs = 0
+    let activeSince: number | null = null
+
+    const flushPageEngagement = (reason: string) => {
+      if (activeSince !== null) {
+        activeMs += Date.now() - activeSince
+        activeSince = null
+      }
+      const durationMs = Math.min(activeMs, MAX_PAGE_ENGAGEMENT_MS)
+      if (durationMs < 1000) {
+        activeMs = 0
+        return
+      }
+      capture('official_page_engagement', {
+        duration_ms: durationMs,
+        status: reason,
+      })
+      activeMs = 0
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        flushPageEngagement('background')
+      } else {
+        activeSince = Date.now()
+      }
+    }
+    const handlePageHide = () => {
+      flushPageEngagement('pagehide')
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pagehide', handlePageHide)
+    return () => {
+      // 客户端路由切换时上报上一页停留，再重置计时。
+      flushPageEngagement('navigate')
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pagehide', handlePageHide)
     }
   }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
 

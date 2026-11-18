@@ -51,6 +51,7 @@ export const OFFICIAL_CLIENT_EVENT_NAMES = [
   '$pageview',
   'landing_page_viewed',
   'official_cta_clicked',
+  'official_page_engagement',
   'official_invite_lookup_completed',
   'official_product_auth_redirected',
 ] as const
@@ -76,6 +77,7 @@ export type OfficialServerEventName = (typeof OFFICIAL_SERVER_EVENT_NAMES)[numbe
 const ANALYTICS_TEXT_KEYS = new Set([
   'visitor_id',
   'action',
+  'device',
   'app_surface',
   'cta_id',
   'official_cta_id',
@@ -106,6 +108,33 @@ const PATH_VALUE_MAX_LENGTH = 160
 const DISTINCT_ID_VALUE_MAX_LENGTH = 160
 
 const PAGE_TITLE_VALUE_MAX_LENGTH = 300
+
+/**
+ * 读取官网浏览设备类型。
+ * 只依赖公开 viewport 与 UA 数据，不采集更细的设备指纹。
+ *
+ * @returns 设备类型；未知时返回空串
+ */
+export function readOfficialDevice(): string {
+  if (typeof navigator === 'undefined' || !navigator.userAgent) {
+    return ''
+  }
+
+  const userAgent = navigator.userAgent
+  if (/iPad|Tablet/i.test(userAgent) || (/Macintosh/.test(userAgent) && 'ontouchend' in document)) {
+    return 'tablet'
+  }
+  if (/Mobi|Android|iPhone/i.test(userAgent)) {
+    return 'mobile'
+  }
+  if (window.matchMedia?.('(max-width: 767px)').matches) {
+    return 'mobile'
+  }
+  if (window.matchMedia?.('(min-width: 768px)').matches) {
+    return 'desktop'
+  }
+  return ''
+}
 
 /**
  * 判断事件名是否属于浏览器允许上报的埋点集合。

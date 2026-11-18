@@ -74,7 +74,16 @@ export function OfficialHomeHeader(props: {
           </Link>
         )
         return children.length ? (
-          <details className="managed-nav-group" key={item.id || item.href}>
+          <details
+            className="managed-nav-group"
+            key={item.id || item.href}
+            onPointerEnter={(event) => {
+              if (!mobile && event.pointerType === 'mouse') event.currentTarget.open = true
+            }}
+            onPointerLeave={(event) => {
+              if (!mobile && event.pointerType === 'mouse') event.currentTarget.open = false
+            }}
+          >
             <summary>{item.label}</summary>
             <div className="managed-nav-children">
               {link}

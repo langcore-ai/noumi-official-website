@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { publicPath, resolveManagedRedirect, safeHref } from '@/lib/site/managed-routing'
 import {
   OfficialHomeHeader,
@@ -135,4 +135,34 @@ describe('published metadata and menus', () => {
     expect(screen.getByText('Custom copyright')).toBeTruthy()
     unmount()
   })
+})
+
+it('opens desktop submenus on mouse hover while leaving touch menus click-driven', () => {
+  const menu = {
+    enabled: true,
+    header: [
+      {
+        label: 'Features',
+        href: '/features',
+        children: [{ label: 'Security', href: '/security' }],
+      },
+    ],
+  } as MenuSetting
+  const { container, unmount } = render(<OfficialHomeHeader menu={menu} />)
+  const desktop = container.querySelector<HTMLDetailsElement>('.site-nav details')!
+  const mobile = container.querySelector<HTMLDetailsElement>('.mobile-nav details')!
+  const pointer = (target: Element, type: string, pointerType: string) => {
+    const event = new Event(type, { bubbles: true })
+    Object.defineProperty(event, 'pointerType', { value: pointerType })
+    fireEvent(target, event)
+  }
+  pointer(desktop, 'pointerover', 'mouse')
+  expect(desktop.open).toBe(true)
+  pointer(desktop, 'pointerout', 'mouse')
+  expect(desktop.open).toBe(false)
+  pointer(desktop, 'pointerover', 'touch')
+  expect(desktop.open).toBe(false)
+  pointer(mobile, 'pointerover', 'mouse')
+  expect(mobile.open).toBe(false)
+  unmount()
 })

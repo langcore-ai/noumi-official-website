@@ -1,3 +1,4 @@
+import { createBrowserUuid } from '../browser-uuid'
 import { readStoredConsent } from '../consent'
 import { readSharedVisitorId } from '../shared-visitor'
 import {
@@ -132,7 +133,7 @@ export class OfficialRecorder {
     if (!this.visitId || now - this.lastActivity > REPLAY_IDLE_MS) {
       this.client.stop(true)
       this.recording = false
-      this.visitId = crypto.randomUUID()
+      this.visitId = createBrowserUuid()
       this.page = ''
     }
     this.lastActivity = now
@@ -224,7 +225,7 @@ export class OfficialRecorder {
                 version: 1,
                 app: REPLAY_APP,
                 scope: this.config.scope,
-                eventId: crypto.randomUUID(),
+                eventId: createBrowserUuid(),
                 occurredAt: new Date(timestamp).toISOString(),
                 anonymousId: this.anonymousId,
                 visitId: this.visitId,

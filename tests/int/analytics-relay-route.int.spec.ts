@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { POST } from '@/app/api/site/analytics/events/route'
+import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 
 type MockBatch = {
   api_key: string
@@ -14,6 +15,8 @@ type MockBatch = {
 }
 
 const batches: MockBatch[] = []
+
+const siteOrigin = new URL(OFFICIAL_SITE_URL).origin
 
 /**
  * 拦截合成 base URL 的 `/batch/` 请求并记录批次。
@@ -45,14 +48,11 @@ function relayRequest(
   } = {},
 ) {
   const headers = new Headers({ 'content-type': 'application/json' })
-  headers.set(
-    'origin',
-    overrides.origin === undefined ? 'https://noumi.ai' : String(overrides.origin),
-  )
+  headers.set('origin', overrides.origin === undefined ? siteOrigin : String(overrides.origin))
   if (overrides.header !== false) headers.set('x-noumi-analytics', '1')
   if (overrides.consent !== false) headers.set('cookie', 'noumi_analytics_consent=1')
 
-  return new Request('https://noumi.ai/api/site/analytics/events', {
+  return new Request(`${siteOrigin}/api/site/analytics/events`, {
     method: 'POST',
     headers,
     body: JSON.stringify(
@@ -98,8 +98,8 @@ describe('POST /api/site/analytics/events', () => {
     expect(batch?.batch[0]).toMatchObject({
       event: '$pageview',
       properties: {
-        $current_url: 'https://noumi.ai/pricing',
-        $host: 'noumi.ai',
+        $current_url: `${siteOrigin}/pricing`,
+        $host: new URL(siteOrigin).host,
         $pathname: '/pricing',
         app_source: 'noumi-official',
         page_group: 'pricing',

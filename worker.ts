@@ -3,6 +3,7 @@ import openNextWorker from './.open-next/worker.js'
 import { resolveManagedRedirect } from './src/lib/site/managed-routing'
 import { allowsHtmlSnapshot } from './src/lib/site/html-snapshot-policy'
 import { getCanonicalRedirectPath } from './src/lib/site/url'
+import { INTRO_VIDEO_PATH, serveIntroVideo } from './src/lib/site/intro-video-range'
 
 /** 快照刷新 Worker 环境变量。 */
 type SnapshotWorkerEnv = Cloudflare.Env & {
@@ -568,6 +569,13 @@ const handler = {
    */
   async fetch(request: Request, env: SnapshotWorkerEnv, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url)
+    if (
+      url.pathname === INTRO_VIDEO_PATH &&
+      (request.method === 'GET' || request.method === 'HEAD')
+    ) {
+      return serveIntroVideo(request, await env.ASSETS.fetch(request))
+    }
+
     const redirectPath = getCanonicalRedirectPath({
       method: request.method,
       pathname: url.pathname,

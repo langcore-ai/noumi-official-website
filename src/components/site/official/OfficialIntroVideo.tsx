@@ -1,5 +1,24 @@
+'use client'
+
+import { useRef, useState } from 'react'
+
 /** Homepage introduction film, bundled as a static site asset. */
 export function OfficialIntroVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hasPlayed, setHasPlayed] = useState(false)
+
+  async function playIntro() {
+    const video = videoRef.current
+    if (!video) return
+
+    try {
+      await video.play()
+      video.focus({ preventScroll: true })
+    } catch {
+      // Keep the poster button available for another attempt.
+    }
+  }
+
   return (
     <section aria-labelledby="intro-video-title" className="redesign-intro-video" id="intro-video">
       <div className="redesign-shell">
@@ -14,15 +33,26 @@ export function OfficialIntroVideo() {
         </h2>
         <div className="redesign-intro-video__frame">
           <video
+            ref={videoRef}
             aria-label="Meet Noumi: Your Secure Workspace for Requirements, Proposals, Decks and More"
-            controls
+            controls={hasPlayed}
+            tabIndex={-1}
             playsInline
-            preload="none"
-            poster="/assets/intro-video/noumi-se-film-poster-02s.jpg"
+            preload="metadata"
+            onPlaying={() => setHasPlayed(true)}
+            poster="/assets/intro-video/noumi-se-film-poster-requirements.webp"
           >
             <source src="/assets/intro-video/noumi-se-film-1080p.mp4" type="video/mp4" />
             Your browser does not support the video element.
           </video>
+          {!hasPlayed && (
+            <button
+              type="button"
+              className="redesign-intro-video__play"
+              aria-label="Play Noumi introduction"
+              onClick={playIntro}
+            />
+          )}
         </div>
       </div>
     </section>

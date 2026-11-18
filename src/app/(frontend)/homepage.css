@@ -72,6 +72,7 @@
   text-wrap: balance;
 }
 .redesign-intro-video__frame {
+  position: relative;
   overflow: hidden;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -85,6 +86,33 @@
   height: 100%;
   background: transparent;
   object-fit: contain;
+}
+.redesign-intro-video__play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  place-items: center;
+  width: clamp(56px, 7vw, 80px);
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 50%;
+  background: rgb(24 26 29 / 85%);
+  color: white;
+  cursor: pointer;
+  translate: -50% -50%;
+}
+.redesign-intro-video__play::before {
+  content: '';
+  margin-inline-start: 4px;
+  border-block: 10px solid transparent;
+  border-inline-start: 16px solid currentColor;
+}
+.redesign-intro-video__play:hover {
+  background: #181a1d;
+}
+.redesign-intro-video__play:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
 }
 .redesign-section-heading--tagline {
   margin-bottom: 48px;

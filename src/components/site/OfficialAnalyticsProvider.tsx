@@ -34,6 +34,7 @@ import {
   touchOfficialBrowserSession,
 } from '@/lib/site/analytics-identity'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
+import { readDeviceFingerprint } from '@/lib/site/device-fingerprint'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
@@ -187,6 +188,8 @@ export function OfficialAnalyticsProvider(props: {
   const queueRef = useRef<QueuedEvent[]>([])
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPageViewKeyRef = useRef('')
+  // 指纹只在 consent 后采集一次;事件照常上报,采集完成前的事件不带 device_fp。
+  const fingerprintRef = useRef('')
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -220,6 +223,7 @@ export function OfficialAnalyticsProvider(props: {
 
       if (!nextHasAnalyticsConsent) {
         queueRef.current = []
+        fingerprintRef.current = ''
         if (flushTimerRef.current) {
           clearTimeout(flushTimerRef.current)
           flushTimerRef.current = null
@@ -290,7 +294,12 @@ export function OfficialAnalyticsProvider(props: {
         occurredAt: new Date(occurredAt).toISOString(),
         properties: {
           ...sanitizeOfficialAnalyticsProperties(
-            { ...properties, device: readOfficialDevice(), page_path: pagePath },
+            {
+              ...properties,
+              device: readOfficialDevice(),
+              device_fp: fingerprintRef.current || undefined,
+              page_path: pagePath,
+            },
             window.location.origin,
           ),
           page_group: officialPageGroup(pagePath),
@@ -367,6 +376,21 @@ export function OfficialAnalyticsProvider(props: {
     document.addEventListener('click', handleTryFreeClick, true)
     return () => document.removeEventListener('click', handleTryFreeClick, true)
   }, [statisticsEnabled])
+
+  useEffect(() => {
+    if (!statisticsEnabled || !hasAnalyticsConsent) return
+    let canceled = false
+
+    void readDeviceFingerprint().then((fingerprint) => {
+      if (!canceled && fingerprint) {
+        fingerprintRef.current = fingerprint
+      }
+    })
+
+    return () => {
+      canceled = true
+    }
+  }, [hasAnalyticsConsent, statisticsEnabled])
 
   useEffect(() => {
     if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {

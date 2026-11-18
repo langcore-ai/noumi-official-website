@@ -78,6 +78,7 @@ const ANALYTICS_TEXT_KEYS = new Set([
   'visitor_id',
   'action',
   'device',
+  'device_fp',
   'app_surface',
   'cta_id',
   'official_cta_id',

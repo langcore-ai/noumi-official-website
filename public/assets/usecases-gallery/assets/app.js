@@ -208,7 +208,7 @@
   /* ---------------- Hero ---------------- */
   var HERO_COPY = {
     title: { en: "What you can deliver with Noumi", zh: "用 Noumi 交付更多" },
-    cta: { en: "Deliver with Noumi", zh: "立即体验 Noumi" },
+    cta: { en: "More Usecases", zh: "更多案例" },
   };
 
   function renderHero() {

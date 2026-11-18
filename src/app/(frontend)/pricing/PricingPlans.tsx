@@ -116,7 +116,7 @@ export function PricingPlans() {
                   <svg className="check" aria-hidden="true">
                     <use href="#check" />
                   </svg>
-                  <span>5 GB sandbox storage</span>
+                  <span>5 GB File Storage</span>
                 </li>
                 <li className="muted-feature">
                   <span
@@ -218,7 +218,7 @@ export function PricingPlans() {
                   <svg className="check" aria-hidden="true">
                     <use href="#check" />
                   </svg>
-                  <span>10 GB sandbox storage</span>
+                  <span>10 GB File Storage</span>
                 </li>
                 <li className="muted-feature">
                   <span
@@ -301,7 +301,7 @@ export function PricingPlans() {
                   <svg className="check" aria-hidden="true">
                     <use href="#check" />
                   </svg>
-                  <span>20 GB sandbox storage</span>
+                  <span>20 GB File Storage</span>
                 </li>
                 <li>
                   <svg className="check" aria-hidden="true">
@@ -392,7 +392,7 @@ export function PricingPlans() {
               <summary>Can I start for free?</summary>
               <p>
                 Yes. Basic includes 500 credits per month, Basic AI models, one Light System, and 5
-                GB of sandbox storage. No credit card is required to get started.
+                GB of file storage. No credit card is required to get started.
               </p>
             </details>
             <details>

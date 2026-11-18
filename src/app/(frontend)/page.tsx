@@ -50,9 +50,7 @@ export default async function HomePage() {
                   </span>
                 </h1>
                 <p className="redesign-hero__copy">
-                  The secure AI workspace for business, sales
-                  <br />
-                  and solution professionals.
+                  The secure AI teammate for presales and solution consultants.
                 </p>
                 <HomeCTA placement="hero" />
               </div>
@@ -141,6 +139,6 @@ export function generateMetadata() {
     title: 'Personal AI workspace built for Business & Solutions professionals | Noumi.ai',
     description:
       'Noumi works like a real colleague — understanding context, managing tasks, and delivering results without constant prompting.',
-    image: '/assets/intro-video/noumi-se-film-poster-02s.jpg',
+    image: '/assets/intro-video/noumi-se-film-poster-requirements.webp',
   })
 }

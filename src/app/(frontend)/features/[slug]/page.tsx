@@ -7,6 +7,7 @@ import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
 import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialFeaturePage } from '@/lib/site/official-cms'
 
+import '../../prototype-pages.css'
 import styles from './feature-page.module.css'
 
 /**

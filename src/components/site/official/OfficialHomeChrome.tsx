@@ -36,6 +36,7 @@ function renderMobilePrimaryLinks(activeItem?: ActiveNavItem) {
       className="mobile-nav__link"
       href={item.href}
       key={item.href}
+      prefetch={false}
     >
       {item.label}
     </Link>
@@ -107,7 +108,7 @@ export function OfficialHomeHeader(props: {
     <header className="site-header site-header--home" data-official-nav id="nav">
       <OfficialBetaBanner />
       <div className="container nav-row">
-        <Link aria-label="Noumi home" className="brand" href="/">
+        <Link aria-label="Noumi home" className="brand" href="/" prefetch={false}>
           <img
             alt="Noumi icon"
             className="brand__icon brand__icon--img"

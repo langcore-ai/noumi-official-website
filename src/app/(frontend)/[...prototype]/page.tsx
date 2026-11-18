@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { PrototypePage } from '@/components/site/prototype/PrototypePage'
 import { getPrototypePage, prototypeMetadata } from '@/lib/site/prototype/pages'
+import '../prototype-pages.css'
 
 type Props = { params: Promise<{ prototype: string[] }> }
 export async function generateMetadata({ params }: Props) {

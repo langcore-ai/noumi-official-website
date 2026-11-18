@@ -6,6 +6,7 @@ import { getOfficialBlogPosts } from '@/lib/site/official-cms'
 import { BLOG_PAGE_JSON_LD, OFFICIAL_JSON_LD_PAGE_META } from '@/lib/site/json-ld'
 
 import { BlogTabs } from './BlogTabs'
+import '../prototype-pages.css'
 import './blog-index.css'
 
 /**

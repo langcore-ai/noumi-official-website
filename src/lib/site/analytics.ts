@@ -65,6 +65,7 @@ export type OfficialGoogleTagConsentPayload = {
 /** 浏览器允许上报的官网埋点事件名。 */
 export const OFFICIAL_CLIENT_EVENT_NAMES = [
   '$pageview',
+  '$pageleave',
   'landing_page_viewed',
   'official_cta_clicked',
   'official_page_engagement',

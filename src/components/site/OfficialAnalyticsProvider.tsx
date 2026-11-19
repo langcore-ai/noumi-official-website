@@ -53,6 +53,9 @@ const ANALYTICS_REQUEST_HEADER = 'x-noumi-analytics'
 const FLUSH_DELAY_MS = 50
 const MAX_BATCH_SIZE = 20
 
+/** $pageleave 总停留时长上限，避免长时间挂机页面拉高均值。 */
+const MAX_PAGE_DURATION_MS = 24 * 60 * 60 * 1000
+
 type GoogleTagCommand = [command: string, ...args: unknown[]]
 
 type GoogleTagWindow = Window &
@@ -175,6 +178,8 @@ export function OfficialAnalyticsProvider(props: {
   const firstTouchRef = useRef<OfficialFirstTouch | null>(null)
   // 指纹采集一次；事件照常上报，采集完成前的事件不带 device_fp。
   const fingerprintRef = useRef('')
+  // 当前页面进入时间，驱动 $pageleave 总停留时长。
+  const pageEnteredAtRef = useRef(0)
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -305,6 +310,24 @@ export function OfficialAnalyticsProvider(props: {
     [flush, pathname, statisticsEnabled],
   )
 
+  /**
+   * 上报当前页的 $pageleave（总停留时长）。
+   * 触发点：客户端路由切换与 pagehide；与 $pageview 事件键去重语义对齐，
+   * 每个被记过 $pageview 的页面至多一条 $pageleave。
+   */
+  const flushPageLeave = useCallback(() => {
+    const enteredAt = pageEnteredAtRef.current
+    pageEnteredAtRef.current = 0
+    if (!enteredAt || !lastPageViewKeyRef.current) {
+      return
+    }
+    const durationMs = Math.min(Date.now() - enteredAt, MAX_PAGE_DURATION_MS)
+    if (durationMs < 1000) {
+      return
+    }
+    capture('$pageleave', { duration_ms: durationMs })
+  }, [capture])
+
   useEffect(() => {
     if (!statisticsEnabled) return
     const gtag = ensureOfficialGoogleTag()
@@ -390,6 +413,7 @@ export function OfficialAnalyticsProvider(props: {
     const pageViewKey = `${session.$session_id}:${pathname}`
     if (lastPageViewKeyRef.current !== pageViewKey) {
       lastPageViewKeyRef.current = pageViewKey
+      pageEnteredAtRef.current = Date.now()
       capture('$pageview', {})
     }
 
@@ -398,7 +422,16 @@ export function OfficialAnalyticsProvider(props: {
       // 来源属性由 capture 统一注入，这里只标记「本会话首个落地页」。
       capture('landing_page_viewed', {})
     }
-  }, [analyticsConfig, capture, pathname])
+
+    // 关标签页 / 跳外站时上报离开；卸载后 50ms 定时器不可靠，必须同步 flush；
+    // fetch 已用 keepalive，页面卸载后仍可送达。
+    const handlePageLeaveHide = () => {
+      flushPageLeave()
+      flush()
+    }
+    window.addEventListener('pagehide', handlePageLeaveHide)
+    return () => window.removeEventListener('pagehide', handlePageLeaveHide)
+  }, [analyticsConfig, capture, flush, flushPageLeave, pathname])
 
   useEffect(() => {
     if (!analyticsConfig?.enabled) {
@@ -443,10 +476,12 @@ export function OfficialAnalyticsProvider(props: {
     return () => {
       // 客户端路由切换时上报上一页停留，再重置计时。
       flushPageEngagement('navigate')
+      // 路由离开时上报上一页总停留（$pageview 记过才上报）。
+      flushPageLeave()
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('pagehide', handlePageHide)
     }
-  }, [analyticsConfig, capture, pathname])
+  }, [analyticsConfig, capture, flushPageLeave, pathname])
 
   useEffect(() => {
     if (!statisticsEnabled) return

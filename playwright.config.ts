@@ -41,6 +41,13 @@ export default defineConfig({
   ],
   webServer: {
     command: 'bun run dev',
+    // E2E 需要本地 D1 环境（env.local 的库）；顶层生产库在本地是空的。
+    env: {
+      CLOUDFLARE_ENV: 'local',
+      NEXT_DEV_WRANGLER_ENV: 'local',
+      OPEN_NEXT_LOCAL_BINDINGS: 'true',
+      CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: 'false',
+    },
     reuseExistingServer: true,
     url: 'http://localhost:3000',
   },

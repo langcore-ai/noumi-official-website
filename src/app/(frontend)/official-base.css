@@ -1,5 +1,5 @@
 /* ── Noumi Shared Stylesheet ───────────────────────────── */
-@import url('/assets/fonts/fonts.css');
+/* @font-face 由 layout 以非阻塞方式单独加载，避免 @import 追加一次串行往返。 */
 
 :root {
   --cream: #f5f0e8;

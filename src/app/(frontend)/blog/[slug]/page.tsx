@@ -8,6 +8,7 @@ import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { getOfficialBlogPost } from '@/lib/site/official-cms'
 import { renderMarkdownToHtml } from '@/lib/site/markdown'
 
+import '../../prototype-pages.css'
 import './blog-article.css'
 import styles from './blog-post.module.css'
 

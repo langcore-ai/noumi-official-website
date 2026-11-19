@@ -8,6 +8,7 @@ import { OfficialRawHtml } from '@/components/site/official/OfficialRawHtml'
 import { OfficialUseCaseWorkflow } from '@/components/site/official/OfficialUseCaseWorkflow'
 import { getOfficialUseCasePage } from '@/lib/site/official-cms'
 
+import '../../prototype-pages.css'
 import styles from './use-case.module.css'
 
 /**

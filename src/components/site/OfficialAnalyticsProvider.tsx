@@ -54,8 +54,6 @@ const ANALYTICS_REQUEST_HEADER = 'x-noumi-analytics'
 const FLUSH_DELAY_MS = 50
 const MAX_BATCH_SIZE = 20
 
-const GOOGLE_TAG_SCRIPT_ID = 'noumi-official-google-tag'
-
 type GoogleTagCommand = [command: string, ...args: unknown[]]
 
 type GoogleTagWindow = Window &
@@ -105,7 +103,11 @@ async function loadOfficialAnalyticsConfig(): Promise<PublicOfficialAnalyticsCon
 }
 
 /**
- * 按需插入官网 GA4 gtag 脚本。
+ * 提供 gtag 命令函数，保证命令能进入 `dataLayer` 队列。
+ *
+ * 本函数不再自行插入脚本：GTM 容器内已配置同一 GA4 属性（G-TJBXDRBMVM），
+ * 再插一份 `gtag/js` 会重复上报；而且动态插入的 async script 在 `load`
+ * 之前插入时，会把它拖成 `load` 的依赖（实测 GTM 域名不可达时 `load` 永不触发）。
  * @returns gtag 命令函数
  */
 function ensureOfficialGoogleTag() {
@@ -116,14 +118,6 @@ function ensureOfficialGoogleTag() {
     ((...args: GoogleTagCommand) => {
       googleWindow.dataLayer?.push(args)
     })
-
-  if (!document.getElementById(GOOGLE_TAG_SCRIPT_ID)) {
-    const script = document.createElement('script')
-    script.async = true
-    script.id = GOOGLE_TAG_SCRIPT_ID
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(OFFICIAL_GOOGLE_TAG_ID)}`
-    document.head.appendChild(script)
-  }
 
   return googleWindow.gtag
 }

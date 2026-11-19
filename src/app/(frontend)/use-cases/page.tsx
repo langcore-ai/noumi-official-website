@@ -1,5 +1,6 @@
 import { PrototypePage } from '@/components/site/prototype/PrototypePage'
 import { prototypeMetadata } from '@/lib/site/prototype/pages'
+import '../prototype-pages.css'
 
 export function generateMetadata() {
   return prototypeMetadata('/use-cases')

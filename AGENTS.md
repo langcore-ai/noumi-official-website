@@ -1151,3 +1151,13 @@ For deeper exploration of specific topics, refer to the context files located in
 修改官网 Use Cases、内部滚动或预览浮窗前，读取 [noumi-embed skill](skills/noumi-embed/SKILL.md) 和其中引用的说明。该目录名称为历史沿用；Use Cases 已改为仓库内原生页面，不再依赖 iframe 或外部展示站点。本地运行使用 `bun run mode:` 系列命令。当前恢复版本先供用户本地确认，确认前不得提交新 PR 或发布恢复内容。
 
 Cloudflare Builds 自动部署 staging 的配置与验证见 [部署指南](docs/CLOUDFLARE-BUILDS.md)。预览构建使用 `build:worker-preview` / `deploy:worker-preview`，开发者通过 GitHub 触发；本地模拟仍使用 `mode:start` / `mode:preview up`。
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

@@ -586,7 +586,10 @@ curl -sS -X POST \
 - PostHog 采用同源中继：浏览器只请求 `GET /api/site/analytics/config` 拿开关，事件经 `POST /api/site/analytics/events` 由 Worker 转发到 PostHog `/batch/`。浏览器端不再加载 `posthog-js`。
 - `POSTHOG_PROJECT_KEY` 与 `POSTHOG_API_HOST` 只存在于 Worker 运行时；公开 config API 只返回 `{ enabled }`。
 - 事件接口要求同源 Origin、`x-noumi-analytics: 1` 请求头和 `noumi_analytics_consent=1` cookie；body ≤ 16KB、批量 ≤ 20、事件时间 ±30 分钟。
-- 浏览器事件白名单：`$pageview`、`landing_page_viewed`、`official_cta_clicked`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`official_invite_request_submitted` 只由服务端在写入成功后发送。
+- 浏览器事件白名单：`$pageview`、`landing_page_viewed`、`official_cta_clicked`、`official_page_engagement`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`official_invite_request_submitted` 只由服务端在写入成功后发送。
+- 归因：首触快照（`noumi:analytics:first_touch`，90 天窗口）在同意后写入 localStorage；每条事件都带 `first_touch_*`、当前 `utm_*` 与 `visitor_id`，站内翻页不丢来源。`/invite` 的服务端重定向与站内 CTA 点击都会把 `utm_*` + `first_touch_*` 透传到 `https://www.noumi.ai/auth`。
+- 中继为每条事件写入服务端读到的客户端 IP（`$ip`）与 `$referrer`，并设置 `$process_person_profile: true`；只有读不到 IP 时才写 `$geoip_disable: true`。因此国家/城市维度可用，匿名访客有 person profile 可与产品侧 `$anon_distinct_id` 缝合。
+- `noumi_visitor_id` 在 `noumi.ai` 与 `www.noumi.ai` 统一写 `Domain=noumi.ai`；`preview.*` 与本地用 `noumi_visitor_id_preview`。
 - 详细契约见 [POSTHOG-SERVER-RELAY.md](POSTHOG-SERVER-RELAY.md)。
 
 ### 14.2 Consent

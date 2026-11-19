@@ -1,5 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { clearSharedVisitorId, readSharedVisitorId } from '@/lib/site/shared-visitor'
+import {
+  clearSharedVisitorId,
+  readSharedVisitorId,
+  resolveVisitorCookieSettings,
+} from '@/lib/site/shared-visitor'
 import { REPLAY_IDENTITY_KEY } from '@/lib/site/replay/shared'
 import { writeStoredConsent } from '@/lib/site/consent'
 
@@ -45,4 +49,24 @@ it('keeps an in-memory visitor when both storage mechanisms are blocked', () => 
   const visitor = readSharedVisitorId()
   expect(visitor).toMatch(/^[0-9a-f-]{36}$/i)
   expect(readSharedVisitorId()).toBe(visitor)
+})
+
+it('shares one visitor cookie across noumi.ai and www.noumi.ai', () => {
+  expect(resolveVisitorCookieSettings({ hostname: 'noumi.ai', protocol: 'https:' })).toEqual({
+    name: 'noumi_visitor_id',
+    attributes: expect.stringContaining('Domain=noumi.ai'),
+  })
+  expect(resolveVisitorCookieSettings({ hostname: 'www.noumi.ai', protocol: 'https:' })).toEqual({
+    name: 'noumi_visitor_id',
+    attributes: expect.stringContaining('Domain=noumi.ai'),
+  })
+})
+
+it('keeps preview and staging visitors in their own cookie', () => {
+  expect(
+    resolveVisitorCookieSettings({ hostname: 'preview.staging.noumi.ai', protocol: 'https:' }),
+  ).toEqual({ name: 'noumi_visitor_id_preview', attributes: expect.not.stringContaining('Domain=') })
+  expect(
+    resolveVisitorCookieSettings({ hostname: 'localhost', protocol: 'http:' }).attributes,
+  ).not.toContain('Secure')
 })

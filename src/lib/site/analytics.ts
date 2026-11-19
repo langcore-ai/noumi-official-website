@@ -27,13 +27,31 @@ export type OfficialGoogleTagPageViewPayload = {
   page_title?: string
 }
 
-const GOOGLE_TAG_CAMPAIGN_KEYS = [
+/** 官网识别渠道用的 UTM 参数；事件、GA4 与产品侧透传共用同一份白名单。 */
+export const OFFICIAL_UTM_KEYS = [
   'utm_source',
   'utm_medium',
   'utm_campaign',
   'utm_term',
   'utm_content',
 ] as const
+
+/**
+ * 官网首触归因快照。
+ *
+ * 保存访客第一次被识别出渠道时（utm 或站外 referrer）的来源，之后每次事件与
+ * 产品侧跳转都复用它，避免站内翻页后来源丢失（断点清单 W1/W4/W7）。
+ */
+export type OfficialFirstTouch = {
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_content?: string
+  utm_term?: string
+  referrer_origin?: string
+  landing_page: string
+  captured_at: string
+}
 
 /** GA4 consent mode 支持的授权值。 */
 export type OfficialGoogleTagConsentValue = 'denied' | 'granted'
@@ -91,6 +109,11 @@ const ANALYTICS_TEXT_KEYS = new Set([
   'utm_medium',
   'utm_source',
   'utm_term',
+  'first_touch_source',
+  'first_touch_medium',
+  'first_touch_campaign',
+  'first_touch_content',
+  'first_touch_term',
 ])
 
 const ANALYTICS_PATH_KEYS = new Set([
@@ -106,7 +129,9 @@ const TEXT_VALUE_MAX_LENGTH = 96
 
 const PATH_VALUE_MAX_LENGTH = 160
 
+/** 匿名观测 ID 的最大长度；与中继侧 UUID 校验保持一致的裁剪上限。 */
 const DISTINCT_ID_VALUE_MAX_LENGTH = 160
+
 
 const PAGE_TITLE_VALUE_MAX_LENGTH = 300
 
@@ -358,13 +383,7 @@ export function buildOfficialLandingSourceProperties(options: {
     options.search.startsWith('?') ? options.search.slice(1) : options.search,
   )
 
-  for (const key of [
-    'utm_source',
-    'utm_medium',
-    'utm_campaign',
-    'utm_term',
-    'utm_content',
-  ] as const) {
+  for (const key of OFFICIAL_UTM_KEYS) {
     const value = searchParams.get(key)?.trim()
     if (value) {
       properties[key] = normalizeTextValue(value, TEXT_VALUE_MAX_LENGTH)
@@ -383,58 +402,108 @@ export function buildOfficialLandingSourceProperties(options: {
 }
 
 /**
- * 构建官网跳转产品侧时可透传的安全归因参数。
- * @param options 当前地址、referrer 与 CTA 标识
+ * 把首触快照转换成事件属性，供每个事件携带来源（W1/W2/W3/W4）。
+ *
+ * 输出两套键：
+ * - `first_touch_*`：本条访问的首触渠道，站内翻页后仍然存在。
+ * - `utm_*`：当前地址栏里的 UTM（用户中途点开新的活动链接时覆盖首触）。
+ *
+ * @param firstTouch 首触快照
+ * @param current 当前地址栏与 referrer（可选）
+ * @returns 可上报的来源属性
+ */
+export function buildOfficialAttributionProperties(
+  firstTouch: OfficialFirstTouch | null,
+  current?: { baseUrl: string; pathname?: string; referrer?: string | null; search?: string },
+): OfficialAnalyticsProperties {
+  const properties: OfficialAnalyticsProperties = {}
+
+  if (firstTouch) {
+    for (const key of OFFICIAL_UTM_KEYS) {
+      const value = firstTouch[key]
+      if (value) {
+        properties[`first_touch_${key.slice('utm_'.length)}`] = value
+      }
+    }
+    if (firstTouch.referrer_origin) {
+      properties.first_touch_referrer_origin = firstTouch.referrer_origin
+    }
+    properties.first_touch_landing_page = firstTouch.landing_page
+  }
+
+  if (current) {
+    const searchParams = new URLSearchParams(
+      current.search?.startsWith('?') ? current.search.slice(1) : (current.search ?? ''),
+    )
+    for (const key of OFFICIAL_UTM_KEYS) {
+      const value = (searchParams.get(key) || '').trim().slice(0, TEXT_VALUE_MAX_LENGTH)
+      if (value) {
+        properties[key] = value
+      }
+    }
+
+    const trimmedReferrer = current.referrer?.trim()
+    if (trimmedReferrer) {
+      try {
+        const parsedReferrer = new URL(trimmedReferrer)
+        if (
+          (parsedReferrer.protocol === 'http:' || parsedReferrer.protocol === 'https:') &&
+          parsedReferrer.origin !== new URL(current.baseUrl).origin
+        ) {
+          properties.referrer_origin = parsedReferrer.origin
+        }
+      } catch {
+        // 非法 referrer 不构成来源。
+      }
+    }
+  }
+
+  return properties
+}
+
+/**
+ * 构建官网跳转产品侧时的归因参数。
+ *
+ * 同时写两套键：产品侧 `/auth` 埋点读标准 `utm_*`，官网历史契约保留
+ * `first_touch_*`。UTM 是渠道信息而非个人数据，因此不受 analytics 同意门控；
+ * 匿名 ID 与 visitor_id 是否出现由调用方按同意状态决定（断点清单 W7）。
+ *
+ * @param options 首触归因、CTA 标识与可选匿名身份
  * @returns URL 查询参数；仅包含白名单元数据
  */
 export function buildOfficialOutboundAttributionParams(options: {
   anonymousDistinctId?: string | null
-  visitorId?: string
   baseUrl: string
   ctaId?: string | null
-  landingPage: string
-  referrer?: string | null
-  search: string
+  firstTouch: OfficialFirstTouch | null
+  visitorId?: string
 }): URLSearchParams {
-  const landingProperties = buildOfficialLandingSourceProperties({
-    baseUrl: options.baseUrl,
-    referrer: options.referrer,
-    search: options.search,
-  })
   const params = new URLSearchParams()
 
-  for (const [key, value] of Object.entries(landingProperties)) {
-    if (typeof value !== 'string' || !value) {
-      continue
+  if (options.firstTouch) {
+    const properties = buildOfficialAttributionProperties(options.firstTouch)
+    for (const [key, value] of Object.entries(properties)) {
+      if (typeof value === 'string' && value) {
+        params.set(key, value)
+      }
     }
-    if (
-      key !== 'utm_source' &&
-      key !== 'utm_medium' &&
-      key !== 'utm_campaign' &&
-      key !== 'referrer_origin'
-    ) {
-      continue
+
+    // 产品侧 /auth 只认标准 UTM 键，官网渠道因此必须原样带上。
+    for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const) {
+      const value = options.firstTouch[key]
+      if (value) {
+        params.set(key, value)
+      }
     }
-    if (key === 'referrer_origin') {
-      params.set('first_touch_referrer_origin', value)
-      continue
-    }
-    params.set(key.replace(/^utm_/, 'first_touch_'), value)
   }
 
-  const landingPage = normalizePathLike(options.landingPage, options.baseUrl)
-  if (landingPage) {
-    params.set('first_touch_landing_page', landingPage)
+  const trimmedCtaId = (options.ctaId || '').trim().slice(0, TEXT_VALUE_MAX_LENGTH)
+  if (trimmedCtaId) {
+    params.set('official_cta_id', trimmedCtaId)
   }
-
-  const ctaId = normalizeTextValue(options.ctaId, TEXT_VALUE_MAX_LENGTH)
-  if (ctaId) {
-    params.set('official_cta_id', ctaId)
-  }
-  const anonymousDistinctId = normalizeTextValue(
-    options.anonymousDistinctId,
-    DISTINCT_ID_VALUE_MAX_LENGTH,
-  )
+  const anonymousDistinctId = (options.anonymousDistinctId || '')
+    .trim()
+    .slice(0, DISTINCT_ID_VALUE_MAX_LENGTH)
   if (anonymousDistinctId) {
     params.set('posthog_anonymous_distinct_id', anonymousDistinctId)
   }
@@ -443,8 +512,9 @@ export function buildOfficialOutboundAttributionParams(options: {
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       options.visitorId,
     )
-  )
+  ) {
     params.set('visitor_id', options.visitorId)
+  }
   params.set('source_surface', 'official')
 
   return params
@@ -466,7 +536,7 @@ export function buildOfficialGoogleTagPageViewPayload(input: {
   const pagePath = normalizePathLike(input.pathname, input.baseUrl) || '/'
   const pageLocationUrl = new URL(pagePath, input.baseUrl)
   const searchParams = new URLSearchParams(input.search || '')
-  for (const key of GOOGLE_TAG_CAMPAIGN_KEYS) {
+  for (const key of OFFICIAL_UTM_KEYS) {
     const value = searchParams.get(key)?.trim()
     if (value) {
       pageLocationUrl.searchParams.set(key, normalizeTextValue(value, TEXT_VALUE_MAX_LENGTH))

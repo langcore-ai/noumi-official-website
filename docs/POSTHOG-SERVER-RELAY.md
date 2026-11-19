@@ -215,8 +215,9 @@ const posthogProperties = {
   $current_url: url.href,
   $pathname: url.pathname,
   $host: url.host,
-  $process_person_profile: false,
-  $geoip_disable: true,
+  $referrer: properties.referrer_origin,
+  $ip: clientIp,
+  $process_person_profile: true,
   app_source: 'noumi-official',
   schema_version: 1,
 }
@@ -294,7 +295,7 @@ noumi_analytics_consent=1; Path=/; SameSite=Lax; Max-Age=31536000
   - `fetch('/api/site/analytics/events', { method: 'POST', keepalive: true, headers: { 'content-type': 'application/json', 'x-noumi-analytics': '1' }, body: JSON.stringify({ events }) })`；
   - 非 2xx 丢弃并记录一次 console warn（不重试，避免影响页面）。
 - `$pageview`：pathname 变化时发送一次；同 path + session 去重。
-- `landing_page_viewed`：每会话一次，带 `buildOfficialLandingSourceProperties` 的 utm/referrer（已去 query/hash）。
+- `landing_page_viewed`：每会话一次，只标记「本会话首个落地页」；来源属性统一由 `capture` 注入（`first_touch_*` + 当前 `utm_*` + `referrer_origin`），不再单独拼一套。
 - `official_cta_clicked`：沿用现有 capture 阶段点击监听和 `data-analytics-*` 属性。
 - 外跳归因：继续使用 `buildOfficialOutboundAttributionParams`，`anonymousDistinctId` 改为 `readOfficialAnonymousId()`。
 - 撤回同意：清空队列、停止发送、轮换匿名 ID。
@@ -350,8 +351,13 @@ async function sendPostHogBatch(
 - `POSTHOG_API_HOST` 默认 `https://us.i.posthog.com`；只允许 HTTP(S) origin，拒绝 credentials/query/hash。
 - 不把 key 写入日志。
 - 每个 event 带稳定 `uuid`（客户端 `eventId` 或 `sha256(event + distinctId + eventId)`），重试去重。
-- `$process_person_profile: false`，不创建 person profile。
-- `$geoip_disable: true`（如后续需要国家维度，再单独评估）。
+- `$process_person_profile: true`：官网匿名事件也建 person profile，注册时的
+  `$anon_distinct_id` 才有落点可缝合（断点清单 W5）。
+- `$ip` 由中继写入服务端读到的客户端 IP（`cf-connecting-ip` → `x-forwarded-for`
+  → `x-real-ip`）；PostHog GEOIP 变换按该地址解析国家/城市（B2/B3）。
+  只有读不到 IP 时才写 `$geoip_disable: true`，避免用 Worker 出口地址定位。
+- `$ip`、`$current_url`、`$pathname`、`$host`、`$referrer` 一律由服务端构造，
+  浏览器提交会被 schema 拒绝。
 
 ### 8.3 环境变量
 
@@ -394,7 +400,8 @@ POSTHOG_UI_HOST
 
 - `normalizeOfficialPagePath`：query/hash、尾斜杠、动态 slug、未知路径、超长。
 - `officialClientEventSchema`：合法事件、未知事件、未知属性、非法 UUID、超长 label、非法 path。
-- `buildPostHogBatch`：服务端构造 URL/host/path；`$process_person_profile`/`$geoip_disable`；`api_key`。
+- `buildClientPostHogEvents`：服务端构造 URL/host/path、`$referrer`、`$ip`；
+  `$process_person_profile: true`；`api_key`。
 - consent cookie 写入/清除。
 
 ### 路由

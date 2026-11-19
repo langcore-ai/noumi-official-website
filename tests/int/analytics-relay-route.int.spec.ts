@@ -104,8 +104,7 @@ describe('POST /api/site/analytics/events', () => {
         app_source: 'noumi-official',
         page_group: 'pricing',
         page_path: '/pricing',
-        $geoip_disable: true,
-        $process_person_profile: false,
+        $process_person_profile: true,
       },
     })
     expect(JSON.stringify(batch)).not.toContain('email=')
@@ -213,5 +212,36 @@ describe('POST /api/site/analytics/events', () => {
     } finally {
       vi.stubEnv('POSTHOG_ENABLED', 'true')
     }
+  })
+})
+
+it('keeps UTM parameters on $current_url and maps referrer_origin to $referrer', async () => {
+  const response = await POST(
+    relayRequest({
+      body: {
+        events: [
+          {
+            event: '$pageview',
+            eventId: uuid(),
+            occurredAt: new Date().toISOString(),
+            anonymousId: uuid(),
+            properties: {
+              page_path: '/pricing',
+              referrer_origin: 'https://www.google.com',
+              utm_campaign: 'apollo',
+              utm_medium: 'email',
+              utm_source: 'cold-email',
+            },
+          },
+        ],
+      },
+    }),
+  )
+  expect(response.status).toBe(204)
+
+  const [built] = batches[0]!.batch
+  expect(built?.properties).toMatchObject({
+    $current_url: `${siteOrigin}/pricing?utm_source=cold-email&utm_medium=email&utm_campaign=apollo`,
+    $referrer: 'https://www.google.com',
   })
 })

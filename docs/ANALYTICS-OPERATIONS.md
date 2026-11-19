@@ -86,3 +86,33 @@ OAuth 使用 10 分钟加密 HttpOnly/SameSite=Lax cookie、随机 state、PKCE 
 ## 运营新增点击
 
 运营在 GTM 使用稳定链接地址或元素属性配置触发器，创建新的 GA4 事件标签，Preview 验证 Cookie 同意/拒绝、桌面/移动端和页面参数后发布。不要为 try_free_click 添加重复规则。复杂业务成功事件、跨域 iframe 内事件仍需开发提供准确的事件信号。
+
+## 对外链接 UTM 规则
+
+官网站内已经能收到渠道参数，但前提是**对外发出的链接本身带 UTM**。断点清单里 UTM 覆盖率只有 7.7%，原因是 24 条对外链接没有统一规则，不是埋点缺失。
+
+固定写法（全部小写，不用空格，多词用 `-`）：
+
+```text
+https://noumi.ai/<页面>?utm_source=<来源>&utm_medium=<媒介>&utm_campaign=<活动>&utm_content=<素材>
+```
+
+必填三件：`utm_source`、`utm_medium`、`utm_campaign`；`utm_content` 用于区分同活动的不同素材。`utm_term` 只在付费搜索的关键词上使用。
+
+| 渠道             | `utm_source`      | `utm_medium` |
+| ---------------- | ----------------- | ------------ |
+| LinkedIn 自然帖  | `linkedin`        | `social`     |
+| LinkedIn 付费    | `linkedin`        | `paid`       |
+| 冷邮件 / BD 邀约 | `cold-email`      | `email`      |
+| 邀约 / 私信      | `invite`          | `message`    |
+| Follow up        | `follow-up`       | `email`      |
+| 营销活动         | `<campaign-name>` | `campaign`   |
+
+规则：
+
+- 落地页优先 `/`、`/pricing`、`/use-cases`；不要直接贴 `/auth`，`/auth` 由官网 CTA 或 `/invite` 带参数跳转。
+- 一条链接只对应一个渠道；同一活动换素材时只改 `utm_content`。
+- 改短链或加跳转时必须保留参数，否则这条访问会回落成「直接访问」。
+- 发出去后不要改动 `utm_campaign`，否则历史数据会断成两段。
+
+验证方式：打开带参数的链接，在 PostHog Live Events 里确认事件带 `utm_source` / `utm_medium` / `utm_campaign`，且 `$current_url` 保留这些参数。

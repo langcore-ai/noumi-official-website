@@ -71,10 +71,8 @@ export function CookieConsentBanner() {
           <p className="cookie-consent__eyebrow">Cookie preferences</p>
           <h2>Choose how Noumi stores site cookies.</h2>
           <p>
-            We use essential cookies for core site functions and always-on, privacy-preserving
-            analytics to understand how the site is used. Agree also enables preference cookies
-            such as your language choice. Necessary only keeps optional preference cookies off;
-            analytics stays on either way.
+            We use essential cookies for core site functions. Choose Agree to allow preference and
+            analytics cookies, or Necessary only to keep optional cookies off.
           </p>
         </div>
 

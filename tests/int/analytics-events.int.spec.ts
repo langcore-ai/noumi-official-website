@@ -141,6 +141,30 @@ describe('analytics relay transport', () => {
     expect(built.properties).not.toHaveProperty('token')
   })
 
+  it('stamps the server-verified country and forwards client timezone', () => {
+    const [built] = buildClientPostHogEvents(
+      officialAnalyticsBatchSchema.parse({
+        events: [event({ properties: { timezone: 'Asia/Shanghai' } })],
+      }).events,
+      'https://noumi.ai',
+      '203.0.113.9',
+      'CN',
+    )
+
+    expect(built.properties).toMatchObject({ country: 'CN', timezone: 'Asia/Shanghai' })
+    expect(built.properties).not.toHaveProperty('$geoip_disable')
+  })
+
+  it('omits country when the edge header is missing', () => {
+    const [built] = buildClientPostHogEvents(
+      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
+      'https://noumi.ai',
+      '',
+    )
+
+    expect(built.properties).not.toHaveProperty('country')
+  })
+
   it('posts the batch with the project key as api_key', async () => {
     const send = vi.fn(
       async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 200 }),

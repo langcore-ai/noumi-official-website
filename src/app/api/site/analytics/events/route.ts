@@ -190,10 +190,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'invalid_analytics_time' }, { status: 400 })
   }
 
+  // 国家取 Cloudflare 边缘写入的 `CF-IPCountry`（如 `CN`、`US`），仅作为标签转发。
   const events = buildClientPostHogEvents(
     parsed.data.events,
     new URL(OFFICIAL_SITE_URL).origin,
     clientIp,
+    request.headers.get('cf-ipcountry')?.trim() || '',
   )
   if (!(await sendPostHogBatch(config, events))) {
     console.warn({

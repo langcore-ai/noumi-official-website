@@ -36,6 +36,7 @@ export const officialEventPropertiesSchema = z
   .object({
     action: label.optional(),
     cta_id: label.optional(),
+    country: label.optional(),
     device: label.optional(),
     device_fp: z.string().regex(/^[0-9a-f]{8,64}$/iu).optional(),
     duration_ms: z.number().int().min(0).max(24 * 60 * 60 * 1000).optional(),
@@ -54,6 +55,7 @@ export const officialEventPropertiesSchema = z
     utm_medium: label.optional(),
     utm_source: label.optional(),
     utm_term: label.optional(),
+    timezone: label.optional(),
     visitor_id: z.uuid().optional(),
     $session_id: z.uuid().optional(),
     $window_id: z.uuid().optional(),
@@ -167,6 +169,7 @@ export function buildClientPostHogEvents(
   events: z.infer<typeof officialClientEventSchema>[],
   officialOrigin: string,
   clientIp: string,
+  country = '',
 ): PostHogBatchEvent[] {
   return events.map((event) => {
     const pagePath = normalizeOfficialPagePath(event.properties.page_path || '/')
@@ -200,6 +203,9 @@ export function buildClientPostHogEvents(
           ? { $ip: clientIp }
           : // 没有可信 IP 时显式关闭，避免 PostHog 用 Worker 出口地址定位。
             { $geoip_disable: true }),
+        // 国家取自 Cloudflare `CF-IPCountry` 请求头，由服务端写入，
+        // 浏览器传的 country 属性不可信时以服务端值为准。
+        ...(country ? { country } : {}),
         $process_person_profile: true,
         app_source: 'noumi-official',
         schema_version: 1,

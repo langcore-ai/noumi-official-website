@@ -163,6 +163,20 @@ export function readOfficialDevice(): string {
 }
 
 /**
+ * 读取浏览器 IANA 时区。
+ * 只暴露时区名，不采集更细的地理信息。
+ *
+ * @returns IANA 时区；不可用时返回空串
+ */
+export function readOfficialTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+  } catch {
+    return ''
+  }
+}
+
+/**
  * 判断事件名是否属于浏览器允许上报的埋点集合。
  * @param value 待判断的事件名
  * @returns 是否为受支持的客户端事件名

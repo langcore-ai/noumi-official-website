@@ -20,6 +20,7 @@ import {
   isOfficialClientEventName,
   normalizeOfficialPagePath,
   readOfficialDevice,
+  readOfficialTimezone,
   officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
@@ -324,6 +325,7 @@ export function OfficialAnalyticsProvider(props: {
             {
               ...properties,
               device: readOfficialDevice(),
+              timezone: readOfficialTimezone(),
               device_fp: fingerprintRef.current || undefined,
               page_path: pagePath,
             },

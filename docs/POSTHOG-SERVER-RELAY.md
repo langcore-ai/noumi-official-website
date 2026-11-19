@@ -506,3 +506,13 @@ POSTHOG_UI_HOST
 2. 确认生产 `POSTHOG_API_HOST=https://us.i.posthog.com`、`POSTHOG_ENABLED=true`。
 3. 部署后验证 `noumi.ai` 的 `$pageview` 进入生产项目，且 Network 中不再出现 `e.noumi.ai`。
 4. 视需要为 `/api/site/analytics/events` 配置 Cloudflare WAF 速率规则。
+
+## 14. 营销短链（2026-11-20）
+
+飞书 UTM 规则表（`UTM规则表` Base）中「使用方式=短链」的 outbound/邮件触达链接由站内短链服务承载：
+
+- 映射：`src/lib/site/short-links.ts`（slug → 完整 UTM URL，覆盖 UTM-07~16、UTM-20 共 11 条）。
+- 路由：`src/app/(frontend)/go/[slug]/route.ts`，302 跳转，`x-robots-tag: noindex` + `cache-control: no-store`；未知 slug 404。
+- 落地后走既有 UTM/首触采集链路，PostHog 无需感知短链；不发送任何短链事件。
+- slug 是对外投放承诺，不可改名；新增规则按 Base 表追加 `SHORT_LINK_TARGETS`。
+- 测试：`tests/int/short-links.int.spec.ts`。

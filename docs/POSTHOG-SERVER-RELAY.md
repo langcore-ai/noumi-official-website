@@ -93,7 +93,6 @@ Next.js Route (Cloudflare Worker)
 Content-Type: application/json
 x-noumi-analytics: 1
 Origin: https://noumi.ai
-Cookie: noumi_analytics_consent=1
 ```
 
 请求体：
@@ -123,7 +122,7 @@ Cookie: noumi_analytics_consent=1
 - 仅接受 `application/json`。
 - `Origin` 必须是同源（`request.url` origin、`OFFICIAL_SITE_URL` 或 `NEXT_PUBLIC_SITE_URL`）；缺失时要求 `sec-fetch-site: same-origin`。
 - 必须带 `x-noumi-analytics: 1`；跨站简单请求无法伪造该头而不触发 CORS preflight。
-- 必须带 `noumi_analytics_consent=1`；服务端不信任请求体里的 consent 字段。
+- 不校验任何 consent cookie：埋点采集不以 cookie 同意为前提；同源 Origin 与自定义 header 是唯一来源校验。
 - IP 限流：模块内 best-effort 60 请求/分钟/IP；生产再叠加 Cloudflare WAF 速率规则。
 - `occurredAt` 必须在当前时间 ±30 分钟内。
 - 未启用或 key 为空：返回 204，不读数据库、不发请求。
@@ -259,20 +258,15 @@ captureOfficialServerEvent({
 - 30 分钟无事件或 24 小时上限换新；`$window_id` 每次文档加载生成。
 - 只由真实事件延长，不加心跳。
 
-### 6.3 同意
+### 6.3 同意（已废止）
 
-当前 consent 存在 `localStorage`，服务端读不到。增加一个非 HttpOnly 偏好 cookie：
+早期设计用 `noumi_analytics_consent` cookie 作为第二道采集门，现已移除：
 
-```text
-noumi_analytics_consent=1; Path=/; SameSite=Lax; Max-Age=31536000
-```
-
-- `writeStoredConsent(locale, productLogin, analytics)`：
-  - `analytics === true` → 写入 `noumi_analytics_consent=1`；
-  - `analytics === false` → 删除该 cookie。
-- 服务端 `POST /api/site/analytics/events` 要求该 cookie 为 `1`。
-- 客户端仍需在 consent 为 false 时不发事件；cookie 是第二道门。
-- 撤回同意时清空客户端队列、轮换匿名 ID；服务端看到 cookie 清除后不再接受。
+- `writeStoredConsent(locale, productLogin, analytics)` 只持久化偏好并派发变更事件，不再写 cookie。
+- 服务端 `POST /api/site/analytics/events` 不校验 consent。
+- 客户端 `capture()` 不因 cookie 选择而中断；点 Necessary only 也不清空队列、不轮换匿名 ID。
+- 后果：Agree 与 Necessary only 都会全量采集埋点，两者的差别只剩语言偏好等非分析类 cookie。
+- 站点会话回放（rrweb）仍受 `analytics` 选择门控，未纳入本次变更。
 
 ## 7. 客户端改造
 
@@ -472,11 +466,11 @@ POSTHOG_UI_HOST
 | 项               | 文件                                                      | 状态                                                              |
 | ---------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
 | 浏览器可见开关   | `src/app/api/site/analytics/config/route.ts`              | 完成，仅返回 `{ enabled }`                                        |
-| 事件接口         | `src/app/api/site/analytics/events/route.ts`              | 完成，Origin/header/consent/schema/时间窗口/限流                  |
+| 事件接口         | `src/app/api/site/analytics/events/route.ts`              | 完成，Origin/header/schema/时间窗口/限流                          |
 | schema 与投递    | `src/lib/site/analytics-events.server.ts`                 | 完成，`/batch/` + 429/5xx 一次重试                                |
 | 浏览器身份与会话 | `src/lib/site/analytics-identity.ts`                      | 完成，复用 `noumi_visitor_id`，30 分钟/24 小时会话                |
 | Provider         | `src/components/site/OfficialAnalyticsProvider.tsx`       | 完成，50ms 批量、`keepalive`、撤回即停                            |
-| consent cookie   | `src/lib/site/consent.ts`                                 | 完成，同意写 `noumi_analytics_consent=1`，撤回删除                |
+| consent cookie   | `src/lib/site/consent.ts`                                 | 已移除，采集不依赖 consent cookie                                 |
 | 服务端事件       | `src/app/api/site/invite-requests/route.ts`               | 完成，写入成功后发送                                              |
 | 依赖             | `package.json` / `bun.lock`                               | 已移除 `posthog-js`                                               |
 | 环境变量         | `wrangler.jsonc` / `.env.example` / `cloudflare-env.d.ts` | `POSTHOG_BROWSER_API_HOST`/`POSTHOG_UI_HOST` → `POSTHOG_API_HOST` |

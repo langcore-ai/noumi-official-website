@@ -1,16 +1,10 @@
 'use client'
 
-import {
-  COOKIE_CONSENT_STORAGE_KEY,
-  COOKIE_CONSENT_VERSION,
-  OFFICIAL_ANALYTICS_CONSENT_COOKIE,
-} from './consent-shared'
-import { clearSharedVisitorId } from './shared-visitor'
+import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
 
 export {
   COOKIE_CONSENT_STORAGE_KEY,
   COOKIE_CONSENT_VERSION,
-  OFFICIAL_ANALYTICS_CONSENT_COOKIE,
 } from './consent-shared'
 
 /** cookie 偏好变更事件名。 */
@@ -116,7 +110,7 @@ export function readStoredConsent(): CookieConsentState | null {
 
 /**
  * 持久化 cookie 偏好并通知监听方更新。
- * 同步写入非 HttpOnly 的 analytics 偏好 cookie，供服务端中继二次校验。
+ * analytics 选择不再门控埋点采集，只决定是否启用偏好类 cookie。
  *
  * @param locale 是否允许语言偏好 cookie
  * @param productLogin 是否允许产品登录相关 cookie
@@ -132,23 +126,5 @@ export function writeStoredConsent(locale: boolean, productLogin: boolean, analy
   }
 
   persistStoredConsent(consent)
-  writeAnalyticsConsentCookie(analytics)
-  if (!analytics) clearSharedVisitorId()
   dispatchConsentChanged()
-}
-
-/**
- * 写入或清除 analytics 偏好 cookie。
- *
- * @param analytics 是否同意 analytics
- */
-function writeAnalyticsConsentCookie(analytics: boolean) {
-  try {
-    const secure = window.location.protocol === 'https:' ? '; Secure' : ''
-    document.cookie = analytics
-      ? `${OFFICIAL_ANALYTICS_CONSENT_COOKIE}=1; Path=/; SameSite=Lax; Max-Age=31536000${secure}`
-      : `${OFFICIAL_ANALYTICS_CONSENT_COOKIE}=; Path=/; SameSite=Lax; Max-Age=0${secure}`
-  } catch {
-    // Cookie 受限时由客户端 consent 继续阻断事件。
-  }
 }

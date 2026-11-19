@@ -582,12 +582,12 @@ curl -sS -X POST \
 - 生产 GTM 容器为 `GTM-NFXRLW7R`。免费试用点击在同意 analytics 后向 dataLayer 发送 `try_free_click`，由 GTM 自定义事件标签发送至 GA4，不额外直发同名 GA4 事件。
 - 点击参数包括去掉 query/hash 的 `page_location`、`page_path`、`page_title`、`button_text`、`button_location`、`cta_id`；当前页面在点击时读取。现有 CTA 标记与标准 Try Noumi Free 文案均可识别，自定义按钮可使用 `data-track-action="try_free"` 和 `data-track-location`。
 - local/staging 不发送正式点击统计；PostHog 是否启用不影响生产 GTM 点击事件。GTM 预览验证通过后，仍需在容器中发布事件标签，网站代码上线不会自动发布 GTM 工作区。
-- Google tag script 会加载；初始 consent 为 denied，用户同意后更新 Consent Mode。
+- Google tag script 会加载；`analytics_storage` 默认即 granted（站点埋点不以 cookie 同意为前提），广告类信号保持 denied。
 - PostHog 采用同源中继：浏览器只请求 `GET /api/site/analytics/config` 拿开关，事件经 `POST /api/site/analytics/events` 由 Worker 转发到 PostHog `/batch/`。浏览器端不再加载 `posthog-js`。
 - `POSTHOG_PROJECT_KEY` 与 `POSTHOG_API_HOST` 只存在于 Worker 运行时；公开 config API 只返回 `{ enabled }`。
-- 事件接口要求同源 Origin、`x-noumi-analytics: 1` 请求头和 `noumi_analytics_consent=1` cookie；body ≤ 16KB、批量 ≤ 20、事件时间 ±30 分钟。
+- 事件接口要求同源 Origin 与 `x-noumi-analytics: 1` 请求头；body ≤ 16KB、批量 ≤ 20、事件时间 ±30 分钟。接口不再校验任何 consent cookie。
 - 浏览器事件白名单：`$pageview`、`landing_page_viewed`、`official_cta_clicked`、`official_page_engagement`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`official_invite_request_submitted` 只由服务端在写入成功后发送。
-- 归因：首触快照（`noumi:analytics:first_touch`，90 天窗口）在同意后写入 localStorage；每条事件都带 `first_touch_*`、当前 `utm_*` 与 `visitor_id`，站内翻页不丢来源。`/invite` 的服务端重定向与站内 CTA 点击都会把 `utm_*` + `first_touch_*` 透传到 `https://www.noumi.ai/auth`。
+- 归因：首触快照（`noumi:analytics:first_touch`，90 天窗口）首次出现渠道信号即写入 localStorage，不依赖 cookie 选择；每条事件都带 `first_touch_*`、当前 `utm_*` 与 `visitor_id`，站内翻页不丢来源。`/invite` 的服务端重定向与站内 CTA 点击都会把 `utm_*` + `first_touch_*` 透传到 `https://www.noumi.ai/auth`。
 - 中继为每条事件写入服务端读到的客户端 IP（`$ip`）与 `$referrer`，并设置 `$process_person_profile: true`；只有读不到 IP 时才写 `$geoip_disable: true`。因此国家/城市维度可用，匿名访客有 person profile 可与产品侧 `$anon_distinct_id` 缝合。
 - `noumi_visitor_id` 在 `noumi.ai` 与 `www.noumi.ai` 统一写 `Domain=noumi.ai`；`preview.*` 与本地用 `noumi_visitor_id_preview`。
 - 详细契约见 [POSTHOG-SERVER-RELAY.md](POSTHOG-SERVER-RELAY.md)。
@@ -1087,8 +1087,8 @@ Media 与 snapshot/cache 同 bucket，但 media 不是可丢弃缓存。Snapshot
 
 1. 检查 `GET /api/site/analytics/config` 是否返回 `{"enabled":true}`。
 2. 检查 Worker 的 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_API_HOST`。
-3. 确认用户已同意 analytics，且请求带 `noumi_analytics_consent=1` cookie 与 `x-noumi-analytics: 1`。
-4. 检查 `POST /api/site/analytics/events` 的响应码：403 为 Origin/header/consent 拒绝，429 为限流，400 为 schema 或时间窗口拒绝。
+3. 确认请求带 `x-noumi-analytics: 1`；接口不要求任何 consent cookie，因此无需检查用户是否点过 Agree。
+4. 检查 `POST /api/site/analytics/events` 的响应码：403 为 Origin/header 拒绝，429 为限流，400 为 schema 或时间窗口拒绝。
 5. 检查 Worker 日志中的 `relay_delivery_failed`，确认 `POSTHOG_API_HOST/batch/` 可达且 key 正确。
 6. 不要把 GA4 Consent Mode 行为与 PostHog 中继条件混为一谈。
 

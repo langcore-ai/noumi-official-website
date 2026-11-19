@@ -81,16 +81,20 @@ describe('GTM free trial tracking', () => {
     ).toHaveLength(0)
     expect(document.querySelector('script[src*="gtm.js"]')).toBeNull()
   })
-  it('tracks consent grants and revocations without replaying previous clicks', async () => {
+  it('tracks clicks regardless of cookie choices without replaying them', async () => {
     const view = await mount()
+    // 未做任何 cookie 选择时也立即上报。
     fireEvent.click(view.getByRole('button'))
-    expect(clicks()).toHaveLength(0)
+    expect(clicks()).toHaveLength(1)
+
     act(() => consent(true))
     fireEvent.click(view.getByRole('button'))
-    expect(clicks()).toHaveLength(1)
+    expect(clicks()).toHaveLength(2)
+
+    // 存 Necessary only 仍继续采集，且不重放历史点击。
     act(() => consent(false))
     fireEvent.click(view.getByRole('button'))
-    expect(clicks()).toHaveLength(1)
+    expect(clicks()).toHaveLength(3)
   })
   it('does not track clicks or load Google scripts in test environments', async () => {
     consent(true)

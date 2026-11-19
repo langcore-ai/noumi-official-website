@@ -1,5 +1,3 @@
-import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_VERSION } from './consent-shared'
-
 /** 官网分析配置的默认 PostHog ingest 地址。 */
 export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://us.i.posthog.com'
 
@@ -572,19 +570,16 @@ export function buildOfficialGoogleTagPageViewPayload(input: {
 
 /**
  * 构建 GA4 consent mode 参数。
- * 广告相关授权保持关闭；analytics_storage 由 cookie 面板控制。
+ * 广告相关授权保持关闭；站点分析不依赖 cookie 同意，analytics_storage 固定授权。
  *
- * @param hasAnalyticsConsent 用户是否同意 analytics cookie
  * @returns 可传给 gtag consent 命令的参数
  */
-export function buildOfficialGoogleTagConsentPayload(
-  hasAnalyticsConsent: boolean,
-): OfficialGoogleTagConsentPayload {
+export function buildOfficialGoogleTagConsentPayload(): OfficialGoogleTagConsentPayload {
   return {
     ad_personalization: 'denied',
     ad_storage: 'denied',
     ad_user_data: 'denied',
-    analytics_storage: hasAnalyticsConsent ? 'granted' : 'denied',
+    analytics_storage: 'granted',
   }
 }
 
@@ -595,8 +590,6 @@ export function buildOfficialGoogleTagConsentPayload(
  * @returns 可安全注入前台 layout 的 inline script 内容
  */
 export function buildOfficialGoogleTagBootstrapScript(): string {
-  const consentStorageKey = JSON.stringify(COOKIE_CONSENT_STORAGE_KEY)
-  const consentVersion = JSON.stringify(COOKIE_CONSENT_VERSION)
   const googleTagId = JSON.stringify(OFFICIAL_GOOGLE_TAG_ID)
   const bootstrapFlag = JSON.stringify(OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG)
 
@@ -604,20 +597,11 @@ export function buildOfficialGoogleTagBootstrapScript(): string {
 window.dataLayer = window.dataLayer || [];
 window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
 (function(){
-  var hasAnalyticsConsent = false;
-  try {
-    var rawConsent = window.localStorage.getItem(${consentStorageKey});
-    var parsedConsent = rawConsent ? JSON.parse(rawConsent) : null;
-    hasAnalyticsConsent =
-      parsedConsent &&
-      parsedConsent.version === ${consentVersion} &&
-      parsedConsent.analytics === true;
-  } catch (error) {}
   window.gtag('consent', 'default', {
     ad_personalization: 'denied',
     ad_storage: 'denied',
     ad_user_data: 'denied',
-    analytics_storage: hasAnalyticsConsent ? 'granted' : 'denied'
+    analytics_storage: 'granted'
   });
   window.gtag('js', new Date());
   window.gtag('config', ${googleTagId}, { send_page_view: false });

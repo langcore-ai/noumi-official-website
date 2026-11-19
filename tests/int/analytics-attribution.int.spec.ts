@@ -36,7 +36,6 @@ afterEach(() => {
 it('keeps the first channel signal for the rest of the visit', () => {
   const first = resolveOfficialFirstTouch({
     baseUrl,
-    consent: true,
     now: Date.parse('2026-11-19T00:00:00.000Z'),
     pathname: '/pricing',
     referrer: 'https://www.linkedin.com/feed',
@@ -54,7 +53,6 @@ it('keeps the first channel signal for the rest of the visit', () => {
   // 站内翻页（无 UTM，referrer 指向官网自己）不得覆盖首触。
   const later = resolveOfficialFirstTouch({
     baseUrl,
-    consent: true,
     now: Date.parse('2026-11-19T00:05:00.000Z'),
     pathname: '/features/foo',
     referrer: 'https://noumi.ai/pricing',
@@ -63,10 +61,9 @@ it('keeps the first channel signal for the rest of the visit', () => {
   expect(later).toEqual(first)
 })
 
-it('does not persist attribution before consent but keeps it in memory', () => {
+it('persists attribution immediately, independent of cookie choices', () => {
   const captured = resolveOfficialFirstTouch({
     baseUrl,
-    consent: false,
     now: Date.parse('2026-11-19T00:00:00.000Z'),
     pathname: '/',
     referrer: null,
@@ -74,25 +71,22 @@ it('does not persist attribution before consent but keeps it in memory', () => {
   })
 
   expect(captured?.utm_source).toBe('cold-email')
-  expect(localStorage.getItem('noumi:analytics:first_touch')).toBeNull()
+  expect(localStorage.getItem('noumi:analytics:first_touch')).not.toBeNull()
 
   const persisted = resolveOfficialFirstTouch({
     baseUrl,
-    consent: true,
     now: Date.parse('2026-11-19T00:01:00.000Z'),
     pathname: '/',
     referrer: null,
     search: '',
   })
   expect(persisted?.utm_source).toBe('cold-email')
-  expect(localStorage.getItem('noumi:analytics:first_touch')).not.toBeNull()
 })
 
 it('returns null when a visit carries no channel signal', () => {
   expect(
     resolveOfficialFirstTouch({
       baseUrl,
-      consent: true,
       now: Date.parse('2026-11-19T00:00:00.000Z'),
       pathname: '/',
       referrer: 'https://noumi.ai/pricing',
@@ -110,7 +104,6 @@ it('expires stored attribution after the window', () => {
   expect(
     resolveOfficialFirstTouch({
       baseUrl,
-      consent: true,
       now: Date.parse('2026-11-19T00:00:00.000Z'),
       pathname: '/',
       referrer: null,

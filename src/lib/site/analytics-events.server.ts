@@ -11,8 +11,6 @@ import {
 } from './analytics'
 import { OFFICIAL_SITE_URL } from './official-site'
 
-export { OFFICIAL_ANALYTICS_CONSENT_COOKIE } from './consent-shared'
-
 /** 官网事件接口允许的最大请求体字节数。 */
 export const OFFICIAL_ANALYTICS_MAX_BODY_BYTES = 16 * 1024
 
@@ -48,8 +46,13 @@ export const officialEventPropertiesSchema = z
     source_path: pathValue.optional(),
     status: label.optional(),
     target_path: pathValue.optional(),
+    first_touch_campaign: label.optional(),
+    first_touch_content: label.optional(),
     first_touch_landing_page: pathValue.optional(),
+    first_touch_medium: label.optional(),
     first_touch_referrer_origin: z.url().max(200).optional(),
+    first_touch_source: label.optional(),
+    first_touch_term: label.optional(),
     utm_campaign: label.optional(),
     utm_content: label.optional(),
     utm_medium: label.optional(),

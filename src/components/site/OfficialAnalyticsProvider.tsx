@@ -30,18 +30,16 @@ import {
   type OfficialFirstTouch,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
-import { clearOfficialFirstTouch, resolveOfficialFirstTouch } from '@/lib/site/attribution'
+import { resolveOfficialFirstTouch } from '@/lib/site/attribution'
 import {
   readOfficialAnonymousId,
   readOfficialBrowserSession,
-  rotateOfficialAnonymousId,
   touchOfficialBrowserSession,
 } from '@/lib/site/analytics-identity'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { readDeviceFingerprint } from '@/lib/site/device-fingerprint'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
-import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
 import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 
 /** Landing page 视图仅在一个会话内记一次。 */
@@ -124,32 +122,20 @@ function ensureOfficialGoogleTag() {
 }
 
 /**
- * 读取初始 analytics cookie 授权。
- * @returns 是否已经同意 analytics cookie
- */
-function readInitialAnalyticsConsent() {
-  if (typeof window === 'undefined') {
-    return false
-  }
-
-  return readStoredConsent()?.analytics === true
-}
-
-/**
  * 追加归因参数；已有参数不覆盖。
- * UTM 与首触来源对所有 CTA 都写入，匿名身份只在已同意时带出。
+ * UTM、首触来源与匿名身份对所有产品侧 CTA 都写入。
  *
  * @param url 外跳链接
- * @param input 首触归因、CTA 标识与是否已获同意
+ * @param input 首触归因与 CTA 标识
  * @returns 追加归因后的链接
  */
 function buildAttributedOutboundUrl(
   url: URL,
-  input: { consent: boolean; ctaId?: string | null; firstTouch: OfficialFirstTouch | null },
+  input: { ctaId?: string | null; firstTouch: OfficialFirstTouch | null },
 ): URL {
   const params = buildOfficialOutboundAttributionParams({
-    anonymousDistinctId: input.consent ? readOfficialAnonymousId() : null,
-    visitorId: input.consent ? readSharedVisitorId() : undefined,
+    anonymousDistinctId: readOfficialAnonymousId(),
+    visitorId: readSharedVisitorId(),
     baseUrl: window.location.origin,
     ctaId: input.ctaId,
     firstTouch: input.firstTouch,
@@ -179,17 +165,15 @@ export function OfficialAnalyticsProvider(props: {
   const { children, statisticsEnabled = true } = props
   const pathname = usePathname()
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
-  const [hasAnalyticsConsent, setHasAnalyticsConsent] = useState(readInitialAnalyticsConsent)
   const googleTagBootstrappedRef = useRef(false)
   const googleTagPageViewKeyRef = useRef<string | null>(null)
-  const hasAnalyticsConsentRef = useRef(hasAnalyticsConsent)
   const enabledRef = useRef(false)
   const queueRef = useRef<QueuedEvent[]>([])
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPageViewKeyRef = useRef('')
   // 首触归因：首个带渠道信号的访问决定来源，之后所有事件与跳转复用。
   const firstTouchRef = useRef<OfficialFirstTouch | null>(null)
-  // 指纹只在 consent 后采集一次;事件照常上报,采集完成前的事件不带 device_fp。
+  // 指纹采集一次；事件照常上报，采集完成前的事件不带 device_fp。
   const fingerprintRef = useRef('')
 
   useEffect(() => {
@@ -214,36 +198,6 @@ export function OfficialAnalyticsProvider(props: {
       canceled = true
     }
   }, [statisticsEnabled])
-
-  useEffect(() => {
-    const syncConsent = () => {
-      const storedConsent = readStoredConsent()
-      const nextHasAnalyticsConsent = storedConsent?.analytics === true
-      hasAnalyticsConsentRef.current = nextHasAnalyticsConsent
-      setHasAnalyticsConsent(nextHasAnalyticsConsent)
-
-      if (!nextHasAnalyticsConsent) {
-        queueRef.current = []
-        fingerprintRef.current = ''
-        if (flushTimerRef.current) {
-          clearTimeout(flushTimerRef.current)
-          flushTimerRef.current = null
-        }
-        rotateOfficialAnonymousId()
-        clearOfficialFirstTouch()
-        firstTouchRef.current = null
-      }
-    }
-
-    syncConsent()
-    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
-    window.addEventListener('storage', syncConsent)
-
-    return () => {
-      window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
-      window.removeEventListener('storage', syncConsent)
-    }
-  }, [])
 
   /**
    * 立即把队列提交到同源事件接口。
@@ -277,17 +231,15 @@ export function OfficialAnalyticsProvider(props: {
   }, [])
 
   useEffect(() => {
-    // 首触必须在落地页就记录：用户先站内翻页、之后才同意时，UTM 已不在地址栏。
-    // 未同意时只写内存快照，不落 localStorage。
+    // 首触必须在落地页就记录；之后站内翻页时地址栏已无 UTM。
     firstTouchRef.current =
       resolveOfficialFirstTouch({
         baseUrl: window.location.origin,
-        consent: hasAnalyticsConsentRef.current,
         pathname: window.location.pathname,
         referrer: document.referrer,
         search: window.location.search,
       }) ?? firstTouchRef.current
-  }, [hasAnalyticsConsent, pathname])
+  }, [pathname])
 
   const capture = useCallback(
     (eventName: OfficialClientEventName, properties: OfficialAnalyticsProperties = {}) => {
@@ -295,7 +247,6 @@ export function OfficialAnalyticsProvider(props: {
       if (
         !statisticsEnabled ||
         !enabledRef.current ||
-        !hasAnalyticsConsentRef.current ||
         !isOfficialClientEventName(eventName)
       ) {
         return
@@ -307,7 +258,6 @@ export function OfficialAnalyticsProvider(props: {
         firstTouchRef.current ??
         resolveOfficialFirstTouch({
           baseUrl: window.location.origin,
-          consent: hasAnalyticsConsentRef.current,
           now: occurredAt,
           pathname: window.location.pathname,
           referrer: document.referrer,
@@ -358,7 +308,8 @@ export function OfficialAnalyticsProvider(props: {
   useEffect(() => {
     if (!statisticsEnabled) return
     const gtag = ensureOfficialGoogleTag()
-    const consentPayload = buildOfficialGoogleTagConsentPayload(hasAnalyticsConsent)
+    // analytics_storage 始终 granted：站点不再以 cookie 同意为分析采集前提。
+    const consentPayload = buildOfficialGoogleTagConsentPayload()
     const googleWindow = window as GoogleTagWindow
 
     if (googleWindow[OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG] === true) {
@@ -377,11 +328,11 @@ export function OfficialAnalyticsProvider(props: {
     }
 
     gtag('consent', 'update', consentPayload)
-  }, [hasAnalyticsConsent, statisticsEnabled])
+  }, [statisticsEnabled])
 
   useEffect(() => {
     const search = window.location.search
-    const pageViewKey = `${hasAnalyticsConsent ? 'granted' : 'denied'}:${pathname}:${search}`
+    const pageViewKey = `${pathname}:${search}`
     if (googleTagPageViewKeyRef.current === pageViewKey) {
       return
     }
@@ -399,13 +350,12 @@ export function OfficialAnalyticsProvider(props: {
         title: document.title,
       }),
     )
-  }, [hasAnalyticsConsent, pathname, statisticsEnabled])
+  }, [pathname, statisticsEnabled])
 
   // GTM owns GA4 click delivery; this listener is independent of the relay.
   useEffect(() => {
     if (!statisticsEnabled) return
     const handleTryFreeClick = (event: MouseEvent) => {
-      if (!hasAnalyticsConsentRef.current) return
       const payload = getTryFreeClickPayload(event.target)
       if (!payload) return
       const googleWindow = window as GoogleTagWindow
@@ -417,7 +367,7 @@ export function OfficialAnalyticsProvider(props: {
   }, [statisticsEnabled])
 
   useEffect(() => {
-    if (!statisticsEnabled || !hasAnalyticsConsent) return
+    if (!statisticsEnabled) return
     let canceled = false
 
     void readDeviceFingerprint().then((fingerprint) => {
@@ -429,10 +379,10 @@ export function OfficialAnalyticsProvider(props: {
     return () => {
       canceled = true
     }
-  }, [hasAnalyticsConsent, statisticsEnabled])
+  }, [statisticsEnabled])
 
   useEffect(() => {
-    if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
+    if (!analyticsConfig?.enabled) {
       return
     }
 
@@ -448,10 +398,10 @@ export function OfficialAnalyticsProvider(props: {
       // 来源属性由 capture 统一注入，这里只标记「本会话首个落地页」。
       capture('landing_page_viewed', {})
     }
-  }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
+  }, [analyticsConfig, capture, pathname])
 
   useEffect(() => {
-    if (!analyticsConfig?.enabled || !hasAnalyticsConsent) {
+    if (!analyticsConfig?.enabled) {
       return
     }
 
@@ -496,7 +446,7 @@ export function OfficialAnalyticsProvider(props: {
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('pagehide', handlePageHide)
     }
-  }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
+  }, [analyticsConfig, capture, pathname])
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -554,14 +504,11 @@ export function OfficialAnalyticsProvider(props: {
         return
       }
 
-      // 外跳归因不受 analytics 同意门控：UTM 属于渠道信息，报告里需要完整链路（W7）。
-      // 匿名身份只写进 URL 时也仅由 buildAttributedOutboundUrl 按同意状态决定。
+      // 外跳归因携带 UTM、首触来源与匿名身份，保证产品侧链路完整（W7）。
       const firstTouch =
         firstTouchRef.current ??
         resolveOfficialFirstTouch({
           baseUrl: window.location.origin,
-          // 未同意时用内存快照，不写本地存储。
-          consent: hasAnalyticsConsentRef.current,
           pathname: window.location.pathname,
           referrer: document.referrer,
           search: window.location.search,
@@ -569,7 +516,6 @@ export function OfficialAnalyticsProvider(props: {
       firstTouchRef.current = firstTouch
 
       link.href = buildAttributedOutboundUrl(new URL(link.href, window.location.origin), {
-        consent: hasAnalyticsConsentRef.current,
         ctaId: analyticsElement?.dataset.analyticsCtaId,
         firstTouch,
       }).toString()

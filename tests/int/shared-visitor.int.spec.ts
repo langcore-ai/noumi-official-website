@@ -12,12 +12,13 @@ afterEach(() => {
   clearSharedVisitorId()
   localStorage.clear()
 })
-it('clears only the visitor Cookie when analytics consent is withdrawn', () => {
+it('keeps the visitor Cookie when the Necessary-only choice is saved', () => {
   document.cookie = 'session_example=kept; Path=/'
   const id = readSharedVisitorId()
   expect(document.cookie).toContain(id)
+  // 埋点采集不以 cookie 同意为前提，因此关掉可选 cookie 不影响访客身份。
   writeStoredConsent(false, true, false)
-  expect(document.cookie).not.toContain('noumi_visitor_id_preview=')
+  expect(document.cookie).toContain(`noumi_visitor_id_preview=${id}`)
   expect(document.cookie).toContain('session_example=kept')
 })
 

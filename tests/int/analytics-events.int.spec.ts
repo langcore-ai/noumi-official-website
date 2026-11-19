@@ -65,6 +65,37 @@ describe('analytics relay schema', () => {
     ).toBe(false)
   })
 
+  it('accepts the full first-touch attribution set the client always sends', () => {
+    const attributed = event({
+      properties: {
+        page_path: '/pricing',
+        page_group: 'pricing',
+        utm_source: 'linkedin',
+        utm_medium: 'outbound',
+        utm_campaign: 'se_outreach',
+        utm_content: 'hook_usecase',
+        first_touch_source: 'linkedin',
+        first_touch_medium: 'outbound',
+        first_touch_campaign: 'se_outreach',
+        first_touch_content: 'hook_usecase',
+        first_touch_landing_page: '/',
+        first_touch_referrer_origin: 'https://www.linkedin.com',
+      },
+    })
+
+    const parsed = officialClientEventSchema.safeParse(attributed)
+    expect(parsed.success).toBe(true)
+    expect(parsed.success && parsed.data.properties).toMatchObject({
+      first_touch_campaign: 'se_outreach',
+      first_touch_content: 'hook_usecase',
+      first_touch_landing_page: '/',
+      first_touch_medium: 'outbound',
+      first_touch_referrer_origin: 'https://www.linkedin.com',
+      first_touch_source: 'linkedin',
+    })
+    expect(officialAnalyticsBatchSchema.safeParse({ events: [attributed] }).success).toBe(true)
+  })
+
   it('caps the batch size', () => {
     expect(
       officialAnalyticsBatchSchema.safeParse({

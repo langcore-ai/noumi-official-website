@@ -92,17 +92,55 @@ it('sends the first page view through the same-origin relay after consent', asyn
   expect((eventsCall?.[1]?.headers as Record<string, string>)['x-noumi-analytics']).toBe('1')
 })
 
-it('sends nothing before consent even when analytics is enabled', async () => {
+it('sends events before any cookie choice is made', async () => {
   stubRelayFetch(true)
   render(
     <OfficialAnalyticsProvider>
       <div>Website</div>
     </OfficialAnalyticsProvider>,
   )
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 120))
+  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
+  const events = relayPayloads.flatMap((payload) => payload.events)
+  expect(events.filter((event) => event.event === '$pageview')).toHaveLength(1)
+  expect(events.filter((event) => event.event === 'landing_page_viewed')).toHaveLength(1)
+})
+
+it('keeps sending after the Necessary-only choice', async () => {
+  stubRelayFetch(true)
+  render(
+    <OfficialAnalyticsProvider>
+      <a
+        data-analytics-cta-id="pricing_card"
+        data-analytics-event="official_cta_clicked"
+        href="#pricing"
+        id="necessary-cta"
+      >
+        Pricing
+      </a>
+    </OfficialAnalyticsProvider>,
+  )
+  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
+  const firstAnonymousId = relayPayloads[0]?.events[0]?.anonymousId
+
+  act(() => writeStoredConsent(false, true, false))
+  act(() => {
+    const link = document.getElementById('necessary-cta') as HTMLAnchorElement
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
   })
-  expect(relayPayloads).toHaveLength(0)
+
+  await waitFor(() =>
+    expect(
+      relayPayloads
+        .flatMap((payload) => payload.events)
+        .some((event) => event.event === 'official_cta_clicked'),
+    ).toBe(true),
+  )
+
+  const ctaEvent = relayPayloads
+    .flatMap((payload) => payload.events)
+    .find((event) => event.event === 'official_cta_clicked')
+  // 关闭可选 cookie 不轮换身份，前后仍属同一访客。
+  expect(ctaEvent?.anonymousId).toBe(firstAnonymousId)
 })
 
 it('sends nothing when the relay config is disabled', async () => {
@@ -117,30 +155,6 @@ it('sends nothing when the relay config is disabled', async () => {
     await new Promise((resolve) => setTimeout(resolve, 120))
   })
   expect(relayPayloads).toHaveLength(0)
-})
-
-it('stops sending after consent is withdrawn and rotates the anonymous id', async () => {
-  stubRelayFetch(true)
-  writeStoredConsent(true, true, true)
-  render(
-    <OfficialAnalyticsProvider>
-      <div>Website</div>
-    </OfficialAnalyticsProvider>,
-  )
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
-  const firstAnonymousId = relayPayloads[0]?.events[0]?.anonymousId
-
-  const before = relayPayloads.length
-  act(() => writeStoredConsent(true, true, false))
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 120))
-  })
-  expect(relayPayloads).toHaveLength(before)
-
-  act(() => writeStoredConsent(true, true, true))
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(before))
-  const afterAnonymousId = relayPayloads[before]?.events[0]?.anonymousId
-  expect(afterAnonymousId).not.toBe(firstAnonymousId)
 })
 
 it('never exposes the PostHog project key to the browser config', async () => {

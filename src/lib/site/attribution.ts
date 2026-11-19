@@ -13,7 +13,7 @@ const PATH_VALUE_MAX_LENGTH = 160
 
 /**
  * 归因快照内存副本。
- * 未获得 analytics 同意时不写本地存储，只在当前文档内保留。
+ * 与 localStorage 双写：内存副本供同文档即时读取，localStorage 供跨页面与跨会话复用。
  */
 let memoryFirstTouch: OfficialFirstTouch | null = null
 
@@ -109,12 +109,11 @@ function persistFirstTouch(snapshot: OfficialFirstTouch) {
  * 记录并返回首触归因。
  * 已有有效快照时保持不变：首个带渠道信号的访问决定来源。
  *
- * @param input 当前地址、referrer、是否已获同意
+ * @param input 当前地址与 referrer
  * @returns 当前生效的首触快照；无渠道信号且无历史时返回 null
  */
 export function resolveOfficialFirstTouch(input: {
   baseUrl: string
-  consent: boolean
   now?: number
   pathname: string
   referrer?: string | null
@@ -126,21 +125,18 @@ export function resolveOfficialFirstTouch(input: {
   }
 
   let stored: OfficialFirstTouch | null = null
-  if (input.consent) {
-    try {
-      const parsed = JSON.parse(
-        window.localStorage.getItem(FIRST_TOUCH_STORAGE_KEY) ?? 'null',
-      ) as OfficialFirstTouch | null
-      stored =
-        parsed && typeof parsed === 'object' && isFreshFirstTouch(parsed, now) ? parsed : null
-    } catch {
-      stored = null
-    }
+  try {
+    const parsed = JSON.parse(
+      window.localStorage.getItem(FIRST_TOUCH_STORAGE_KEY) ?? 'null',
+    ) as OfficialFirstTouch | null
+    stored = parsed && typeof parsed === 'object' && isFreshFirstTouch(parsed, now) ? parsed : null
+  } catch {
+    stored = null
   }
 
   const existing = stored ?? memoryFirstTouch
   if (existing) {
-    if (input.consent && !stored) {
+    if (!stored) {
       persistFirstTouch(existing)
     }
     return existing
@@ -158,14 +154,12 @@ export function resolveOfficialFirstTouch(input: {
   }
 
   memoryFirstTouch = candidate
-  if (input.consent) {
-    persistFirstTouch(candidate)
-  }
+  persistFirstTouch(candidate)
   return candidate
 }
 
 /**
- * 清除首触归因；撤回 analytics 同意时调用。
+ * 清除首触归因。站点不以此做采集门控，仅用于测试与本地重置。
  */
 export function clearOfficialFirstTouch() {
   memoryFirstTouch = null

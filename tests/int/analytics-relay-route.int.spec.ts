@@ -111,11 +111,10 @@ describe('POST /api/site/analytics/events', () => {
     expect(JSON.stringify(batch)).not.toContain('#top')
   })
 
-  it('rejects requests that skip the consent cookie', async () => {
+  it('accepts requests without any consent cookie', async () => {
     const response = await POST(relayRequest({ consent: false }))
-    expect(response.status).toBe(403)
-    expect(await response.json()).toEqual({ error: 'missing_analytics_consent' })
-    expect(batches).toHaveLength(0)
+    expect(response.status).toBe(204)
+    expect(batches).toHaveLength(1)
   })
 
   it('rejects cross-origin and header-less requests', async () => {

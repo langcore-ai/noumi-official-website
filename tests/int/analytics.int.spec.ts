@@ -24,7 +24,8 @@ describe('official analytics helpers', () => {
     const commands = browser.dataLayer
       .slice(1, 4)
       .map((entry) => Array.from(entry as ArrayLike<unknown>))
-    expect(commands[0]).toMatchObject(['consent', 'default', { analytics_storage: 'denied' }])
+    // 站点分析不再以 cookie 同意为前提，默认即授权 analytics_storage。
+    expect(commands[0]).toMatchObject(['consent', 'default', { analytics_storage: 'granted' }])
     expect(commands[1][0]).toBe('js')
     expect(browser.dataLayer[4]).toMatchObject({ event: 'gtm.js', 'gtm.start': expect.any(Number) })
   })
@@ -104,15 +105,8 @@ describe('official analytics helpers', () => {
     })
   })
 
-  it('builds GA4 consent mode payloads from cookie choices', () => {
-    expect(buildOfficialGoogleTagConsentPayload(false)).toEqual({
-      ad_personalization: 'denied',
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      analytics_storage: 'denied',
-    })
-
-    expect(buildOfficialGoogleTagConsentPayload(true)).toMatchObject({
+  it('always grants analytics storage while keeping ad signals denied', () => {
+    expect(buildOfficialGoogleTagConsentPayload()).toEqual({
       ad_personalization: 'denied',
       ad_storage: 'denied',
       ad_user_data: 'denied',

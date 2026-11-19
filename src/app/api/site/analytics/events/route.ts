@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 
 import { OFFICIAL_SITE_URL } from '@/lib/site/official-site'
 import {
-  OFFICIAL_ANALYTICS_CONSENT_COOKIE,
   OFFICIAL_ANALYTICS_MAX_BODY_BYTES,
   OFFICIAL_ANALYTICS_REQUEST_HEADER,
   buildClientPostHogEvents,
@@ -57,17 +56,6 @@ async function readPostHogServerConfig(): Promise<PostHogServerConfig> {
   ])
 
   return buildPostHogServerConfig({ apiHost, enabledEnv, projectKey })
-}
-
-/**
- * 读取同意 cookie。
- *
- * @param request 当前请求
- * @returns 用户是否同意 analytics
- */
-function hasAnalyticsConsentCookie(request: Request): boolean {
-  const cookie = request.headers.get('cookie') || ''
-  return cookie.split(';').some((part) => part.trim() === `${OFFICIAL_ANALYTICS_CONSENT_COOKIE}=1`)
 }
 
 /**
@@ -153,9 +141,6 @@ export async function POST(request: Request) {
   }
   if (request.headers.get(OFFICIAL_ANALYTICS_REQUEST_HEADER) !== '1') {
     return NextResponse.json({ error: 'missing_analytics_header' }, { status: 403 })
-  }
-  if (!hasAnalyticsConsentCookie(request)) {
-    return NextResponse.json({ error: 'missing_analytics_consent' }, { status: 403 })
   }
 
   const contentType = request.headers.get('content-type') || ''

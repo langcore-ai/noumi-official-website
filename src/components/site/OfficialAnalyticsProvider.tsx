@@ -13,9 +13,9 @@ import {
 } from 'react'
 
 import {
+  buildOfficialAttributionProperties,
   buildOfficialGoogleTagConsentPayload,
   buildOfficialGoogleTagPageViewPayload,
-  buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   isOfficialClientEventName,
   normalizeOfficialPagePath,
@@ -26,8 +26,10 @@ import {
   sanitizeOfficialAnalyticsProperties,
   type OfficialAnalyticsProperties,
   type OfficialClientEventName,
+  type OfficialFirstTouch,
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
+import { clearOfficialFirstTouch, resolveOfficialFirstTouch } from '@/lib/site/attribution'
 import {
   readOfficialAnonymousId,
   readOfficialBrowserSession,
@@ -39,6 +41,7 @@ import { readDeviceFingerprint } from '@/lib/site/device-fingerprint'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
 import { getTryFreeClickPayload } from '@/lib/site/try-free-tracking'
 import { COOKIE_CONSENT_CHANGE_EVENT, readStoredConsent } from '@/lib/site/consent'
+import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 
 /** Landing page 视图仅在一个会话内记一次。 */
 const LANDING_PAGE_VIEWED_SESSION_KEY = 'noumi:official:landing_page_viewed'
@@ -138,23 +141,23 @@ function readInitialAnalyticsConsent() {
 }
 
 /**
- * 追加 `first_touch_*` 归因参数；已有参数不覆盖。
+ * 追加归因参数；已有参数不覆盖。
+ * UTM 与首触来源对所有 CTA 都写入，匿名身份只在已同意时带出。
+ *
  * @param url 外跳链接
- * @param search 当前地址栏 query
+ * @param input 首触归因、CTA 标识与是否已获同意
  * @returns 追加归因后的链接
  */
 function buildAttributedOutboundUrl(
   url: URL,
-  input: { ctaId?: string | null; search: string },
+  input: { consent: boolean; ctaId?: string | null; firstTouch: OfficialFirstTouch | null },
 ): URL {
   const params = buildOfficialOutboundAttributionParams({
-    anonymousDistinctId: readOfficialAnonymousId(),
-    visitorId: readSharedVisitorId(),
+    anonymousDistinctId: input.consent ? readOfficialAnonymousId() : null,
+    visitorId: input.consent ? readSharedVisitorId() : undefined,
     baseUrl: window.location.origin,
     ctaId: input.ctaId,
-    landingPage: window.location.pathname,
-    referrer: document.referrer,
-    search: input.search,
+    firstTouch: input.firstTouch,
   })
 
   for (const [key, value] of params) {
@@ -189,6 +192,8 @@ export function OfficialAnalyticsProvider(props: {
   const queueRef = useRef<QueuedEvent[]>([])
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPageViewKeyRef = useRef('')
+  // 首触归因：首个带渠道信号的访问决定来源，之后所有事件与跳转复用。
+  const firstTouchRef = useRef<OfficialFirstTouch | null>(null)
   // 指纹只在 consent 后采集一次;事件照常上报,采集完成前的事件不带 device_fp。
   const fingerprintRef = useRef('')
 
@@ -230,6 +235,8 @@ export function OfficialAnalyticsProvider(props: {
           flushTimerRef.current = null
         }
         rotateOfficialAnonymousId()
+        clearOfficialFirstTouch()
+        firstTouchRef.current = null
       }
     }
 
@@ -274,6 +281,19 @@ export function OfficialAnalyticsProvider(props: {
       })
   }, [])
 
+  useEffect(() => {
+    // 首触必须在落地页就记录：用户先站内翻页、之后才同意时，UTM 已不在地址栏。
+    // 未同意时只写内存快照，不落 localStorage。
+    firstTouchRef.current =
+      resolveOfficialFirstTouch({
+        baseUrl: window.location.origin,
+        consent: hasAnalyticsConsentRef.current,
+        pathname: window.location.pathname,
+        referrer: document.referrer,
+        search: window.location.search,
+      }) ?? firstTouchRef.current
+  }, [hasAnalyticsConsent, pathname])
+
   const capture = useCallback(
     (eventName: OfficialClientEventName, properties: OfficialAnalyticsProperties = {}) => {
       trackOfficialReplay(eventName, properties)
@@ -288,6 +308,18 @@ export function OfficialAnalyticsProvider(props: {
 
       const occurredAt = Date.now()
       const pagePath = normalizeOfficialPagePath(pathname)
+      const firstTouch =
+        firstTouchRef.current ??
+        resolveOfficialFirstTouch({
+          baseUrl: window.location.origin,
+          consent: hasAnalyticsConsentRef.current,
+          now: occurredAt,
+          pathname: window.location.pathname,
+          referrer: document.referrer,
+          search: window.location.search,
+        })
+      firstTouchRef.current = firstTouch
+
       queueRef.current.push({
         anonymousId: readOfficialAnonymousId(),
         event: eventName,
@@ -305,6 +337,16 @@ export function OfficialAnalyticsProvider(props: {
           ),
           page_group: officialPageGroup(pagePath),
           ...touchOfficialBrowserSession(occurredAt),
+          // 每个事件都带来源，站内翻页后不丢（W1/W2/W3/W4）。
+          ...sanitizeOfficialAnalyticsProperties(
+            buildOfficialAttributionProperties(firstTouch, {
+              baseUrl: window.location.origin,
+              referrer: document.referrer,
+              search: window.location.search,
+            }),
+            window.location.origin,
+          ),
+          visitor_id: readSharedVisitorId() || undefined,
         },
       })
 
@@ -407,14 +449,8 @@ export function OfficialAnalyticsProvider(props: {
 
     if (!sessionStorage.getItem(LANDING_PAGE_VIEWED_SESSION_KEY)) {
       sessionStorage.setItem(LANDING_PAGE_VIEWED_SESSION_KEY, '1')
-      capture(
-        'landing_page_viewed',
-        buildOfficialLandingSourceProperties({
-          baseUrl: window.location.origin,
-          referrer: document.referrer,
-          search: window.location.search,
-        }),
-      )
+      // 来源属性由 capture 统一注入，这里只标记「本会话首个落地页」。
+      capture('landing_page_viewed', {})
     }
   }, [analyticsConfig, capture, hasAnalyticsConsent, pathname])
 
@@ -469,6 +505,26 @@ export function OfficialAnalyticsProvider(props: {
   useEffect(() => {
     if (!statisticsEnabled) return
 
+    const productOrigin = new URL(OFFICIAL_PRODUCT_AUTH_URL, window.location.origin).origin
+
+    /**
+     * 只改写产品侧入口：外站内容链接（LinkedIn / 目录站）不该被塞 UTM。
+     * @param href 原始 href
+     * @returns 是否为产品入口
+     */
+    const isProductOutbound = (href: string) => {
+      try {
+        const url = new URL(href, window.location.origin)
+        return (
+          (url.protocol === 'http:' || url.protocol === 'https:') &&
+          url.origin !== window.location.origin &&
+          url.origin === productOrigin
+        )
+      } catch {
+        return false
+      }
+    }
+
     const handleClick = (event: MouseEvent) => {
       const target = event.target
       if (!(target instanceof Element)) {
@@ -476,29 +532,23 @@ export function OfficialAnalyticsProvider(props: {
       }
 
       const analyticsElement = target.closest<HTMLElement>('[data-analytics-event]')
-      if (!analyticsElement) {
-        return
+      const analyticsEventName = analyticsElement?.dataset.analyticsEvent || ''
+      if (analyticsElement && isOfficialClientEventName(analyticsEventName)) {
+        capture(analyticsEventName, {
+          action: analyticsElement.dataset.analyticsAction || undefined,
+          cta_id: analyticsElement.dataset.analyticsCtaId || undefined,
+          placement: analyticsElement.dataset.analyticsPlacement || undefined,
+          source_path: analyticsElement.dataset.analyticsSourcePath || undefined,
+          target_path: analyticsElement.dataset.analyticsTargetPath || undefined,
+        })
       }
-
-      const analyticsEventName = analyticsElement.dataset.analyticsEvent || ''
-      if (!isOfficialClientEventName(analyticsEventName)) {
-        return
-      }
-
-      capture(analyticsEventName, {
-        action: analyticsElement.dataset.analyticsAction || undefined,
-        cta_id: analyticsElement.dataset.analyticsCtaId || undefined,
-        placement: analyticsElement.dataset.analyticsPlacement || undefined,
-        source_path: analyticsElement.dataset.analyticsSourcePath || undefined,
-        target_path: analyticsElement.dataset.analyticsTargetPath || undefined,
-      })
 
       const link =
-        analyticsElement instanceof HTMLAnchorElement
-          ? analyticsElement
-          : analyticsElement.closest('a')
+        target.closest('a') ??
+        (analyticsElement instanceof HTMLAnchorElement ? analyticsElement : null)
       if (
         !link ||
+        !isProductOutbound(link.getAttribute('href') || '') ||
         event.defaultPrevented ||
         event.metaKey ||
         event.ctrlKey ||
@@ -508,11 +558,24 @@ export function OfficialAnalyticsProvider(props: {
         return
       }
 
-      if (!enabledRef.current || !hasAnalyticsConsentRef.current) return
+      // 外跳归因不受 analytics 同意门控：UTM 属于渠道信息，报告里需要完整链路（W7）。
+      // 匿名身份只写进 URL 时也仅由 buildAttributedOutboundUrl 按同意状态决定。
+      const firstTouch =
+        firstTouchRef.current ??
+        resolveOfficialFirstTouch({
+          baseUrl: window.location.origin,
+          // 未同意时用内存快照，不写本地存储。
+          consent: hasAnalyticsConsentRef.current,
+          pathname: window.location.pathname,
+          referrer: document.referrer,
+          search: window.location.search,
+        })
+      firstTouchRef.current = firstTouch
 
       link.href = buildAttributedOutboundUrl(new URL(link.href, window.location.origin), {
-        ctaId: analyticsElement.dataset.analyticsCtaId,
-        search: window.location.search,
+        consent: hasAnalyticsConsentRef.current,
+        ctaId: analyticsElement?.dataset.analyticsCtaId,
+        firstTouch,
       }).toString()
     }
 

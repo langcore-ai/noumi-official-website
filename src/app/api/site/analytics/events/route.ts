@@ -190,7 +190,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'invalid_analytics_time' }, { status: 400 })
   }
 
-  const events = buildClientPostHogEvents(parsed.data.events, new URL(OFFICIAL_SITE_URL).origin)
+  const events = buildClientPostHogEvents(
+    parsed.data.events,
+    new URL(OFFICIAL_SITE_URL).origin,
+    clientIp,
+  )
   if (!(await sendPostHogBatch(config, events))) {
     console.warn({
       component: 'posthog',

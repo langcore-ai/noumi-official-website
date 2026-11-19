@@ -6,6 +6,7 @@ vi.mock('next/navigation', () => ({ usePathname: () => '/' }))
 vi.mock('@/lib/site/replay/recorder', () => ({ trackOfficialReplay: vi.fn() }))
 
 import { OfficialAnalyticsProvider } from '@/components/site/OfficialAnalyticsProvider'
+import { clearOfficialFirstTouch } from '@/lib/site/attribution'
 import { writeStoredConsent } from '@/lib/site/consent'
 
 type RelayBody = {
@@ -44,6 +45,8 @@ function stubRelayFetch(enabled: boolean) {
 
 beforeEach(() => {
   localStorage.clear()
+  clearOfficialFirstTouch()
+  window.history.replaceState({}, '', '/')
   sessionStorage.clear()
   relayPayloads.length = 0
   document.cookie = 'noumi_analytics_consent=; Path=/; Max-Age=0'
@@ -152,4 +155,95 @@ it('never exposes the PostHog project key to the browser config', async () => {
     expect(fetchImpl.mock.calls.some(([url]) => String(url).includes('/config'))).toBe(true),
   )
   expect(JSON.stringify(fetchImpl.mock.calls.map(([url]) => String(url)))).not.toContain('posthog')
+})
+
+it('attaches first-touch UTM context to every relayed event', async () => {
+  window.history.replaceState(
+    {},
+    '',
+    '/?utm_source=linkedin&utm_medium=social&utm_campaign=q4',
+  )
+  stubRelayFetch(true)
+  render(
+    <OfficialAnalyticsProvider>
+      <div>Website</div>
+    </OfficialAnalyticsProvider>,
+  )
+  await waitFor(() => expect(relayPayloads).toHaveLength(0))
+
+  act(() => writeStoredConsent(true, true, true))
+  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
+
+  const pageView = relayPayloads
+    .flatMap((payload) => payload.events)
+    .find((event) => event.event === '$pageview')
+  expect(pageView?.properties).toMatchObject({
+    first_touch_campaign: 'q4',
+    first_touch_landing_page: '/',
+    first_touch_medium: 'social',
+    first_touch_source: 'linkedin',
+    utm_campaign: 'q4',
+    utm_medium: 'social',
+    utm_source: 'linkedin',
+  })
+})
+
+it('adds attribution params when a product CTA is clicked', async () => {
+  window.history.replaceState({}, '', '/?utm_source=newsletter&utm_campaign=apollo')
+  stubRelayFetch(true)
+  act(() => writeStoredConsent(true, true, true))
+
+  render(
+    <OfficialAnalyticsProvider>
+      <a
+        data-analytics-cta-id="home_hero_try_free"
+        data-analytics-event="official_cta_clicked"
+        data-analytics-placement="hero"
+        href="https://www.noumi.ai/auth"
+        id="cta"
+      >
+        Try Noumi Free
+      </a>
+    </OfficialAnalyticsProvider>,
+  )
+
+  const link = document.getElementById('cta') as HTMLAnchorElement
+  act(() => {
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+  })
+
+  const params = new URL(link.href).searchParams
+  expect(params.get('utm_source')).toBe('newsletter')
+  expect(params.get('utm_campaign')).toBe('apollo')
+  expect(params.get('first_touch_source')).toBe('newsletter')
+  expect(params.get('official_cta_id')).toBe('home_hero_try_free')
+  expect(params.get('source_surface')).toBe('official')
+})
+
+it('keeps the landing UTM after in-app navigation and later consent', async () => {
+  window.history.replaceState({}, '', '/?utm_source=cold-email&utm_campaign=apollo')
+  stubRelayFetch(true)
+  render(
+    <OfficialAnalyticsProvider>
+      <div>Website</div>
+    </OfficialAnalyticsProvider>,
+  )
+  await waitFor(() => expect(relayPayloads).toHaveLength(0))
+
+  // 用户先站内翻页，之后才在 cookie 面板同意。
+  act(() => {
+    window.history.pushState({}, '', '/pricing')
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  })
+  act(() => writeStoredConsent(true, true, true))
+  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
+
+  const pageView = relayPayloads
+    .flatMap((payload) => payload.events)
+    .find((event) => event.event === '$pageview')
+  expect(pageView?.properties).toMatchObject({
+    first_touch_campaign: 'apollo',
+    first_touch_landing_page: '/',
+    first_touch_source: 'cold-email',
+  })
 })

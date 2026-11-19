@@ -187,6 +187,7 @@ export async function POST(request: Request) {
     event: 'official_invite_request_submitted',
     eventId: `invite-submitted:${String(record?.id ?? email)}`,
     occurredAt: new Date(),
+    clientIp: getRequestIpAddress(headers),
     properties: { outcome: 'created', page_path: '/invite' },
   }).catch(() => false)
 

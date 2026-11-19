@@ -124,6 +124,7 @@ describe('analytics relay transport', () => {
         events: [event({ properties: { page_path: '/blog/post?x=1#y' } })],
       }).events,
       'https://noumi.ai',
+      '',
     )
 
     expect(built.properties).toMatchObject({
@@ -131,7 +132,7 @@ describe('analytics relay transport', () => {
       $host: 'noumi.ai',
       $pathname: '/blog/post',
       $geoip_disable: true,
-      $process_person_profile: false,
+      $process_person_profile: true,
       app_source: 'noumi-official',
       page_group: 'blog',
       page_path: '/blog/post',
@@ -152,6 +153,7 @@ describe('analytics relay transport', () => {
     const events = buildClientPostHogEvents(
       officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
       'https://noumi.ai',
+      '',
     )
 
     await expect(sendPostHogBatch(config, events, send)).resolves.toBe(true)
@@ -164,6 +166,7 @@ describe('analytics relay transport', () => {
     const events = buildClientPostHogEvents(
       officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
       'https://noumi.ai',
+      '',
     )
     const config = { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' }
 
@@ -189,5 +192,29 @@ describe('analytics relay transport', () => {
       ),
     ).resolves.toBe(false)
     expect(send).not.toHaveBeenCalled()
+  })
+})
+
+describe('relay geoip forwarding', () => {
+  it('injects the server-observed client IP so PostHog can resolve country', () => {
+    const [built] = buildClientPostHogEvents(
+      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
+      'https://noumi.ai',
+      '203.0.113.9',
+    )
+
+    expect(built.properties).toMatchObject({ $ip: '203.0.113.9' })
+    expect(built.properties).not.toHaveProperty('$geoip_disable')
+  })
+
+  it('never lets a browser-supplied $ip through', () => {
+    expect(
+      officialClientEventSchema.safeParse(event({ properties: { $ip: '1.2.3.4' } })).success,
+    ).toBe(false)
+    expect(
+      officialClientEventSchema.safeParse(
+        event({ properties: { $geoip_disable: false } }),
+      ).success,
+    ).toBe(false)
   })
 })

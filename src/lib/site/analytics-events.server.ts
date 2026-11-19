@@ -5,6 +5,7 @@ import {
   OFFICIAL_ANALYTICS_DEFAULT_API_HOST,
   OFFICIAL_CLIENT_EVENT_NAMES,
   OFFICIAL_SERVER_EVENT_NAMES,
+  OFFICIAL_UTM_KEYS,
   normalizeOfficialPagePath,
   officialPageGroup,
 } from './analytics'
@@ -46,11 +47,14 @@ export const officialEventPropertiesSchema = z
     source_path: pathValue.optional(),
     status: label.optional(),
     target_path: pathValue.optional(),
+    first_touch_landing_page: pathValue.optional(),
+    first_touch_referrer_origin: z.url().max(200).optional(),
     utm_campaign: label.optional(),
     utm_content: label.optional(),
     utm_medium: label.optional(),
     utm_source: label.optional(),
     utm_term: label.optional(),
+    visitor_id: z.uuid().optional(),
     $session_id: z.uuid().optional(),
     $window_id: z.uuid().optional(),
   })
@@ -149,17 +153,31 @@ export function buildPostHogServerConfig(input: {
  * 把浏览器事件转换为 PostHog batch 事件。
  * 页面 URL、host、path 由服务端按可信 origin 构造，浏览器不能覆盖。
  *
+ * 中继同时承担两件事：
+ * - 用服务端读到的真实客户端 IP 覆盖 `$ip`，让 PostHog 的 GeoIP 变换能按访客
+ *   所在地解析，而不是按 Worker 出口地址（断点清单 B2/B3）。
+ * - 不再写 `$geoip_disable`，否则 GeoIP 变换会直接跳过（B3）。
+ *
  * @param events 已校验的浏览器事件
  * @param officialOrigin 官网可信 origin
+ * @param clientIp 服务端读到的客户端 IP；为空时无法做 GeoIP，退化为禁用
  * @returns PostHog batch 事件
  */
 export function buildClientPostHogEvents(
   events: z.infer<typeof officialClientEventSchema>[],
   officialOrigin: string,
+  clientIp: string,
 ): PostHogBatchEvent[] {
   return events.map((event) => {
     const pagePath = normalizeOfficialPagePath(event.properties.page_path || '/')
     const pageUrl = new URL(pagePath, officialOrigin)
+    // `$current_url` 只附加白名单内的 UTM，保留渠道信息但绝不带任意 query（W6）。
+    for (const key of OFFICIAL_UTM_KEYS) {
+      const value = event.properties[key]
+      if (value) {
+        pageUrl.searchParams.set(key, value)
+      }
+    }
 
     return {
       event: event.event,
@@ -173,8 +191,16 @@ export function buildClientPostHogEvents(
         $current_url: pageUrl.href,
         $pathname: pageUrl.pathname,
         $host: pageUrl.host,
-        $process_person_profile: false,
-        $geoip_disable: true,
+        // PostHog 的“直接访问 vs 自然搜索”依赖 `$referrer`；这里只放白名单
+        // origin，浏览器无法注入任意 URL（W1）。
+        ...(event.properties.referrer_origin
+          ? { $referrer: event.properties.referrer_origin }
+          : {}),
+        ...(clientIp
+          ? { $ip: clientIp }
+          : // 没有可信 IP 时显式关闭，避免 PostHog 用 Worker 出口地址定位。
+            { $geoip_disable: true }),
+        $process_person_profile: true,
         app_source: 'noumi-official',
         schema_version: 1,
       },
@@ -196,6 +222,7 @@ export async function captureOfficialServerEvent(
     event: z.infer<typeof officialServerEventNameSchema>
     eventId: string
     occurredAt: Date
+    clientIp?: string
     properties?: Record<string, unknown>
   },
 ): Promise<boolean> {
@@ -219,8 +246,10 @@ export async function captureOfficialServerEvent(
         $current_url: pageUrl.href,
         $pathname: pageUrl.pathname,
         $host: pageUrl.host,
-        $process_person_profile: false,
-        $geoip_disable: true,
+        ...(input.clientIp
+          ? { $ip: input.clientIp }
+          : { $geoip_disable: true }),
+        $process_person_profile: true,
         app_source: 'noumi-official',
         schema_version: 1,
       },

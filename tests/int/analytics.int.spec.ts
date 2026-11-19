@@ -138,20 +138,28 @@ describe('official analytics helpers', () => {
     })
   })
 
-  it('builds safe outbound attribution params for product redirects', () => {
+  it('carries first-touch attribution and standard UTM keys to the product site', () => {
     expect(
       Object.fromEntries(
         buildOfficialOutboundAttributionParams({
           anonymousDistinctId: ' 0193f5e0-visitor ',
           baseUrl: 'https://www.noumi.ai',
           ctaId: ' invite_register_link ',
-          landingPage: '/invite?email=user@example.com',
-          referrer: 'https://google.com/search?q=noumi',
-          search: '?utm_source=newsletter&utm_medium=email&utm_campaign=spring&token=secret',
+          firstTouch: {
+            captured_at: '2026-11-19T00:00:00.000Z',
+            landing_page: '/invite',
+            referrer_origin: 'https://google.com',
+            utm_campaign: 'spring',
+            utm_content: 'hero',
+            utm_medium: 'email',
+            utm_source: 'newsletter',
+          },
+          visitorId: '0193f5e0-1111-4111-8111-aaaaaaaaaaaa',
         }),
       ),
     ).toEqual({
       first_touch_campaign: 'spring',
+      first_touch_content: 'hero',
       first_touch_landing_page: '/invite',
       first_touch_medium: 'email',
       first_touch_referrer_origin: 'https://google.com',
@@ -159,6 +167,11 @@ describe('official analytics helpers', () => {
       official_cta_id: 'invite_register_link',
       posthog_anonymous_distinct_id: '0193f5e0-visitor',
       source_surface: 'official',
+      utm_campaign: 'spring',
+      utm_content: 'hero',
+      utm_medium: 'email',
+      utm_source: 'newsletter',
+      visitor_id: '0193f5e0-1111-4111-8111-aaaaaaaaaaaa',
     })
   })
 })

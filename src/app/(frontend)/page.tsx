@@ -120,7 +120,7 @@ export default async function HomePage() {
                   Only you and the person you shared with can have access to them, and no one else,
                   not even Noumi.
                 </p>
-                <a className="security-learn-more" href="/security">
+                <Link className="security-learn-more" href="/security">
                   <span>Learn more</span>
                   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
                     <path
@@ -131,7 +131,7 @@ export default async function HomePage() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                </a>
+                </Link>
               </div>
               <OfficialSecurityVisual />
             </article>

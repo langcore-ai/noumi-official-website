@@ -55,13 +55,14 @@ for (const width of [390, 768, 1440]) {
       await page.goto(route)
       await expect(page.locator('header.site-header--home')).toHaveCount(1)
       await expect(page.locator('header.site-header--use-case')).toHaveCount(0)
-      await expect(page.locator('.brand__wordmark')).toHaveText('Noumi.ai')
+      await expect(page.locator('header.site-header--home .brand__wordmark')).toHaveText('Noumi.ai')
       await expect(page.locator('#footer')).toHaveCount(1)
-      await expect(page.locator('#footer')).toHaveCSS('background-color', 'rgb(16, 25, 29)')
-      await expect(page.locator('.footer-free-cta')).toHaveAttribute(
-        'data-analytics-placement',
-        'footer',
-      )
+      await expect(page.locator('#footer')).toHaveCSS('background-color', 'rgb(20, 20, 19)')
+      await expect(page.locator('#footer .footer-heading')).toHaveText([
+        'Product',
+        'Resources',
+        'Company',
+      ])
       if (route.includes('/use-cases/') && width > 900) {
         await expect(
           page

@@ -197,7 +197,11 @@ it('copies the Company email and reports success only after clipboard confirmati
   const { unmount, container } = render(<OfficialHomeFooter />)
   expect(container.querySelector('.footer-free-cta')).toBeNull()
   expect(screen.getByRole('link', { name: 'YouTube' }).getAttribute('href')).toContain('@Noumi-AI')
-  fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+  // The address stays a real link so it works without JavaScript.
+  expect(screen.getByRole('link', { name: 'Contact us' }).getAttribute('href')).toBe(
+    'mailto:official@noumi.ai',
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Copy official@noumi.ai' }))
   await waitFor(() =>
     expect(screen.getByRole('status').textContent).toBe('Copied: official@noumi.ai'),
   )
@@ -209,7 +213,7 @@ it('copies the email on internal HTTP using the clipboard fallback', async () =>
   const execCommand = vi.fn().mockReturnValue(true)
   Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
   const { unmount } = render(<OfficialHomeFooter />)
-  fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Copy official@noumi.ai' }))
   await waitFor(() =>
     expect(screen.getByRole('status').textContent).toBe('Copied: official@noumi.ai'),
   )
@@ -225,7 +229,7 @@ it('shows the copy confirmation outside the footer and dismisses it after four s
   const { unmount, container } = render(<OfficialHomeFooter />)
   try {
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Copy official@noumi.ai' }))
     })
     const toast = screen.getByRole('status')
     expect(document.body.contains(toast)).toBe(true)

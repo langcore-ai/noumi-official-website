@@ -6,7 +6,7 @@ test('homepage follows the new design and reserves the shared header height', as
   await expect(page.locator('.redesign-home')).toHaveCSS('background-color', 'rgb(250, 249, 246)')
   await expect(page.locator('.redesign-hero__media')).toHaveCSS('width', '1392px')
   await expect(page.locator('.redesign-hero__media')).toHaveCSS('border-radius', '32px')
-  await expect(page.locator('.brand__wordmark')).toHaveText('Noumi.ai')
+  await expect(page.locator('header .brand__wordmark')).toHaveText('Noumi.ai')
   const cards = page.locator('.redesign-feature')
   await expect(cards).toHaveCount(3)
   await expect(cards.nth(0)).toContainText('Specialist-Level')

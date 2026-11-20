@@ -164,8 +164,17 @@ export function OfficialFooterContact({ email, label }: { email: string; label: 
   }
   return (
     <div className="footer-contact">
-      <button type="button" className="footer-contact__button" onClick={copy}>
+      {/* The anchor stays in the markup so the address works without JavaScript. */}
+      <a className="footer-contact__link" href={`mailto:${email}`}>
         {label}
+      </a>
+      <button
+        type="button"
+        className="footer-contact__button"
+        aria-label={`Copy ${email}`}
+        onClick={copy}
+      >
+        Copy
       </button>
       {status &&
         createPortal(

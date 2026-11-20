@@ -271,7 +271,7 @@ export function OfficialHomeFooter({ menu }: { menu?: MenuSetting | null } = {})
               footerDescription
             )}
           </p>
-          <div className="footer-social-icons" aria-label="Social media">
+          <nav className="footer-social-icons" aria-label="Social media">
             {[
               { label: 'YouTube', href: 'https://www.youtube.com/@Noumi-AI', icon: 'youtube' },
               {
@@ -297,7 +297,7 @@ export function OfficialHomeFooter({ menu }: { menu?: MenuSetting | null } = {})
                 />
               </a>
             ))}
-          </div>
+          </nav>
         </div>
         {columns
           .filter((column) => !('hidden' in column && column.hidden))
@@ -311,7 +311,7 @@ export function OfficialHomeFooter({ menu }: { menu?: MenuSetting | null } = {})
                     <OfficialFooterContact
                       key={link.href}
                       label={link.label}
-                      email={link.href.slice(7).split('?')[0]}
+                      email={link.href.slice(7).split('?')[0] || menu?.email || ''}
                     />
                   ) : (
                     <Link href={link.href} key={link.href} prefetch={false}>

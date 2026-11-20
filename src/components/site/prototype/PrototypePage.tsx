@@ -3,7 +3,7 @@ import { PrototypeEffects } from './PrototypeEffects'
 import { OfficialUseCasesGallery } from '../official/OfficialUseCasesGallery'
 
 /** Only build-time reviewed local HTML is accepted, never CMS or request-supplied markup. */
-export function PrototypePage({ route }: { route: string }) {
+export function PrototypePage({ route, className }: { route: string; className?: string }) {
   const page = getPrototypePage(route)
   if (!page) return null
   const nativeUseCases = route === '/use-cases'
@@ -29,7 +29,12 @@ export function PrototypePage({ route }: { route: string }) {
         `}</style>
       </noscript>
       <main
-        className={nativeUseCases ? 'native-use-cases-page' : `prototype-page ${page.bodyClass}`}
+        className={[
+          nativeUseCases ? 'native-use-cases-page' : `prototype-page ${page.bodyClass}`,
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
         data-prototype-source={page.file}
       >
         {route === '/use-cases' && <OfficialUseCasesGallery />}
@@ -39,7 +44,11 @@ export function PrototypePage({ route }: { route: string }) {
           }
           dangerouslySetInnerHTML={{ __html: html }}
         />
-        <PrototypeEffects key={route} motion={getPageMotion(page)} />
+        <PrototypeEffects
+          key={route}
+          motion={getPageMotion(page)}
+          allowMultipleFaqs={route === '/faqs'}
+        />
       </main>
     </div>
   )

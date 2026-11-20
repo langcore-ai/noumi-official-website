@@ -1,3 +1,4 @@
+import footerDefaults from '@/lib/site/footer-defaults.json'
 import type { Field, GlobalConfig } from 'payload'
 import { contentUpdateAccess } from '@/access/cms'
 import { marketingGlobalReadAccess, PUBLIC_GLOBAL_VERSIONS } from '@/lib/site/publishing'
@@ -52,28 +53,7 @@ export const MenuSettings: GlobalConfig = {
         { name: 'hidden', label: '隐藏', type: 'checkbox', defaultValue: false },
         { name: 'links', label: '链接', type: 'array', fields: linkFields },
       ],
-      defaultValue: [
-        {
-          title: 'Product',
-          links: [
-            { label: 'Home', href: '/' },
-            { label: 'About', href: '/about' },
-            { label: 'Features', href: '/features' },
-            { label: 'Use Cases', href: '/use-cases' },
-            { label: 'Blog', href: '/blog' },
-            { label: 'Pricing', href: '/pricing' },
-          ],
-        },
-        {
-          title: 'Resources',
-          links: [
-            { label: 'FAQ', href: '/faqs' },
-            { label: 'Terms & Conditions', href: '/terms' },
-            { label: 'Privacy', href: '/privacy' },
-            { label: 'Links', href: '/links' },
-          ],
-        },
-      ],
+      defaultValue: footerDefaults.footer,
     },
     { name: 'ctaLabel', label: '按钮文案', type: 'text', defaultValue: 'Try Noumi Free' },
     {
@@ -86,13 +66,13 @@ export const MenuSettings: GlobalConfig = {
       name: 'description',
       label: '页脚说明',
       type: 'textarea',
-      defaultValue: 'A personal AI workspace built for Business & Solutions professionals',
+      defaultValue: 'The trustworthy AI teammate for presales & solution consultants.',
     },
     {
       name: 'copyright',
       label: '版权',
       type: 'text',
-      defaultValue: '© 2026 Noumi. All rights reserved.',
+      defaultValue: footerDefaults.copyright,
     },
     { name: 'email', label: '联系邮箱', type: 'email', defaultValue: 'official@noumi.ai' },
     { name: 'phone', label: '电话', type: 'text' },

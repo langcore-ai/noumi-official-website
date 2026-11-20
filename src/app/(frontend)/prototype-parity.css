@@ -37,7 +37,7 @@ body {
 }
 .site-header .site-nav a:not(.button--nav):is(:hover, :focus-visible, [aria-current='page']),
 .site-header .mobile-nav__link:is(:hover, :focus-visible, [aria-current='page']) {
-  color: var(--noumi-blue);
+  color: #141413;
 }
 .site-header--use-case .site-nav a[aria-current='page'] {
   background: transparent;
@@ -560,26 +560,27 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 
 /* Keep feature cards inset evenly from their surrounding frame on large screens. */
 @media (min-width: 1440px) {
-  .prototype-page[data-prototype-source="features.html"] .features-card-area {
+  .prototype-page[data-prototype-source='features.html'] .features-card-area {
     padding-top: 30px;
   }
 }
 
-.prototype-page[data-prototype-source="solution-engineer.html"]
-  .testimonial-card-brand-wrap img[src$="/linear.png"] {
+.prototype-page[data-prototype-source='solution-engineer.html']
+  .testimonial-card-brand-wrap
+  img[src$='/linear.png'] {
   width: auto;
   height: 32px;
   max-width: 100%;
   object-fit: contain;
 }
 
-.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-card-brand-wrap {
+.prototype-page[data-prototype-source='business-analyst.html'] .testimonial-card-brand-wrap {
   flex: 0 1 140px;
   min-width: 0;
   height: 32px;
   align-items: center;
 }
-.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-card-brand-wrap img {
+.prototype-page[data-prototype-source='business-analyst.html'] .testimonial-card-brand-wrap img {
   display: block;
   width: auto;
   height: auto;
@@ -587,7 +588,7 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
   max-height: 32px;
   object-fit: contain;
 }
-.prototype-page[data-prototype-source="business-analyst.html"] .testimonial-icon-area {
+.prototype-page[data-prototype-source='business-analyst.html'] .testimonial-icon-area {
   flex-shrink: 0;
 }
 
@@ -601,7 +602,7 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 }
 
 /* Available profession cards are links; Coming Soon cards remain static. */
-.prototype-page[data-prototype-source="use-cases.html"] .integration-card {
+.prototype-page[data-prototype-source='use-cases.html'] .integration-card {
   cursor: default;
 }
 .prototype-page[data-prototype-source='use-cases.html'] .integration-card[href] {

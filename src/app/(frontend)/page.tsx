@@ -50,7 +50,7 @@ export default async function HomePage() {
                   </span>
                 </h1>
                 <p className="redesign-hero__copy">
-                  The secure AI teammate for presales and
+                  The trustworthy AI teammate for presales &amp;
                   <br />
                   solution consultants.
                 </p>
@@ -120,6 +120,18 @@ export default async function HomePage() {
                   Only you and the person you shared with can have access to them, and no one else,
                   not even Noumi.
                 </p>
+                <a className="security-learn-more" href="/security">
+                  <span>Learn more</span>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="m9 5 7 7-7 7"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
               </div>
               <OfficialSecurityVisual />
             </article>

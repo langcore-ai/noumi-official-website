@@ -278,6 +278,12 @@ async function applyToProduction(source: MenuGlobal, sourceLabel: string): Promi
     console.log(warning('未写入。确认后加 --yes 执行。'))
     return
   }
+  // 未配置菜单的测试库只有默认栏目，直接写入会把生产页脚回退成旧内容。
+  if (!source.enabled || source._status !== 'published') {
+    throw new Error(
+      `${sourceLabel} 的菜单配置未启用或未发布（enabled=${source.enabled}, _status=${source._status ?? '—'}），拒绝写入生产。先在来源后台配置并发布页脚。`,
+    )
+  }
 
   mkdirSync(SNAPSHOT_DIR, { recursive: true })
   const stamp = new Date().toISOString().replaceAll(':', '')

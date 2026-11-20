@@ -12,7 +12,13 @@ const easing = (value?: string) =>
     outCubic: 'cubic-bezier(.215,.61,.355,1)',
   })[value || ''] || 'linear'
 
-export function PrototypeEffects({ motion }: { motion: PageMotion }) {
+export function PrototypeEffects({
+  motion,
+  allowMultipleFaqs = false,
+}: {
+  motion: PageMotion
+  allowMultipleFaqs?: boolean
+}) {
   const anchor = useRef<HTMLSpanElement>(null)
   useLayoutEffect(() => {
     const root = anchor.current?.closest<HTMLElement>('[data-prototype-source]')
@@ -248,9 +254,11 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }) {
         clearTimeout(timer)
         expanded = !expanded
         if (expanded) {
-          closeFaqs.forEach((close, other) => {
-            if (other !== details && other.open) close()
-          })
+          if (!allowMultipleFaqs) {
+            closeFaqs.forEach((close, other) => {
+              if (other !== details && other.open) close()
+            })
+          }
           details.open = true
         }
         details.dispatchEvent(new Event(expanded ? 'prototype-open' : 'prototype-close'))
@@ -371,6 +379,6 @@ export function PrototypeEffects({ motion }: { motion: PageMotion }) {
       root.removeEventListener('click', playVideo)
       footer()
     }
-  }, [motion])
+  }, [motion, allowMultipleFaqs])
   return <span hidden ref={anchor} />
 }

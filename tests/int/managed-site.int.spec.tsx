@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { publicPath, resolveManagedRedirect, safeHref } from '@/lib/site/managed-routing'
 import {
   OfficialHomeHeader,
@@ -156,6 +156,9 @@ it('opens desktop submenus on mouse hover while leaving touch menus click-driven
     Object.defineProperty(event, 'pointerType', { value: pointerType })
     fireEvent(target, event)
   }
+  expect(desktop.querySelectorAll('.managed-nav-children a')).toHaveLength(1)
+  expect(mobile.querySelectorAll('.managed-nav-children a')).toHaveLength(1)
+  expect(desktop.querySelector('a[href="/features"]')).toBeNull()
   pointer(desktop, 'pointerover', 'mouse')
   expect(desktop.open).toBe(true)
   pointer(desktop, 'pointerout', 'mouse')
@@ -164,5 +167,79 @@ it('opens desktop submenus on mouse hover while leaving touch menus click-driven
   expect(desktop.open).toBe(false)
   pointer(mobile, 'pointerover', 'mouse')
   expect(mobile.open).toBe(false)
+  pointer(desktop, 'pointerover', 'mouse')
+  fireEvent.keyDown(desktop, { key: 'Escape' })
+  expect(desktop.open).toBe(false)
+  pointer(desktop, 'pointerover', 'mouse')
+  fireEvent.click(desktop.querySelector('a[href="/security"]')!)
+  expect(desktop.open).toBe(false)
   unmount()
+})
+
+it('keeps English selected when unavailable footer languages are clicked', () => {
+  const { unmount } = render(<OfficialHomeFooter />)
+  fireEvent.click(screen.getByRole('button', { name: 'Language: English' }))
+  expect(screen.getAllByRole('option')).toHaveLength(20)
+  const chinese = screen.getByRole('option', { name: '简体中文' })
+  expect(chinese.getAttribute('aria-disabled')).toBe('true')
+  fireEvent.click(chinese)
+  expect(
+    screen.getByRole('button', { name: 'Language: English' }).getAttribute('aria-expanded'),
+  ).toBe('true')
+  expect(screen.getByRole('option', { name: 'English' }).getAttribute('aria-selected')).toBe('true')
+  fireEvent.keyDown(chinese, { key: 'Escape' })
+  expect(screen.queryByRole('listbox')).toBeNull()
+  unmount()
+})
+it('copies the Company email and reports success only after clipboard confirmation', async () => {
+  const writeText = vi.fn().mockResolvedValue(undefined)
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
+  const { unmount, container } = render(<OfficialHomeFooter />)
+  expect(container.querySelector('.footer-free-cta')).toBeNull()
+  expect(screen.getByRole('link', { name: 'YouTube' }).getAttribute('href')).toContain('@Noumi-AI')
+  fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+  await waitFor(() =>
+    expect(screen.getByRole('status').textContent).toBe('Copied: official@noumi.ai'),
+  )
+  expect(writeText).toHaveBeenCalledWith('official@noumi.ai')
+  unmount()
+})
+it('copies the email on internal HTTP using the clipboard fallback', async () => {
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined })
+  const execCommand = vi.fn().mockReturnValue(true)
+  Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
+  const { unmount } = render(<OfficialHomeFooter />)
+  fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+  await waitFor(() =>
+    expect(screen.getByRole('status').textContent).toBe('Copied: official@noumi.ai'),
+  )
+  expect(execCommand).toHaveBeenCalledWith('copy')
+  expect(document.querySelector('textarea')).toBeNull()
+  unmount()
+})
+
+it('shows the copy confirmation outside the footer and dismisses it after four seconds', async () => {
+  vi.useFakeTimers()
+  const writeText = vi.fn().mockResolvedValue(undefined)
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
+  const { unmount, container } = render(<OfficialHomeFooter />)
+  try {
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+    })
+    const toast = screen.getByRole('status')
+    expect(document.body.contains(toast)).toBe(true)
+    expect(container.contains(toast)).toBe(false)
+    act(() => {
+      vi.advanceTimersByTime(3999)
+    })
+    expect(screen.getByRole('status')).toBeTruthy()
+    act(() => {
+      vi.advanceTimersByTime(1)
+    })
+    expect(screen.queryByRole('status')).toBeNull()
+  } finally {
+    unmount()
+    vi.useRealTimers()
+  }
 })

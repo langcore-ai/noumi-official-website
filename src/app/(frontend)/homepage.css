@@ -49,7 +49,7 @@
   max-width: 440px;
   font-size: clamp(16px, 1.3vw, 21px);
   line-height: 1.5;
-  color: #514b44;
+  color: #625d57;
 }
 .redesign-hero .noumi-modern-cta {
   margin-top: 30px;
@@ -246,7 +246,9 @@
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.18s;
+  transition:
+    color 0.18s,
+    background-color 0.18s;
 }
 .redesign-home .deliverable-tab img {
   width: 28px;
@@ -258,6 +260,9 @@
 .deliverable-tab:hover,
 .deliverable-tab[aria-selected='true'] {
   color: #2c33e2;
+}
+.redesign-home .deliverable-tab[aria-selected='true'] {
+  background: #f1f1ee;
 }
 .deliverable-tab:focus-visible,
 .preview-expand:focus-visible,
@@ -1131,10 +1136,55 @@
   }
 }
 
-.hero-slogan-result { position: relative; left: -2px; }
+.hero-slogan-result {
+  position: relative;
+  left: -2px;
+}
 
 /* Add 6px above the hero positioning copy. */
-.redesign-home .redesign-hero__copy { margin-top: 26px; }
+.redesign-home .redesign-hero__copy {
+  margin-top: 26px;
+}
 @media (max-width: 600px) {
-  .redesign-home .redesign-hero__copy { margin-top: 24px; }
+  .redesign-home .redesign-hero__copy {
+    margin-top: 24px;
+  }
+}
+
+/* Security card link follows the site accent without adding a filled button. */
+.redesign-home .security-feature .security-learn-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  width: fit-content;
+  margin-top: 32px;
+  color: #f7f8f6;
+  font: 600 18px/1.5 var(--ff-body);
+  text-decoration: none;
+}
+.security-learn-more span {
+  padding-bottom: 4px;
+  border-bottom: 3px solid #6268ee;
+}
+.security-learn-more svg {
+  width: 20px;
+  height: 20px;
+  margin-top: -5px;
+  transition: transform 180ms ease;
+}
+.redesign-home .security-feature .security-learn-more:hover {
+  color: #b5b8ff;
+}
+.security-learn-more:hover svg {
+  transform: translateX(3px);
+}
+.security-learn-more:focus-visible {
+  outline: 2px solid #9ba1ff;
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .security-learn-more svg {
+    transition: none;
+  }
 }

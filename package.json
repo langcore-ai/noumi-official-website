@@ -46,6 +46,7 @@
     "mode:help": "bun tooling/infra/help.ts",
     "mode:staging": "bun tooling/infra/staging.ts",
     "mode:setup": "bun tooling/infra/mode.ts setup",
+    "footer:sync": "bun tooling/infra/footer-sync.ts",
     "build:staging": "bun run build:worker-preview",
     "deploy:staging": "bun run deploy:worker-preview",
     "build:worker-preview": "bun tooling/infra/worker-preview.ts build",

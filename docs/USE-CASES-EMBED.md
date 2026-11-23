@@ -19,8 +19,16 @@ The website navigation, FAQ, CMS behavior, and footer remain in their existing p
 - `public/assets/se-use-cases/files/`: 20 downloadable outputs and one original reference workbook. Changes to
   downloads must also update the corresponding preview and metadata/checksum.
 
-The obsolete HTML wrappers, iframe CSS/JS, and sizing protocol are removed. The separate
-homepage gallery `OfficialUseCasesShowcase.tsx` is outside this task's scope.
+The obsolete HTML wrappers, iframe CSS/JS, and sizing protocol are removed.
+
+The homepage gallery is native as well: `HomeUseCasesGallery.tsx` and its
+`home-usecases/` directory render the reviewed 16-case snapshot directly in the page.
+`content.json` is the reviewed source of truth for the case data (manifest categories and
+all cases); `gallery.css` is the gallery stylesheet scoped to `.home-usecases` with
+prefixed keyframes. Only the images,
+downloadable files and connector icons remain under `public/assets/usecases-gallery/assets/`.
+The homepage gallery has no iframe, document fetch, cross-window height protocol or
+`index.html`/`app.js`/`style.css` snapshot.
 
 ## Accepted behavior
 

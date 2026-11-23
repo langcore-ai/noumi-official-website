@@ -1,0 +1,1081 @@
+{
+  "categories": [
+    {
+      "id": "discover-document",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6.2 3.2h8.3L18.8 7.7v13.1H6.2z\"></path><path d=\"M14.5 3.2v4.5h4.3\"></path><path d=\"M9.3 12.4h5.4M9.3 15.8h5.4\"></path></svg>",
+      "iconColor": "#5a61e6",
+      "label": {
+        "en": "Discover & Document",
+        "zh": "调研与文档"
+      },
+      "cases": [
+        {
+          "id": "build-brd",
+          "title": {
+            "en": "Build BRD, FRD, User Stories & BPMN",
+            "zh": "整合并生成需求文档"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Based on the available project materials @Requirements @Meeting notes, including:\n1. ==Stakeholder inputs:== business brief, meeting notes, plus relevant email conversations retrieved from my Gmail, including threads with sarah.mitchell@acme.com and david.chen@acme.com\n2. ==Pre-sales handover:== project background, proposed solution, and key requirements and current process image captured during pre-sales\n3. ==My own analysis:== initial research, requirement analysis, and working notes\n4. ==Previous cases:== similar past projects retrieved from Google Drive for reference on structure, framework, terminology, and document styling\nPlease consolidate and clarify the requirements, ==identify gaps or open questions==, and ==generate a complete requirements package== including the BRD, FRD, User Stories with acceptance criteria, and an end-to-end business process flow. ==Ensure all deliverables are consistent.==",
+            "zh": "基于以下现有项目材料 @Requirements @Meeting notes：\n1. ==相关方输入：==业务简介、会议纪要，以及从我的 Gmail 中检索到的相关邮件往来，包括与 sarah.mitchell@acme.com 和 david.chen@acme.com 的邮件往来\n2. ==售前交接材料：==项目背景、方案建议，以及售前阶段整理的关键需求和现状流程图\n3. ==我自己的分析：==前期调研、需求分析和工作笔记\n4. ==历史案例：==从 Google Drive 检索到的类似历史项目，用于参考结构、框架、术语和文档风格\n请帮我整合并厘清需求，==识别其中的缺口或待澄清问题==，并==生成一套完整的需求包==，包括 BRD、FRD、带验收标准的用户故事，以及端到端的业务流程图。==确保所有交付物之间保持一致。=="
+          },
+          "artifacts": [
+            {
+              "name": {
+                "en": "Requirements",
+                "zh": "需求材料"
+              },
+              "files": [
+                {
+                  "name": {
+                    "en": "executive-business-brief.pdf",
+                    "zh": "executive-business-brief.pdf"
+                  },
+                  "ext": "PDF"
+                },
+                {
+                  "name": {
+                    "en": "crm-project-handover.docx",
+                    "zh": "crm-project-handover.docx"
+                  },
+                  "ext": "DOC"
+                }
+              ]
+            },
+            {
+              "name": {
+                "en": "Meeting notes",
+                "zh": "会议纪要"
+              },
+              "files": [
+                {
+                  "name": {
+                    "en": "interview-kevin-zhao-it-system-administrator.md",
+                    "zh": "interview-kevin-zhao-it-system-administrator.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-laura-bennett-legal-counsel.md",
+                    "zh": "interview-laura-bennett-legal-counsel.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-jennifer-walsh-marketing-manager.md",
+                    "zh": "interview-jennifer-walsh-marketing-manager.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-david-park-sales-director.md",
+                    "zh": "interview-david-park-sales-director.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-james-lee-ecosystem-manager.md",
+                    "zh": "interview-james-lee-ecosystem-manager.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-rachel-kim-presales-engineer.md",
+                    "zh": "interview-rachel-kim-presales-engineer.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "interview-alex-martinez-sales-rep.md",
+                    "zh": "interview-alex-martinez-sales-rep.md"
+                  },
+                  "ext": "MD"
+                }
+              ]
+            }
+          ],
+          "connectors": [
+            {
+              "name": {
+                "en": "Gmail",
+                "zh": "Gmail"
+              },
+              "logo": "✉",
+              "color": "#ea4335"
+            },
+            {
+              "name": {
+                "en": "Google Drive",
+                "zh": "Google Drive"
+              },
+              "logo": "▲",
+              "color": "#34a853"
+            }
+          ],
+          "inputAttachments": [
+            {
+              "kind": "image",
+              "name": {
+                "en": "current-process.jpg",
+                "zh": "现状流程图.jpg"
+              },
+              "src": "current-process.jpg"
+            }
+          ],
+          "reply": {
+            "en": "Consolidated all sources, flagged 4 open questions, and generated a consistent BRD, FRD, User Stories, and process flow.",
+            "zh": "已整合全部材料，识别出 4 处待澄清问题，并生成了一套相互一致的 BRD、FRD、用户故事和业务流程图。"
+          },
+          "duration": "8m 42s",
+          "outputAttachments": [
+            {
+              "kind": "link",
+              "label": {
+                "en": "Requirements Package",
+                "zh": "需求文档包"
+              },
+              "url": "https://www.noumi.ai/s/t2fhv8sqk7"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "End-to-end business process flow (BPMN)",
+                "zh": "端到端业务流程图（BPMN）"
+              },
+              "src": "BApackage-BPMN.svg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "BRD draft",
+                "zh": "BRD 文档草稿"
+              },
+              "src": "BApackage-BRD.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Requirements clarification questions",
+                "zh": "需求澄清问题"
+              },
+              "src": "BApackage-Requirements-Clarification.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "FRD draft",
+                "zh": "FRD 文档草稿"
+              },
+              "src": "BApackage-FRD.jpg"
+            }
+          ]
+        },
+        {
+          "id": "research",
+          "title": {
+            "en": "Client Research",
+            "zh": "客户调研"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Research Bosch and prepare me for an upcoming requirement elicitation meeting.",
+            "zh": "帮我调研一下 Bosch，为即将进行的需求调研会议做准备。"
+          },
+          "inputAttachments": [],
+          "reply": {
+            "en": "Completed the research on Robert Bosch GmbH: company background, commercial context, and discovery agenda for the meeting. Click the link below to view the full report.",
+            "zh": "已完成对 Robert Bosch GmbH 的调研：公司背景、商业现状，以及会议用的调研议程都整理好了。点击下方链接查看完整报告。"
+          },
+          "duration": "1m 20s",
+          "outputAttachments": [
+            {
+              "kind": "link",
+              "label": {
+                "en": "Robert Bosch GmbH Research Report",
+                "zh": "Robert Bosch GmbH 调研报告"
+              },
+              "url": "https://www.noumi.ai/s/zz932yasw3"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Research report — executive assessment & company profile",
+                "zh": "调研报告——高层评估与公司概况"
+              },
+              "src": "client-research-1.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Research report — ownership structure & revenue mix",
+                "zh": "调研报告——股权结构与营收构成"
+              },
+              "src": "client-research-2.jpg"
+            }
+          ]
+        },
+        {
+          "id": "doc-translate",
+          "title": {
+            "en": "Translate Docs Without Losing Formatting",
+            "zh": "翻译文档且不破坏排版"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Translate the full content of the uploaded business documents ==from English into Japanese and German==.\n1. ==Preserve the original formatting exactly==, like layout, headings, fonts, styles, spacing, and alignment, etc.\n2. ==Keep business and technical terminology consistent== throughout the documents. The translated files should be presentation-ready for my clients.",
+            "zh": "把上传的这些业务文档全文==翻译成日语和德语==。\n1. ==完全保持原始格式==，包括排版、标题层级、字体、样式、间距、对齐方式等。\n2. ==全篇业务和技术术语保持一致==。翻译后的文件要能直接用于客户展示。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "LangHub-CRM-BRD.docx",
+                "zh": "LangHub-CRM-BRD.docx"
+              },
+              "ext": "DOC",
+              "src": null
+            },
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "Noumi-Product-Introduction-EN.pptx",
+                "zh": "Noumi-Product-Introduction-EN.pptx"
+              },
+              "ext": "PPT",
+              "src": null
+            },
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "Project Plan Implementation Table.xlsx",
+                "zh": "项目实施计划表.xlsx"
+              },
+              "ext": "XLS",
+              "src": null
+            }
+          ],
+          "reply": {
+            "en": "Translated all three documents into Japanese and German, keeping layout, headings, fonts, and terminology consistent throughout — ready to present to clients. Click the links below to view the translated files.",
+            "zh": "已将三份文档分别翻译成日语和德语，排版、标题层级、字体和术语全篇保持一致，可以直接用于客户展示。点击下方链接查看翻译后的文件。"
+          },
+          "duration": "8m 40s",
+          "outputAttachments": [
+            {
+              "kind": "link",
+              "label": {
+                "en": "Docs in Japanese",
+                "zh": "日语版文档"
+              },
+              "url": "https://www.noumi.ai/s/w8m7z8hno8"
+            },
+            {
+              "kind": "link",
+              "label": {
+                "en": "Docs in German",
+                "zh": "德语版文档"
+              },
+              "url": "https://www.noumi.ai/s/yj9af2ftmv"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Translated Word document (Japanese)",
+                "zh": "翻译后的 Word 文档（日语）"
+              },
+              "src": "translated-word-en-jp.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Translated slide deck (German)",
+                "zh": "翻译后的幻灯片（德语）"
+              },
+              "src": "translated-slides-de.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Translated spreadsheet (Japanese)",
+                "zh": "翻译后的表格（日语）"
+              },
+              "src": "translated-excel-jp.jpg"
+            }
+          ]
+        },
+        {
+          "id": "build-rfp",
+          "title": {
+            "en": "Create Documents from a Template",
+            "zh": "按模板生成文档"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Based on the content of this file @LangHub-CRM-Project-Blueprint_V1.0_20260827.md and related images, generate a Word document that matches the content format of this template Word @Template_Blueprint.docx",
+            "zh": "基于这份文件 @LangHub-CRM-Project-Blueprint_V1.0_20260827.md 以及相关图片的内容，生成一份 Word 文档，内容格式要和这份模板 Word @Template_Blueprint.docx 保持一致"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "name": {
+                "en": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md",
+                "zh": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md"
+              },
+              "ext": "MD",
+              "src": "LangHub-CRM-Project-Blueprint_V1.0_20260827.md"
+            }
+          ],
+          "reply": {
+            "en": "Generated the Word document with content mapped into the template's structure, styles, and formatting.",
+            "zh": "已生成 Word 文档，内容已按模板的结构、样式和格式排版好。"
+          },
+          "duration": "3m 12s",
+          "outputAttachments": [
+            {
+              "kind": "file",
+              "name": {
+                "en": "LangHub_CRM_Project_Blueprint_V1.0.docx",
+                "zh": "LangHub_CRM_Project_Blueprint_V1.0.docx"
+              },
+              "ext": "DOC",
+              "src": "LangHub_CRM_Project_Blueprint_V1.0.docx"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Generated document following the template's layout",
+                "zh": "生成文档，排版与模板一致"
+              },
+              "src": "template-follow1.png"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Generated document, section detail",
+                "zh": "生成文档，章节细节"
+              },
+              "src": "template-follow2.png"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Generated document, section detail",
+                "zh": "生成文档，章节细节"
+              },
+              "src": "template-follow3.jpg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "check-validate",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 6.5h8M4 11h8M4 15.5h5\"></path><circle cx=\"17\" cy=\"15.5\" r=\"4.8\"></circle><path d=\"m15 15.6 1.5 1.5 2.6-2.9\"></path></svg>",
+      "iconColor": "#247f55",
+      "label": {
+        "en": "Check & Validate",
+        "zh": "核查与验证"
+      },
+      "cases": [
+        {
+          "id": "consistency-check",
+          "title": {
+            "en": "Consistency Check before Sign-off",
+            "zh": "签署前一致性校验"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Before sign-off, review the files:\n1. @Requirement Package\n2. API documentation at http://172.16.42.18:8082/langhub-crm/swagger-ui/index.html\n3. connected postgresql database\nPerform a requirements consistency review. Identify contradictions, ambiguities, missing requirements, data mismatches, and traceability gaps.\nSummarize the key findings and open questions requiring clarification",
+            "zh": "签署前，请审阅以下内容：\n1. @Requirement Package\n2. API 文档：http://172.16.42.18:8082/langhub-crm/swagger-ui/index.html\n3. 已连接的 postgresql 数据库\n请做一次需求一致性审查，识别其中的矛盾、歧义、缺失需求、数据不匹配和可追溯性缺口。\n总结关键发现和需要澄清的开放问题"
+          },
+          "artifacts": [
+            {
+              "name": {
+                "en": "Requirement Package",
+                "zh": "需求包"
+              },
+              "files": [
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Business-Requirements-Document.docx",
+                    "zh": "LangHub-CRM-Business-Requirements-Document.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Functional-Requirements-Document.docx",
+                    "zh": "LangHub-CRM-Functional-Requirements-Document.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Requirements-Clarification.md",
+                    "zh": "LangHub-CRM-Requirements-Clarification.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-User-Stories-Backlog.docx",
+                    "zh": "LangHub-CRM-User-Stories-Backlog.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Lead-to-Contract-Process.drawio",
+                    "zh": "LangHub-CRM-Lead-to-Contract-Process.drawio"
+                  },
+                  "ext": "DRAWIO"
+                }
+              ]
+            }
+          ],
+          "connectors": [
+            {
+              "name": {
+                "en": "PostgreSQL database",
+                "zh": "PostgreSQL 数据库"
+              },
+              "logo": "▤",
+              "color": "#336791"
+            }
+          ],
+          "inputAttachments": [],
+          "reply": {
+            "en": "Found several contradictions, ambiguities, and traceability gaps across the requirement package, API, and database schema — details and open questions below.",
+            "zh": "在需求包、API 和数据库表结构之间发现了若干矛盾、歧义和可追溯性缺口，详情和待澄清问题见下方。"
+          },
+          "duration": "6m 05s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Consistency check findings and open questions",
+                "zh": "一致性校验发现与待澄清问题"
+              },
+              "src": "consistency-check.png"
+            }
+          ]
+        },
+        {
+          "id": "change-impact",
+          "title": {
+            "en": "Requirement Change Impact Analysis",
+            "zh": "需求变更影响分析"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "A new requirement clarification has been confirmed in @joint-session-contract-approval-clarification-2026-08-20.md. Analyze its impact across the existing requirements package @Requirement Package\nIdentify what need to be added, updated, or removed, and flag any downstream inconsistencies or traceability impacts.",
+            "zh": "一项新的需求澄清已在 @joint-session-contract-approval-clarification-2026-08-20.md 中确认。请分析它对现有需求包 @Requirement Package 的影响\n识别哪些内容需要新增、更新或删除，并标记出下游的不一致或可追溯性影响。"
+          },
+          "artifacts": [
+            {
+              "name": {
+                "en": "Requirement Package",
+                "zh": "需求包"
+              },
+              "files": [
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Business-Requirements-Document.docx",
+                    "zh": "LangHub-CRM-Business-Requirements-Document.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Functional-Requirements-Document.docx",
+                    "zh": "LangHub-CRM-Functional-Requirements-Document.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Requirements-Clarification.md",
+                    "zh": "LangHub-CRM-Requirements-Clarification.md"
+                  },
+                  "ext": "MD"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-User-Stories-Backlog.docx",
+                    "zh": "LangHub-CRM-User-Stories-Backlog.docx"
+                  },
+                  "ext": "DOC"
+                },
+                {
+                  "name": {
+                    "en": "LangHub-CRM-Lead-to-Contract-Process.drawio",
+                    "zh": "LangHub-CRM-Lead-to-Contract-Process.drawio"
+                  },
+                  "ext": "DRAWIO"
+                }
+              ]
+            }
+          ],
+          "inputAttachments": [],
+          "reply": {
+            "en": "Traced the clarification across the requirement package and flagged the affected sections and inconsistencies.",
+            "zh": "已在需求包中追溯该澄清项的影响范围，并标出受影响的章节和不一致之处。"
+          },
+          "duration": "2m 47s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Impact analysis summary",
+                "zh": "影响分析总览"
+              },
+              "src": "change-analysis.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Affected requirements and traceability detail",
+                "zh": "受影响需求与可追溯性细节"
+              },
+              "src": "change-analysis2.jpg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"8.5\" y=\"2.6\" width=\"7\" height=\"5\" rx=\"1.2\"></rect><rect x=\"2.6\" y=\"15.4\" width=\"7\" height=\"5\" rx=\"1.2\"></rect><rect x=\"14.4\" y=\"15.4\" width=\"7\" height=\"5\" rx=\"1.2\"></rect><path d=\"M12 7.6v4.2M12 11.8H6.1v3.6M12 11.8h5.9v3.6\"></path></svg>",
+      "iconColor": "#c08a1e",
+      "label": {
+        "en": "Diagram",
+        "zh": "流程图"
+      },
+      "cases": [
+        {
+          "id": "bpmn",
+          "title": {
+            "en": "Turn Notes into a BPMN Diagram",
+            "zh": "会议记录转 BPMN 流程图"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Generate an end-to-end process flow diagram based on these raw stakeholder notes, one lane per role, decisions as flow.",
+            "zh": "根据这份原始的与会者会议记录，生成一张端到端的流程图，每个角色对应一条泳道，决策点用流程节点表示。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "Decision Session Minutes.pdf",
+                "zh": "决策会议纪要.pdf"
+              },
+              "ext": "PDF",
+              "src": null
+            }
+          ],
+          "reply": {
+            "en": "BPMN diagram complete and visually reviewed. Modeled as 5 lanes (split by the participant roles in §2 of the meeting minutes, plus automated system behavior): Marketing Operations, Ecosystem Partnerships, Sales Representative, CRM System (automated), and Sales Director; with 8 decision gateways.",
+            "zh": "BPMN 流程图已完成并通过视觉复核。模型结构为 5 条泳道（按会议记录 §2 参会角色 + 系统自动化行为拆分）：Marketing Operations、Ecosystem Partnerships、Sales Representative、CRM System（自动化）、Sales Director；共 8 个判定网关。"
+          },
+          "duration": "3m 40s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "BPMN diagram — CRM Lead Ownership, Visibility & Follow-up Governance Process",
+                "zh": "BPMN 流程图 —— CRM 线索归属、可见性与跟进治理流程"
+              },
+              "src": "bpmn-lead-governance.png"
+            }
+          ]
+        },
+        {
+          "id": "handdrawing-flowchart",
+          "title": {
+            "en": "Turn Hand Sketch into a Flowchart",
+            "zh": "手绘草图转专业流程图"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "@handdrawing-sketches.jpg convert this sketch into a professional business process flowchart, strictly preserving its original content and layout.",
+            "zh": "@handdrawing-sketches.jpg 把这张手绘草图转换成专业的业务流程图，严格保留原始内容和布局。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "image",
+              "name": {
+                "en": "handdrawing-sketches.jpg",
+                "zh": "handdrawing-sketches.jpg"
+              },
+              "ext": "JPG",
+              "src": "handdrawing-sketches.jpg"
+            }
+          ],
+          "reply": {
+            "en": "Redrew the hand sketch as a clean, professional flowchart, preserving the original 3-step structure, all labels, and layout.",
+            "zh": "已将手绘草图重绘为清晰、专业的流程图，保留了原有的三步结构、所有文字标注和布局。"
+          },
+          "duration": "2m 15s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Professional flowchart redrawn from the hand sketch",
+                "zh": "根据手绘草图重绘的专业流程图"
+              },
+              "src": "handdrawing-diagram.png"
+            }
+          ]
+        },
+        {
+          "id": "erd",
+          "title": {
+            "en": "Generate ERDs from Database",
+            "zh": "从数据库生成 ERD"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Connect to the database, and generate an Entity-Relationship Diagram (ERD) for our ERP database.\nDatabase connection: postgresql://erp_readonly:demo_8f2a1c7d@10.0.4.20:5432/erp_analysis",
+            "zh": "帮我连上数据库，给我们的 ERP 数据库生成一张实体关系图（ERD）。\n数据库连接：postgresql://erp_readonly:demo_8f2a1c7d@10.0.4.20:5432/erp_analysis"
+          },
+          "reply": {
+            "en": "Connected to the ERP database and mapped out the ERD — covering CRM (leads/contacts/opportunities), project delivery, contracts & payments, subcontractor management, and system/user config, with primary and foreign keys labeled.",
+            "zh": "已连接到 ERP 数据库并生成 ERD 图，覆盖 CRM（线索/联系人/商机）、项目交付、合同与回款、分包管理、系统与用户配置等模块，主外键均已标注。"
+          },
+          "duration": "2m 12s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "ERP database ERD",
+                "zh": "ERP 数据库 ERD 图"
+              },
+              "src": "erd-diagram.png"
+            }
+          ]
+        },
+        {
+          "id": "architecture",
+          "title": {
+            "en": "Architecture & Deployment Diagrams",
+            "zh": "架构与部署图"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Based on this architecture doc, generate a product architecture diagram, an on-premises deployment network topology diagram, and a backup and recovery architecture diagram.",
+            "zh": "基于这份架构文档，帮我生成一张产品架构图、一张本地化部署网络拓扑图，以及一张备份与恢复架构图。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "Architecture Design Doc.docx",
+                "zh": "架构设计文档.docx"
+              },
+              "ext": "DOC",
+              "src": null
+            }
+          ],
+          "reply": {
+            "en": "Generated all three diagrams from the architecture doc: a layered product architecture diagram (interaction, execution, capability, models/tools, task management, and deployment layers), an on-premises network topology diagram (DMZ, application, and data zones with traffic flows), and a backup & recovery architecture diagram covering scheduled backups and access controls.",
+            "zh": "已根据架构文档生成全部三张图：分层的产品架构图（交互层、执行控制层、能力集成层、模型与工具层、任务管理层、服务部署层），本地化部署网络拓扑图（DMZ、应用、数据分区及流量走向），以及备份与恢复架构图（定期备份策略与访问控制）。"
+          },
+          "duration": "4m 05s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Product architecture diagram",
+                "zh": "产品架构图"
+              },
+              "src": "architecture-product.svg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "On-premises deployment network topology diagram",
+                "zh": "本地化部署网络拓扑图"
+              },
+              "src": "architecture-network-topology.svg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Backup and recovery architecture diagram",
+                "zh": "备份与恢复架构图"
+              },
+              "src": "architecture-backup-recovery.svg"
+            }
+          ]
+        },
+        {
+          "id": "gantt",
+          "title": {
+            "en": "Project Gantt Chart & Timeline",
+            "zh": "项目甘特图与时间线"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Generate a Gantt chart and a timeline for the project based on @Project Implementation Plan.docx",
+            "zh": "根据 @Project Implementation Plan.docx 帮我生成一张项目甘特图和一张时间线图。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "name": {
+                "en": "Project Implementation Plan.docx",
+                "zh": "项目实施计划.docx"
+              },
+              "ext": "DOC",
+              "src": "project-implementation-plan.docx"
+            }
+          ],
+          "reply": {
+            "en": "Generated both views from the implementation plan: a Gantt chart breaking down all 20 tasks across the 6 phases with role assignments and dependencies, and a milestone timeline marking each phase gate along the ~26.5-week schedule.",
+            "zh": "已根据实施计划生成两张图：一张甘特图，按 6 个阶段拆解全部 20 个任务并标出负责角色与依赖关系；一张时间线图，标出约 26.5 周排期中每个阶段的关键里程碑（Gate）。"
+          },
+          "duration": "2m 15s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Project Gantt chart",
+                "zh": "项目甘特图"
+              },
+              "src": "gantt-chart.png"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Project milestone timeline",
+                "zh": "项目里程碑时间线"
+              },
+              "src": "project-timeline.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "image",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4.2\" width=\"18\" height=\"15.6\" rx=\"2.6\"></rect><circle cx=\"9\" cy=\"9.6\" r=\"1.8\"></circle><path d=\"m5 19 5.4-5.4a1.8 1.8 0 0 1 2.5 0L19 19.6\"></path><path d=\"m15.5 16 1.6-1.6a1.8 1.8 0 0 1 2.5 0l1.4 1.4\"></path></svg>",
+      "iconColor": "#d96a58",
+      "label": {
+        "en": "Image",
+        "zh": "图片"
+      },
+      "cases": [
+        {
+          "id": "visualize-solution",
+          "title": {
+            "en": "Visualize a Complex Solution",
+            "zh": "把复杂方案可视化"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Turn this solution into a clear, presentation-ready visual showing the key business processes, system components, data flows, stakeholders, and expected outcomes in one coherent diagram.",
+            "zh": "把这份方案做成一张清晰、可直接用于汇报的可视化图，在一张图里体现关键业务流程、系统组件、数据流、相关方和预期成效。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "name": {
+                "en": "Langhub Enterprise Delivery Solution Brief.docx",
+                "zh": "Langhub 企业交付方案说明书.docx"
+              },
+              "ext": "DOC",
+              "src": "langhub-enterprise-delivery-solution-brief.docx"
+            }
+          ],
+          "reply": {
+            "en": "Turned the solution brief into a single architecture diagram: request intake from enterprise IM, routing through the Main Agent, core execution in the Agent Runtime, project/task context management, team collaboration, and delivery through external systems and file outputs — with special capabilities called out on the side.",
+            "zh": "已把整份方案说明书提炼成一张架构图：从企业 IM 入口接收请求，经 Main Agent 识别与分发，进入 Agent Runtime 核心执行层，配合项目/任务管理与团队协作，最终通过外部系统集成与文件交付产出结果，特色能力单独列在右侧。"
+          },
+          "duration": "3m 20s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Langhub product architecture diagram",
+                "zh": "Langhub 产品架构图"
+              },
+              "src": "langhub-product-architecture.jpg"
+            }
+          ]
+        },
+        {
+          "id": "polish-diagrams",
+          "title": {
+            "en": "Polish Diagrams",
+            "zh": "批量美化架构图"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "These 3 diagrams were drafted quickly in draw.io and look too plain for a client deck — same for all three: clean up the visual hierarchy, give each zone/layer a clearer color scheme, and make them presentation-ready without changing the underlying logic.",
+            "zh": "这 3 张图是用 draw.io 快速画的草稿，配色和排版比较简陋，不太能直接放进给客户的汇报材料。麻烦帮我统一美化一下：理清各分层/分区的视觉层级，配色更专业一些，逻辑不要改，做成可以直接拿去汇报的效果。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "image",
+              "name": {
+                "en": "Noumi Product Architecture.svg",
+                "zh": "Noumi 产品架构图.svg"
+              },
+              "ext": "SVG",
+              "src": "noumi-product-architecture.svg"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "On-Premises Deployment Network Topology.svg",
+                "zh": "本地化部署网络拓扑图.svg"
+              },
+              "ext": "SVG",
+              "src": "on-premises-deployment-network-topology.svg"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "Secure On-Premises Deployment Network Topology.svg",
+                "zh": "安全本地化部署网络拓扑图.svg"
+              },
+              "ext": "SVG",
+              "src": "secure-on-premises-deployment-network-topology.svg"
+            }
+          ],
+          "reply": {
+            "en": "Polished all 3 diagrams: rebuilt each as a color-coded, presentation-ready visual with consistent typography and clearer zone grouping, while keeping every component, connection, and label unchanged — just the Noumi product architecture, the on-premises deployment network topology, and the backup & recovery architecture.",
+            "zh": "已完成 3 张图的美化：统一了字体和分区配色，用更清晰的色块划分各层/各区域，组件、连线和文案内容全部保留不变——分别是 Noumi 产品架构图、本地化部署网络拓扑图、备份与容灾架构图。"
+          },
+          "duration": "4m 05s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Polished: Noumi Product Architecture",
+                "zh": "美化后：Noumi 产品架构图"
+              },
+              "src": "polished-noumi-product-architecture.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Polished: Backup & Recovery Architecture",
+                "zh": "美化后：备份与容灾架构图"
+              },
+              "src": "polished-backup-recovery-architecture.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Polished: On-Premises Deployment Network Topology",
+                "zh": "美化后：本地化部署网络拓扑图"
+              },
+              "src": "polished-on-premises-deployment-network.jpg"
+            }
+          ]
+        },
+        {
+          "id": "translate-image",
+          "title": {
+            "en": "Translate Text in an Image",
+            "zh": "翻译图片中的文字"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Translate all text in the image into Chinese while preserving the original image structure. Replace \"WhatsApp / Slack / Telegram\" with \"Feishu / WeCom / DingTalk\"",
+            "zh": "把图片里的所有文字翻译成中文，保持原图结构不变。把「WhatsApp / Slack / Telegram」替换成「飞书 / 企微 / 钉钉」"
+          },
+          "inputAttachments": [
+            {
+              "kind": "image",
+              "name": {
+                "en": "Langhub Product Architecture.jpg",
+                "zh": "Langhub 产品架构图.jpg"
+              },
+              "ext": "JPG",
+              "src": "langhub-product-architecture.jpg"
+            }
+          ],
+          "reply": {
+            "en": "Translated all text in the diagram into Chinese and swapped the IM entry points to Feishu / WeCom / DingTalk, keeping the exact same layout and structure.",
+            "zh": "已将图中所有文字翻译成中文，并把 IM 入口替换成飞书 / 企微 / 钉钉，图片结构保持不变。"
+          },
+          "duration": "1m 40s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "Langhub product architecture diagram (Chinese)",
+                "zh": "Langhub 产品架构图（中文版）"
+              },
+              "src": "langhub-product-architecture-zh.jpg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prototype",
+      "icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.6\" y=\"3.6\" width=\"18.8\" height=\"14\" rx=\"2.4\"></rect><path d=\"M2.6 8h18.8\"></path><path d=\"M5 5.8h.01M7.4 5.8h.01\"></path><path d=\"M9 21h6M12 17.6V21\"></path></svg>",
+      "iconColor": "#1e8a8a",
+      "label": {
+        "en": "Prototype & Build",
+        "zh": "原型与搭建"
+      },
+      "cases": [
+        {
+          "id": "frd-to-prototype",
+          "title": {
+            "en": "Interactive Prototype from FRD",
+            "zh": "根据 FRD 生成可交互原型"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "Based on this @FRD.docx and referring to the UI design of this image @reference image.png, generate a usable interactive prototype for me.",
+            "zh": "根据这份 @FRD.docx，并参考这张图片 @reference image.png 的 UI 设计风格，帮我生成一个可用的交互原型。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "isPlaceholder": true,
+              "name": {
+                "en": "FRD.docx",
+                "zh": "FRD.docx"
+              },
+              "ext": "DOC",
+              "src": null
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "Reference Image.jpg",
+                "zh": "参考设计图.jpg"
+              },
+              "ext": "JPG",
+              "src": "noumi-crm-reference.jpg"
+            }
+          ],
+          "reply": {
+            "en": "Generated a fully interactive prototype from the FRD, matching the reference UI's layout and visual style, with real navigation between pages. Click this link to interact with the prototype: https://www.noumi.ai/light-systems/ls-3c5e953500d4fa932e0e1bd2bac28f01/",
+            "zh": "已根据 FRD 生成一版可交互原型，页面布局和视觉风格参考了给定的设计图，页面之间可以真实跳转。点击此链接查看完整原型：https://www.noumi.ai/light-systems/ls-3c5e953500d4fa932e0e1bd2bac28f01/"
+          },
+          "duration": "6m 30s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "ProjectHub prototype — project dashboard",
+                "zh": "ProjectHub 原型——项目仪表盘"
+              },
+              "src": "projecthub-1.jpg"
+            },
+            {
+              "kind": "image",
+              "caption": {
+                "en": "ProjectHub prototype — project detail & Gantt chart",
+                "zh": "ProjectHub 原型——项目详情与甘特图"
+              },
+              "src": "projecthub-2.jpg"
+            }
+          ]
+        },
+        {
+          "id": "usecase-gallery-website",
+          "title": {
+            "en": "Use Cases Gallery Website",
+            "zh": "Use Cases 展示画廊网站"
+          },
+          "type": "A",
+          "prompt": {
+            "en": "I want to build an interactive Use Cases Gallery.\nPlease use the attached @Use-Cases-Gallery-Design-Brief.docx as the functional and interaction requirements.\n1. For the interaction/layout: @UI-claude-page-reference.png is the interaction/layout reference. I like how the categories are presented as tabs at the top. @Noumi-Main-Agent-Orb.html is the Noumi interactive playful icon.\n2. Screenshots @UI-typography.png @UI-bg-color.png @UI-font-color.png are our existing Noumi UI design references. Please follow their overall visual style, spacing, typography, colors, and component design.\n3. The gallery contains five main categories: Discover & Document, Check & Validate, Diagram, Image, Build. Each category contains multiple use cases.\n4. For now, please focus on building the overall UI framework, components, layout, and interactions. I’ll provide the final use case content and copy later, so please use appropriate placeholders for the content at this stage.\nNote: Users should be able to switch between categories from the top navigation, then browse individual use cases from a catalog on the left. The selected use case should be displayed in the main content area.\nPlease make the overall experience polished, simple, and easy to explore.\nFeel free to improve the interaction or layout if you think there is a better approach.",
+            "zh": "我想搭建一个可交互的 Use Cases 展示画廊。\n请以附带的 @Use-Cases-Gallery-Design-Brief.docx 作为功能和交互需求说明。\n1. 交互/布局方面：@UI-claude-page-reference.png 是交互/布局参考图，我很喜欢这种分类以顶部标签形式展示的方式。@Noumi-Main-Agent-Orb.html 是 Noumi 的趣味互动小图标。\n2. 截图 @UI-typography.png @UI-bg-color.png @UI-font-color.png 是我们现有的 Noumi UI 设计参考，请在整体视觉风格、间距、字体排版、色彩和组件设计上参考它们。\n3. 画廊包含五大主分类：调研与文档、核查与验证、流程图、图片、搭建。每个分类下有多个用例。\n4. 目前请先专注搭建整体的 UI 框架、组件、布局和交互，具体用例内容和文案我之后再补充，现阶段先用合适的占位内容代替。\n备注：用户应该可以从顶部导航切换分类，然后从左侧的用例目录浏览各个具体用例，选中的用例需展示在主内容区。\n请让整体体验尽量精致、简洁、易于探索。\n如果你觉得有更好的交互或布局方式，也欢迎自行优化。"
+          },
+          "inputAttachments": [
+            {
+              "kind": "file",
+              "name": {
+                "en": "Use Cases Gallery Design Brief.docx",
+                "zh": "Use Cases Gallery 设计说明.docx"
+              },
+              "ext": "DOC",
+              "src": "use-cases-gallery-design-brief.docx"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "UI-claude-page-reference.png",
+                "zh": "UI-claude-page-reference.png"
+              },
+              "ext": "PNG",
+              "src": "ui-claude-page-reference.png"
+            },
+            {
+              "kind": "file",
+              "name": {
+                "en": "Noumi-Main-Agent-Orb.html",
+                "zh": "Noumi-Main-Agent-Orb.html"
+              },
+              "ext": "HTML",
+              "src": "noumi-main-agent-orb.html"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "UI-typography.png",
+                "zh": "UI-typography.png"
+              },
+              "ext": "PNG",
+              "src": "ui-typography.png"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "UI-bg-color.png",
+                "zh": "UI-bg-color.png"
+              },
+              "ext": "PNG",
+              "src": "ui-bg-color.png"
+            },
+            {
+              "kind": "image",
+              "name": {
+                "en": "UI-font-color.png",
+                "zh": "UI-font-color.png"
+              },
+              "ext": "PNG",
+              "src": "ui-font-color.png"
+            }
+          ],
+          "reply": {
+            "en": "Built the full interactive gallery framework, view live result : https://noumi.ai/#use-cases\n\n==👀 ✍️ Author's note: Yep, the page you're browsing right now was built with Noumi Lightsystem from the requirements prompts and design references above.==",
+            "zh": "已搭建好完整的交互式画廊框架，查看上线结果：https://noumi.ai/#use-cases\n\n==👀 ✍️ 作者按：没错，你现在正在浏览的这个页面，就是 Noumi Lightsystem 根据以上需求提示词和设计参考搭建出来的。=="
+          },
+          "duration": "16m 05s",
+          "outputAttachments": [
+            {
+              "kind": "image",
+              "caption": {
+                "en": "The finished interactive gallery — this very page",
+                "zh": "最终成品——交互式画廊，也就是你正在浏览的这个页面"
+              },
+              "src": "gallery-website-live.jpg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

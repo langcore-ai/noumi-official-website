@@ -5,7 +5,7 @@ import { OfficialDeliverableShowcase } from '@/components/site/official/Official
 import { OfficialHeroImage } from '@/components/site/official/OfficialHeroImage'
 import { OfficialIntroVideo } from '@/components/site/official/OfficialIntroVideo'
 import { OfficialSecurityVisual } from '@/components/site/official/OfficialSecurityVisual'
-import { OfficialUseCasesShowcase } from '@/components/site/official/OfficialUseCasesShowcase'
+import { HomeUseCasesGallery } from '@/components/site/official/home-usecases/HomeUseCasesGallery'
 import { StructuredData } from '@/components/site/StructuredData'
 import { HOME_ASSETS } from '@/lib/site/homepage-assets'
 import { HOME_INTRO_VIDEO_JSON_LD, HOME_JSON_LD } from '@/lib/site/json-ld'
@@ -139,7 +139,7 @@ export default async function HomePage() {
         </section>
         <section className="redesign-use-cases" id="use-cases" aria-label="Use cases">
           <div className="redesign-shell">
-            <OfficialUseCasesShowcase />
+            <HomeUseCasesGallery />
           </div>
         </section>
       </main>

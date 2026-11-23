@@ -78,22 +78,16 @@ for (const width of [390, 768, 1440]) {
   })
 }
 
-test('gallery can resize while its content request is still pending', async ({ page }) => {
+test('native homepage gallery mounts at a narrow viewport without runtime errors', async ({
+  page,
+}) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
-  let release!: () => void
-  const ready = new Promise<void>((resolve) => {
-    release = resolve
-  })
-  await page.route('**/assets/content/manifest.json', async (route) => {
-    await ready
-    await route.continue()
-  })
-  await page.goto('/assets/usecases-gallery/index.html', { waitUntil: 'domcontentloaded' })
   await page.setViewportSize({ width: 390, height: 900 })
-  // Let the gallery's 150ms resize debounce fire before resolving its data.
-  await page.waitForTimeout(250)
-  release()
+  await page.goto('/')
+  await expect(page.locator('.home-usecases iframe')).toHaveCount(0)
   await expect(page.locator('.pill')).toHaveCount(5)
+  await page.locator('.pill').nth(1).click()
+  await expect(page.locator('.case-fade')).toHaveClass(/in/)
   expect(errors).toEqual([])
 })

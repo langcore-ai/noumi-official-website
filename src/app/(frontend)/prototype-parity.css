@@ -230,14 +230,6 @@ a:is(:hover, :focus-visible) .prototype-button-content > * {
 .redesign-use-cases > .redesign-shell:last-child {
   padding: 25px;
 }
-.noumi-usecases-frame {
-  display: block;
-  border: 0;
-  border-radius: 5px;
-  overflow: hidden;
-  background: var(--noumi-lite);
-}
-
 .redesign-final-cta {
   padding: 50px 20px;
   background: url('/assets/redesign/cta-swirl.jpg') center / cover;

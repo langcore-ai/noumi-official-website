@@ -89,9 +89,7 @@ describe('static asset cache headers', () => {
   it('keeps a single Cache-Control on stable-name assets so the first max-age wins', () => {
     for (const pathname of [
       '/assets/fonts/font-0.woff2',
-      '/assets/usecases-gallery/assets/app.js',
-      '/assets/usecases-gallery/index.html',
-      '/assets/usecases-gallery/assets/content/cases/bpmn.json',
+      '/assets/usecases-gallery/assets/cases/bpmn-lead-governance.png',
       '/assets/intro-video/noumi-se-film-1080p.mp4',
       '/assets/about/member-1.jpeg',
     ]) {

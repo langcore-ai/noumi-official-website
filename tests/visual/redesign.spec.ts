@@ -20,15 +20,15 @@ test('homepage follows the new design and reserves the shared header height', as
 })
 
 test('all gallery cases, local images, English copy and accessible lightbox', async ({ page }) => {
-  await page.goto('/assets/usecases-gallery/index.html')
+  await page.goto('/')
   await expect(page.locator('.pill')).toHaveCount(5)
   let count = 0
   for (let cat = 0; cat < 5; cat++) {
     await page.locator('.pill').nth(cat).click()
-    const total = await page.locator('.case-item').count()
+    const total = await page.locator('.sidebar .case-item').count()
     for (let index = 0; index < total; index++) {
-      await page.locator(`.case-item[data-index="${index}"]`).click()
-      await expect(page.locator(`.case-item[data-index="${index}"]`)).toHaveAttribute(
+      await page.locator(`.sidebar .case-item[data-index="${index}"]`).click()
+      await expect(page.locator(`.sidebar .case-item[data-index="${index}"]`)).toHaveAttribute(
         'aria-selected',
         'true',
       )
@@ -124,9 +124,9 @@ test('gallery ignores stored language and cancels obsolete transitions', async (
     localStorage.setItem('noumi-cookie-consent', JSON.stringify({ version: 3, locale: true }))
     localStorage.setItem('noumi-usecases-lang', 'zh')
   })
-  await page.goto('/assets/usecases-gallery/index.html')
+  await page.goto('/')
   await expect(page.locator('.pill')).toHaveCount(5)
-  await expect(page.locator('#heroTitle')).toHaveText('What you can deliver with Noumi')
+  await expect(page.locator('.hero-title')).toHaveText('What you can deliver with Noumi')
   await expect(page.locator('#langSwitch')).toHaveCount(0)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await page.locator('.case-item[data-index="1"]').click()

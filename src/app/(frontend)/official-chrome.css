@@ -631,6 +631,10 @@ body a.noumi-modern-cta:hover {
 }
 
 /* Use Cases FAQ follows the About page's typography and accordion design. */
+.native-use-cases-page .prototype-page.native-use-cases-faq {
+  /* The prototype body background is a warmer tone; keep both side bands on the page paper. */
+  background-color: transparent;
+}
 .native-use-cases-faq > .regular-section {
   width: 100%;
   max-width: 1000px;
@@ -721,16 +725,20 @@ body a.noumi-modern-cta:hover {
   outline: 2px solid #6268ee;
   outline-offset: -4px;
 }
-.native-use-cases-faq .faq-icon-wrap {
+.native-use-cases-page .native-use-cases-faq .faq-icon-wrap {
   position: relative;
   width: 14px;
   height: 14px;
+  min-width: 14px;
+  max-width: 14px;
+  min-height: 14px;
+  max-height: 14px;
   flex-shrink: 0;
   padding: 0;
   background: none;
   border: 0;
 }
-.native-use-cases-faq .faq-horizontal-line {
+.native-use-cases-page .native-use-cases-faq .faq-horizontal-line {
   position: absolute;
   width: 14px;
   height: 2px;
@@ -738,7 +746,7 @@ body a.noumi-modern-cta:hover {
   left: 0;
   background: currentColor;
 }
-.native-use-cases-faq .faq-vertical-line {
+.native-use-cases-page .native-use-cases-faq .faq-vertical-line {
   position: absolute;
   width: 2px;
   height: 14px;

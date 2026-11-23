@@ -90,6 +90,8 @@
 
 /* ---------- Hero ---------- */
 .home-usecases .hero {
+  /* Reset the site-wide .hero padding so the gallery title starts at the panel top. */
+  padding: 0;
   text-align: center;
   margin-bottom: 36px;
 }

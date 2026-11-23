@@ -134,3 +134,17 @@ test('gallery ignores stored language and cancels obsolete transitions', async (
   await expect(page.locator('.case-fade')).toHaveClass(/in/)
   await expect(page.locator('.msg-user')).toContainText('FRD')
 })
+
+test('homepage gallery resets the shared hero padding and use cases FAQ keeps the page paper', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('.home-usecases .hero')).toHaveCSS('padding-top', '0px')
+  await page.goto('/use-cases')
+  const faq = page.locator('.native-use-cases-faq')
+  await expect(faq).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  await expect(faq.locator('.faq-icon-wrap').first()).toHaveCSS('width', '14px')
+  await expect(faq.locator('.faq-vertical-line').first()).toHaveCSS('height', '14px')
+  await expect(faq.locator('.faq-horizontal-line').first()).toHaveCSS('width', '14px')
+  await expect(faq.locator('.faq-horizontal-line').first()).toHaveCSS('height', '2px')
+})

@@ -1,0 +1,142 @@
+.visual {
+  width: min(86%, 520px);
+  min-width: 0;
+  margin: 0 auto;
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+}
+
+.sheet {
+  position: relative;
+  aspect-ratio: 1.62;
+  transform: perspective(1400px) rotateY(-8deg) rotateZ(-4deg);
+  border-radius: 6px;
+  box-shadow:
+    1px 2px 1px #85879a66,
+    0 15px 26px -14px #080b16a6,
+    0 28px 56px -34px #050712;
+}
+.paper,
+.encrypted {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  padding: 6.2%;
+  text-align: left;
+}
+.paper {
+  background: linear-gradient(115deg, #fffefa 0%, #f4f1ec 48%, #e8e6ed 77%, #d6d4e0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #282936;
+}
+.title {
+  font:
+    400 9.8cqw/0.97 Georgia,
+    serif;
+  letter-spacing: -0.052em;
+}
+.excerpt {
+  width: 33cqw;
+  border-top: 1px solid #35314442;
+  margin-top: 3.6cqw;
+  padding-top: 2.4cqw;
+  font:
+    400 clamp(8px, 2.55cqw, 14px)/1.42 var(--ff-body, Arial),
+    sans-serif;
+  color: #52515b;
+}
+.excerpt strong,
+.excerpt span {
+  display: block;
+}
+.excerpt strong {
+  margin-bottom: 0.28em;
+  color: #30303a;
+  font-weight: 600;
+}
+.encrypted {
+  clip-path: inset(0 0 0 59%);
+  background: linear-gradient(113deg, #27253e 20%, #514783 51%, #42396b 72%, #2f2b50);
+  box-shadow: inset 0 0 0 1px #d9d2ff40;
+  animation: encrypt 8s ease-in-out infinite;
+}
+.label,
+.filename,
+.encrypted pre {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55em;
+  color: #e8e8f1;
+  font-size: clamp(9px, 2.35cqw, 12px);
+  line-height: 1.4;
+}
+.encrypted pre {
+  margin: 5% 0 0;
+  color: #d6cef5;
+  font-size: 3.35cqw;
+  line-height: 1.55;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  white-space: pre;
+}
+.light {
+  position: absolute;
+  top: -1.4%;
+  bottom: -1.4%;
+  left: 59%;
+  width: 1.5px;
+  background: linear-gradient(transparent, #fbfaff 8% 92%, transparent);
+  box-shadow:
+    0 0 5px 1px #eee6ff,
+    2px 0 15px 3px #ad94ffb3;
+  animation: scan 8s ease-in-out infinite;
+}
+.filename {
+  margin-top: clamp(24px, 6.6cqw, 34px);
+  text-align: right;
+  color: #c8c8d4;
+  font-size: clamp(10px, 2.3cqw, 12px);
+  letter-spacing: 0.035em;
+}
+@keyframes encrypt {
+  0%,
+  18%,
+  100% {
+    clip-path: inset(0 0 0 59%);
+  }
+  57%,
+  67% {
+    clip-path: inset(0 0 0 42%);
+  }
+}
+@keyframes scan {
+  0%,
+  18%,
+  100% {
+    left: 59%;
+  }
+  57%,
+  67% {
+    left: 42%;
+  }
+}
+@media (max-width: 900px) {
+  .visual {
+    width: min(90%, 480px);
+    margin: 20px auto 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .encrypted,
+  .light {
+    animation: none;
+  }
+}

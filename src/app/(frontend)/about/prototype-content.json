@@ -7,64 +7,76 @@
   ],
   "team": [
     {
-      "name": "Abel zhai",
+      "name": "Abel Zhai",
       "role": "CEO",
       "href": "https://www.linkedin.com/in/zhaixingji/",
-      "image": "/assets/about/member-1.jpeg"
+      "image": "/assets/about/crew/abel-zhai.webp",
+      "portraitScale": 1.34,
+      "portraitOrigin": "50% 8%"
     },
     {
       "name": "Billy Chi",
       "role": "CTO",
       "href": "https://www.linkedin.com/in/billy-chi-98670b231/",
-      "image": "/assets/about/member-2.png"
+      "image": "/assets/about/crew/billy-chi.webp",
+      "portraitScale": 1.39,
+      "portraitOrigin": "50% 8%"
     },
     {
       "name": "Arnold Hu",
       "role": "COO",
       "href": "https://linkedin.com/in/captain1386/?skipRedirect=true",
-      "image": "/assets/about/member-3.jpeg"
+      "image": "/assets/about/crew/arnold-hu.webp",
+      "portraitScale": 1.34,
+      "portraitOrigin": "50% 8%"
     },
     {
       "name": "Tao Yang",
       "role": "Product Lead",
       "href": "https://www.linkedin.com/in/tao-yang-777317289/",
-      "image": "/assets/about/member-4.png"
+      "image": "/assets/about/crew/tao-yang.webp",
+      "portraitScale": 1.19,
+      "portraitOrigin": "50% 0%"
     },
     {
-      "name": "Chunk Liao",
-      "role": "User Expert",
+      "name": "Chuck Liao",
+      "role": "Principal Solutions Advisor",
       "href": "https://www.linkedin.com/in/chuck-liao-bb193a110/",
-      "image": "/assets/about/member-5.png"
+      "image": "/assets/about/crew/chunk-liao.webp",
+      "portraitScale": 1.21,
+      "portraitOrigin": "50% 0%"
     },
     {
       "name": "Grit Zhao",
-      "role": "Product Hunt",
+      "role": "Head of User Strategy",
       "href": "#",
-      "image": "/assets/about/member-6.png"
-    },
-    {
-      "name": "Yoyo Wu",
-      "role": "Product Manager",
-      "href": "https://www.linkedin.com/in/youyou-wu-0b6b16265/",
-      "image": "/assets/about/member-7.png"
+      "image": "/assets/about/crew/grit-zhao.webp",
+      "portraitScale": 1.25,
+      "portraitOrigin": "50% 6%"
     },
     {
       "name": "Kun Jiang",
       "role": "Product Manager",
       "href": "https://www.linkedin.com/in/kun-jiang-b91b17423/",
-      "image": "/assets/about/member-8.png"
+      "image": "/assets/about/crew/kun-jiang.webp",
+      "portraitScale": 1.25,
+      "portraitOrigin": "50% 0%"
     },
     {
       "name": "Ruini Zhang",
-      "role": "Product Lead",
+      "role": "Product Manager",
       "href": "https://www.linkedin.com/in/ruini-zhang-732477376/",
-      "image": "/assets/about/member-9.png"
+      "image": "/assets/about/crew/ruini-zhang.webp",
+      "portraitScale": 1.1,
+      "portraitOrigin": "50% 0%"
     },
     {
       "name": "Huiling Pan",
       "role": "Growth Lead",
       "href": "https://www.linkedin.com/in/huilingpan257/",
-      "image": "/assets/about/member-10.png"
+      "image": "/assets/about/crew/huiling-pan.webp",
+      "portraitScale": 1.25,
+      "portraitOrigin": "50% 6%"
     }
   ],
   "faq": [

@@ -889,7 +889,7 @@
   color: #20211f;
 }
 .redesign-home .redesign-feature-stack > .security-feature {
-  background: #10191d;
+  background: radial-gradient(ellipse at 77% 57%, #313445 0%, #1b232d 35%, #10191d 72%);
   border-color: #1e2b31;
 }
 .redesign-home .security-feature h3 {

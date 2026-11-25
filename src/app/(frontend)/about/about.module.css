@@ -61,23 +61,27 @@
 }
 .team {
   max-width: 1440px;
-  margin: 0 auto;
-  padding: 96px 32px 0;
+  margin: 88px auto 0;
+  padding-inline: 32px;
+  scroll-margin-top: calc(var(--official-header-height, 70px) + 28px);
 }
-.teamHeading {
-  text-align: center;
+.teamHeading,
+.teamGrid {
+  max-width: 980px;
+  margin-inline: auto;
+}
+.teamHeading h2 {
+  font: 500 clamp(26px, 2.5vw, 32px)/1.25 var(--ff-body);
+  letter-spacing: -0.02em;
 }
 .teamGrid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
-  margin: 12px 0 64px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 52px 20px;
+  margin-block: 32px 80px;
 }
 .member {
   min-width: 0;
-  padding: 14px 14px 24px;
-  border-radius: 20px;
-  background: #fff;
 }
 .member > a {
   display: block;
@@ -87,19 +91,15 @@
 .portrait {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  background: #f1f0ec;
+  border-radius: 6px;
+  background: #e8e8e8;
 }
 .portrait img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
-  transition: transform 220ms ease;
-}
-.member a:hover .portrait img {
-  transform: scale(1.025);
 }
 .member a:focus-visible {
   outline: 2px solid #6268ee;
@@ -110,17 +110,23 @@
   display: none;
 }
 .memberCaption {
+  margin-top: 13px;
   text-align: left;
-  margin-top: 20px;
 }
 .memberCaption h3 {
-  font: 500 clamp(16px, 1.4vw, 20px)/1.35 var(--ff-body);
-  letter-spacing: -0.02em;
+  font: 400 18px/1.35 var(--ff-body);
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+.member > a:hover .memberCaption h3,
+.member > a:focus-visible .memberCaption h3 {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .memberCaption p {
-  margin-top: 8px;
+  margin-top: 4px;
   color: #656a66;
-  font: 400 13px/1.5 var(--ff-body);
+  font: 400 16px/1.5 var(--ff-body);
   overflow-wrap: anywhere;
 }
 .recruitment {
@@ -274,16 +280,26 @@
     border-radius: 20px;
   }
   .team {
-    padding: 64px 12px 0;
+    margin-top: 64px;
+    padding-inline: 12px;
+  }
+  .teamHeading,
+  .teamGrid {
+    margin-inline: 6px;
   }
   .teamGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 40px;
+    gap: 32px 18px;
+    margin-block: 20px 56px;
   }
-  .member {
-    padding: 10px 10px 20px;
-    border-radius: 16px;
+  .memberCaption {
+    margin-top: 10px;
+  }
+  .memberCaption h3 {
+    font-size: 18px;
+  }
+  .memberCaption p {
+    font-size: 14px;
   }
   .recruitment {
     grid-template-columns: 1fr;
@@ -305,7 +321,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .portrait img,
   .faqItem,
   .faqIcon::before,
   .faqIcon::after {

@@ -5,11 +5,11 @@ import { AboutFaq } from './AboutFaq'
 import content from './prototype-content.json'
 import styles from './about.module.css'
 
-const title = 'We build tools for the people who know their Craft'
+const title = 'About Noumi'
 
 export function generateMetadata() {
   return createManagedMetadata({
-    title: title + ' - Noumi',
+    title,
     description: content.intro[0],
     pathname: '/about',
   })
@@ -41,7 +41,7 @@ export default async function AboutPage() {
       />
       <main className={styles.page} data-about-prototype>
         <section className={styles.hero} data-about-motion="hero">
-          <Kicker>Company Info</Kicker>
+          <Kicker>About Noumi</Kicker>
           <h1>
             We build tools for the people who know their <em>Craft</em>
           </h1>
@@ -63,9 +63,9 @@ export default async function AboutPage() {
             )
           })}
         </section>
-        <section className={styles.team} id="team" aria-label="Core Crew">
+        <section className={styles.team} id="team" aria-labelledby="team-heading">
           <div className={styles.teamHeading} data-about-motion="crew">
-            <Kicker>Core Crew</Kicker>
+            <h2 id="team-heading">Meet the team</h2>
           </div>
           <div className={styles.teamGrid} data-about-team>
             {content.team.map((member) => {
@@ -77,8 +77,12 @@ export default async function AboutPage() {
                         src={member.image}
                         alt={member.name}
                         loading="lazy"
-                        width={500}
-                        height={500}
+                        style={{
+                          transform: `scale(${member.portraitScale})`,
+                          transformOrigin: member.portraitOrigin,
+                        }}
+                        width={900}
+                        height={675}
                       />
                     </div>
                     <span

@@ -1,15 +1,24 @@
 /** 官网分析配置的默认 PostHog ingest 地址。 */
 export const OFFICIAL_ANALYTICS_DEFAULT_API_HOST = 'https://us.i.posthog.com'
 
+/** 浏览器使用的同域 PostHog ingest 路径；Worker 在该路径下原样转发到 PostHog。 */
+export const OFFICIAL_ANALYTICS_BROWSER_API_PATH = '/ingest'
+
+/** PostHog 应用地址；reverse proxy 下只用于 SDK 的工具栏链接。 */
+export const OFFICIAL_ANALYTICS_UI_HOST = 'https://us.posthog.com'
+
 /** 官网 GA4 Measurement ID。 */
 export const OFFICIAL_GOOGLE_TAG_ID = 'G-TJBXDRBMVM'
 
 /** window 上标记 GA4 初始化是否已完成的字段名。 */
 export const OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG = 'noumiOfficialGoogleTagBootstrapped'
 
-/** 官网浏览器可见的 PostHog 配置；project key 与 host 只保留在服务端。 */
+/** 官网浏览器可见的 PostHog 配置；project key 是公开写 key，host 固定为同域 ingest 路径。 */
 export type PublicOfficialAnalyticsConfig = {
   enabled: boolean
+  apiHost: string | null
+  projectKey: string | null
+  uiHost: string | null
 }
 
 /** 官网分析属性值类型。 */
@@ -62,10 +71,8 @@ export type OfficialGoogleTagConsentPayload = {
   analytics_storage: OfficialGoogleTagConsentValue
 }
 
-/** 浏览器允许上报的官网埋点事件名。 */
+/** 浏览器允许上报的官网埋点事件名；标准页面事件由 posthog-js 自动产生。 */
 export const OFFICIAL_CLIENT_EVENT_NAMES = [
-  '$pageview',
-  '$pageleave',
   'landing_page_viewed',
   'official_cta_clicked',
   'official_page_engagement',
@@ -75,15 +82,6 @@ export const OFFICIAL_CLIENT_EVENT_NAMES = [
 
 /** 只能由服务端在业务成功后上报的官网埋点事件名。 */
 export const OFFICIAL_SERVER_EVENT_NAMES = ['official_invite_request_submitted'] as const
-
-/** 官网可上报的全部埋点事件名。 */
-export const OFFICIAL_ANALYTICS_EVENT_NAMES = [
-  ...OFFICIAL_CLIENT_EVENT_NAMES,
-  ...OFFICIAL_SERVER_EVENT_NAMES,
-] as const
-
-/** 可上报的官网埋点事件名类型。 */
-export type OfficialAnalyticsEventName = (typeof OFFICIAL_ANALYTICS_EVENT_NAMES)[number]
 
 /** 浏览器可上报的官网埋点事件名类型。 */
 export type OfficialClientEventName = (typeof OFFICIAL_CLIENT_EVENT_NAMES)[number]
@@ -128,52 +126,10 @@ const TEXT_VALUE_MAX_LENGTH = 96
 
 const PATH_VALUE_MAX_LENGTH = 160
 
-/** 匿名观测 ID 的最大长度；与中继侧 UUID 校验保持一致的裁剪上限。 */
+/** 外跳归因里匿名 distinct id 的最大长度。 */
 const DISTINCT_ID_VALUE_MAX_LENGTH = 160
 
-
 const PAGE_TITLE_VALUE_MAX_LENGTH = 300
-
-/**
- * 读取官网浏览设备类型。
- * 只依赖公开 viewport 与 UA 数据，不采集更细的设备指纹。
- *
- * @returns 设备类型；未知时返回空串
- */
-export function readOfficialDevice(): string {
-  if (typeof navigator === 'undefined' || !navigator.userAgent) {
-    return ''
-  }
-
-  const userAgent = navigator.userAgent
-  if (/iPad|Tablet/i.test(userAgent) || (/Macintosh/.test(userAgent) && 'ontouchend' in document)) {
-    return 'tablet'
-  }
-  if (/Mobi|Android|iPhone/i.test(userAgent)) {
-    return 'mobile'
-  }
-  if (window.matchMedia?.('(max-width: 767px)').matches) {
-    return 'mobile'
-  }
-  if (window.matchMedia?.('(min-width: 768px)').matches) {
-    return 'desktop'
-  }
-  return ''
-}
-
-/**
- * 读取浏览器 IANA 时区。
- * 只暴露时区名，不采集更细的地理信息。
- *
- * @returns IANA 时区；不可用时返回空串
- */
-export function readOfficialTimezone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || ''
-  } catch {
-    return ''
-  }
-}
 
 /**
  * 判断事件名是否属于浏览器允许上报的埋点集合。
@@ -182,15 +138,6 @@ export function readOfficialTimezone(): string {
  */
 export function isOfficialClientEventName(value: string): value is OfficialClientEventName {
   return (OFFICIAL_CLIENT_EVENT_NAMES as readonly string[]).includes(value)
-}
-
-/**
- * 判断事件名是否属于官网埋点集合。
- * @param value 待判断的事件名
- * @returns 是否为受支持事件名
- */
-export function isOfficialAnalyticsEventName(value: string): value is OfficialAnalyticsEventName {
-  return (OFFICIAL_ANALYTICS_EVENT_NAMES as readonly string[]).includes(value)
 }
 
 /**
@@ -379,39 +326,6 @@ export function sanitizeOfficialAnalyticsProperties(
   }
 
   return sanitizedProperties
-}
-
-/**
- * 从浏览器地址栏提取允许上报的来源参数。
- * @param options 当前地址与 referrer
- * @returns 仅包含允许字段的来源属性
- */
-export function buildOfficialLandingSourceProperties(options: {
-  baseUrl: string
-  referrer?: string | null
-  search: string
-}): OfficialAnalyticsProperties {
-  const properties: OfficialAnalyticsProperties = {}
-  const searchParams = new URLSearchParams(
-    options.search.startsWith('?') ? options.search.slice(1) : options.search,
-  )
-
-  for (const key of OFFICIAL_UTM_KEYS) {
-    const value = searchParams.get(key)?.trim()
-    if (value) {
-      properties[key] = normalizeTextValue(value, TEXT_VALUE_MAX_LENGTH)
-    }
-  }
-
-  const referrer = options.referrer?.trim()
-  if (referrer) {
-    const referrerOrigin = normalizeOriginLike(referrer, options.baseUrl)
-    if (referrerOrigin) {
-      properties.referrer_origin = referrerOrigin
-    }
-  }
-
-  return properties
 }
 
 /**
@@ -613,17 +527,32 @@ window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); 
 }
 
 /**
- * 解析浏览器可见的开关；project key 与 ingest host 只保留在服务端。
+ * 解析浏览器可见的 PostHog 配置。
+ * project key 是公开写 key；浏览器只拿到同域 ingest 路径，不直接连接 PostHog。
+ *
  * @param input 原始环境配置
- * @returns 浏览器可见配置
+ * @returns 浏览器配置；关闭时不下发 key
  */
 export function buildPublicOfficialAnalyticsConfig(input: {
   enabledEnv?: string | null
   projectKey?: string | null
 }): PublicOfficialAnalyticsConfig {
+  const projectKey = input.projectKey?.trim() || ''
+  const enabled = /^(1|true|yes|on)$/i.test(input.enabledEnv?.trim() || '') && Boolean(projectKey)
+
+  if (!enabled) {
+    return {
+      apiHost: null,
+      enabled: false,
+      projectKey: null,
+      uiHost: null,
+    }
+  }
+
   return {
-    enabled:
-      /^(1|true|yes|on)$/i.test(input.enabledEnv?.trim() || '') &&
-      Boolean(input.projectKey?.trim()),
+    apiHost: OFFICIAL_ANALYTICS_BROWSER_API_PATH,
+    enabled: true,
+    projectKey,
+    uiHost: OFFICIAL_ANALYTICS_UI_HOST,
   }
 }

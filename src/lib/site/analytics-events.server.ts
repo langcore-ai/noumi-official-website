@@ -3,25 +3,11 @@ import { z } from 'zod'
 
 import {
   OFFICIAL_ANALYTICS_DEFAULT_API_HOST,
-  OFFICIAL_CLIENT_EVENT_NAMES,
   OFFICIAL_SERVER_EVENT_NAMES,
-  OFFICIAL_UTM_KEYS,
   normalizeOfficialPagePath,
   officialPageGroup,
 } from './analytics'
 import { OFFICIAL_SITE_URL } from './official-site'
-
-/** 官网事件接口允许的最大请求体字节数。 */
-export const OFFICIAL_ANALYTICS_MAX_BODY_BYTES = 16 * 1024
-
-/** 单个批次允许的最大事件数。 */
-export const OFFICIAL_ANALYTICS_MAX_BATCH_SIZE = 20
-
-/** 浏览器必须携带的自定义请求头，跨站简单请求无法伪造。 */
-export const OFFICIAL_ANALYTICS_REQUEST_HEADER = 'x-noumi-analytics'
-
-/** 事件发生时间与服务端当前时间的最大偏差。 */
-const MAX_EVENT_AGE_MS = 30 * 60 * 1000
 
 const ANONYMOUS_ID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu
@@ -29,15 +15,23 @@ const ANONYMOUS_ID_PATTERN =
 const label = z.string().min(1).max(96)
 const pathValue = z.string().min(1).max(160)
 
-/** 官网事件属性白名单；不接受原始 URL、query、邮箱、正文或自由文本。 */
+/** 服务端事件属性白名单；不接受原始 URL、query、邮箱、正文或自由文本。 */
 export const officialEventPropertiesSchema = z
   .object({
     action: label.optional(),
     cta_id: label.optional(),
     country: label.optional(),
     device: label.optional(),
-    device_fp: z.string().regex(/^[0-9a-f]{8,64}$/iu).optional(),
-    duration_ms: z.number().int().min(0).max(24 * 60 * 60 * 1000).optional(),
+    device_fp: z
+      .string()
+      .regex(/^[0-9a-f]{8,64}$/iu)
+      .optional(),
+    duration_ms: z
+      .number()
+      .int()
+      .min(0)
+      .max(24 * 60 * 60 * 1000)
+      .optional(),
     outcome: label.optional(),
     page_group: label.optional(),
     page_path: pathValue.optional(),
@@ -60,33 +54,13 @@ export const officialEventPropertiesSchema = z
     utm_term: label.optional(),
     timezone: label.optional(),
     visitor_id: z.uuid().optional(),
-    $session_id: z.uuid().optional(),
-    $window_id: z.uuid().optional(),
-  })
-  .strict()
-
-/** 浏览器可提交的单个事件。 */
-export const officialClientEventSchema = z
-  .object({
-    event: z.enum(OFFICIAL_CLIENT_EVENT_NAMES),
-    eventId: z.uuid(),
-    occurredAt: z.iso.datetime(),
-    anonymousId: z.uuid(),
-    properties: officialEventPropertiesSchema,
-  })
-  .strict()
-
-/** 浏览器事件批量请求体。 */
-export const officialAnalyticsBatchSchema = z
-  .object({
-    events: z.array(officialClientEventSchema).min(1).max(OFFICIAL_ANALYTICS_MAX_BATCH_SIZE),
   })
   .strict()
 
 /** 服务端事件名。 */
 export const officialServerEventNameSchema = z.enum(OFFICIAL_SERVER_EVENT_NAMES)
 
-/** 服务端 PostHog 配置；project key 与 host 不下发浏览器。 */
+/** 服务端 PostHog 配置；仅用于服务端事实事件。 */
 export type PostHogServerConfig = {
   apiHost: string
   enabled: boolean
@@ -155,73 +129,11 @@ export function buildPostHogServerConfig(input: {
 }
 
 /**
- * 把浏览器事件转换为 PostHog batch 事件。
- * 页面 URL、host、path 由服务端按可信 origin 构造，浏览器不能覆盖。
- *
- * 中继同时承担两件事：
- * - 用服务端读到的真实客户端 IP 覆盖 `$ip`，让 PostHog 的 GeoIP 变换能按访客
- *   所在地解析，而不是按 Worker 出口地址（断点清单 B2/B3）。
- * - 不再写 `$geoip_disable`，否则 GeoIP 变换会直接跳过（B3）。
- *
- * @param events 已校验的浏览器事件
- * @param officialOrigin 官网可信 origin
- * @param clientIp 服务端读到的客户端 IP；为空时无法做 GeoIP，退化为禁用
- * @returns PostHog batch 事件
- */
-export function buildClientPostHogEvents(
-  events: z.infer<typeof officialClientEventSchema>[],
-  officialOrigin: string,
-  clientIp: string,
-  country = '',
-): PostHogBatchEvent[] {
-  return events.map((event) => {
-    const pagePath = normalizeOfficialPagePath(event.properties.page_path || '/')
-    const pageUrl = new URL(pagePath, officialOrigin)
-    // `$current_url` 只附加白名单内的 UTM，保留渠道信息但绝不带任意 query（W6）。
-    for (const key of OFFICIAL_UTM_KEYS) {
-      const value = event.properties[key]
-      if (value) {
-        pageUrl.searchParams.set(key, value)
-      }
-    }
-
-    return {
-      event: event.event,
-      distinct_id: event.anonymousId,
-      uuid: event.eventId,
-      timestamp: event.occurredAt,
-      properties: {
-        ...event.properties,
-        page_path: pagePath,
-        page_group: event.properties.page_group || officialPageGroup(pagePath),
-        $current_url: pageUrl.href,
-        $pathname: pageUrl.pathname,
-        $host: pageUrl.host,
-        // PostHog 的“直接访问 vs 自然搜索”依赖 `$referrer`；这里只放白名单
-        // origin，浏览器无法注入任意 URL（W1）。
-        ...(event.properties.referrer_origin
-          ? { $referrer: event.properties.referrer_origin }
-          : {}),
-        ...(clientIp
-          ? { $ip: clientIp }
-          : // 没有可信 IP 时显式关闭，避免 PostHog 用 Worker 出口地址定位。
-            { $geoip_disable: true }),
-        // 国家取自 Cloudflare `CF-IPCountry` 请求头，由服务端写入，
-        // 浏览器传的 country 属性不可信时以服务端值为准。
-        ...(country ? { country } : {}),
-        $process_person_profile: true,
-        app_source: 'noumi-official',
-        schema_version: 1,
-      },
-    }
-  })
-}
-
-/**
  * 投递单个服务端事件；在业务提交成功后调用，失败不影响业务结果。
  *
  * @param config 服务端配置
  * @param input 事件事实
+ * @param send fetch 实现，便于测试注入
  * @returns 是否成功送达
  */
 export async function captureOfficialServerEvent(
@@ -234,6 +146,7 @@ export async function captureOfficialServerEvent(
     clientIp?: string
     properties?: Record<string, unknown>
   },
+  send: typeof fetch = fetch,
 ): Promise<boolean> {
   const parsedProperties = officialEventPropertiesSchema.safeParse(input.properties ?? {})
   if (!parsedProperties.success || !ANONYMOUS_ID_PATTERN.test(input.anonymousId)) {
@@ -242,40 +155,30 @@ export async function captureOfficialServerEvent(
 
   const pagePath = normalizeOfficialPagePath(parsedProperties.data.page_path || '/invite')
   const pageUrl = new URL(pagePath, OFFICIAL_SITE_URL)
-  return sendPostHogBatch(config, [
-    {
-      event: input.event,
-      distinct_id: input.anonymousId,
-      uuid: input.eventId,
-      timestamp: input.occurredAt.toISOString(),
-      properties: {
-        ...parsedProperties.data,
-        page_path: pagePath,
-        page_group: officialPageGroup(pagePath),
-        $current_url: pageUrl.href,
-        $pathname: pageUrl.pathname,
-        $host: pageUrl.host,
-        ...(input.clientIp
-          ? { $ip: input.clientIp }
-          : { $geoip_disable: true }),
-        $process_person_profile: true,
-        app_source: 'noumi-official',
-        schema_version: 1,
+  return sendPostHogBatch(
+    config,
+    [
+      {
+        event: input.event,
+        distinct_id: input.anonymousId,
+        uuid: input.eventId,
+        timestamp: input.occurredAt.toISOString(),
+        properties: {
+          ...parsedProperties.data,
+          page_path: pagePath,
+          page_group: officialPageGroup(pagePath),
+          $current_url: pageUrl.href,
+          $pathname: pageUrl.pathname,
+          $host: pageUrl.host,
+          ...(input.clientIp ? { $ip: input.clientIp } : { $geoip_disable: true }),
+          $process_person_profile: true,
+          app_source: 'noumi-official',
+          schema_version: 1,
+        },
       },
-    },
-  ])
-}
-
-/**
- * 判断事件时间是否落在允许窗口内。
- *
- * @param occurredAt ISO 时间
- * @param now 当前时间
- * @returns 是否可以接受
- */
-export function isEventTimestampAcceptable(occurredAt: string, now = Date.now()): boolean {
-  const timestamp = Date.parse(occurredAt)
-  return Number.isFinite(timestamp) && Math.abs(now - timestamp) <= MAX_EVENT_AGE_MS
+    ],
+    send,
+  )
 }
 
 /**

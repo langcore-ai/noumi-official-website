@@ -2,40 +2,48 @@ import React from 'react'
 import { act, cleanup, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
+const sdk = vi.hoisted(() => ({
+  capture: vi.fn(),
+  get_distinct_id: vi.fn(),
+  init: vi.fn(),
+}))
+
 vi.mock('next/navigation', () => ({ usePathname: () => '/' }))
+vi.mock('posthog-js', () => ({ default: sdk }))
 vi.mock('@/lib/site/replay/recorder', () => ({ trackOfficialReplay: vi.fn() }))
+vi.mock('@/lib/site/device-fingerprint', () => ({
+  readDeviceFingerprint: vi.fn(async () => 'abcdef012345'),
+}))
 
 import { OfficialAnalyticsProvider } from '@/components/site/OfficialAnalyticsProvider'
 import { clearOfficialFirstTouch } from '@/lib/site/attribution'
-import { writeStoredConsent } from '@/lib/site/consent'
+import type { PublicOfficialAnalyticsConfig } from '@/lib/site/analytics'
 
-type RelayBody = {
-  events: Array<{
-    anonymousId: string
-    event: string
-    eventId: string
-    occurredAt: string
-    properties: Record<string, unknown>
-  }>
+const VISITOR_ID = '0193f5e0-1111-4111-8111-aaaaaaaaaaaa'
+
+const ENABLED_CONFIG: PublicOfficialAnalyticsConfig = {
+  apiHost: '/ingest',
+  enabled: true,
+  projectKey: 'phc_test',
+  uiHost: 'https://us.posthog.com',
 }
 
-const relayPayloads: RelayBody[] = []
+const DISABLED_CONFIG: PublicOfficialAnalyticsConfig = {
+  apiHost: null,
+  enabled: false,
+  projectKey: null,
+  uiHost: null,
+}
 
 /**
- * 拦截官网同源接口：config 返回开关，events 记录批次。
- *
- * @param enabled 埋点开关
+ * 拦截配置接口。
+ * @param config 返回的配置
  * @returns fetch 实现
  */
-function stubRelayFetch(enabled: boolean) {
-  const impl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = String(input)
-    if (url.endsWith('/api/site/analytics/config')) {
-      return Response.json({ enabled })
-    }
-    if (url.endsWith('/api/site/analytics/events')) {
-      relayPayloads.push(JSON.parse(String(init?.body)) as RelayBody)
-      return new Response(null, { status: 204 })
+function stubConfig(config: PublicOfficialAnalyticsConfig) {
+  const impl = vi.fn(async (input: RequestInfo | URL) => {
+    if (String(input).endsWith('/api/site/analytics/config')) {
+      return Response.json(config)
     }
     return new Response(null, { status: 404 })
   })
@@ -43,14 +51,25 @@ function stubRelayFetch(enabled: boolean) {
   return impl
 }
 
+/**
+ * 写入官网预览域名的访客 Cookie。
+ */
+function setVisitorCookie() {
+  document.cookie = `noumi_visitor_id_preview=${VISITOR_ID}; Path=/`
+}
+
 beforeEach(() => {
   localStorage.clear()
+  sessionStorage.clear()
   clearOfficialFirstTouch()
   window.history.replaceState({}, '', '/')
-  sessionStorage.clear()
-  relayPayloads.length = 0
-  document.cookie = 'noumi_analytics_consent=; Path=/; Max-Age=0'
-  vi.clearAllMocks()
+  document.cookie = 'noumi_visitor_id_preview=; Path=/; Max-Age=0'
+  document.cookie = 'noumi_visitor_id=; Path=/; Max-Age=0'
+  setVisitorCookie()
+  sdk.capture.mockReset()
+  sdk.get_distinct_id.mockReset()
+  sdk.get_distinct_id.mockReturnValue(VISITOR_ID)
+  sdk.init.mockReset()
 })
 
 afterEach(() => {
@@ -58,154 +77,106 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-it('sends the first page view through the same-origin relay after consent', async () => {
-  const fetchImpl = stubRelayFetch(true)
+it('initializes posthog against the same-origin ingest path', async () => {
+  const fetchImpl = stubConfig(ENABLED_CONFIG)
+
   render(
     <OfficialAnalyticsProvider>
       <div>Website</div>
     </OfficialAnalyticsProvider>,
   )
-  await waitFor(() =>
-    expect(fetchImpl.mock.calls.some(([url]) => String(url).includes('/config'))).toBe(true),
-  )
-  expect(relayPayloads).toHaveLength(0)
 
-  act(() => writeStoredConsent(true, true, true))
-
-  await waitFor(() =>
-    expect(relayPayloads.flatMap((payload) => payload.events.map((e) => e.event))).toContain(
-      '$pageview',
-    ),
-  )
-  const events = relayPayloads.flatMap((payload) => payload.events)
-  expect(events.filter((event) => event.event === '$pageview')).toHaveLength(1)
-  expect(events.filter((event) => event.event === 'landing_page_viewed')).toHaveLength(1)
-
-  const configCall = fetchImpl.mock.calls.find(([url]) => String(url).includes('/config'))
-  const eventsCall = fetchImpl.mock.calls.find(([url]) => String(url).includes('/events'))
-  expect(configCall?.[1]).toMatchObject({ cache: 'no-store' })
-  expect(eventsCall?.[1]).toMatchObject({
-    credentials: 'same-origin',
-    keepalive: true,
-    method: 'POST',
+  await waitFor(() => expect(sdk.init).toHaveBeenCalledTimes(1))
+  const [projectKey, options] = sdk.init.mock.calls[0]
+  expect(projectKey).toBe('phc_test')
+  expect(options).toMatchObject({
+    advanced_disable_decide: true,
+    api_host: '/ingest',
+    autocapture: false,
+    capture_pageleave: true,
+    capture_pageview: 'history_change',
+    cross_subdomain_cookie: false,
+    disable_session_recording: true,
+    disable_surveys: true,
+    persistence: 'localStorage',
+    persistence_name: 'noumi_website',
+    person_profiles: 'always',
+    ui_host: 'https://us.posthog.com',
   })
-  expect((eventsCall?.[1]?.headers as Record<string, string>)['x-noumi-analytics']).toBe('1')
+  expect(options.bootstrap).toEqual({ distinctID: VISITOR_ID, isIdentifiedID: false })
+
+  await waitFor(() => expect(sdk.capture).toHaveBeenCalledWith('landing_page_viewed', {}))
+  expect(sdk.capture.mock.calls.map(([eventName]) => eventName)).not.toContain('$pageview')
+  expect(fetchImpl).toHaveBeenCalledWith(
+    '/api/site/analytics/config',
+    expect.objectContaining({ cache: 'no-store' }),
+  )
 })
 
-it('sends events before any cookie choice is made', async () => {
-  stubRelayFetch(true)
+it('does not initialize when analytics is disabled', async () => {
+  const fetchImpl = stubConfig(DISABLED_CONFIG)
+
   render(
     <OfficialAnalyticsProvider>
       <div>Website</div>
     </OfficialAnalyticsProvider>,
   )
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
-  const events = relayPayloads.flatMap((payload) => payload.events)
-  expect(events.filter((event) => event.event === '$pageview')).toHaveLength(1)
-  expect(events.filter((event) => event.event === 'landing_page_viewed')).toHaveLength(1)
+
+  await waitFor(() => expect(fetchImpl).toHaveBeenCalled())
+  await act(async () => {})
+  expect(sdk.init).not.toHaveBeenCalled()
+  expect(sdk.capture).not.toHaveBeenCalled()
 })
 
-it('keeps sending after the Necessary-only choice', async () => {
-  stubRelayFetch(true)
+it('enriches SDK events without dropping SDK-owned fields', async () => {
+  window.history.replaceState({}, '', '/?utm_source=linkedin&utm_medium=social&utm_campaign=q4')
+  stubConfig(ENABLED_CONFIG)
+
   render(
     <OfficialAnalyticsProvider>
-      <a
-        data-analytics-cta-id="pricing_card"
-        data-analytics-event="official_cta_clicked"
-        href="#pricing"
-        id="necessary-cta"
-      >
-        Pricing
-      </a>
+      <div>Website</div>
     </OfficialAnalyticsProvider>,
   )
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
-  const firstAnonymousId = relayPayloads[0]?.events[0]?.anonymousId
 
-  act(() => writeStoredConsent(false, true, false))
-  act(() => {
-    const link = document.getElementById('necessary-cta') as HTMLAnchorElement
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+  await waitFor(() => expect(sdk.init).toHaveBeenCalledTimes(1))
+  const options = sdk.init.mock.calls[0][1]
+  await waitFor(() => expect(options.sanitize_properties({}).device_fp).toBe('abcdef012345'))
+
+  const enriched = options.sanitize_properties({
+    $browser: 'Chrome',
+    $browser_language: 'en-US',
+    $current_url:
+      'https://noumi.test/pricing?utm_source=linkedin&utm_medium=social&utm_campaign=q4',
+    $pathname: '/pricing',
+    $prev_pageview_max_scroll_percentage: 42,
+    $referrer: 'https://www.google.com/search?q=noumi',
+    gclid: 'test123',
   })
 
-  await waitFor(() =>
-    expect(
-      relayPayloads
-        .flatMap((payload) => payload.events)
-        .some((event) => event.event === 'official_cta_clicked'),
-    ).toBe(true),
-  )
-
-  const ctaEvent = relayPayloads
-    .flatMap((payload) => payload.events)
-    .find((event) => event.event === 'official_cta_clicked')
-  // 关闭可选 cookie 不轮换身份，前后仍属同一访客。
-  expect(ctaEvent?.anonymousId).toBe(firstAnonymousId)
-})
-
-it('sends nothing when the relay config is disabled', async () => {
-  stubRelayFetch(false)
-  writeStoredConsent(true, true, true)
-  render(
-    <OfficialAnalyticsProvider>
-      <div>Website</div>
-    </OfficialAnalyticsProvider>,
-  )
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 120))
-  })
-  expect(relayPayloads).toHaveLength(0)
-})
-
-it('never exposes the PostHog project key to the browser config', async () => {
-  const fetchImpl = stubRelayFetch(true)
-  writeStoredConsent(true, true, true)
-  render(
-    <OfficialAnalyticsProvider>
-      <div>Website</div>
-    </OfficialAnalyticsProvider>,
-  )
-  await waitFor(() =>
-    expect(fetchImpl.mock.calls.some(([url]) => String(url).includes('/config'))).toBe(true),
-  )
-  expect(JSON.stringify(fetchImpl.mock.calls.map(([url]) => String(url)))).not.toContain('posthog')
-})
-
-it('attaches first-touch UTM context to every relayed event', async () => {
-  window.history.replaceState(
-    {},
-    '',
-    '/?utm_source=linkedin&utm_medium=social&utm_campaign=q4',
-  )
-  stubRelayFetch(true)
-  render(
-    <OfficialAnalyticsProvider>
-      <div>Website</div>
-    </OfficialAnalyticsProvider>,
-  )
-  await waitFor(() => expect(relayPayloads).toHaveLength(0))
-
-  act(() => writeStoredConsent(true, true, true))
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
-
-  const pageView = relayPayloads
-    .flatMap((payload) => payload.events)
-    .find((event) => event.event === '$pageview')
-  expect(pageView?.properties).toMatchObject({
+  expect(enriched).toMatchObject({
+    $browser: 'Chrome',
+    $browser_language: 'en-US',
+    $prev_pageview_max_scroll_percentage: 42,
+    $referrer: 'https://www.google.com',
+    app_source: 'noumi-official',
+    device_fp: 'abcdef012345',
     first_touch_campaign: 'q4',
     first_touch_landing_page: '/',
     first_touch_medium: 'social',
     first_touch_source: 'linkedin',
+    gclid: 'test123',
+    page_group: 'pricing',
+    page_path: '/pricing',
     utm_campaign: 'q4',
     utm_medium: 'social',
     utm_source: 'linkedin',
+    visitor_id: VISITOR_ID,
   })
 })
 
-it('adds attribution params when a product CTA is clicked', async () => {
+it('adds attribution params with the SDK distinct id', async () => {
   window.history.replaceState({}, '', '/?utm_source=newsletter&utm_campaign=apollo')
-  stubRelayFetch(true)
-  act(() => writeStoredConsent(true, true, true))
+  stubConfig(ENABLED_CONFIG)
 
   render(
     <OfficialAnalyticsProvider>
@@ -221,43 +192,22 @@ it('adds attribution params when a product CTA is clicked', async () => {
     </OfficialAnalyticsProvider>,
   )
 
+  await waitFor(() => expect(sdk.init).toHaveBeenCalledTimes(1))
   const link = document.getElementById('cta') as HTMLAnchorElement
   act(() => {
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
   })
 
   const params = new URL(link.href).searchParams
+  expect(params.get('posthog_anonymous_distinct_id')).toBe(VISITOR_ID)
+  expect(params.get('visitor_id')).toBe(VISITOR_ID)
   expect(params.get('utm_source')).toBe('newsletter')
   expect(params.get('utm_campaign')).toBe('apollo')
   expect(params.get('first_touch_source')).toBe('newsletter')
   expect(params.get('official_cta_id')).toBe('home_hero_try_free')
   expect(params.get('source_surface')).toBe('official')
-})
-
-it('keeps the landing UTM after in-app navigation and later consent', async () => {
-  window.history.replaceState({}, '', '/?utm_source=cold-email&utm_campaign=apollo')
-  stubRelayFetch(true)
-  render(
-    <OfficialAnalyticsProvider>
-      <div>Website</div>
-    </OfficialAnalyticsProvider>,
+  expect(sdk.capture).toHaveBeenCalledWith(
+    'official_cta_clicked',
+    expect.objectContaining({ cta_id: 'home_hero_try_free', placement: 'hero' }),
   )
-  await waitFor(() => expect(relayPayloads).toHaveLength(0))
-
-  // 用户先站内翻页，之后才在 cookie 面板同意。
-  act(() => {
-    window.history.pushState({}, '', '/pricing')
-    window.dispatchEvent(new PopStateEvent('popstate'))
-  })
-  act(() => writeStoredConsent(true, true, true))
-  await waitFor(() => expect(relayPayloads.length).toBeGreaterThan(0))
-
-  const pageView = relayPayloads
-    .flatMap((payload) => payload.events)
-    .find((event) => event.event === '$pageview')
-  expect(pageView?.properties).toMatchObject({
-    first_touch_campaign: 'apollo',
-    first_touch_landing_page: '/',
-    first_touch_source: 'cold-email',
-  })
 })

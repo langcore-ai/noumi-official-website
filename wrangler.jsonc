@@ -24,7 +24,7 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    "run_worker_first": ["/assets/intro-video/noumi-se-film-1080p.mp4"],
+    "run_worker_first": ["/assets/intro-video/noumi-se-film-1080p.mp4", "/ingest/*"],
   },
   "triggers": {
     "crons": ["*/5 * * * *"],

@@ -33,7 +33,12 @@ beforeEach(() => {
     'fetch',
     vi.fn().mockResolvedValue({
       ok: true,
-      json: async (): Promise<PublicOfficialAnalyticsConfig> => ({ enabled: false }),
+      json: async (): Promise<PublicOfficialAnalyticsConfig> => ({
+        apiHost: null,
+        enabled: false,
+        projectKey: null,
+        uiHost: null,
+      }),
     }),
   )
 })

@@ -72,3 +72,33 @@ it('serves Preview pages directly without stale snapshot reads or writes', async
   expect(get).not.toHaveBeenCalled()
   expect(put).not.toHaveBeenCalled()
 })
+
+it('proxies PostHog ingest before redirects, snapshots and OpenNext', async () => {
+  vi.mocked(openNext.fetch).mockClear()
+  const readSnapshot = vi.fn()
+  const env = { R2: { get: readSnapshot } } as unknown as Parameters<typeof worker.fetch>[1]
+  const ctx = { waitUntil: vi.fn() } as unknown as Parameters<typeof worker.fetch>[2]
+  const upstream = vi.fn(
+    async (_input: RequestInfo | URL, _init?: RequestInit) => new Response('proxied'),
+  )
+  vi.stubGlobal('fetch', upstream)
+
+  const response = await worker.fetch(
+    new Request('https://noumi.ai/ingest/e/', {
+      body: '{"event":"$pageview"}',
+      headers: { 'cf-connecting-ip': '203.0.113.9', 'content-type': 'application/json' },
+      method: 'POST',
+    }),
+    env,
+    ctx,
+  )
+
+  expect(await response.text()).toBe('proxied')
+  expect(String(upstream.mock.calls[0]?.[0])).toBe('https://us.i.posthog.com/e/')
+  expect(new Headers(upstream.mock.calls[0]?.[1]?.headers).get('x-forwarded-for')).toBe(
+    '203.0.113.9',
+  )
+  expect(readSnapshot).not.toHaveBeenCalled()
+  expect(openNext.fetch).not.toHaveBeenCalled()
+  vi.unstubAllGlobals()
+})

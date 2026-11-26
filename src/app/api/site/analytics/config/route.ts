@@ -34,10 +34,10 @@ async function readRuntimeEnv(key: 'POSTHOG_ENABLED' | 'POSTHOG_PROJECT_KEY'): P
 }
 
 /**
- * 返回浏览器可见的 PostHog 开关。
- * project key 与 ingest host 不下发浏览器，只由同源事件接口使用。
+ * 返回浏览器可用的 PostHog 配置。
+ * key 是公开写 token；ingest host 固定为同域 `/ingest`，不直连 PostHog。
  *
- * @returns 埋点开关
+ * @returns 埋点配置
  */
 export async function GET() {
   const [enabledEnv, projectKey] = await Promise.all([

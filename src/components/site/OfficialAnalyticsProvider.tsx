@@ -1,5 +1,4 @@
 'use client'
-import { createBrowserUuid } from '@/lib/site/browser-uuid'
 
 import { usePathname } from 'next/navigation'
 import {
@@ -19,8 +18,6 @@ import {
   buildOfficialOutboundAttributionParams,
   isOfficialClientEventName,
   normalizeOfficialPagePath,
-  readOfficialDevice,
-  readOfficialTimezone,
   officialPageGroup,
   OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG,
   OFFICIAL_GOOGLE_TAG_ID,
@@ -31,11 +28,6 @@ import {
   type PublicOfficialAnalyticsConfig,
 } from '@/lib/site/analytics'
 import { resolveOfficialFirstTouch } from '@/lib/site/attribution'
-import {
-  readOfficialAnonymousId,
-  readOfficialBrowserSession,
-  touchOfficialBrowserSession,
-} from '@/lib/site/analytics-identity'
 import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 import { readDeviceFingerprint } from '@/lib/site/device-fingerprint'
 import { trackOfficialReplay } from '@/lib/site/replay/recorder'
@@ -45,16 +37,11 @@ import { OFFICIAL_PRODUCT_AUTH_URL } from '@/lib/site/official-site'
 /** Landing page 视图仅在一个会话内记一次。 */
 const LANDING_PAGE_VIEWED_SESSION_KEY = 'noumi:official:landing_page_viewed'
 
-/** 事件上报接口路径与自定义请求头，服务端据此拒绝跨站简单请求。 */
-const ANALYTICS_EVENTS_ENDPOINT = '/api/site/analytics/events'
-const ANALYTICS_REQUEST_HEADER = 'x-noumi-analytics'
+/** SDK 初始化前最多缓冲的事件数；初始化失败时避免无限增长。 */
+const MAX_PENDING_CAPTURES = 50
 
-/** 小批量合并窗口与单批上限，与接口 20 条上限保持一致。 */
-const FLUSH_DELAY_MS = 50
-const MAX_BATCH_SIZE = 20
-
-/** $pageleave 总停留时长上限，避免长时间挂机页面拉高均值。 */
-const MAX_PAGE_DURATION_MS = 24 * 60 * 60 * 1000
+/** PostHog 持久化命名空间；隔离第一代 SDK 的本地状态。 */
+const POSTHOG_PERSISTENCE_NAME = 'noumi_website'
 
 type GoogleTagCommand = [command: string, ...args: unknown[]]
 
@@ -65,13 +52,14 @@ type GoogleTagWindow = Window &
     [OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG]?: boolean
   }
 
-type QueuedEvent = {
-  anonymousId: string
-  event: OfficialClientEventName
-  eventId: string
-  occurredAt: string
-  properties: OfficialAnalyticsProperties
+/** 官网只依赖 posthog-js 的 capture 与 distinct id，避免把整个 SDK 类型带进组件。 */
+type PostHogClient = {
+  capture: (eventName: string, properties?: Record<string, unknown>) => void
+  get_distinct_id: () => string
 }
+
+/** SDK 初始化前缓冲的事件。 */
+type PendingCapture = [eventName: OfficialClientEventName, properties: OfficialAnalyticsProperties]
 
 /** 官网埋点上下文。 */
 type OfficialAnalyticsContextValue = {
@@ -88,8 +76,8 @@ const OfficialAnalyticsContext = createContext<OfficialAnalyticsContextValue>({
 })
 
 /**
- * 读取官网公开埋点开关。
- * @returns 埋点开关；失败时返回关闭状态
+ * 读取官网公开埋点配置。
+ * @returns 埋点配置；失败时返回关闭状态
  */
 async function loadOfficialAnalyticsConfig(): Promise<PublicOfficialAnalyticsConfig> {
   const response = await fetch('/api/site/analytics/config', {
@@ -125,19 +113,41 @@ function ensureOfficialGoogleTag() {
 }
 
 /**
+ * 只保留来源 URL 的 origin；`$direct` 与空值原样返回。
+ *
+ * @param value 原始来源
+ * @returns origin 或空串
+ */
+function readReferrerOrigin(value: unknown): string {
+  if (typeof value !== 'string' || !value || value === '$direct') {
+    return ''
+  }
+
+  try {
+    return new URL(value).origin
+  } catch {
+    return ''
+  }
+}
+
+/**
  * 追加归因参数；已有参数不覆盖。
  * UTM、首触来源与匿名身份对所有产品侧 CTA 都写入。
  *
  * @param url 外跳链接
- * @param input 首触归因与 CTA 标识
+ * @param input 首触归因、CTA 标识与当前 distinct id
  * @returns 追加归因后的链接
  */
 function buildAttributedOutboundUrl(
   url: URL,
-  input: { ctaId?: string | null; firstTouch: OfficialFirstTouch | null },
+  input: {
+    ctaId?: string | null
+    distinctId: string
+    firstTouch: OfficialFirstTouch | null
+  },
 ): URL {
   const params = buildOfficialOutboundAttributionParams({
-    anonymousDistinctId: readOfficialAnonymousId(),
+    anonymousDistinctId: input.distinctId,
     visitorId: readSharedVisitorId(),
     baseUrl: window.location.origin,
     ctaId: input.ctaId,
@@ -154,8 +164,11 @@ function buildAttributedOutboundUrl(
 }
 
 /**
- * 提供官网分析上下文与同源事件中继。
- * 浏览器不持有 PostHog project key 或 ingest host，所有事件经官网接口转发。
+ * 提供官网分析上下文与 posthog-js 生命周期。
+ *
+ * 浏览器从 `/api/site/analytics/config` 拿到公开写 key，SDK 的 `api_host` 固定为
+ * 同域 `/ingest`，由 Worker 原样转发到 PostHog；原始浏览器环境、来源与滚动深度
+ * 全部由 SDK 计算，组件只补充业务字段并发送官网自定义事件。
  *
  * @param props.children 前台页面节点
  * @param props.statisticsEnabled 是否启用浏览器统计
@@ -170,16 +183,15 @@ export function OfficialAnalyticsProvider(props: {
   const [analyticsConfig, setAnalyticsConfig] = useState<PublicOfficialAnalyticsConfig | null>(null)
   const googleTagBootstrappedRef = useRef(false)
   const googleTagPageViewKeyRef = useRef<string | null>(null)
-  const enabledRef = useRef(false)
-  const queueRef = useRef<QueuedEvent[]>([])
-  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lastPageViewKeyRef = useRef('')
+  const sdkInitStartedRef = useRef(false)
+  const posthogRef = useRef<PostHogClient | null>(null)
+  const pendingCapturesRef = useRef<PendingCapture[]>([])
   // 首触归因：首个带渠道信号的访问决定来源，之后所有事件与跳转复用。
   const firstTouchRef = useRef<OfficialFirstTouch | null>(null)
+  // 访客编号在 SDK 初始化前先接续官网已有 Cookie。
+  const visitorIdRef = useRef('')
   // 指纹采集一次；事件照常上报，采集完成前的事件不带 device_fp。
   const fingerprintRef = useRef('')
-  // 当前页面进入时间，驱动 $pageleave 总停留时长。
-  const pageEnteredAtRef = useRef(0)
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -188,14 +200,17 @@ export function OfficialAnalyticsProvider(props: {
     void loadOfficialAnalyticsConfig()
       .then((config) => {
         if (!canceled) {
-          enabledRef.current = config.enabled
           setAnalyticsConfig(config)
         }
       })
       .catch(() => {
         if (!canceled) {
-          enabledRef.current = false
-          setAnalyticsConfig({ enabled: false })
+          setAnalyticsConfig({
+            apiHost: null,
+            enabled: false,
+            projectKey: null,
+            uiHost: null,
+          })
         }
       })
 
@@ -203,37 +218,6 @@ export function OfficialAnalyticsProvider(props: {
       canceled = true
     }
   }, [statisticsEnabled])
-
-  /**
-   * 立即把队列提交到同源事件接口。
-   * 失败只记录一次警告，不重试，避免拖慢页面。
-   */
-  const flush = useCallback(() => {
-    if (flushTimerRef.current) {
-      clearTimeout(flushTimerRef.current)
-      flushTimerRef.current = null
-    }
-    const events = queueRef.current.splice(0, MAX_BATCH_SIZE)
-    if (events.length === 0) {
-      return
-    }
-
-    void fetch(ANALYTICS_EVENTS_ENDPOINT, {
-      method: 'POST',
-      credentials: 'same-origin',
-      keepalive: true,
-      headers: { 'content-type': 'application/json', [ANALYTICS_REQUEST_HEADER]: '1' },
-      body: JSON.stringify({ events }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          console.warn('official analytics relay rejected events', response.status)
-        }
-      })
-      .catch(() => {
-        console.warn('official analytics relay unreachable')
-      })
-  }, [])
 
   useEffect(() => {
     // 首触必须在落地页就记录；之后站内翻页时地址栏已无 UTM。
@@ -246,87 +230,148 @@ export function OfficialAnalyticsProvider(props: {
       }) ?? firstTouchRef.current
   }, [pathname])
 
+  useEffect(() => {
+    if (!statisticsEnabled || !analyticsConfig?.enabled) {
+      return
+    }
+
+    const { apiHost, projectKey, uiHost } = analyticsConfig
+    if (!apiHost || !projectKey || !uiHost) {
+      return
+    }
+    if (sdkInitStartedRef.current) {
+      return
+    }
+    sdkInitStartedRef.current = true
+
+    let canceled = false
+    const visitorId = readSharedVisitorId()
+    visitorIdRef.current = visitorId
+    firstTouchRef.current =
+      firstTouchRef.current ??
+      resolveOfficialFirstTouch({
+        baseUrl: window.location.origin,
+        pathname: window.location.pathname,
+        referrer: document.referrer,
+        search: window.location.search,
+      })
+
+    void import('posthog-js')
+      .then(({ default: posthog }) => {
+        if (canceled) {
+          return
+        }
+
+        posthog.init(projectKey, {
+          api_host: apiHost,
+          ui_host: uiHost,
+          // 官网没有 feature flags / 远程配置需求，少一次 /flags 请求。
+          advanced_disable_decide: true,
+          autocapture: false,
+          // 用官网已有访客编号起头，保持切换前后的身份连续。
+          bootstrap: { distinctID: visitorId, isIdentifiedID: false },
+          capture_pageleave: true,
+          capture_pageview: 'history_change',
+          capture_performance: false,
+          cross_subdomain_cookie: false,
+          disable_session_recording: true,
+          disable_surveys: true,
+          persistence: 'localStorage',
+          persistence_name: POSTHOG_PERSISTENCE_NAME,
+          person_profiles: 'always',
+          sanitize_properties: (properties) => {
+            const pagePath = normalizeOfficialPagePath(
+              typeof properties.$pathname === 'string'
+                ? properties.$pathname
+                : window.location.pathname,
+            )
+            const currentUrl =
+              typeof properties.$current_url === 'string'
+                ? properties.$current_url
+                : window.location.href
+            let search = ''
+            try {
+              search = new URL(currentUrl, window.location.origin).search
+            } catch {
+              // 非法 URL 不构成来源参数。
+            }
+
+            const enriched: Record<string, unknown> = {
+              ...properties,
+              ...buildOfficialAttributionProperties(firstTouchRef.current, {
+                baseUrl: window.location.origin,
+                referrer: document.referrer,
+                search,
+              }),
+              app_source: 'noumi-official',
+              page_group: officialPageGroup(pagePath),
+              page_path: pagePath,
+            }
+
+            if (visitorIdRef.current) {
+              enriched.visitor_id = visitorIdRef.current
+            }
+            if (fingerprintRef.current) {
+              enriched.device_fp = fingerprintRef.current
+            }
+
+            // 只保留来源域名；完整外部 URL 没必要进入分析系统。
+            for (const key of ['$referrer', '$initial_referrer', '$session_entry_referrer']) {
+              const origin = readReferrerOrigin(enriched[key])
+              if (origin) {
+                enriched[key] = origin
+              }
+            }
+
+            return enriched
+          },
+        })
+
+        posthogRef.current = posthog
+        for (const [eventName, properties] of pendingCapturesRef.current.splice(0)) {
+          posthog.capture(eventName, properties)
+        }
+      })
+      .catch((error) => {
+        sdkInitStartedRef.current = false
+        console.warn('official analytics sdk failed to initialize', error)
+      })
+
+    return () => {
+      canceled = true
+      if (!posthogRef.current) {
+        sdkInitStartedRef.current = false
+      }
+    }
+  }, [analyticsConfig, statisticsEnabled])
+
   const capture = useCallback(
     (eventName: OfficialClientEventName, properties: OfficialAnalyticsProperties = {}) => {
       trackOfficialReplay(eventName, properties)
       if (
         !statisticsEnabled ||
-        !enabledRef.current ||
+        !analyticsConfig?.enabled ||
         !isOfficialClientEventName(eventName)
       ) {
         return
       }
 
-      const occurredAt = Date.now()
-      const pagePath = normalizeOfficialPagePath(pathname)
-      const firstTouch =
-        firstTouchRef.current ??
-        resolveOfficialFirstTouch({
-          baseUrl: window.location.origin,
-          now: occurredAt,
-          pathname: window.location.pathname,
-          referrer: document.referrer,
-          search: window.location.search,
-        })
-      firstTouchRef.current = firstTouch
-
-      queueRef.current.push({
-        anonymousId: readOfficialAnonymousId(),
-        event: eventName,
-        eventId: createBrowserUuid(),
-        occurredAt: new Date(occurredAt).toISOString(),
-        properties: {
-          ...sanitizeOfficialAnalyticsProperties(
-            {
-              ...properties,
-              device: readOfficialDevice(),
-              timezone: readOfficialTimezone(),
-              device_fp: fingerprintRef.current || undefined,
-              page_path: pagePath,
-            },
-            window.location.origin,
-          ),
-          page_group: officialPageGroup(pagePath),
-          ...touchOfficialBrowserSession(occurredAt),
-          // 每个事件都带来源，站内翻页后不丢（W1/W2/W3/W4）。
-          ...sanitizeOfficialAnalyticsProperties(
-            buildOfficialAttributionProperties(firstTouch, {
-              baseUrl: window.location.origin,
-              referrer: document.referrer,
-              search: window.location.search,
-            }),
-            window.location.origin,
-          ),
-          visitor_id: readSharedVisitorId() || undefined,
-        },
-      })
-
-      if (queueRef.current.length >= MAX_BATCH_SIZE) {
-        flush()
+      const sanitizedProperties = sanitizeOfficialAnalyticsProperties(
+        properties,
+        window.location.origin,
+      )
+      const client = posthogRef.current
+      if (!client) {
+        if (pendingCapturesRef.current.length < MAX_PENDING_CAPTURES) {
+          pendingCapturesRef.current.push([eventName, sanitizedProperties])
+        }
         return
       }
-      flushTimerRef.current ??= setTimeout(flush, FLUSH_DELAY_MS)
-    },
-    [flush, pathname, statisticsEnabled],
-  )
 
-  /**
-   * 上报当前页的 $pageleave（总停留时长）。
-   * 触发点：客户端路由切换与 pagehide；与 $pageview 事件键去重语义对齐，
-   * 每个被记过 $pageview 的页面至多一条 $pageleave。
-   */
-  const flushPageLeave = useCallback(() => {
-    const enteredAt = pageEnteredAtRef.current
-    pageEnteredAtRef.current = 0
-    if (!enteredAt || !lastPageViewKeyRef.current) {
-      return
-    }
-    const durationMs = Math.min(Date.now() - enteredAt, MAX_PAGE_DURATION_MS)
-    if (durationMs < 1000) {
-      return
-    }
-    capture('$pageleave', { duration_ms: durationMs })
-  }, [capture])
+      client.capture(eventName, sanitizedProperties)
+    },
+    [analyticsConfig?.enabled, statisticsEnabled],
+  )
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -375,7 +420,7 @@ export function OfficialAnalyticsProvider(props: {
     )
   }, [pathname, statisticsEnabled])
 
-  // GTM owns GA4 click delivery; this listener is independent of the relay.
+  // GTM owns GA4 click delivery; this listener is independent of PostHog.
   useEffect(() => {
     if (!statisticsEnabled) return
     const handleTryFreeClick = (event: MouseEvent) => {
@@ -409,29 +454,12 @@ export function OfficialAnalyticsProvider(props: {
       return
     }
 
-    const session = readOfficialBrowserSession()
-    const pageViewKey = `${session.$session_id}:${pathname}`
-    if (lastPageViewKeyRef.current !== pageViewKey) {
-      lastPageViewKeyRef.current = pageViewKey
-      pageEnteredAtRef.current = Date.now()
-      capture('$pageview', {})
-    }
-
     if (!sessionStorage.getItem(LANDING_PAGE_VIEWED_SESSION_KEY)) {
       sessionStorage.setItem(LANDING_PAGE_VIEWED_SESSION_KEY, '1')
-      // 来源属性由 capture 统一注入，这里只标记「本会话首个落地页」。
+      // 来源属性由 SDK 的 sanitize_properties 统一注入，这里只标记「本会话首个落地页」。
       capture('landing_page_viewed', {})
     }
-
-    // 关标签页 / 跳外站时上报离开；卸载后 50ms 定时器不可靠，必须同步 flush；
-    // fetch 已用 keepalive，页面卸载后仍可送达。
-    const handlePageLeaveHide = () => {
-      flushPageLeave()
-      flush()
-    }
-    window.addEventListener('pagehide', handlePageLeaveHide)
-    return () => window.removeEventListener('pagehide', handlePageLeaveHide)
-  }, [analyticsConfig, capture, flush, flushPageLeave, pathname])
+  }, [analyticsConfig?.enabled, capture])
 
   useEffect(() => {
     if (!analyticsConfig?.enabled) {
@@ -476,12 +504,10 @@ export function OfficialAnalyticsProvider(props: {
     return () => {
       // 客户端路由切换时上报上一页停留，再重置计时。
       flushPageEngagement('navigate')
-      // 路由离开时上报上一页总停留（$pageview 记过才上报）。
-      flushPageLeave()
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('pagehide', handlePageHide)
     }
-  }, [analyticsConfig, capture, flushPageLeave, pathname])
+  }, [analyticsConfig?.enabled, capture, pathname])
 
   useEffect(() => {
     if (!statisticsEnabled) return
@@ -552,6 +578,7 @@ export function OfficialAnalyticsProvider(props: {
 
       link.href = buildAttributedOutboundUrl(new URL(link.href, window.location.origin), {
         ctaId: analyticsElement?.dataset.analyticsCtaId,
+        distinctId: posthogRef.current?.get_distinct_id() || readSharedVisitorId(),
         firstTouch,
       }).toString()
     }
@@ -559,14 +586,6 @@ export function OfficialAnalyticsProvider(props: {
     document.addEventListener('click', handleClick, true)
     return () => document.removeEventListener('click', handleClick, true)
   }, [capture, statisticsEnabled])
-
-  useEffect(() => {
-    return () => {
-      if (flushTimerRef.current) {
-        clearTimeout(flushTimerRef.current)
-      }
-    }
-  }, [])
 
   const contextValue = {
     capture,

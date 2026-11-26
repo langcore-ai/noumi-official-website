@@ -5,7 +5,6 @@ import {
   buildOfficialGoogleTagBootstrapScript,
   buildOfficialGoogleTagConsentPayload,
   buildOfficialGoogleTagPageViewPayload,
-  buildOfficialLandingSourceProperties,
   buildOfficialOutboundAttributionParams,
   buildPublicOfficialAnalyticsConfig,
   normalizeOfficialPagePath,
@@ -45,15 +44,23 @@ describe('official analytics helpers', () => {
     expect(script).toContain(OFFICIAL_GOOGLE_TAG_BOOTSTRAP_FLAG)
   })
 
-  it('exposes only the enabled flag to the browser', () => {
+  it('exposes the public write key and same-origin ingest path', () => {
     expect(
       buildPublicOfficialAnalyticsConfig({ enabledEnv: 'true', projectKey: 'phc_test_key' }),
-    ).toEqual({ enabled: true })
+    ).toEqual({
+      apiHost: '/ingest',
+      enabled: true,
+      projectKey: 'phc_test_key',
+      uiHost: 'https://us.posthog.com',
+    })
     expect(
       buildPublicOfficialAnalyticsConfig({ enabledEnv: 'false', projectKey: 'phc_test_key' }),
-    ).toEqual({ enabled: false })
+    ).toEqual({ apiHost: null, enabled: false, projectKey: null, uiHost: null })
     expect(buildPublicOfficialAnalyticsConfig({ enabledEnv: 'true', projectKey: '  ' })).toEqual({
+      apiHost: null,
       enabled: false,
+      projectKey: null,
+      uiHost: null,
     })
   })
 
@@ -111,24 +118,6 @@ describe('official analytics helpers', () => {
       ad_storage: 'denied',
       ad_user_data: 'denied',
       analytics_storage: 'granted',
-    })
-  })
-
-  it('extracts only allowed landing source parameters', () => {
-    expect(
-      buildOfficialLandingSourceProperties({
-        baseUrl: 'https://www.noumi.ai',
-        referrer: 'https://google.com/search?q=noumi',
-        search:
-          '?utm_source=newsletter&utm_medium=email&utm_campaign=spring&utm_term=ai&utm_content=hero&foo=bar',
-      }),
-    ).toEqual({
-      referrer_origin: 'https://google.com',
-      utm_campaign: 'spring',
-      utm_content: 'hero',
-      utm_medium: 'email',
-      utm_source: 'newsletter',
-      utm_term: 'ai',
     })
   })
 

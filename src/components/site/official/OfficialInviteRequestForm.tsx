@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 import { useOfficialAnalytics } from '@/components/site/OfficialAnalyticsProvider'
-import { readOfficialAnonymousId } from '@/lib/site/analytics-identity'
+import { readSharedVisitorId } from '@/lib/site/shared-visitor'
 
 type InviteLookupAction = 'idle' | 'login' | 'register' | 'duplicate' | 'request'
 
@@ -158,7 +158,7 @@ export function OfficialInviteRequestForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-noumi-analytics-anonymous-id': readOfficialAnonymousId(),
+          'x-noumi-analytics-anonymous-id': readSharedVisitorId(),
         },
         body: JSON.stringify({
           email: normalizedEmail,

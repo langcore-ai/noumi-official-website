@@ -4,6 +4,7 @@ import { resolveManagedRedirect } from './src/lib/site/managed-routing'
 import { allowsHtmlSnapshot } from './src/lib/site/html-snapshot-policy'
 import { getCanonicalRedirectPath } from './src/lib/site/url'
 import { INTRO_VIDEO_PATH, serveIntroVideo } from './src/lib/site/intro-video-range'
+import { POSTHOG_INGEST_PATH, proxyPostHogIngest } from './src/lib/site/posthog-ingest-proxy'
 
 /** 快照刷新 Worker 环境变量。 */
 type SnapshotWorkerEnv = Cloudflare.Env & {
@@ -613,6 +614,16 @@ const handler = {
    */
   async fetch(request: Request, env: SnapshotWorkerEnv, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url)
+
+    // PostHog 同域 ingest 必须先于 canonical redirect：PostHog 的接口路径以 `/` 结尾，
+    // 若先归一化尾斜杠会把 `/ingest/e/` 重定向成 `/ingest/e`，capture 直接失效。
+    if (
+      url.pathname === POSTHOG_INGEST_PATH ||
+      url.pathname.startsWith(`${POSTHOG_INGEST_PATH}/`)
+    ) {
+      return proxyPostHogIngest(request, ctx)
+    }
+
     if (
       url.pathname === INTRO_VIDEO_PATH &&
       (request.method === 'GET' || request.method === 'HEAD')

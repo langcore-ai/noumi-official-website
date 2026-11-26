@@ -564,8 +564,8 @@ curl -sS -X POST \
 | `/api/graphql-playground`             | 以 Payload 配置为准    | GraphQL playground                 |
 | `/api/preview`                        | Preview secret         | 开启 draft mode                    |
 | `/api/preview/exit`                   | 无                     | 退出 draft mode                    |
-| `/api/site/analytics/config`          | 公开                   | PostHog 开关（不含 key/host）      |
-| `/api/site/analytics/events` POST     | 公开 + 同源/同意校验   | 浏览器事件中继到 PostHog           |
+| `/api/site/analytics/config`          | 公开                   | PostHog 开关与公开写 key           |
+| `/ingest/*`                           | 公开                   | 同域转发 posthog-js 到 PostHog     |
 | `/api/site/invite-requests` POST      | 公开                   | 当前返回产品 auth，不写入          |
 | `/api/site/invite-requests` GET/PATCH | Bearer token           | 产品服务同步 Invite                |
 | `/api/site/invite-requests/lookup`    | 公开                   | 当前返回产品 auth                  |
@@ -583,14 +583,15 @@ curl -sS -X POST \
 - 点击参数包括去掉 query/hash 的 `page_location`、`page_path`、`page_title`、`button_text`、`button_location`、`cta_id`；当前页面在点击时读取。现有 CTA 标记与标准 Try Noumi Free 文案均可识别，自定义按钮可使用 `data-track-action="try_free"` 和 `data-track-location`。
 - local/staging 不发送正式点击统计；PostHog 是否启用不影响生产 GTM 点击事件。GTM 预览验证通过后，仍需在容器中发布事件标签，网站代码上线不会自动发布 GTM 工作区。
 - Google tag script 会加载；`analytics_storage` 默认即 granted（站点埋点不以 cookie 同意为前提），广告类信号保持 denied。
-- PostHog 采用同源中继：浏览器只请求 `GET /api/site/analytics/config` 拿开关，事件经 `POST /api/site/analytics/events` 由 Worker 转发到 PostHog `/batch/`。浏览器端不再加载 `posthog-js`。
-- `POSTHOG_PROJECT_KEY` 与 `POSTHOG_API_HOST` 只存在于 Worker 运行时；公开 config API 只返回 `{ enabled }`。
-- 事件接口要求同源 Origin 与 `x-noumi-analytics: 1` 请求头；body ≤ 16KB、批量 ≤ 20、事件时间 ±30 分钟。接口不再校验任何 consent cookie。
-- 浏览器事件白名单：`$pageview`、`landing_page_viewed`、`official_cta_clicked`、`official_page_engagement`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`official_invite_request_submitted` 只由服务端在写入成功后发送。
-- 归因：首触快照（`noumi:analytics:first_touch`，90 天窗口）首次出现渠道信号即写入 localStorage，不依赖 cookie 选择；每条事件都带 `first_touch_*`、当前 `utm_*` 与 `visitor_id`，站内翻页不丢来源。`/invite` 的服务端重定向与站内 CTA 点击都会把 `utm_*` + `first_touch_*` 透传到 `https://www.noumi.ai/auth`。
-- 中继为每条事件写入服务端读到的客户端 IP（`$ip`）与 `$referrer`，并设置 `$process_person_profile: true`；只有读不到 IP 时才写 `$geoip_disable: true`。因此国家/城市维度可用，匿名访客有 person profile 可与产品侧 `$anon_distinct_id` 缝合。
-- `noumi_visitor_id` 在 `noumi.ai` 与 `www.noumi.ai` 统一写 `Domain=noumi.ai`；`preview.*` 与本地用 `noumi_visitor_id_preview`。
-- 详细契约见 [POSTHOG-SERVER-RELAY.md](POSTHOG-SERVER-RELAY.md)。
+- PostHog 使用浏览器端 `posthog-js`：`GET /api/site/analytics/config` 返回开关、公开写 key、同域 `apiHost: '/ingest'` 与 `uiHost`；SDK 的页面浏览、来源、设备、语言、屏幕、时区、点击 ID、滚动深度都由 SDK 自己计算。
+- `/ingest/*` 由 Worker 在重定向与快照之前透明转发到 `us.i.posthog.com`（`/static/*`、`/array/*` 走 `us-assets.i.posthog.com`）。代理不解析事件体、不改属性，只删除 Cookie、删除非 PostHog 的 Authorization，并把 `CF-Connecting-IP` 写入 `X-Forwarded-For`。
+- 浏览器不直接连接 PostHog；不使用 `e.noumi.ai`，也不需要新增 DNS/CNAME。`POSTHOG_PROJECT_KEY` 是公开写 token，会下发浏览器；`POSTHOG_API_HOST` 只用于服务端事实事件。
+- SDK 配置：`autocapture: false`、`capture_pageview: 'history_change'`、`capture_pageleave: true`、`disable_session_recording: true`、`disable_surveys: true`、`capture_performance: false`、`advanced_disable_decide: true`、`person_profiles: 'always'`、`persistence: 'localStorage'`、`persistence_name: 'noumi_website'`。
+- 访客身份：`bootstrap.distinctID` 使用 `noumi_visitor_id`，SDK 的 `distinct_id` 与官网访客编号一致；`noumi_visitor_id` 在 `noumi.ai` 与 `www.noumi.ai` 统一写 `Domain=noumi.ai`，`preview.*` 与本地用 `noumi_visitor_id_preview`。
+- 浏览器自定义事件仍由 Provider 通过 `capture` 发送：`landing_page_viewed`、`official_cta_clicked`、`official_page_engagement`、`official_invite_lookup_completed`、`official_product_auth_redirected`；`$pageview`/`$pageleave` 由 SDK 独占，不再手写。`official_invite_request_submitted` 只由服务端在写入成功后发送。
+- 归因：首触快照（`noumi:analytics:first_touch`，90 天窗口）首次出现渠道信号即写入 localStorage；SDK 的 `sanitize_properties` 为每条事件注入 `first_touch_*`、当前 `utm_*`、`visitor_id`、`device_fp`、`page_path`、`page_group`、`app_source`，并把 `$referrer`/`$initial_referrer` 收窄到 origin。`/invite` 的服务端重定向与站内 CTA 点击仍把 `utm_*` + `first_touch_*` 透传到 `https://www.noumi.ai/auth`，`posthog_anonymous_distinct_id` 取 `posthog.get_distinct_id()`。
+- `$prev_pageview_*` 的事件位置随 SDK 版本变化：整页跳转时在 `$pageleave`，站内路由切换时在下一条 `$pageview`。报表按两者合并查询，不要只看 `$pageview`。
+- 详细契约见 [POSTHOG-SDK-PROXY.md](POSTHOG-SDK-PROXY.md)。
 
 ### 14.2 Consent
 
@@ -1085,12 +1086,12 @@ Media 与 snapshot/cache 同 bucket，但 media 不是可丢弃缓存。Snapshot
 
 ### PostHog 没有事件
 
-1. 检查 `GET /api/site/analytics/config` 是否返回 `{"enabled":true}`。
+1. 检查 `GET /api/site/analytics/config` 是否返回 `enabled: true`、非空 `projectKey`、`apiHost: "/ingest"`。
 2. 检查 Worker 的 `POSTHOG_ENABLED`、`POSTHOG_PROJECT_KEY`、`POSTHOG_API_HOST`。
-3. 确认请求带 `x-noumi-analytics: 1`；接口不要求任何 consent cookie，因此无需检查用户是否点过 Agree。
-4. 检查 `POST /api/site/analytics/events` 的响应码：403 为 Origin/header 拒绝，429 为限流，400 为 schema 或时间窗口拒绝。
-5. 检查 Worker 日志中的 `relay_delivery_failed`，确认 `POSTHOG_API_HOST/batch/` 可达且 key 正确。
-6. 不要把 GA4 Consent Mode 行为与 PostHog 中继条件混为一谈。
+3. 浏览器 Network 应只有同域 `/ingest/e/`、`/ingest/static/*`、`/ingest/array/*`，不应出现 `us.i.posthog.com`；`/ingest/e/` 应返回 200。
+4. 确认 `$lib = "web"`、`$lib_version` 存在；若没有，说明 SDK 未初始化或配置被关闭。
+5. 检查 `/ingest/*` 代理日志与上游响应；`/ingest` 404 说明请求没到 Worker，`502/5xx` 说明上游不可达。
+6. 不要把 GA4 Consent Mode 行为与 PostHog 采集条件混为一谈。
 
 ## 24. 测试与验证现状
 

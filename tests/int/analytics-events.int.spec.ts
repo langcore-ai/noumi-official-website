@@ -1,119 +1,29 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import {
-  buildClientPostHogEvents,
   buildPostHogServerConfig,
-  isEventTimestampAcceptable,
+  captureOfficialServerEvent,
   normalizePostHogApiHost,
-  officialAnalyticsBatchSchema,
-  officialClientEventSchema,
   sendPostHogBatch,
 } from '@/lib/site/analytics-events.server'
 
-const uuid = () => crypto.randomUUID()
-
 /**
- * 构造合法客户端事件。
- * @param overrides 覆盖字段
- * @returns 事件
+ * 构造可观测的 fetch 实现。
+ * @param statuses 每次请求依次返回的状态码
+ * @returns 调用记录与 fetch 实现
  */
-function event(overrides: Record<string, unknown> = {}) {
-  return {
-    event: '$pageview',
-    eventId: uuid(),
-    occurredAt: new Date().toISOString(),
-    anonymousId: uuid(),
-    properties: { page_path: '/pricing' },
-    ...overrides,
+function createSend(statuses: number[] = [200]) {
+  const calls: Array<{ input: RequestInfo | URL; init?: RequestInit }> = []
+  const send: typeof fetch = async (input, init) => {
+    calls.push({ input, init })
+    const status = statuses[Math.min(calls.length - 1, statuses.length - 1)] ?? 200
+    return new Response(null, { status })
   }
+
+  return { calls, send }
 }
 
-describe('analytics relay schema', () => {
-  it('accepts allowlisted events and rejects unknown ones', () => {
-    expect(officialClientEventSchema.safeParse(event()).success).toBe(true)
-    expect(officialClientEventSchema.safeParse(event({ event: 'app_active' })).success).toBe(false)
-    expect(
-      officialClientEventSchema.safeParse(event({ event: 'official_invite_request_submitted' }))
-        .success,
-    ).toBe(false)
-  })
-
-  it('rejects unknown properties and browser-provided URLs', () => {
-    expect(
-      officialClientEventSchema.safeParse(event({ properties: { email: 'a@b.c' } })).success,
-    ).toBe(false)
-    expect(
-      officialClientEventSchema.safeParse(
-        event({ properties: { $current_url: 'https://evil.test/x' } }),
-      ).success,
-    ).toBe(false)
-    expect(
-      officialClientEventSchema.safeParse(event({ properties: { token: 'phc_x' } })).success,
-    ).toBe(false)
-  })
-
-  it('rejects malformed ids, timestamps and oversized labels', () => {
-    expect(officialClientEventSchema.safeParse(event({ eventId: 'not-a-uuid' })).success).toBe(
-      false,
-    )
-    expect(officialClientEventSchema.safeParse(event({ occurredAt: 'yesterday' })).success).toBe(
-      false,
-    )
-    expect(
-      officialClientEventSchema.safeParse(event({ properties: { cta_id: 'x'.repeat(120) } }))
-        .success,
-    ).toBe(false)
-  })
-
-  it('accepts the full first-touch attribution set the client always sends', () => {
-    const attributed = event({
-      properties: {
-        page_path: '/pricing',
-        page_group: 'pricing',
-        utm_source: 'linkedin',
-        utm_medium: 'outbound',
-        utm_campaign: 'se_outreach',
-        utm_content: 'hook_usecase',
-        first_touch_source: 'linkedin',
-        first_touch_medium: 'outbound',
-        first_touch_campaign: 'se_outreach',
-        first_touch_content: 'hook_usecase',
-        first_touch_landing_page: '/',
-        first_touch_referrer_origin: 'https://www.linkedin.com',
-      },
-    })
-
-    const parsed = officialClientEventSchema.safeParse(attributed)
-    expect(parsed.success).toBe(true)
-    expect(parsed.success && parsed.data.properties).toMatchObject({
-      first_touch_campaign: 'se_outreach',
-      first_touch_content: 'hook_usecase',
-      first_touch_landing_page: '/',
-      first_touch_medium: 'outbound',
-      first_touch_referrer_origin: 'https://www.linkedin.com',
-      first_touch_source: 'linkedin',
-    })
-    expect(officialAnalyticsBatchSchema.safeParse({ events: [attributed] }).success).toBe(true)
-  })
-
-  it('caps the batch size', () => {
-    expect(
-      officialAnalyticsBatchSchema.safeParse({
-        events: Array.from({ length: 21 }, () => event()),
-      }).success,
-    ).toBe(false)
-    expect(officialAnalyticsBatchSchema.safeParse({ events: [] }).success).toBe(false)
-  })
-
-  it('only accepts event timestamps inside the allowed window', () => {
-    const now = Date.parse('2026-11-10T12:00:00.000Z')
-    expect(isEventTimestampAcceptable('2026-11-10T12:10:00.000Z', now)).toBe(true)
-    expect(isEventTimestampAcceptable('2026-11-10T13:00:00.000Z', now)).toBe(false)
-    expect(isEventTimestampAcceptable('2026-11-09T12:00:00.000Z', now)).toBe(false)
-  })
-})
-
-describe('analytics relay transport', () => {
+describe('posthog server config', () => {
   it('requires an explicit enable flag, project key and valid host', () => {
     expect(
       buildPostHogServerConfig({
@@ -148,128 +58,167 @@ describe('analytics relay transport', () => {
     expect(normalizePostHogApiHost('https://us.i.posthog.com/x')).toBe('')
     expect(normalizePostHogApiHost('ftp://us.i.posthog.com')).toBe('')
   })
+})
 
-  it('constructs trusted URL fields from the official origin', () => {
-    const [built] = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({
-        events: [event({ properties: { page_path: '/blog/post?x=1#y' } })],
-      }).events,
-      'https://noumi.ai',
-      '',
-    )
-
-    expect(built.properties).toMatchObject({
-      $current_url: 'https://noumi.ai/blog/post',
-      $host: 'noumi.ai',
-      $pathname: '/blog/post',
-      $geoip_disable: true,
-      $process_person_profile: true,
-      app_source: 'noumi-official',
-      page_group: 'blog',
-      page_path: '/blog/post',
-      schema_version: 1,
-    })
-    expect(built.properties).not.toHaveProperty('token')
-  })
-
-  it('stamps the server-verified country and forwards client timezone', () => {
-    const [built] = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({
-        events: [event({ properties: { timezone: 'Asia/Shanghai' } })],
-      }).events,
-      'https://noumi.ai',
-      '203.0.113.9',
-      'CN',
-    )
-
-    expect(built.properties).toMatchObject({ country: 'CN', timezone: 'Asia/Shanghai' })
-    expect(built.properties).not.toHaveProperty('$geoip_disable')
-  })
-
-  it('omits country when the edge header is missing', () => {
-    const [built] = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
-      'https://noumi.ai',
-      '',
-    )
-
-    expect(built.properties).not.toHaveProperty('country')
-  })
-
+describe('posthog server transport', () => {
   it('posts the batch with the project key as api_key', async () => {
-    const send = vi.fn(
-      async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 200 }),
-    )
+    const { calls, send } = createSend()
     const config = {
       apiHost: 'https://us.i.posthog.com',
       enabled: true,
       projectKey: 'phc_test',
     }
-    const events = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
-      'https://noumi.ai',
-      '',
-    )
 
-    await expect(sendPostHogBatch(config, events, send)).resolves.toBe(true)
-    const [url, init] = send.mock.calls[0] as [string, RequestInit]
-    expect(url).toBe('https://us.i.posthog.com/batch/')
-    expect(JSON.parse(String(init.body))).toMatchObject({ api_key: 'phc_test' })
+    await expect(
+      sendPostHogBatch(
+        config,
+        [
+          {
+            event: 'official_invite_request_submitted',
+            distinct_id: crypto.randomUUID(),
+            uuid: 'invite:1',
+            timestamp: '2026-11-10T12:00:00.000Z',
+            properties: { outcome: 'created' },
+          },
+        ],
+        send,
+      ),
+    ).resolves.toBe(true)
+
+    expect(String(calls[0]?.input)).toBe('https://us.i.posthog.com/batch/')
+    expect(JSON.parse(String(calls[0]?.init?.body))).toMatchObject({
+      api_key: 'phc_test',
+      batch: [{ event: 'official_invite_request_submitted' }],
+    })
   })
 
   it('retries server errors once and gives up on client errors', async () => {
-    const events = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
-      'https://noumi.ai',
-      '',
-    )
-    const config = { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' }
+    const retry = createSend([500, 200])
+    await expect(
+      sendPostHogBatch(
+        { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' },
+        [
+          {
+            event: 'official_invite_request_submitted',
+            distinct_id: crypto.randomUUID(),
+            uuid: 'invite:1',
+            timestamp: '2026-11-10T12:00:00.000Z',
+            properties: {},
+          },
+        ],
+        retry.send,
+      ),
+    ).resolves.toBe(true)
+    expect(retry.calls).toHaveLength(2)
 
-    const retrying = vi
-      .fn()
-      .mockResolvedValueOnce(new Response(null, { status: 503 }))
-      .mockResolvedValueOnce(new Response(null, { status: 200 }))
-    await expect(sendPostHogBatch(config, events, retrying)).resolves.toBe(true)
-    expect(retrying).toHaveBeenCalledTimes(2)
-
-    const rejecting = vi.fn(async () => new Response(null, { status: 400 }))
-    await expect(sendPostHogBatch(config, events, rejecting)).resolves.toBe(false)
-    expect(rejecting).toHaveBeenCalledTimes(1)
+    const rejected = createSend([400])
+    await expect(
+      sendPostHogBatch(
+        { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' },
+        [
+          {
+            event: 'official_invite_request_submitted',
+            distinct_id: crypto.randomUUID(),
+            uuid: 'invite:1',
+            timestamp: '2026-11-10T12:00:00.000Z',
+            properties: {},
+          },
+        ],
+        rejected.send,
+      ),
+    ).resolves.toBe(false)
+    expect(rejected.calls).toHaveLength(1)
   })
 
   it('does nothing when disabled', async () => {
-    const send = vi.fn(async () => new Response(null, { status: 200 }))
+    const { calls, send } = createSend()
     await expect(
       sendPostHogBatch(
-        { apiHost: 'https://us.i.posthog.com', enabled: false, projectKey: null },
-        [],
+        { apiHost: 'https://us.i.posthog.com', enabled: false, projectKey: 'phc_test' },
+        [
+          {
+            event: 'official_invite_request_submitted',
+            distinct_id: crypto.randomUUID(),
+            uuid: 'invite:1',
+            timestamp: '2026-11-10T12:00:00.000Z',
+            properties: {},
+          },
+        ],
         send,
       ),
     ).resolves.toBe(false)
-    expect(send).not.toHaveBeenCalled()
+    expect(calls).toHaveLength(0)
   })
 })
 
-describe('relay geoip forwarding', () => {
-  it('injects the server-observed client IP so PostHog can resolve country', () => {
-    const [built] = buildClientPostHogEvents(
-      officialAnalyticsBatchSchema.parse({ events: [event()] }).events,
-      'https://noumi.ai',
-      '203.0.113.9',
+describe('official server events', () => {
+  it('stamps the trusted URL, client IP and person profile', async () => {
+    const { calls, send } = createSend()
+    const anonymousId = crypto.randomUUID()
+    const delivered = await captureOfficialServerEvent(
+      { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' },
+      {
+        anonymousId,
+        event: 'official_invite_request_submitted',
+        eventId: 'invite:1',
+        occurredAt: new Date('2026-11-10T12:00:00.000Z'),
+        clientIp: '203.0.113.9',
+        properties: { outcome: 'created', page_path: '/invite' },
+      },
+      send,
     )
 
-    expect(built.properties).toMatchObject({ $ip: '203.0.113.9' })
-    expect(built.properties).not.toHaveProperty('$geoip_disable')
+    expect(delivered).toBe(true)
+    const body = JSON.parse(String(calls[0]?.init?.body))
+    expect(body.batch[0]).toMatchObject({
+      distinct_id: anonymousId,
+      event: 'official_invite_request_submitted',
+      properties: {
+        $current_url: 'https://noumi.ai/invite',
+        $host: 'noumi.ai',
+        $ip: '203.0.113.9',
+        $process_person_profile: true,
+        $pathname: '/invite',
+        app_source: 'noumi-official',
+        outcome: 'created',
+        page_group: 'invite',
+        page_path: '/invite',
+      },
+    })
   })
 
-  it('never lets a browser-supplied $ip through', () => {
-    expect(
-      officialClientEventSchema.safeParse(event({ properties: { $ip: '1.2.3.4' } })).success,
-    ).toBe(false)
-    expect(
-      officialClientEventSchema.safeParse(
-        event({ properties: { $geoip_disable: false } }),
-      ).success,
-    ).toBe(false)
+  it('rejects invalid anonymous ids and unknown properties without sending', async () => {
+    const { calls, send } = createSend()
+    const config = { apiHost: 'https://us.i.posthog.com', enabled: true, projectKey: 'phc_test' }
+
+    await expect(
+      captureOfficialServerEvent(
+        config,
+        {
+          anonymousId: 'not-a-uuid',
+          event: 'official_invite_request_submitted',
+          eventId: 'invite:1',
+          occurredAt: new Date('2026-11-10T12:00:00.000Z'),
+          properties: { outcome: 'created' },
+        },
+        send,
+      ),
+    ).resolves.toBe(false)
+
+    await expect(
+      captureOfficialServerEvent(
+        config,
+        {
+          anonymousId: crypto.randomUUID(),
+          event: 'official_invite_request_submitted',
+          eventId: 'invite:1',
+          occurredAt: new Date('2026-11-10T12:00:00.000Z'),
+          properties: { email: 'user@example.com' },
+        },
+        send,
+      ),
+    ).resolves.toBe(false)
+
+    expect(calls).toHaveLength(0)
   })
 })

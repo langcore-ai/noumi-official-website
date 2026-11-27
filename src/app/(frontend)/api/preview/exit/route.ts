@@ -1,4 +1,4 @@
-import { draftMode } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 import { sanitizePreviewPath } from '@/lib/site/publishing'
@@ -14,5 +14,19 @@ export async function GET(request: Request) {
 
   preview.disable()
 
-  return NextResponse.redirect(new URL(sanitizePreviewPath(url.searchParams.get('path')), url))
+  if (process.env.CLOUDFLARE_ENV === 'local' && url.protocol === 'http:') {
+    const cookieStore = await cookies()
+    cookieStore.set('__prerender_bypass', '', {
+      expires: new Date(0),
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      secure: false,
+    })
+  }
+
+  return new NextResponse(null, {
+    status: 307,
+    headers: { Location: sanitizePreviewPath(url.searchParams.get('path')) },
+  })
 }

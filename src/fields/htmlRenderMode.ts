@@ -72,17 +72,22 @@ export const validateHtmlContent: TextareaFieldValidation = (value, { siblingDat
 /**
  * 创建通用页面渲染模式字段
  * @param description 后台说明文案
+ * @param defaultMode 新建文档的默认模式
  * @returns Payload 选择字段
  */
-export function createRenderModeField(description: string): Field {
+export function createRenderModeField(
+  description: string,
+  defaultMode: 'template' | 'markdown' = 'template',
+): Field {
   return {
     name: 'renderMode',
     type: 'select',
-    defaultValue: 'template',
+    // Apply the Markdown default through Payload without changing the legacy database default.
+    defaultValue: defaultMode === 'markdown' ? () => defaultMode : defaultMode,
     label: '渲染模式',
     options: [
       {
-        label: '默认模板模式',
+        label: defaultMode === 'template' ? '默认模板模式' : '分块模板模式',
         value: 'template',
       },
       {
@@ -143,12 +148,12 @@ export function createMarkdownContentField(): Field {
     name: 'markdownContent',
     type: 'textarea',
     localized: true,
-    label: 'Markdown 内容',
+    label: '正文（Markdown）',
     validate: validateMarkdownContent,
     admin: {
       condition: isMarkdownRenderMode,
       description:
-        '仅 Markdown 模式使用；支持 GFM 语法（标题/列表/表格/代码块/引用/图片）。渲染时白名单净化，内联脚本与危险属性会被剥离。',
+        '从二级标题（##）开始。支持列表、表格、代码块、引用和图片。保存草稿后，点击「预览」查看官网排版。',
       components: {
         Field: '/components/admin/MarkdownEditor#MarkdownEditor',
       },

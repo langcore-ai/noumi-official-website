@@ -162,7 +162,13 @@ function isPreviewGlobalSlug(value?: null | string): value is PreviewGlobalSlug 
 export function sanitizePreviewPath(value?: null | string): string {
   const path = value?.trim()
 
-  if (!path || !path.startsWith('/') || path.startsWith('//')) {
+  if (
+    !path ||
+    !path.startsWith('/') ||
+    path.startsWith('//') ||
+    path.includes('\\') ||
+    /[\r\n\t]/.test(path)
+  ) {
     return '/'
   }
 

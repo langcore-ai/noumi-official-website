@@ -247,7 +247,7 @@ export interface Media {
 export interface BlogPost {
   id: number;
   /**
-   * 默认模板沿用当前文章结构；Markdown 模式只需要 slug 与 Markdown 内容；HTML 模式仅管理员可用。
+   * 新文章默认使用 Markdown，沿用官网 Blog 排版。分块模板用于已有结构化文章，HTML 模式仅管理员可用。
    */
   renderMode: 'template' | 'markdown' | 'html';
   /**
@@ -259,33 +259,33 @@ export interface BlogPost {
    */
   slug: string;
   /**
-   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
-   */
-  htmlContent?: string | null;
-  /**
-   * 仅 Markdown 模式使用；支持 GFM 语法（标题/列表/表格/代码块/引用/图片）。渲染时白名单净化，内联脚本与危险属性会被剥离。
-   */
-  markdownContent?: string | null;
-  /**
-   * Blog 列表卡片顶部图片。
-   */
-  htmlCardImage?: (number | null) | Media;
-  /**
-   * Blog 列表卡片第一行左侧标签。
-   */
-  htmlCardTag?: string | null;
-  /**
-   * Blog 列表卡片第二行标题；未填写时回退到 slug。
+   * 用于 Blog 总览，Markdown 文章也用作正文标题。
    */
   htmlCardTitle?: string | null;
   /**
-   * Blog 列表卡片第三行描述。
+   * 用于 Blog 总览卡片，Markdown 文章也用作正文首图。
+   */
+  htmlCardImage?: (number | null) | Media;
+  /**
+   * 用于 Blog 总览，Markdown 文章也用作正文导语。
    */
   htmlCardDescription?: string | null;
   /**
-   * Blog 列表卡片右下角阅读时间，例如 7 min read。
+   * 用于 Blog 筛选。请沿用总览页已有的分类名称。
+   */
+  htmlCardTag?: string | null;
+  /**
+   * 填写时长，例如 7 min。显示在 Blog 总览和 Markdown 文章页。
    */
   htmlCardReadingTime?: string | null;
+  /**
+   * 从二级标题（##）开始。支持列表、表格、代码块、引用和图片。保存草稿后，点击「预览」查看官网排版。
+   */
+  markdownContent?: string | null;
+  /**
+   * 仅 HTML 模式使用；前台会在 navbar 与 footer 之间直接渲染这段 HTML。
+   */
+  htmlContent?: string | null;
   /**
    * 列表页摘要与分享描述。
    */
@@ -319,7 +319,7 @@ export interface BlogPost {
    */
   relatedPosts?: (number | BlogPost)[] | null;
   /**
-   * 渲染为原型 FAQ 手风琴；回答使用 Markdown，前台经白名单净化后再输出。
+   * 可选。问题与回答显示在文章底部，回答支持 Markdown。
    */
   faqItems?:
     | {
@@ -1223,13 +1223,13 @@ export interface BlogPostsSelect<T extends boolean = true> {
   renderMode?: T;
   title?: T;
   slug?: T;
-  htmlContent?: T;
-  markdownContent?: T;
-  htmlCardImage?: T;
-  htmlCardTag?: T;
   htmlCardTitle?: T;
+  htmlCardImage?: T;
   htmlCardDescription?: T;
+  htmlCardTag?: T;
   htmlCardReadingTime?: T;
+  markdownContent?: T;
+  htmlContent?: T;
   excerpt?: T;
   lead?: T;
   coverImage?: T;

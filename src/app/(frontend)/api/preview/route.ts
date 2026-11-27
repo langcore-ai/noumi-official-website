@@ -1,4 +1,4 @@
-import { draftMode } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 import {
@@ -25,7 +25,19 @@ export async function GET(request: Request) {
   const preview = await draftMode()
   preview.enable()
 
-  const response = NextResponse.redirect(new URL(sanitizePreviewPath(url.searchParams.get('path')), url))
+  // Chrome rejects the production Next.js draft cookie on the local HTTP preview.
+  if (process.env.CLOUDFLARE_ENV === 'local' && url.protocol === 'http:') {
+    const cookieStore = await cookies()
+    const draftCookie = cookieStore.get('__prerender_bypass')
+    if (draftCookie) {
+      cookieStore.set({ ...draftCookie, httpOnly: true, path: '/', sameSite: 'lax', secure: false })
+    }
+  }
+
+  const response = new NextResponse(null, {
+    status: 307,
+    headers: { Location: sanitizePreviewPath(url.searchParams.get('path')) },
+  })
   const localeCookie = createPreviewLocaleCookie(url.searchParams.get('locale'))
 
   response.cookies.set(localeCookie.name, localeCookie.value, {

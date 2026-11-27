@@ -1,0 +1,68 @@
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/assets/fonts/newsreader-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/assets/fonts/newsreader-latin-italic.woff2') format('woff2');
+}
+
+.noumi-blog {
+  --blog-ink: #20211f;
+  --blog-muted: #5c5d57;
+  --blog-line: rgb(32 33 31 / 14%);
+  --blog-surface: #f1f1ee;
+  --blog-accent: #4b4be8;
+  --blog-serif: 'Newsreader', 'Noto Serif SC', Georgia, serif;
+  --blog-sans: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  --blog-gutter: clamp(20px, 5vw, 64px);
+  --blog-reading: 45rem;
+  --blog-media-radius: 16px;
+  background: var(--noumi-paper, #faf9f6);
+  color: var(--blog-ink);
+  font-family: var(--blog-sans);
+}
+
+.noumi-blog .blog-frame {
+  width: min(100% - 2 * var(--blog-gutter), 75rem);
+  margin-inline: auto;
+}
+
+.noumi-blog :is(h1, h2, h3, h4) {
+  color: var(--blog-ink);
+  font-family: var(--blog-serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.noumi-blog h1 {
+  font-size: clamp(2.35rem, 5vw, 4.5rem);
+  line-height: 1.08;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.noumi-blog .blog-meta {
+  color: var(--blog-muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.noumi-blog :is(a, button, summary, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--blog-accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .noumi-blog {
+    --blog-media-radius: 12px;
+  }
+}

@@ -33,6 +33,30 @@ describe('renderMarkdownToHtml', () => {
     expect(html).toContain('class="hljs language-ts"')
   })
 
+  it('keeps literal table rows inside imported HTML code blocks', () => {
+    const html = renderMarkdownToHtml(
+      [
+        '<p>Copy this template:</p>',
+        '<pre><code class="language-markdown">### First section',
+        '',
+        '| Item | Owner |',
+        '| --- | --- |',
+        '|  |  |',
+        '',
+        '### Next section',
+        '</code></pre>',
+        '',
+        '| Actual | Table |',
+        '| --- | --- |',
+      ].join('\n'),
+    )
+
+    expect(html).toContain('| Item | Owner |\n| --- | --- |\n|  |  |')
+    expect(html).toContain('<span class="hljs-section">### Next section</span>')
+    expect(html.match(/<table>/g)).toHaveLength(1)
+    expect(html).toContain('<th>Actual</th>')
+  })
+
   it('strips scripts, iframes, event handlers and unsafe URLs', () => {
     const html = renderMarkdownToHtml(
       [

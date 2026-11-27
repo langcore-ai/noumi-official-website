@@ -1,317 +1,354 @@
-/*
- * Blog 文章页（Markdown 模式）：沿用原型 blog-article.html 的排版语言。
- * 结构类名来自原型 CSS（banner-section-2 / blog-post-* / faq-*），在此统一布局与排版：
- * 1) 原型本身的元素级默认值不适合正文（p 的 color 为透明、blockquote 是巨型引号版式）；
- * 2) 正文由 Markdown 渲染，需要把字号/字重映射到原型文章的刻度。
- */
-
-/* 所有文章区块共享一条内容边界，覆盖原型各断点的独立缩进。 */
-.prototype-page.blog-article .banner-section-2 {
-  width: calc(100% - 40px);
+.blog-article,
+.blog-legacy {
+  --blog-reading: 54rem;
+  --blog-body-size: 1.25rem;
+  padding-block: clamp(32px, 5.5vw, 80px) clamp(64px, 9vw, 120px);
 }
 
-.prototype-page.blog-article .blog-post-banner-wrap,
-.prototype-page.blog-article .blog-post-section-2 {
-  width: 100%;
-  max-width: 1125px;
+.blog-article {
+  --blog-hero-width: 60rem;
+}
+
+.blog-article .blog-frame {
+  max-width: 64rem;
+}
+
+.blog-article-header,
+.blog-article-cover {
+  width: min(100%, var(--blog-hero-width));
   margin-inline: auto;
 }
 
-.prototype-page.blog-article .blog-post-title-wrap.blog-title-wrap-width,
-.prototype-page.blog-article .blog-post-author-area-2,
-.prototype-page.blog-article .small-container.small-container-width.small-containermaxw,
-.prototype-page.blog-article .regular-summary-2.regular-summary-limit {
-  width: 100%;
-  max-width: none;
-  margin-inline: 0;
+.noumi-blog .blog-reading-width {
+  width: min(100%, var(--blog-reading));
+  margin-inline: auto;
 }
 
-.prototype-page.blog-article .blog-post-title-2.blog-title-left,
-.prototype-page.blog-article .small-container.small-container-width.small-containermaxw,
-.prototype-page.blog-article .regular-summary-2.regular-summary-limit {
-  padding-inline: 0;
+.blog-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--blog-muted);
+  font-size: 0.9375rem;
+  text-decoration: none;
 }
 
-.prototype-page.blog-article .blog-category-wrap-2.blog-title-left {
-  margin-left: 0;
+.blog-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-.prototype-page.blog-article .blog-post-image-area {
-  min-height: 0;
-  margin-top: 40px;
+.blog-article-header h1 {
+  font-size: clamp(2.25rem, 4.8vw, 4rem);
 }
 
-.prototype-page.blog-article .blog-post-image-wrap {
-  width: 100%;
+.blog-article-header .blog-meta {
+  margin-top: 18px;
 }
 
-.prototype-page.blog-article .blog-post-image {
+.blog-article-cover {
+  margin-block: clamp(28px, 4vw, 48px) 0;
+}
+
+.blog-article-cover img {
   display: block;
   width: 100%;
+  height: auto;
+  max-height: 38rem;
+  border-radius: clamp(12px, 2vw, 24px);
+  object-fit: contain;
+}
+
+.blog-article-lead {
+  margin-top: clamp(28px, 4vw, 48px);
+  color: var(--blog-muted);
+  font-family: var(--blog-serif);
+  font-size: clamp(1.1875rem, 1.8vw, 1.4375rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.blog-article-body,
+.blog-article-sections {
+  margin-top: clamp(28px, 4vw, 48px);
+}
+
+.blog-article-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--blog-reading)) minmax(0, 1fr);
+}
+
+.blog-article-body > * {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.blog-article-body > :is(table, pre, figure, p:has(> img:only-child)) {
+  grid-column: 1 / -1;
+}
+
+.blog-article .blog-prose,
+.blog-article .post-wrap--section {
+  color: var(--blog-ink);
+  font-family: var(--blog-serif);
+  font-size: var(--blog-body-size);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.blog-prose > * + *,
+.blog-legacy .post-body > * + * {
+  margin-top: 1.1em;
+}
+
+.blog-article .blog-prose h2,
+.blog-article .blog-faq h2,
+.blog-article .blog-related h2,
+.blog-article .post-wrap--section h2 {
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  line-height: 1.18;
+}
+
+.blog-article .blog-prose h3 {
+  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  line-height: 1.28;
+}
+
+.blog-prose :is(h2, h3, h4) {
+  margin-top: 1.55em;
+  scroll-margin-top: calc(var(--official-header-height, 70px) + 24px);
+  text-wrap: pretty;
+}
+
+.blog-prose :is(ul, ol) {
+  padding-inline-start: 1.4em;
+}
+
+.blog-prose li + li {
+  margin-top: 0.32em;
+}
+
+.blog-prose a,
+.blog-article .post-wrap--section .markdown-content a,
+.blog-legacy .post-body a {
+  color: var(--blog-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+
+.blog-prose a.heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.blog-prose a.heading-anchor:hover {
+  text-decoration: underline;
+}
+
+.noumi-blog :is(.blog-prose, .post-wrap--section .markdown-content, .post-body) blockquote {
+  margin-inline: 0;
+  padding: 16px clamp(16px, 2vw, 20px);
+  border: 0;
+  background: #f8f5ec;
+}
+
+.noumi-blog :is(.blog-prose, .post-wrap--section .markdown-content, .post-body) blockquote > * + * {
+  margin-block-start: 0.75em;
+}
+
+.blog-prose img,
+.blog-article .official-image-block img,
+.blog-legacy :is(.post-cover, .post-body) img {
+  display: block;
   max-width: 100%;
   height: auto;
-  margin: 0;
-  padding: 0;
+  margin-inline: auto;
+  border-radius: var(--blog-media-radius);
 }
 
-.prototype-page.blog-article .blog-date-2 {
-  margin: 0;
-}
-
-.prototype-page.blog-article .blog-article-body {
-  color: var(--font-color--black);
-  overflow-wrap: anywhere;
-}
-
-.prototype-page.blog-article .blog-article-lead {
-  background-color: var(--bg-color--lite-transparent);
-  border-left: 3px solid var(--bg-color--blue-transparent);
-  border-radius: 5px;
-  padding: 20px;
-  overflow-wrap: anywhere;
-  color: var(--font-color--black);
-  font-size: clamp(16px, 1.25vw, 18px);
-  font-weight: var(--_typography---font-weight--lite);
-  line-height: 1.5;
-  margin: 0 0 28px;
-}
-
-/* 正文字号不跟随原型标题变量在小屏缩小，保持至少 16px。 */
-.prototype-page.blog-article .blog-article-body p,
-.prototype-page.blog-article .blog-article-body li {
-  color: var(--font-color--black);
-  font-size: clamp(16px, 1.25vw, 18px);
-  font-weight: var(--_typography---font-weight--lite);
-  line-height: 1.5;
-  margin: 0 0 16px;
-}
-
-.prototype-page.blog-article .blog-article-body h2,
-.prototype-page.blog-article .blog-article-body h3,
-.prototype-page.blog-article .blog-article-body h4,
-.prototype-page.blog-article .blog-article-body h5,
-.prototype-page.blog-article .blog-article-body h6 {
-  font-family: var(--_typography---font-family--primary-font);
-  color: var(--font-color--black);
-  font-weight: var(--_typography---font-weight--semi-blod);
-  letter-spacing: -0.02em;
-  line-height: 130%;
-}
-
-/* 原型文章正文用 heading(h5=25px) 与 heading-6(h6=20px) 两级小节标题。 */
-.prototype-page.blog-article .blog-article-body h2 {
-  font-size: clamp(24px, 2vw, 28px);
-  margin-top: 40px;
-  margin-bottom: 20px;
-}
-
-.prototype-page.blog-article .blog-article-body h3 {
-  font-size: clamp(20px, 1.6vw, 24px);
-  margin-top: 30px;
-  margin-bottom: 16px;
-}
-
-.prototype-page.blog-article .blog-article-body h4,
-.prototype-page.blog-article .blog-article-body h5,
-.prototype-page.blog-article .blog-article-body h6 {
-  font-size: 18px;
-  margin-top: 24px;
-  margin-bottom: 12px;
-}
-
-.prototype-page.blog-article .blog-article-body ul,
-.prototype-page.blog-article .blog-article-body ol {
-  margin: 0 0 20px;
-  padding: 0 0 0 24px;
-  list-style-position: outside;
-}
-
-.prototype-page.blog-article .blog-article-body li {
-  margin: 0;
-  padding: 0;
-}
-
-.prototype-page.blog-article .blog-article-body li + li {
+.blog-prose figcaption {
+  font-family: var(--blog-sans);
   margin-top: 10px;
+  color: var(--blog-muted);
+  font-size: 0.875rem;
+  text-align: center;
 }
 
-/* 松散 Markdown 列表中的 p 与紧凑列表共用缩进，不叠加段落尾距。 */
-.prototype-page.blog-article .blog-article-body li > p {
-  margin: 0;
+.blog-prose hr {
+  border: 0;
+  border-top: 1px solid var(--blog-line);
 }
 
-.prototype-page.blog-article .blog-article-body li > p + p {
-  margin-top: 10px;
+.noumi-blog :is(.blog-prose, .post-wrap--section .markdown-content, .post-body) pre {
+  max-width: 100%;
+  padding: clamp(16px, 2vw, 24px);
+  overflow-x: auto;
+  border: 0;
+  border-radius: 6px;
+  background: #383d41;
+  color: #f7f4ef;
+  font: 0.9375rem / 1.65 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre;
+  overflow-wrap: normal;
 }
 
-.prototype-page.blog-article .blog-article-body li > ul,
-.prototype-page.blog-article .blog-article-body li > ol {
-  margin: 10px 0 0;
+.noumi-blog :is(.blog-prose, .post-wrap--section .markdown-content, .post-body) pre > code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: inherit;
 }
 
-/* 原型正文链接默认与正文同色，这里改用站点主色以便正文里可辨识。 */
-.prototype-page.blog-article .blog-article-body a {
-  color: var(--font-color--primary-color);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.noumi-blog :is(.blog-prose, .post-wrap--section .markdown-content, .post-body)
+  pre .hljs-section {
+  color: #8cb5ff;
 }
 
-.prototype-page.blog-article .blog-article-body a:hover {
-  color: var(--font-color--black);
-}
-
-.prototype-page.blog-article .blog-article-body strong {
-  font-weight: var(--_typography---font-weight--semi-blod);
-  color: var(--font-color--black);
-}
-
-/* 引用块使用原型 .block-quote 的浅底卡片，而非元素级的大引号版式。 */
-.prototype-page.blog-article .blog-article-body blockquote {
-  background-color: var(--bg-color--lite-transparent);
-  background-image: none;
-  border: none;
-  border-radius: 5px;
-  color: var(--font-color--black);
-  font-size: var(--_font-size---heading--h7);
-  font-weight: var(--_typography---font-weight--lite);
-  line-height: 1.5;
-  margin: 20px 0;
-  padding: 20px;
-  text-align: left;
-}
-
-.prototype-page.blog-article .blog-article-body blockquote > :first-child {
-  margin-top: 0;
-}
-
-.prototype-page.blog-article .blog-article-body blockquote > :last-child {
-  margin-bottom: 0;
-}
-
-.prototype-page.blog-article .blog-article-body img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  margin: 24px 0;
-}
-
-.prototype-page.blog-article .blog-article-body hr {
-  border: none;
-  border-top: 1px solid var(--bg-color--blue-transparent);
-  margin: 32px 0;
-}
-
-/* 表格在窄屏可横向滚动；表头沿用原型浅底与描边色。 */
-.prototype-page.blog-article .blog-article-body table {
+.blog-prose table,
+.blog-article .post-wrap--section .markdown-content table,
+.blog-legacy .post-body table {
   display: block;
   max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  font-size: var(--_font-size---paragraph--small);
-  margin: 20px 0;
+  text-align: start;
+  font-family: var(--blog-sans);
+  font-size: 0.9375rem;
+  line-height: 1.55;
 }
 
-.prototype-page.blog-article .blog-article-body th {
-  background-color: var(--bg-color--lite-color);
-  border: 1px solid var(--bg-color--blue-transparent);
-  color: var(--font-color--black);
-  font-weight: var(--_typography---font-weight--medium);
-  padding: 11px 16px;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.prototype-page.blog-article .blog-article-body td {
-  border: 1px solid var(--bg-color--blue-transparent);
-  color: var(--font-color--black);
-  font-weight: var(--_typography---font-weight--regular);
-  padding: 10px 16px;
+.blog-prose :is(th, td),
+.blog-article .post-wrap--section .markdown-content :is(th, td),
+.blog-legacy .post-body :is(th, td) {
+  min-width: 8rem;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--blog-line);
   vertical-align: top;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
-.prototype-page.blog-article .blog-article-body code {
-  background-color: var(--bg-color--lite-color);
-  border-radius: 3px;
-  color: var(--font-color--black);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.9em;
-  padding: 0.1em 0.35em;
+.blog-prose th,
+.blog-article .post-wrap--section .markdown-content th,
+.blog-legacy .post-body th {
+  background: var(--blog-surface);
+  color: var(--blog-ink);
+  font-weight: 600;
 }
 
-.prototype-page.blog-article .blog-article-body pre {
-  background-color: var(--font-color--black);
-  border-radius: 5px;
-  margin: 20px 0;
-  overflow-x: auto;
-  padding: 18px 20px;
+.blog-article .post-wrap--section {
+  width: min(100%, var(--blog-reading));
+  margin-inline: auto;
+  padding-inline: 0;
 }
 
-.prototype-page.blog-article .blog-article-body pre code {
-  background: none;
-  color: var(--bg-color--white);
-  font-size: var(--_font-size---paragraph--small);
-  line-height: 160%;
+.blog-faq,
+.blog-related {
+  margin-top: clamp(44px, 7vw, 88px);
+  padding-top: clamp(24px, 4vw, 40px);
+  border-top: 1px solid var(--blog-line);
+}
+
+.blog-faq h2,
+.blog-related h2 {
+  margin-bottom: 18px;
+}
+
+.blog-faq details {
+  border-bottom: 1px solid var(--blog-line);
+}
+
+.blog-faq summary {
+  padding-block: 14px;
+  cursor: pointer;
+}
+
+.blog-faq .blog-prose {
+  padding-bottom: 16px;
+}
+
+.blog-related ul {
+  display: grid;
+  gap: 18px;
   padding: 0;
+  list-style: none;
 }
 
-/* 代码高亮（rehype-highlight）配色 */
-.prototype-page.blog-article .blog-article-body .hljs-comment,
-.prototype-page.blog-article .blog-article-body .hljs-quote {
-  color: #8b8ba7;
-}
-
-.prototype-page.blog-article .blog-article-body .hljs-keyword,
-.prototype-page.blog-article .blog-article-body .hljs-selector-tag,
-.prototype-page.blog-article .blog-article-body .hljs-built_in,
-.prototype-page.blog-article .blog-article-body .hljs-name {
-  color: #c792ea;
-}
-
-.prototype-page.blog-article .blog-article-body .hljs-string,
-.prototype-page.blog-article .blog-article-body .hljs-attr,
-.prototype-page.blog-article .blog-article-body .hljs-addition {
-  color: #a5d6a7;
-}
-
-.prototype-page.blog-article .blog-article-body .hljs-number,
-.prototype-page.blog-article .blog-article-body .hljs-literal,
-.prototype-page.blog-article .blog-article-body .hljs-variable {
-  color: #ffcb6b;
-}
-
-.prototype-page.blog-article .blog-article-body .hljs-title,
-.prototype-page.blog-article .blog-article-body .hljs-section,
-.prototype-page.blog-article .blog-article-body .hljs-function {
-  color: #82aaff;
-}
-
-/* ── FAQ：回答由 Markdown 渲染，继承 .faq-answer 的主色 ── */
-/* 原型 CSS 把 .faq-answer-wrap 设为 display:block，需要显式还原折叠态。 */
-.prototype-page.blog-article details.faq:not([open]) .faq-answer-wrap {
-  display: none;
-}
-
-.prototype-page.blog-article .blog-article-faq-answer p,
-.prototype-page.blog-article .blog-article-faq-answer li {
+.blog-related a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  margin-bottom: 10px;
-}
-
-.prototype-page.blog-article .blog-article-faq-answer p:last-child {
-  margin-bottom: 0;
-}
-
-.prototype-page.blog-article .blog-article-faq-answer a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* 隐藏 Markdown 标题的锚点修饰（若启用 autolink）不影响正文观感。 */
-.prototype-page.blog-article .blog-article-body .heading-anchor {
-  color: inherit;
+  font-family: var(--blog-serif);
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  line-height: 1.25;
   text-decoration: none;
+}
+
+.blog-related a:hover {
+  color: var(--blog-accent);
+}
+
+.blog-related img {
+  flex: none;
+  width: clamp(68px, 10vw, 120px);
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--blog-surface);
+}
+
+/* Archived pages own their markup and may include inline presentation styles. */
+.blog-legacy .official-raw-html {
+  width: min(100% - var(--blog-gutter) * 2, 64rem);
+  margin-inline: auto;
+  background: var(--noumi-paper, #faf9f6);
+}
+
+.blog-legacy .official-raw-html :is(.post-wrap, .post-hero, .post-body, .faq-wrap) {
+  width: min(100%, var(--blog-reading));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+  background: transparent;
+}
+
+.blog-legacy .official-raw-html .post-wrap > :is(.post-hero, .post-body, .faq-wrap) {
+  width: 100%;
+}
+
+.blog-legacy .post-cover {
+  margin-block: clamp(24px, 4vw, 40px);
+}
+
+.blog-legacy .post-meta {
+  font-family: var(--blog-sans);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: start;
+  gap: 8px 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blog-muted);
+}
+
+.blog-legacy .post-body {
+  font-family: var(--blog-serif);
+  font-size: var(--blog-body-size);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .blog-article-header h1 {
+    text-wrap: wrap;
+  }
+
+  .blog-article,
+  .blog-legacy {
+    --blog-body-size: 1.0625rem;
+  }
 }

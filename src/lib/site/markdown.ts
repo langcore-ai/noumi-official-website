@@ -48,5 +48,26 @@ const processor = unified()
  * @returns 净化后的 HTML
  */
 export function renderMarkdownToHtml(markdown: string): string {
-  return String(processor.processSync(markdown))
+  let tree = processor.parse(markdown)
+  const codeBlockStarts = tree.children.flatMap((node) => {
+    if (node.type !== 'html') return []
+    const start = node.position?.start.offset
+    const end = node.position?.end.offset
+    if (start === undefined || end === undefined) return []
+
+    // Give imported HTML code its own Markdown block so GFM leaves literal pipe rows alone.
+    return Array.from(
+      markdown.slice(start, end).matchAll(/<\/p>\r?\n(?=<pre><code\b)/gi),
+      (match) => start + match.index + match[0].length,
+    )
+  })
+
+  if (codeBlockStarts.length) {
+    for (const offset of codeBlockStarts.reverse()) {
+      markdown = markdown.slice(0, offset) + '\n' + markdown.slice(offset)
+    }
+    tree = processor.parse(markdown)
+  }
+
+  return processor.stringify(processor.runSync(tree))
 }

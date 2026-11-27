@@ -90,10 +90,20 @@ export const BlogPosts: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [restrictHtmlModeToAdmin()],
+    beforeChange: [
+      ({ data, originalDoc }) => {
+        if ((data.renderMode ?? originalDoc?.renderMode) === 'markdown' && data.htmlCardTitle?.trim()) {
+          data.title = data.htmlCardTitle.trim()
+        }
+
+        return data
+      },
+    ],
   },
   fields: [
     createRenderModeField(
-      '默认模板沿用当前文章结构；Markdown 模式只需要 slug 与 Markdown 内容；HTML 模式仅管理员可用。',
+      '新文章默认使用 Markdown，沿用官网 Blog 排版。分块模板用于已有结构化文章，HTML 模式仅管理员可用。',
+      'markdown',
     ),
     {
       name: 'title',
@@ -115,64 +125,64 @@ export const BlogPosts: CollectionConfig = {
         description: '文章 URL slug；上线后应谨慎变更，避免 SEO 权重丢失。',
       },
     },
-    createHtmlContentField(),
-    createMarkdownContentField(),
+    {
+      name: 'htmlCardTitle',
+      type: 'text',
+      localized: true,
+      label: '文章标题',
+      access: htmlModeWriteAccess,
+      admin: {
+        condition: isCardRenderMode,
+        description: '用于 Blog 总览，Markdown 文章也用作正文标题。',
+      },
+    },
     {
       name: 'htmlCardImage',
       type: 'upload',
       relationTo: 'media',
       localized: true,
-      label: 'HTML 卡片图片',
+      label: '封面',
       access: htmlModeWriteAccess,
       admin: {
         condition: isCardRenderMode,
-        description: 'Blog 列表卡片顶部图片。',
-      },
-    },
-    {
-      name: 'htmlCardTag',
-      type: 'text',
-      localized: true,
-      label: 'HTML 卡片 Tag',
-      access: htmlModeWriteAccess,
-      admin: {
-        condition: isCardRenderMode,
-        description: 'Blog 列表卡片第一行左侧标签。',
-      },
-    },
-    {
-      name: 'htmlCardTitle',
-      type: 'text',
-      localized: true,
-      label: 'HTML 卡片标题',
-      access: htmlModeWriteAccess,
-      admin: {
-        condition: isCardRenderMode,
-        description: 'Blog 列表卡片第二行标题；未填写时回退到 slug。',
+        description: '用于 Blog 总览卡片，Markdown 文章也用作正文首图。',
       },
     },
     {
       name: 'htmlCardDescription',
       type: 'textarea',
       localized: true,
-      label: 'HTML 卡片描述',
+      label: '摘要',
       access: htmlModeWriteAccess,
       admin: {
         condition: isCardRenderMode,
-        description: 'Blog 列表卡片第三行描述。',
+        description: '用于 Blog 总览，Markdown 文章也用作正文导语。',
+      },
+    },
+    {
+      name: 'htmlCardTag',
+      type: 'text',
+      localized: true,
+      label: '分类',
+      access: htmlModeWriteAccess,
+      admin: {
+        condition: isCardRenderMode,
+        description: '用于 Blog 筛选。请沿用总览页已有的分类名称。',
       },
     },
     {
       name: 'htmlCardReadingTime',
       type: 'text',
       localized: true,
-      label: 'HTML 卡片阅读时间',
+      label: '阅读时长',
       access: htmlModeWriteAccess,
       admin: {
         condition: isCardRenderMode,
-        description: 'Blog 列表卡片右下角阅读时间，例如 7 min read。',
+        description: '填写时长，例如 7 min。显示在 Blog 总览和 Markdown 文章页。',
       },
     },
+    createMarkdownContentField(),
+    createHtmlContentField(),
     {
       name: 'excerpt',
       type: 'textarea',
@@ -271,7 +281,7 @@ export const BlogPosts: CollectionConfig = {
       localized: true,
       label: 'FAQ',
       admin: {
-        description: '渲染为原型 FAQ 手风琴；回答使用 Markdown，前台经白名单净化后再输出。',
+        description: '可选。问题与回答显示在文章底部，回答支持 Markdown。',
         condition: isMarkdownRenderMode,
       },
       fields: [
